@@ -8,8 +8,13 @@ namespace aym {
 
 enum class TokenType {
     Identifier,
-    Number,
     String,
+    LParen,
+    RParen,
+    Colon,
+    Semicolon,
+    Newline,
+    KeywordPrint,
     EndOfFile
 };
 
@@ -23,7 +28,11 @@ public:
     explicit Lexer(const std::string &source);
     std::vector<Token> tokenize();
 private:
+    char peek() const;
+    char get();
+
     std::string src;
+    size_t pos = 0;
 };
 
 } // namespace aym

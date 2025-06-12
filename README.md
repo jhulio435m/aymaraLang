@@ -59,8 +59,8 @@ jaqichawi:
 ### Compilación y Ejecución
 
 ```bash
-$ aymc hola.aym -o hola.ayn
-$ ./hola.ayn
+$ ./bin/aymc samples/hola.aym
+$ ./build/out
 Kamisaraki!
 ```
 

@@ -15,10 +15,10 @@ int main(int argc, char** argv) {
     auto tokens = lexer.tokenize();
 
     aym::Parser parser(tokens);
-    parser.parse();
+    auto nodes = parser.parse();
 
     aym::CodeGenerator cg;
-    cg.generate();
+    cg.generate(nodes, "build/out.asm");
 
     return 0;
 }
