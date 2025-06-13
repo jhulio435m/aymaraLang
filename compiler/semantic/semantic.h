@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <unordered_set>
 #include "../ast/ast.h"
 
 namespace aym {
@@ -11,12 +12,17 @@ namespace aym {
 class SemanticAnalyzer {
 public:
     void analyze(const std::vector<std::unique_ptr<Node>> &nodes);
+    const std::unordered_set<std::string> &getGlobals() const { return globals; }
 
 private:
-    std::unordered_map<std::string, std::string> symbols;
-    std::unordered_map<std::string, size_t> functions;
-    int loopDepth = 0;
-    int functionDepth = 0;
+    std::vector<std::unordered_map<std::string, std::string>> scopes;
+    std::unordered_set<std::string> globals;
+
+    void pushScope();
+    void popScope();
+    void declare(const std::string &name, const std::string &type);
+    bool isDeclared(const std::string &name) const;
+    std::string lookup(const std::string &name) const;
     void analyzeStmt(const Stmt *stmt);
     std::string analyzeExpr(const Expr *expr);
 };

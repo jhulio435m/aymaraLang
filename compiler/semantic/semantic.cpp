@@ -3,11 +3,45 @@
 
 namespace aym {
 
+void SemanticAnalyzer::pushScope() {
+    scopes.emplace_back();
+}
+
+void SemanticAnalyzer::popScope() {
+    if (!scopes.empty()) scopes.pop_back();
+}
+
+void SemanticAnalyzer::declare(const std::string &name, const std::string &type) {
+    if (scopes.empty()) pushScope();
+    scopes.back()[name] = type;
+}
+
+bool SemanticAnalyzer::isDeclared(const std::string &name) const {
+    for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
+        if (it->count(name)) return true;
+    }
+    return false;
+}
+
+std::string SemanticAnalyzer::lookup(const std::string &name) const {
+    for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
+        auto f = it->find(name);
+        if (f != it->end()) return f->second;
+    }
+    return "";
+}
+
 void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) {
+    pushScope();
     functions["willt’aña"] = 1; // built-in print function
     for (const auto &n : nodes) {
         analyzeStmt(static_cast<const Stmt *>(n.get()));
     }
+    globals.clear();
+    if (!scopes.empty()) {
+        for (const auto &p : scopes.front()) globals.insert(p.first);
+    }
+    popScope();
 }
 
 void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
@@ -21,9 +55,9 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
         std::string t = analyzeExpr(a->getValue());
-        if (!symbols.count(a->getName())) {
-            symbols[a->getName()] = t;
-        } else if (symbols[a->getName()] != t) {
+        if (!isDeclared(a->getName())) {
+            declare(a->getName(), t);
+        } else if (lookup(a->getName()) != t && !t.empty()) {
             std::cerr << "Error: tipo incompatible en asignacion a '" << a->getName() << "'" << std::endl;
         }
         return;
@@ -31,14 +65,16 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
         std::string t = "";
         if (v->getInit()) t = analyzeExpr(v->getInit());
-        symbols[v->getName()] = v->getType();
+        declare(v->getName(), v->getType());
         if (!t.empty() && t != v->getType()) {
             std::cerr << "Error: tipo incompatible en declaracion de '" << v->getName() << "'" << std::endl;
         }
         return;
     }
     if (auto *b = dynamic_cast<const BlockStmt *>(stmt)) {
+        pushScope();
         for (const auto &s : b->statements) analyzeStmt(s.get());
+        popScope();
         return;
     }
     if (auto *i = dynamic_cast<const IfStmt *>(stmt)) {
@@ -55,11 +91,20 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         return;
     }
     if (auto *f = dynamic_cast<const ForStmt *>(stmt)) {
-        ++loopDepth;
+
+        pushScope();
         analyzeStmt(f->getInit());
         analyzeExpr(f->getCondition());
         analyzeStmt(f->getPost());
         analyzeStmt(f->getBody());
+        popScope();
+        return;
+    }
+    if (auto *fn = dynamic_cast<const FunctionStmt *>(stmt)) {
+        pushScope();
+        for (const auto &pname : fn->getParams()) declare(pname, "int");
+        analyzeStmt(fn->getBody());
+        popScope();
         --loopDepth;
         return;
     }
@@ -99,11 +144,11 @@ std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
         return "string";
     }
     if (auto *v = dynamic_cast<const VariableExpr *>(expr)) {
-        if (!symbols.count(v->getName())) {
+        if (!isDeclared(v->getName())) {
             std::cerr << "Error: variable '" << v->getName() << "' no declarada" << std::endl;
             return "";
         }
-        return symbols[v->getName()];
+        return lookup(v->getName());
     }
     if (auto *b = dynamic_cast<const BinaryExpr *>(expr)) {
         std::string l = analyzeExpr(b->getLeft());

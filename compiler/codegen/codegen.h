@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 namespace aym {
 
@@ -12,7 +13,8 @@ class Node;
 class CodeGenerator {
 public:
     void generate(const std::vector<std::unique_ptr<Node>> &nodes,
-                  const std::string &outputPath);
+                  const std::string &outputPath,
+                  const std::unordered_set<std::string> &globals);
 };
 
 } // namespace aym
