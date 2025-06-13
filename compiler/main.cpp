@@ -5,6 +5,8 @@
 #include "semantic/semantic.h"
 #include "utils/error.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 
@@ -35,7 +37,17 @@ int main(int argc, char** argv) {
     }
 
     std::string source;
-    for (const auto &in : inputs) source += aym::readFile(in) + "\n";
+    for (const auto &in : inputs) {
+        std::ifstream file(in);
+        if (!file.is_open()) {
+            aym::error("No se pudo abrir el archivo: " + in);
+            return 1;
+        }
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        source += buffer.str();
+        source += "\n";
+    }
     aym::Lexer lexer(source);
     auto tokens = lexer.tokenize();
     if (debug) {
