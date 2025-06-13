@@ -37,7 +37,10 @@ El compilador `aymc` está estructurado en varias etapas clásicas de diseño de
 4. **Análisis Semántico** – Tipado, resolución de símbolos, validaciones.
 5. **Optimización Intermedia** – (opcional) Reescritura del AST para mejoras.
 6. **Generación de Código** – Código ensamblador x86_64.
-7. **Ensamblado y Enlace** – Uso de `nasm` y `ld` para crear `.ayn`.
+7. **Ensamblado y Enlace** – Uso de `nasm` y `gcc` para crear `.ayn`.
+
+Las condiciones y bucles ahora se ejecutan en tiempo de ejecución gracias a un
+AST más completo, análisis semántico y generación de código en ensamblador.
 
 > ⚙️ Futuras mejoras incluirán soporte para LLVM como backend opcional.
 
@@ -47,14 +50,31 @@ El compilador `aymc` está estructurado en varias etapas clásicas de diseño de
 
 ### `hola.aym`
 ```aymara
-yatiyawi Hola:
-    lurayiri ninchaña():
-        willt’aña("Kamisaraki!");
+willt’aña("Kamisaraki!");
+```
 
-jaqichawi:
-    P = Hola()
-    P.ninchaña()
-````
+### `ops.aym`
+```aymara
+willt’aña(3 + 4 * 2);
+```
+
+### `condloop.aym`
+```aymara
+si (1) {
+    willt’aña("cond");
+}
+
+mientras (3) {
+    willt’aña("loop");
+}
+```
+
+### `vars.aym`
+```aymara
+x = 5;
+y = x * 2 + 3;
+willt’aña(y);
+```
 
 ### `ops.aym`
 ```aymara
@@ -75,6 +95,33 @@ $ ./build/out
 11
 ```
 
+<<<<<<< codex/implementar-operaciones-básicas-en-compilador
+```bash
+$ ./bin/aymc samples/condloop.aym
+$ ./build/out
+cond
+loop
+loop
+loop
+```
+
+```bash
+$ ./bin/aymc samples/vars.aym
+$ ./build/out
+13
+```
+
+```bash
+$ ./bin/aymc samples/runtime.aym
+$ ./build/out
+inicio
+3
+2
+1
+```
+
+=======
+>>>>>>> main
 ---
 
 ## 🧰 Tecnologías y Herramientas

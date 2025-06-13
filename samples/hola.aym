@@ -1,7 +1,1 @@
-yatiyawi Hola:
-    lurayiri ninchaña():
-        willt’aña("Kamisaraki!");
-
-jaqichawi:
-    P = Hola()
-    P.ninchaña()
+willt’aña("Kamisaraki!");
