@@ -26,10 +26,6 @@ int main(int argc, char** argv) {
             debug = true;
         } else if (arg == "--dump-ast") {
             dumpAst = true;
-        } else if (arg.rfind("--opt=",0) == 0) {
-            /* nivel de optimizacion no implementado */
-        } else if (arg.rfind("--emit=",0) == 0) {
-            /* objetivo de salida alternativo no implementado */
         } else {
             inputs.push_back(arg);
         }
@@ -41,8 +37,6 @@ int main(int argc, char** argv) {
     }
 
     std::string source;
-
-    for (const auto &in : inputs) source += aym::readFile(in) + "\n";
     for (const auto &in : inputs) {
         std::ifstream file(in);
         if (!file.is_open()) {
@@ -54,7 +48,6 @@ int main(int argc, char** argv) {
         source += buffer.str();
         source += "\n";
     }
-
     aym::Lexer lexer(source);
     auto tokens = lexer.tokenize();
     if (debug) {

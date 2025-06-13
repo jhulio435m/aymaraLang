@@ -3,8 +3,8 @@
 
 #include <memory>
 #include <unordered_map>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 #include "../ast/ast.h"
 
 namespace aym {
@@ -16,24 +16,19 @@ public:
 
 private:
     std::vector<std::unordered_map<std::string, std::string>> scopes;
-
-    std::unordered_map<std::string, FunctionStmt*> functions;
-    void analyzeStmt(const Stmt *stmt);
-    std::string analyzeExpr(const Expr *expr);
-    void enterScope();
-    void exitScope();
-    std::string lookup(const std::string &name);
-
+    std::unordered_map<std::string, size_t> functions;
     std::unordered_set<std::string> globals;
+    int loopDepth = 0;
+    int functionDepth = 0;
 
     void pushScope();
     void popScope();
     void declare(const std::string &name, const std::string &type);
     bool isDeclared(const std::string &name) const;
     std::string lookup(const std::string &name) const;
+
     void analyzeStmt(const Stmt *stmt);
     std::string analyzeExpr(const Expr *expr);
-
 };
 
 } // namespace aym
