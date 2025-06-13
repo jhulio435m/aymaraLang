@@ -96,13 +96,75 @@ public:
 class IfStmt : public Stmt {
 public:
     IfStmt(std::unique_ptr<Expr> cond,
-           std::unique_ptr<BlockStmt> body)
-        : condition(std::move(cond)), thenBlock(std::move(body)) {}
+           std::unique_ptr<BlockStmt> thenBlk,
+           std::unique_ptr<BlockStmt> elseBlk = nullptr)
+        : condition(std::move(cond)), thenBlock(std::move(thenBlk)),
+          elseBlock(std::move(elseBlk)) {}
     Expr *getCondition() const { return condition.get(); }
     BlockStmt *getThen() const { return thenBlock.get(); }
+    BlockStmt *getElse() const { return elseBlock.get(); }
 private:
     std::unique_ptr<Expr> condition;
     std::unique_ptr<BlockStmt> thenBlock;
+    std::unique_ptr<BlockStmt> elseBlock;
+};
+
+class ForStmt : public Stmt {
+public:
+    ForStmt(std::unique_ptr<Stmt> init,
+            std::unique_ptr<Expr> cond,
+            std::unique_ptr<Stmt> post,
+            std::unique_ptr<BlockStmt> body)
+        : initStmt(std::move(init)), condition(std::move(cond)),
+          postStmt(std::move(post)), body(std::move(body)) {}
+    Stmt *getInit() const { return initStmt.get(); }
+    Expr *getCondition() const { return condition.get(); }
+    Stmt *getPost() const { return postStmt.get(); }
+    BlockStmt *getBody() const { return body.get(); }
+private:
+    std::unique_ptr<Stmt> initStmt;
+    std::unique_ptr<Expr> condition;
+    std::unique_ptr<Stmt> postStmt;
+    std::unique_ptr<BlockStmt> body;
+};
+
+class BreakStmt : public Stmt {};
+class ContinueStmt : public Stmt {};
+
+class ReturnStmt : public Stmt {
+public:
+    explicit ReturnStmt(std::unique_ptr<Expr> v) : value(std::move(v)) {}
+    Expr *getValue() const { return value.get(); }
+private:
+    std::unique_ptr<Expr> value;
+};
+
+class VarDeclStmt : public Stmt {
+public:
+    VarDeclStmt(std::string t, std::string n, std::unique_ptr<Expr> i)
+        : type(std::move(t)), name(std::move(n)), init(std::move(i)) {}
+    const std::string &getType() const { return type; }
+    const std::string &getName() const { return name; }
+    Expr *getInit() const { return init.get(); }
+private:
+    std::string type;
+    std::string name;
+    std::unique_ptr<Expr> init;
+};
+
+class FunctionStmt : public Stmt {
+public:
+    FunctionStmt(std::string n,
+                 std::vector<std::string> p,
+                 std::unique_ptr<BlockStmt> b)
+        : name(std::move(n)), params(std::move(p)), body(std::move(b)) {}
+    const std::string &getName() const { return name; }
+    const std::vector<std::string> &getParams() const { return params; }
+    BlockStmt *getBody() const { return body.get(); }
+private:
+    std::string name;
+    std::vector<std::string> params;
+    std::unique_ptr<BlockStmt> body;
 };
 
 class WhileStmt : public Stmt {

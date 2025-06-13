@@ -28,8 +28,28 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordPrint, word});
             } else if (word == "si") {
                 tokens.push_back({TokenType::KeywordIf, word});
+            } else if (word == "sino") {
+                tokens.push_back({TokenType::KeywordElse, word});
             } else if (word == "mientras") {
                 tokens.push_back({TokenType::KeywordWhile, word});
+            } else if (word == "para") {
+                tokens.push_back({TokenType::KeywordFor, word});
+            } else if (word == "break") {
+                tokens.push_back({TokenType::KeywordBreak, word});
+            } else if (word == "continue") {
+                tokens.push_back({TokenType::KeywordContinue, word});
+            } else if (word == "func") {
+                tokens.push_back({TokenType::KeywordFunc, word});
+            } else if (word == "retorna") {
+                tokens.push_back({TokenType::KeywordReturn, word});
+            } else if (word == "int") {
+                tokens.push_back({TokenType::KeywordInt, word});
+            } else if (word == "float") {
+                tokens.push_back({TokenType::KeywordFloat, word});
+            } else if (word == "bool") {
+                tokens.push_back({TokenType::KeywordBool, word});
+            } else if (word == "string") {
+                tokens.push_back({TokenType::KeywordString, word});
             } else {
                 tokens.push_back({TokenType::Identifier, word});
             }
