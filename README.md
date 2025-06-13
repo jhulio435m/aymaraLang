@@ -76,10 +76,6 @@ y = x * 2 + 3;
 willt’aña(y);
 ```
 
-### `ops.aym`
-```aymara
-willt’aña(3 + 4 * 2);
-```
 
 ### Compilación y Ejecución
 
