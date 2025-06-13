@@ -25,6 +25,7 @@ private:
     void emitStmt(const Stmt *stmt);
     void emitExpr(const Expr *expr);
     void collect(const Stmt *stmt);
+    void collectExpr(const Expr *expr);
 };
 
 void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes, const std::string &path) {
@@ -80,6 +81,10 @@ void CodeGenImpl::emitStmt(const Stmt *stmt) {
             out << "    xor eax,eax\n";
             out << "    call printf\n";
         }
+        return;
+    }
+    if (auto *e = dynamic_cast<const ExprStmt *>(stmt)) {
+        emitExpr(e->getExpr());
         return;
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
@@ -182,9 +187,11 @@ void CodeGenImpl::emitExpr(const Expr *expr) {
 
 void CodeGenImpl::collect(const Stmt *stmt) {
     if (auto *p = dynamic_cast<const PrintStmt *>(stmt)) {
-        if (auto *s = dynamic_cast<StringExpr *>(p->getExpr())) {
-            strings.push_back(s->getValue());
-        }
+        collectExpr(p->getExpr());
+        return;
+    }
+    if (auto *e = dynamic_cast<const ExprStmt *>(stmt)) {
+        collectExpr(e->getExpr());
         return;
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
@@ -201,6 +208,22 @@ void CodeGenImpl::collect(const Stmt *stmt) {
     }
     if (auto *w = dynamic_cast<const WhileStmt *>(stmt)) {
         collect(w->getBody());
+        return;
+    }
+}
+
+void CodeGenImpl::collectExpr(const Expr *expr) {
+    if (auto *s = dynamic_cast<const StringExpr *>(expr)) {
+        strings.push_back(s->getValue());
+        return;
+    }
+    if (auto *b = dynamic_cast<const BinaryExpr *>(expr)) {
+        collectExpr(b->getLeft());
+        collectExpr(b->getRight());
+        return;
+    }
+    if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
+        for (const auto &a : c->getArgs()) collectExpr(a.get());
         return;
     }
 }

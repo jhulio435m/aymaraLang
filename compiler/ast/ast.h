@@ -77,6 +77,15 @@ private:
     std::unique_ptr<Expr> expression;
 };
 
+class ExprStmt : public Stmt {
+public:
+    explicit ExprStmt(std::unique_ptr<Expr> e)
+        : expression(std::move(e)) {}
+    Expr *getExpr() const { return expression.get(); }
+private:
+    std::unique_ptr<Expr> expression;
+};
+
 class AssignStmt : public Stmt {
 public:
     AssignStmt(std::string n, std::unique_ptr<Expr> v)
