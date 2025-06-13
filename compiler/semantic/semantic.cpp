@@ -14,6 +14,10 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         analyzeExpr(p->getExpr());
         return;
     }
+    if (auto *e = dynamic_cast<const ExprStmt *>(stmt)) {
+        analyzeExpr(e->getExpr());
+        return;
+    }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
         std::string t = analyzeExpr(a->getValue());
         if (!symbols.count(a->getName())) {
