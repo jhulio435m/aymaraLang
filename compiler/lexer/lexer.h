@@ -14,9 +14,12 @@ enum class TokenType {
     Minus,
     Star,
     Slash,
+<<<<<<< codex/implementar-operaciones-básicas-en-compilador
     Equal,
     LBrace,
     RBrace,
+=======
+>>>>>>> main
     LParen,
     RParen,
     Colon,

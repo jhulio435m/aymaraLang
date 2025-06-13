@@ -76,6 +76,11 @@ y = x * 2 + 3;
 willt’aña(y);
 ```
 
+### `ops.aym`
+```aymara
+willt’aña(3 + 4 * 2);
+```
+
 ### Compilación y Ejecución
 
 ```bash
@@ -90,6 +95,7 @@ $ ./build/out
 11
 ```
 
+<<<<<<< codex/implementar-operaciones-básicas-en-compilador
 ```bash
 $ ./bin/aymc samples/condloop.aym
 $ ./build/out
@@ -114,6 +120,8 @@ inicio
 1
 ```
 
+=======
+>>>>>>> main
 ---
 
 ## 🧰 Tecnologías y Herramientas

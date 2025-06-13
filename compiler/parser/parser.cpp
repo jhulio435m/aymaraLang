@@ -30,9 +30,21 @@ void Parser::parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool sto
 
 std::unique_ptr<Stmt> Parser::parseSingleStatement() {
     if (match(TokenType::KeywordPrint)) {
+<<<<<<< codex/implementar-operaciones-básicas-en-compilador
         match(TokenType::LParen);
         auto expr = parseExpression();
         match(TokenType::RParen);
+=======
+        if (!match(TokenType::LParen)) return nullptr;
+        std::string text;
+        if (peek().type == TokenType::String) {
+            text = get().text;
+        } else {
+            int value = parseExpression();
+            text = std::to_string(value);
+        }
+        if (!match(TokenType::RParen)) return nullptr;
+>>>>>>> main
         match(TokenType::Semicolon);
         return std::make_unique<PrintStmt>(std::move(expr));
     }
@@ -136,6 +148,47 @@ std::vector<std::unique_ptr<Expr>> Parser::parseArguments() {
         args.push_back(parseExpression());
     }
     return args;
+}
+
+int Parser::parseExpression() {
+    int value = parseTerm();
+    while (true) {
+        if (match(TokenType::Plus)) {
+            value += parseTerm();
+        } else if (match(TokenType::Minus)) {
+            value -= parseTerm();
+        } else {
+            break;
+        }
+    }
+    return value;
+}
+
+int Parser::parseTerm() {
+    int value = parseFactor();
+    while (true) {
+        if (match(TokenType::Star)) {
+            value *= parseFactor();
+        } else if (match(TokenType::Slash)) {
+            int divisor = parseFactor();
+            if (divisor != 0) value /= divisor;
+        } else {
+            break;
+        }
+    }
+    return value;
+}
+
+int Parser::parseFactor() {
+    if (match(TokenType::Number)) {
+        return std::stoi(tokens[pos-1].text);
+    }
+    if (match(TokenType::LParen)) {
+        int value = parseExpression();
+        match(TokenType::RParen);
+        return value;
+    }
+    return 0;
 }
 
 } // namespace aym
