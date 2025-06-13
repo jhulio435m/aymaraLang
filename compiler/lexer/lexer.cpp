@@ -35,6 +35,15 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
+        if (std::isdigit(static_cast<unsigned char>(c))) {
+            std::string num;
+            while (pos < src.size() && std::isdigit(static_cast<unsigned char>(peek()))) {
+                num += get();
+            }
+            tokens.push_back({TokenType::Number, num});
+            continue;
+        }
+
         if (c == '"') {
             get();
             std::string str;
@@ -47,6 +56,10 @@ std::vector<Token> Lexer::tokenize() {
         }
 
         switch (c) {
+            case '+': tokens.push_back({TokenType::Plus, "+"}); get(); break;
+            case '-': tokens.push_back({TokenType::Minus, "-"}); get(); break;
+            case '*': tokens.push_back({TokenType::Star, "*"}); get(); break;
+            case '/': tokens.push_back({TokenType::Slash, "/"}); get(); break;
             case '(': tokens.push_back({TokenType::LParen, "("}); get(); break;
             case ')': tokens.push_back({TokenType::RParen, ")"}); get(); break;
             case ':': tokens.push_back({TokenType::Colon, ":"}); get(); break;
