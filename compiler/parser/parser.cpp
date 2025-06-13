@@ -36,13 +36,59 @@ bool Parser::match(TokenType type) {
 std::unique_ptr<Node> Parser::parseStatement() {
     if (match(TokenType::KeywordPrint)) {
         if (!match(TokenType::LParen)) return nullptr;
-        if (peek().type != TokenType::String) return nullptr;
-        std::string text = get().text;
+        std::string text;
+        if (peek().type == TokenType::String) {
+            text = get().text;
+        } else {
+            int value = parseExpression();
+            text = std::to_string(value);
+        }
         if (!match(TokenType::RParen)) return nullptr;
         match(TokenType::Semicolon);
         return std::make_unique<PrintNode>(text);
     }
     return nullptr;
+}
+
+int Parser::parseExpression() {
+    int value = parseTerm();
+    while (true) {
+        if (match(TokenType::Plus)) {
+            value += parseTerm();
+        } else if (match(TokenType::Minus)) {
+            value -= parseTerm();
+        } else {
+            break;
+        }
+    }
+    return value;
+}
+
+int Parser::parseTerm() {
+    int value = parseFactor();
+    while (true) {
+        if (match(TokenType::Star)) {
+            value *= parseFactor();
+        } else if (match(TokenType::Slash)) {
+            int divisor = parseFactor();
+            if (divisor != 0) value /= divisor;
+        } else {
+            break;
+        }
+    }
+    return value;
+}
+
+int Parser::parseFactor() {
+    if (match(TokenType::Number)) {
+        return std::stoi(tokens[pos-1].text);
+    }
+    if (match(TokenType::LParen)) {
+        int value = parseExpression();
+        match(TokenType::RParen);
+        return value;
+    }
+    return 0;
 }
 
 } // namespace aym

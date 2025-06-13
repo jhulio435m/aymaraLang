@@ -56,12 +56,23 @@ jaqichawi:
     P.ninchaña()
 ````
 
+### `ops.aym`
+```aymara
+willt’aña(3 + 4 * 2);
+```
+
 ### Compilación y Ejecución
 
 ```bash
 $ ./bin/aymc samples/hola.aym
 $ ./build/out
 Kamisaraki!
+```
+
+```bash
+$ ./bin/aymc samples/ops.aym
+$ ./build/out
+11
 ```
 
 ---

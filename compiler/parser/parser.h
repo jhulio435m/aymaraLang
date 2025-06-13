@@ -21,6 +21,9 @@ private:
     const Token &get();
     bool match(TokenType type);
     std::unique_ptr<Node> parseStatement();
+    int parseExpression();
+    int parseTerm();
+    int parseFactor();
 };
 
 } // namespace aym

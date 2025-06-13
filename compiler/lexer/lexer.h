@@ -9,6 +9,11 @@ namespace aym {
 enum class TokenType {
     Identifier,
     String,
+    Number,
+    Plus,
+    Minus,
+    Star,
+    Slash,
     LParen,
     RParen,
     Colon,
