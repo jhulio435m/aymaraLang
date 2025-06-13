@@ -11,3 +11,4 @@ make >/dev/null
 ./build/out | grep -q Kamisaraki
 ./bin/aymc samples/return.aym >/dev/null
 ./build/out | grep -q 5
+
