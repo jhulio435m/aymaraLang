@@ -16,6 +16,14 @@ public:
 
 private:
     std::vector<std::unordered_map<std::string, std::string>> scopes;
+
+    std::unordered_map<std::string, FunctionStmt*> functions;
+    void analyzeStmt(const Stmt *stmt);
+    std::string analyzeExpr(const Expr *expr);
+    void enterScope();
+    void exitScope();
+    std::string lookup(const std::string &name);
+
     std::unordered_set<std::string> globals;
 
     void pushScope();
@@ -25,6 +33,7 @@ private:
     std::string lookup(const std::string &name) const;
     void analyzeStmt(const Stmt *stmt);
     std::string analyzeExpr(const Expr *expr);
+
 };
 
 } // namespace aym

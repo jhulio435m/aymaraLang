@@ -39,6 +39,8 @@ El compilador `aymc` está estructurado en varias etapas clásicas de diseño de
 6. **Generación de Código** – Código ensamblador x86_64.
 7. **Ensamblado y Enlace** – Uso de `nasm` y `gcc` para crear `.ayn`.
 
+Las estructuras ahora incluyen `else`, ciclos `for` y funciones simples.
+
 Las condiciones y bucles ahora se ejecutan en tiempo de ejecución gracias a un
 AST más completo, análisis semántico y generación de código en ensamblador.
 
