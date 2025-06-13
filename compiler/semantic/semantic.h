@@ -13,9 +13,13 @@ public:
     void analyze(const std::vector<std::unique_ptr<Node>> &nodes);
 
 private:
-    std::unordered_map<std::string, bool> symbols;
+    std::vector<std::unordered_map<std::string, std::string>> scopes;
+    std::unordered_map<std::string, FunctionStmt*> functions;
     void analyzeStmt(const Stmt *stmt);
-    void analyzeExpr(const Expr *expr);
+    std::string analyzeExpr(const Expr *expr);
+    void enterScope();
+    void exitScope();
+    std::string lookup(const std::string &name);
 };
 
 } // namespace aym

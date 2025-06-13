@@ -29,22 +29,38 @@ void Parser::parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool sto
 }
 
 std::unique_ptr<Stmt> Parser::parseSingleStatement() {
+    if (match(TokenType::KeywordInt) || match(TokenType::KeywordFloat) ||
+        match(TokenType::KeywordBool) || match(TokenType::KeywordString)) {
+        std::string type = tokens[pos-1].text;
+        std::string name;
+        if (peek().type == TokenType::Identifier) name = get().text;
+        std::unique_ptr<Expr> init;
+        if (match(TokenType::Equal)) init = parseExpression();
+        match(TokenType::Semicolon);
+        return std::make_unique<VarDeclStmt>(type, name, std::move(init));
+    }
+
+    if (match(TokenType::KeywordReturn)) {
+        std::unique_ptr<Expr> val;
+        if (peek().type != TokenType::Semicolon) val = parseExpression();
+        match(TokenType::Semicolon);
+        return std::make_unique<ReturnStmt>(std::move(val));
+    }
+
+    if (match(TokenType::KeywordBreak)) {
+        match(TokenType::Semicolon);
+        return std::make_unique<BreakStmt>();
+    }
+
+    if (match(TokenType::KeywordContinue)) {
+        match(TokenType::Semicolon);
+        return std::make_unique<ContinueStmt>();
+    }
+
     if (match(TokenType::KeywordPrint)) {
-<<<<<<< codex/implementar-operaciones-básicas-en-compilador
         match(TokenType::LParen);
         auto expr = parseExpression();
         match(TokenType::RParen);
-=======
-        if (!match(TokenType::LParen)) return nullptr;
-        std::string text;
-        if (peek().type == TokenType::String) {
-            text = get().text;
-        } else {
-            int value = parseExpression();
-            text = std::to_string(value);
-        }
-        if (!match(TokenType::RParen)) return nullptr;
->>>>>>> main
         match(TokenType::Semicolon);
         return std::make_unique<PrintStmt>(std::move(expr));
     }
@@ -54,9 +70,15 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         auto cond = parseExpression();
         match(TokenType::RParen);
         match(TokenType::LBrace);
-        auto block = std::make_unique<BlockStmt>();
-        parseStatements(block->statements, true);
-        return std::make_unique<IfStmt>(std::move(cond), std::move(block));
+        auto thenBlock = std::make_unique<BlockStmt>();
+        parseStatements(thenBlock->statements, true);
+        std::unique_ptr<BlockStmt> elseBlock;
+        if (match(TokenType::KeywordElse)) {
+            match(TokenType::LBrace);
+            elseBlock = std::make_unique<BlockStmt>();
+            parseStatements(elseBlock->statements, true);
+        }
+        return std::make_unique<IfStmt>(std::move(cond), std::move(thenBlock), std::move(elseBlock));
     }
 
     if (match(TokenType::KeywordWhile)) {
@@ -67,6 +89,35 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         auto block = std::make_unique<BlockStmt>();
         parseStatements(block->statements, true);
         return std::make_unique<WhileStmt>(std::move(cond), std::move(block));
+    }
+
+    if (match(TokenType::KeywordFor)) {
+        match(TokenType::LParen);
+        auto init = parseSingleStatement();
+        auto cond = parseExpression();
+        match(TokenType::Semicolon);
+        auto post = parseSingleStatement();
+        match(TokenType::RParen);
+        match(TokenType::LBrace);
+        auto body = std::make_unique<BlockStmt>();
+        parseStatements(body->statements, true);
+        return std::make_unique<ForStmt>(std::move(init), std::move(cond), std::move(post), std::move(body));
+    }
+
+    if (match(TokenType::KeywordFunc)) {
+        std::string name = "";
+        if (peek().type == TokenType::Identifier) name = get().text;
+        match(TokenType::LParen);
+        std::vector<std::string> params;
+        if (peek().type != TokenType::RParen) {
+            params.push_back(get().text);
+            while (match(TokenType::Comma)) params.push_back(get().text);
+        }
+        match(TokenType::RParen);
+        match(TokenType::LBrace);
+        auto body = std::make_unique<BlockStmt>();
+        parseStatements(body->statements, true);
+        return std::make_unique<FunctionStmt>(name, std::move(params), std::move(body));
     }
 
     if (peek().type == TokenType::Identifier) {
@@ -148,47 +199,6 @@ std::vector<std::unique_ptr<Expr>> Parser::parseArguments() {
         args.push_back(parseExpression());
     }
     return args;
-}
-
-int Parser::parseExpression() {
-    int value = parseTerm();
-    while (true) {
-        if (match(TokenType::Plus)) {
-            value += parseTerm();
-        } else if (match(TokenType::Minus)) {
-            value -= parseTerm();
-        } else {
-            break;
-        }
-    }
-    return value;
-}
-
-int Parser::parseTerm() {
-    int value = parseFactor();
-    while (true) {
-        if (match(TokenType::Star)) {
-            value *= parseFactor();
-        } else if (match(TokenType::Slash)) {
-            int divisor = parseFactor();
-            if (divisor != 0) value /= divisor;
-        } else {
-            break;
-        }
-    }
-    return value;
-}
-
-int Parser::parseFactor() {
-    if (match(TokenType::Number)) {
-        return std::stoi(tokens[pos-1].text);
-    }
-    if (match(TokenType::LParen)) {
-        int value = parseExpression();
-        match(TokenType::RParen);
-        return value;
-    }
-    return 0;
 }
 
 } // namespace aym

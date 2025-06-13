@@ -39,6 +39,8 @@ El compilador `aymc` está estructurado en varias etapas clásicas de diseño de
 6. **Generación de Código** – Código ensamblador x86_64.
 7. **Ensamblado y Enlace** – Uso de `nasm` y `gcc` para crear `.ayn`.
 
+Las estructuras ahora incluyen `else`, ciclos `for` y funciones simples.
+
 Las condiciones y bucles ahora se ejecutan en tiempo de ejecución gracias a un
 AST más completo, análisis semántico y generación de código en ensamblador.
 
@@ -95,7 +97,6 @@ $ ./build/out
 11
 ```
 
-<<<<<<< codex/implementar-operaciones-básicas-en-compilador
 ```bash
 $ ./bin/aymc samples/condloop.aym
 $ ./build/out
@@ -120,8 +121,6 @@ inicio
 1
 ```
 
-=======
->>>>>>> main
 ---
 
 ## 🧰 Tecnologías y Herramientas
@@ -192,7 +191,4 @@ Este proyecto es abierto a toda colaboración. Nos interesa especialmente:
 
 > ✨ ¡Únete al desarrollo y forma parte del cambio tecnológico-cultural!
 
-```
 
-¿Te gustaría que genere también un diagrama de arquitectura del compilador?
-```
