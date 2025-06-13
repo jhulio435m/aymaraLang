@@ -205,6 +205,10 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         }
         return;
     }
+    if (auto *e = dynamic_cast<const ExprStmt *>(stmt)) {
+        emitExpr(e->getExpr());
+        return;
+    }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
         emitExpr(a->getValue(), locals);
         if (locals && locals->count(a->getName())) {
@@ -376,6 +380,22 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     std::string cmd2 = "gcc -no-pie " + obj + " -o " + bin + " -lc";
     if (std::system(cmd1.c_str()) != 0 || std::system(cmd2.c_str()) != 0) {
         std::cerr << "Error assembling or linking" << std::endl;
+    }
+}
+
+void CodeGenImpl::collectExpr(const Expr *expr) {
+    if (auto *s = dynamic_cast<const StringExpr *>(expr)) {
+        strings.push_back(s->getValue());
+        return;
+    }
+    if (auto *b = dynamic_cast<const BinaryExpr *>(expr)) {
+        collectExpr(b->getLeft());
+        collectExpr(b->getRight());
+        return;
+    }
+    if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
+        for (const auto &a : c->getArgs()) collectExpr(a.get());
+        return;
     }
 }
 

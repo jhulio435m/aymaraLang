@@ -23,7 +23,6 @@ private:
     void declare(const std::string &name, const std::string &type);
     bool isDeclared(const std::string &name) const;
     std::string lookup(const std::string &name) const;
-
     void analyzeStmt(const Stmt *stmt);
     std::string analyzeExpr(const Expr *expr);
 };

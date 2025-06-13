@@ -33,6 +33,7 @@ std::string SemanticAnalyzer::lookup(const std::string &name) const {
 
 void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) {
     pushScope();
+    functions["willt’aña"] = 1; // built-in print function
     for (const auto &n : nodes) {
         analyzeStmt(static_cast<const Stmt *>(n.get()));
     }
@@ -46,6 +47,10 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
 void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     if (auto *p = dynamic_cast<const PrintStmt *>(stmt)) {
         analyzeExpr(p->getExpr());
+        return;
+    }
+    if (auto *e = dynamic_cast<const ExprStmt *>(stmt)) {
+        analyzeExpr(e->getExpr());
         return;
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
@@ -80,10 +85,13 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     }
     if (auto *w = dynamic_cast<const WhileStmt *>(stmt)) {
         analyzeExpr(w->getCondition());
+        ++loopDepth;
         analyzeStmt(w->getBody());
+        --loopDepth;
         return;
     }
     if (auto *f = dynamic_cast<const ForStmt *>(stmt)) {
+
         pushScope();
         analyzeStmt(f->getInit());
         analyzeExpr(f->getCondition());
@@ -97,6 +105,33 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         for (const auto &pname : fn->getParams()) declare(pname, "int");
         analyzeStmt(fn->getBody());
         popScope();
+        --loopDepth;
+        return;
+    }
+    if (auto *fn = dynamic_cast<const FunctionStmt *>(stmt)) {
+        functions[fn->getName()] = fn->getParams().size();
+        ++functionDepth;
+        analyzeStmt(fn->getBody());
+        --functionDepth;
+        return;
+    }
+    if (dynamic_cast<const BreakStmt *>(stmt)) {
+        if (loopDepth == 0) {
+            std::cerr << "Error: 'break' fuera de un ciclo" << std::endl;
+        }
+        return;
+    }
+    if (dynamic_cast<const ContinueStmt *>(stmt)) {
+        if (loopDepth == 0) {
+            std::cerr << "Error: 'continue' fuera de un ciclo" << std::endl;
+        }
+        return;
+    }
+    if (auto *r = dynamic_cast<const ReturnStmt *>(stmt)) {
+        if (functionDepth == 0) {
+            std::cerr << "Error: 'return' fuera de una funcion" << std::endl;
+        }
+        if (r->getValue()) analyzeExpr(r->getValue());
         return;
     }
 }
@@ -124,6 +159,12 @@ std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
         return l;
     }
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
+        auto it = functions.find(c->getName());
+        if (it == functions.end()) {
+            std::cerr << "Error: funcion '" << c->getName() << "' no declarada" << std::endl;
+        } else if (c->getArgs().size() != it->second) {
+            std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c->getName() << "'" << std::endl;
+        }
         for (const auto &arg : c->getArgs()) analyzeExpr(arg.get());
         return "int";
     }
