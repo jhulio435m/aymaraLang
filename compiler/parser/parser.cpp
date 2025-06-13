@@ -132,7 +132,7 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
     // Fallback: expression statement
     auto expr = parseExpression();
     match(TokenType::Semicolon);
-    return std::make_unique<PrintStmt>(std::move(expr)); // treat as print for now
+    return std::make_unique<ExprStmt>(std::move(expr));
 }
 
 std::unique_ptr<Expr> Parser::parseExpression() {
