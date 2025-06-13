@@ -14,6 +14,9 @@ public:
 
 private:
     std::unordered_map<std::string, std::string> symbols;
+    std::unordered_map<std::string, size_t> functions;
+    int loopDepth = 0;
+    int functionDepth = 0;
     void analyzeStmt(const Stmt *stmt);
     std::string analyzeExpr(const Expr *expr);
 };
