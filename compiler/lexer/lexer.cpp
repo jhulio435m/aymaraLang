@@ -10,9 +10,6 @@ std::vector<Token> Lexer::tokenize() {
     while (pos < src.size()) {
         char c = peek();
         if (std::isspace(static_cast<unsigned char>(c))) {
-            if (c == '\n') {
-                tokens.push_back({TokenType::Newline, "\n"});
-            }
             get();
             continue;
         }
@@ -29,9 +26,22 @@ std::vector<Token> Lexer::tokenize() {
             }
             if (word == "willt’aña") {
                 tokens.push_back({TokenType::KeywordPrint, word});
+            } else if (word == "si") {
+                tokens.push_back({TokenType::KeywordIf, word});
+            } else if (word == "mientras") {
+                tokens.push_back({TokenType::KeywordWhile, word});
             } else {
                 tokens.push_back({TokenType::Identifier, word});
             }
+            continue;
+        }
+
+        if (std::isdigit(static_cast<unsigned char>(c))) {
+            std::string num;
+            while (pos < src.size() && std::isdigit(static_cast<unsigned char>(peek()))) {
+                num += get();
+            }
+            tokens.push_back({TokenType::Number, num});
             continue;
         }
 
@@ -47,9 +57,17 @@ std::vector<Token> Lexer::tokenize() {
         }
 
         switch (c) {
+            case '+': tokens.push_back({TokenType::Plus, "+"}); get(); break;
+            case '-': tokens.push_back({TokenType::Minus, "-"}); get(); break;
+            case '*': tokens.push_back({TokenType::Star, "*"}); get(); break;
+            case '/': tokens.push_back({TokenType::Slash, "/"}); get(); break;
+            case '=': tokens.push_back({TokenType::Equal, "="}); get(); break;
             case '(': tokens.push_back({TokenType::LParen, "("}); get(); break;
             case ')': tokens.push_back({TokenType::RParen, ")"}); get(); break;
+            case '{': tokens.push_back({TokenType::LBrace, "{"}); get(); break;
+            case '}': tokens.push_back({TokenType::RBrace, "}"}); get(); break;
             case ':': tokens.push_back({TokenType::Colon, ":"}); get(); break;
+            case ',': tokens.push_back({TokenType::Comma, ","}); get(); break;
             case ';': tokens.push_back({TokenType::Semicolon, ";"}); get(); break;
             default: get(); break;
         }

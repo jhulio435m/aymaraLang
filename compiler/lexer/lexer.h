@@ -9,12 +9,22 @@ namespace aym {
 enum class TokenType {
     Identifier,
     String,
+    Number,
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    Equal,
+    LBrace,
+    RBrace,
     LParen,
     RParen,
     Colon,
+    Comma,
     Semicolon,
-    Newline,
     KeywordPrint,
+    KeywordIf,
+    KeywordWhile,
     EndOfFile
 };
 

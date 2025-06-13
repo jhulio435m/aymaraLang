@@ -2,6 +2,6 @@
 
 namespace aym {
 
-// Placeholder for AST implementations
+// Implementations remain empty as all logic is in headers.
 
 } // namespace aym

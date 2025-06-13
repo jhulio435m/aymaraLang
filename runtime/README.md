@@ -1,3 +1,3 @@
 # Runtime
 
-Este directorio contiene la biblioteca estándar mínima para el lenguaje `aym`. Proporciona funciones y utilidades básicas que pueden ser utilizadas por los programas escritos en `aym`.
+Este directorio contiene la biblioteca estándar mínima para el lenguaje `aym`. Por ahora se apoya en la función `printf` de la libc para realizar operaciones de entrada y salida básicas.
