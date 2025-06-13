@@ -51,6 +51,8 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes, const st
     for (const auto &n : nodes) emitStmt(static_cast<Stmt*>(n.get()));
     out << "    mov eax,0\n";
     out << "    ret\n";
+    // Mark the stack as non-executable for the linker
+    out << "section .note.GNU-stack noalloc noexec nowrite\n";
     out.close();
 
     std::string obj = path.substr(0, path.find_last_of('.')) + ".o";
