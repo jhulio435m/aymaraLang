@@ -19,6 +19,12 @@ public:
     std::ofstream out;
     std::unordered_set<std::string> variables;
     std::vector<std::string> strings;
+    size_t findString(const std::string &val) const {
+        for (size_t i = 0; i < strings.size(); ++i) {
+            if (strings[i] == val) return i;
+        }
+        return strings.size();
+    }
 
     void emit(const std::vector<std::unique_ptr<Node>> &nodes, const std::string &path);
 private:
@@ -65,10 +71,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes, const st
 void CodeGenImpl::emitStmt(const Stmt *stmt) {
     if (auto *p = dynamic_cast<const PrintStmt *>(stmt)) {
         if (auto *s = dynamic_cast<StringExpr *>(p->getExpr())) {
-            size_t idx = 0;
-            for (; idx < strings.size(); ++idx) {
-                if (strings[idx] == s->getValue()) break;
-            }
+            size_t idx = findString(s->getValue());
             out << "    lea rdi, [rel fmt_str]\n";
             out << "    lea rsi, [rel str" << idx << "]\n";
             out << "    xor eax,eax\n";
@@ -134,10 +137,7 @@ void CodeGenImpl::emitExpr(const Expr *expr) {
         return;
     }
     if (auto *s = dynamic_cast<const StringExpr *>(expr)) {
-        size_t idx = 0;
-        for (; idx < strings.size(); ++idx) {
-            if (strings[idx] == s->getValue()) break;
-        }
+        size_t idx = findString(s->getValue());
         out << "    lea rax, [rel str" << idx << "]\n";
         return;
     }
@@ -162,8 +162,7 @@ void CodeGenImpl::emitExpr(const Expr *expr) {
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
         if (c->getName() == "willt’aña" && !c->getArgs().empty()) {
             if (auto *s = dynamic_cast<StringExpr *>(c->getArgs()[0].get())) {
-                size_t idx = 0;
-                for (; idx < strings.size(); ++idx) if (strings[idx] == s->getValue()) break;
+                size_t idx = findString(s->getValue());
                 out << "    lea rdi, [rel fmt_str]\n";
                 out << "    lea rsi, [rel str" << idx << "]\n";
                 out << "    xor eax,eax\n";
@@ -183,7 +182,9 @@ void CodeGenImpl::emitExpr(const Expr *expr) {
 void CodeGenImpl::collect(const Stmt *stmt) {
     if (auto *p = dynamic_cast<const PrintStmt *>(stmt)) {
         if (auto *s = dynamic_cast<StringExpr *>(p->getExpr())) {
-            strings.push_back(s->getValue());
+            if (findString(s->getValue()) == strings.size()) {
+                strings.push_back(s->getValue());
+            }
         }
         return;
     }
