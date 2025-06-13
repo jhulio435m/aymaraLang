@@ -95,7 +95,6 @@ $ ./build/out
 11
 ```
 
-<<<<<<< codex/implementar-operaciones-básicas-en-compilador
 ```bash
 $ ./bin/aymc samples/condloop.aym
 $ ./build/out
@@ -120,8 +119,6 @@ inicio
 1
 ```
 
-=======
->>>>>>> main
 ---
 
 ## 🧰 Tecnologías y Herramientas
@@ -192,7 +189,4 @@ Este proyecto es abierto a toda colaboración. Nos interesa especialmente:
 
 > ✨ ¡Únete al desarrollo y forma parte del cambio tecnológico-cultural!
 
-```
 
-¿Te gustaría que genere también un diagrama de arquitectura del compilador?
-```

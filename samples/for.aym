@@ -1,0 +1,5 @@
+contador = 3;
+para (contador = 3; contador; contador = contador - 1;) {
+    willt’aña(contador);
+}
+

@@ -13,9 +13,9 @@ public:
     void analyze(const std::vector<std::unique_ptr<Node>> &nodes);
 
 private:
-    std::unordered_map<std::string, bool> symbols;
+    std::unordered_map<std::string, std::string> symbols;
     void analyzeStmt(const Stmt *stmt);
-    void analyzeExpr(const Expr *expr);
+    std::string analyzeExpr(const Expr *expr);
 };
 
 } // namespace aym
