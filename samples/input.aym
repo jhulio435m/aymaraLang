@@ -1,2 +1,4 @@
-numero = input();
-willt’aña(numero);
+string nombre = input();
+willt’aña(nombre);
+int edad = input();
+willt’aña(edad);

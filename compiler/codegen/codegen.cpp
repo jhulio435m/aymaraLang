@@ -31,12 +31,14 @@ public:
     struct FunctionInfo {
         const FunctionStmt *node;
         std::vector<std::string> locals;
+        std::unordered_map<std::string,bool> stringLocals;
     };
 
     std::vector<FunctionInfo> functions;
     std::vector<const Stmt*> mainStmts;
     std::unordered_map<std::string, std::vector<std::string>> paramTypes;
     std::unordered_map<std::string,bool> currentParamStrings;
+    std::unordered_map<std::string,bool> currentLocalStrings;
     std::unordered_map<std::string,std::string> globalTypes;
     std::vector<std::string> breakLabels;
     std::vector<std::string> continueLabels;
@@ -48,7 +50,9 @@ public:
               const std::unordered_map<std::string,std::string> &globalTypesIn);
 private:
     void collectStrings(const Expr *expr);
-    void collectLocals(const Stmt *stmt, std::vector<std::string> &locs);
+    void collectLocals(const Stmt *stmt,
+                       std::vector<std::string> &locs,
+                       std::unordered_map<std::string,bool> &strs);
     void collectGlobal(const Stmt *stmt);
 
     void emitStmt(const Stmt *stmt,
@@ -57,6 +61,7 @@ private:
     void emitExpr(const Expr *expr,
                   const std::unordered_map<std::string,int> *locals);
     void emitFunction(const FunctionInfo &info);
+    void emitInput(bool asString);
 };
 
 void CodeGenImpl::collectStrings(const Expr *expr) {
@@ -81,9 +86,12 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
     }
 }
 
-void CodeGenImpl::collectLocals(const Stmt *stmt, std::vector<std::string> &locs) {
+void CodeGenImpl::collectLocals(const Stmt *stmt,
+                                std::vector<std::string> &locs,
+                                std::unordered_map<std::string,bool> &strs) {
     if (auto *v = dynamic_cast<const VarDeclStmt*>(stmt)) {
         locs.push_back(v->getName());
+        if (v->getType() == "string") strs[v->getName()] = true;
         collectStrings(v->getInit());
         return;
     }
@@ -96,39 +104,39 @@ void CodeGenImpl::collectLocals(const Stmt *stmt, std::vector<std::string> &locs
         return;
     }
     if (auto *b = dynamic_cast<const BlockStmt*>(stmt)) {
-        for (const auto &s : b->statements) collectLocals(s.get(), locs);
+        for (const auto &s : b->statements) collectLocals(s.get(), locs, strs);
         return;
     }
     if (auto *i = dynamic_cast<const IfStmt*>(stmt)) {
         collectStrings(i->getCondition());
-        collectLocals(i->getThen(), locs);
-        if (i->getElse()) collectLocals(i->getElse(), locs);
+        collectLocals(i->getThen(), locs, strs);
+        if (i->getElse()) collectLocals(i->getElse(), locs, strs);
         return;
     }
     if (auto *w = dynamic_cast<const WhileStmt*>(stmt)) {
         collectStrings(w->getCondition());
-        collectLocals(w->getBody(), locs);
+        collectLocals(w->getBody(), locs, strs);
         return;
     }
     if (auto *dw = dynamic_cast<const DoWhileStmt*>(stmt)) {
-        collectLocals(dw->getBody(), locs);
+        collectLocals(dw->getBody(), locs, strs);
         collectStrings(dw->getCondition());
         return;
     }
     if (auto *f = dynamic_cast<const ForStmt*>(stmt)) {
-        collectLocals(f->getInit(), locs);
+        collectLocals(f->getInit(), locs, strs);
         collectStrings(f->getCondition());
-        collectLocals(f->getPost(), locs);
-        collectLocals(f->getBody(), locs);
+        collectLocals(f->getPost(), locs, strs);
+        collectLocals(f->getBody(), locs, strs);
         return;
     }
     if (auto *sw = dynamic_cast<const SwitchStmt*>(stmt)) {
         collectStrings(sw->getExpr());
         for (const auto &c : sw->getCases()) {
             collectStrings(c.first.get());
-            collectLocals(c.second.get(), locs);
+            collectLocals(c.second.get(), locs, strs);
         }
-        if (sw->getDefault()) collectLocals(sw->getDefault(), locs);
+        if (sw->getDefault()) collectLocals(sw->getDefault(), locs, strs);
         return;
     }
     if (auto *ret = dynamic_cast<const ReturnStmt*>(stmt)) {
@@ -212,6 +220,7 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     int stackSize = (off + 15) & ~15;
 
     currentParamStrings.clear();
+    currentLocalStrings = info.stringLocals;
     auto pit = paramTypes.find(info.node->getName());
     if (pit != paramTypes.end()) {
         size_t idx = 0;
@@ -290,7 +299,18 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         return;
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
-        emitExpr(a->getValue(), locals);
+        bool str = false;
+        if (locals && currentLocalStrings.count(a->getName())) str = currentLocalStrings[a->getName()];
+        else if (!locals && globalTypes.count(a->getName()) && globalTypes[a->getName()] == "string") str = true;
+
+        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()=="input") {
+            if (str)
+                emitInput(true);
+            else
+                emitInput(false);
+        } else {
+            emitExpr(a->getValue(), locals);
+        }
         if (locals && locals->count(a->getName())) {
             out << "    mov [rbp-" << locals->at(a->getName()) << "], rax\n";
         } else {
@@ -300,7 +320,12 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
     }
     if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
         if (v->getInit()) {
-            emitExpr(v->getInit(), locals);
+            bool str = (v->getType() == "string");
+            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()=="input") {
+                emitInput(str);
+            } else {
+                emitExpr(v->getInit(), locals);
+            }
             if (locals && locals->count(v->getName())) {
                 out << "    mov [rbp-" << locals->at(v->getName()) << "], rax\n";
             } else {
@@ -562,6 +587,22 @@ void CodeGenImpl::emitExpr(const Expr *expr,
     }
 }
 
+void CodeGenImpl::emitInput(bool asString) {
+    if (asString) {
+        out << "    lea rdi, [rel fmt_read_str]\n";
+        out << "    lea rsi, [rel input_buf]\n";
+        out << "    xor eax,eax\n";
+        out << "    call scanf\n";
+        out << "    lea rax, [rel input_buf]\n";
+    } else {
+        out << "    lea rdi, [rel fmt_read_int]\n";
+        out << "    lea rsi, [rel input_val]\n";
+        out << "    xor eax,eax\n";
+        out << "    call scanf\n";
+        out << "    mov rax, [rel input_val]\n";
+    }
+}
+
 void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::string &path,
                        const std::unordered_set<std::string> &semGlobals,
@@ -575,7 +616,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
             FunctionInfo info; info.node = fn;
             info.locals.insert(info.locals.end(), fn->getParams().begin(), fn->getParams().end());
-            collectLocals(fn->getBody(), info.locals);
+            for (const auto &p : fn->getParams()) {
+                info.stringLocals[p] = false;
+            }
+            collectLocals(fn->getBody(), info.locals, info.stringLocals);
             functions.push_back(std::move(info));
         } else {
             mainStmts.push_back(static_cast<const Stmt*>(n.get()));
@@ -592,7 +636,9 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
     out << "fmt_read_int: db \"%ld\",0\n";
+    out << "fmt_read_str: db \"%255s\",0\n";
     out << "input_val: dq 0\n";
+    out << "input_buf: times 256 db 0\n";
 
     for (size_t i=0;i<strings.size();++i) {
         out << "str" << i << ": db \"" << strings[i] << "\",0\n";
@@ -607,9 +653,12 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     for (const auto &f : functions) emitFunction(f);
 
     out << "main:\n";
+    out << "    push rbp\n";
+    out << "    mov rbp, rsp\n";
     std::string mainEnd = genLabel("endmain");
     for (const auto *s : mainStmts) emitStmt(s, nullptr, mainEnd);
     out << mainEnd << ":\n";
+    out << "    pop rbp\n";
     out << "    mov eax,0\n";
     out << "    ret\n";
 
