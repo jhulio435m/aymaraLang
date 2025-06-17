@@ -56,6 +56,16 @@ private:
     std::unique_ptr<Expr> left, right;
 };
 
+class UnaryExpr : public Expr {
+public:
+    UnaryExpr(char o, std::unique_ptr<Expr> e) : op(o), expr(std::move(e)) {}
+    char getOp() const { return op; }
+    Expr *getExpr() const { return expr.get(); }
+private:
+    char op;
+    std::unique_ptr<Expr> expr;
+};
+
 class CallExpr : public Expr {
 public:
     CallExpr(std::string callee,
@@ -186,6 +196,21 @@ public:
 private:
     std::unique_ptr<Expr> condition;
     std::unique_ptr<BlockStmt> body;
+};
+
+class SwitchStmt : public Stmt {
+public:
+    SwitchStmt(std::unique_ptr<Expr> e,
+               std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<BlockStmt>>> cs,
+               std::unique_ptr<BlockStmt> defc)
+        : expr(std::move(e)), cases(std::move(cs)), defaultCase(std::move(defc)) {}
+    Expr *getExpr() const { return expr.get(); }
+    const std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<BlockStmt>>> &getCases() const { return cases; }
+    BlockStmt *getDefault() const { return defaultCase.get(); }
+private:
+    std::unique_ptr<Expr> expr;
+    std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<BlockStmt>>> cases;
+    std::unique_ptr<BlockStmt> defaultCase;
 };
 
 

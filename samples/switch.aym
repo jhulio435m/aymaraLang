@@ -1,0 +1,12 @@
+valor = 2;
+switch(valor) {
+    case 1 {
+        willt’aña("uno");
+    }
+    case 2 {
+        willt’aña("dos");
+    }
+    default {
+        willt’aña("otro");
+    }
+}

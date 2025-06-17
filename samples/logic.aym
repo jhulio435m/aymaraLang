@@ -1,0 +1,5 @@
+si (1 and not 0) {
+    willt’aña("ok");
+} sino {
+    willt’aña("fail");
+}
