@@ -127,7 +127,7 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
                 match(TokenType::LBrace);
                 auto body = std::make_unique<BlockStmt>();
                 parseStatements(body->statements, true);
-                auto init = std::make_unique<VarDeclStmt>("int", name, std::move(start));
+                auto init = std::make_unique<VarDeclStmt>("jach’a", name, std::move(start));
                 auto cond = std::make_unique<BinaryExpr>('<', std::make_unique<VariableExpr>(name), std::move(end));
                 auto postExpr = std::make_unique<BinaryExpr>('+', std::make_unique<VariableExpr>(name), std::make_unique<NumberExpr>(1));
                 auto post = std::make_unique<AssignStmt>(name, std::move(postExpr));

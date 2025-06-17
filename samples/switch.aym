@@ -1,12 +1,12 @@
-int valor = 2;
+jach’a valor = 2;
 
-switch (valor) {
-    case 1:
+tantachaña (valor) {
+    jamusa 1:
         willt’aña("uno");
-        break;
-    case 2:
+        jalña;
+    jamusa 2:
         willt’aña("dos");
-        break;
-    default:
+        jalña;
+    akhamawa:
         willt’aña("otro");
 }

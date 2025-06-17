@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include <filesystem>
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
@@ -91,7 +92,7 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
                                 std::unordered_map<std::string,bool> &strs) {
     if (auto *v = dynamic_cast<const VarDeclStmt*>(stmt)) {
         locs.push_back(v->getName());
-        if (v->getType() == "string") strs[v->getName()] = true;
+        if (v->getType() == "qillqa") strs[v->getName()] = true;
         collectStrings(v->getInit());
         return;
     }
@@ -225,7 +226,7 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     if (pit != paramTypes.end()) {
         size_t idx = 0;
         for (const auto &p : info.node->getParams()) {
-            if (idx < pit->second.size() && pit->second[idx] == "string")
+            if (idx < pit->second.size() && pit->second[idx] == "qillqa")
                 currentParamStrings[p] = true;
             ++idx;
         }
@@ -273,7 +274,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
             bool isStr = false;
             if (currentParamStrings.count(v->getName())) {
                 isStr = true;
-            } else if (!locals && globalTypes.count(v->getName()) && globalTypes[v->getName()] == "string") {
+            } else if (!locals && globalTypes.count(v->getName()) && globalTypes[v->getName()] == "qillqa") {
                 isStr = true;
             }
             if (isStr) {
@@ -301,7 +302,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
         bool str = false;
         if (locals && currentLocalStrings.count(a->getName())) str = currentLocalStrings[a->getName()];
-        else if (!locals && globalTypes.count(a->getName()) && globalTypes[a->getName()] == "string") str = true;
+        else if (!locals && globalTypes.count(a->getName()) && globalTypes[a->getName()] == "qillqa") str = true;
 
         if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()=="input") {
             if (str)
@@ -320,7 +321,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
     }
     if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
         if (v->getInit()) {
-            bool str = (v->getType() == "string");
+            bool str = (v->getType() == "qillqa");
             if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()=="input") {
                 emitInput(str);
             } else {
@@ -571,6 +572,11 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             out << "    call scanf\n";
             out << "    mov rax, [rel input_val]\n";
             return;
+        } else if (c->getName() == "length") {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov rdi, rax\n";
+            out << "    call strlen\n";
+            return;
         }
         // user function call
         std::vector<std::string> regs = {"rdi","rsi","rdx","rcx","r8","r9"};
@@ -632,6 +638,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 
     out << "extern printf\n";
     out << "extern scanf\n";
+    out << "extern strlen\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
@@ -666,13 +673,25 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 
     out.close();
 
+    namespace fs = std::filesystem;
+    fs::create_directories("build");
+    fs::create_directories("bin");
+
     std::string obj = path.substr(0, path.find_last_of('.')) + ".o";
-    std::string bin = path.substr(0, path.find_last_of('.'));
+    std::string base = path.substr(path.find_last_of("/\\") + 1);
+    base = base.substr(0, base.find_last_of('.'));
+    std::string bin = std::string("bin/") + base;
     std::string cmd1 = "nasm -felf64 " + path + " -o " + obj;
-    std::string cmd2 = "gcc -no-pie " + obj + " -o " + bin + " -lc";
-    if (std::system(cmd1.c_str()) != 0 || std::system(cmd2.c_str()) != 0) {
-        std::cerr << "Error assembling or linking" << std::endl;
+    if (std::system(cmd1.c_str()) != 0) {
+        std::cerr << "Error ensamblando " << path << std::endl;
+        return;
     }
+    std::string cmd2 = "gcc -no-pie " + obj + " -o " + bin + " -lc";
+    if (std::system(cmd2.c_str()) != 0) {
+        std::cerr << "Error enlazando " << obj << std::endl;
+        return;
+    }
+    std::cout << "[aymc] Ejecutable generado: " << bin << std::endl;
 }
 
 

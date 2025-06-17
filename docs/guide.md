@@ -2,7 +2,7 @@
 
 ## Variables string
 ```aymara
-string saludo = "Kamisaraki";
+qillqa saludo = "Kamisaraki";
 willt’aña(saludo);
 ```
 
@@ -16,23 +16,23 @@ willt’aña(2 ^ 3);
 ## Switch-Case
 ```aymara
 valor = 2;
-switch(valor) {
-    case 1 {
+tantachaña(valor) {
+    jamusa 1 {
         willt’aña("uno");
     }
-    case 2 {
+    jamusa 2 {
         willt’aña("dos");
     }
-    default {
+    akhamawa {
         willt’aña("otro");
     }
 }
 ```
 
 ## Operadores lógicos
-Se admiten `and`, `or` y `not`.
+Se admiten `uka`, `jan uka` y `janiwa`.
 ```aymara
-si (1 and not 0) {
+si (1 uka janiwa 0) {
     willt’aña("ok");
 }
 ```
@@ -42,7 +42,7 @@ Usa `//` para comentarios de línea y `/* ... */` para bloques.
 
 ## Lectura con `input()`
 ```aymara
-numero = input();
+jach’a numero = input();
 willt’aña(numero);
 ```
 

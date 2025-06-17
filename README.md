@@ -78,24 +78,36 @@ y = x * 2 + 3;
 willt’aña(y);
 ```
 
+### `recursion.aym`
+```aymara
+luräwi fact(n) {
+    si (n == 0) {
+        kutiyana(1);
+    }
+    kutiyana(n * fact(n - 1));
+}
+
+willt’aña(fact(5));
+```
+
 
 ### Compilación y Ejecución
 
 ```bash
 $ ./bin/aymc samples/hola.aym
-$ ./build/out
+$ ./bin/hola
 Kamisaraki!
 ```
 
 ```bash
 $ ./bin/aymc samples/ops.aym
-$ ./build/out
+$ ./bin/ops
 11
 ```
 
 ```bash
 $ ./bin/aymc samples/condloop.aym
-$ ./build/out
+$ ./bin/condloop
 cond
 loop
 loop
@@ -104,13 +116,19 @@ loop
 
 ```bash
 $ ./bin/aymc samples/vars.aym
-$ ./build/out
+$ ./bin/vars
 13
 ```
 
 ```bash
+$ ./bin/aymc samples/recursion.aym
+$ ./bin/recursion
+120
+```
+
+```bash
 $ ./bin/aymc samples/runtime.aym
-$ ./build/out
+$ ./bin/runtime
 inicio
 3
 2

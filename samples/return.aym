@@ -1,5 +1,5 @@
-func inc(n) {
-    retorna n + 1;
+luräwi inc(n) {
+    kutiyana n + 1;
 }
 
 willt’aña(inc(4));

@@ -1,11 +1,11 @@
-int x = 0;
+jach’a x = 0;
 
-while (x < 3) {
+mientras (x < 3) {
     willt’aña(x);
     x = x + 1;
 }
 
-do {
+haceña {
     willt’aña(x);
     x = x - 1;
-} while (x > 0);
+} mientras (x > 0);

@@ -3,16 +3,17 @@
 AymaraLang (`aym`) es un lenguaje de programación experimental con sintaxis inspirada en Python y un compilador escrito en C++17. Genera código NASM para x86_64 y enlaza con `gcc`.
 
 ## Sintaxis soportada
-- Tipos: `int`, `float`, `bool`, `string`
+- Tipos: `jach’a`, `lliphiphi`, `chuymani`, `qillqa`
 - Variables y asignación
 - Impresión con `willt’aña(expr)`
-- Control de flujo: `si`/`sino`, `while`, `do...while`, `for`, `switch`
-- Funciones con `func nombre(params) { ... }`
+- Control de flujo: `si`/`sino`, `mientras`, `haceña...mientras`, `para`, `tantachaña`
+- Funciones con `luräwi nombre(params) { ... }`
 - Expresiones aritméticas `+ - * / % ^`
-- Operadores lógicos `and`, `or`, `not`, comparaciones `== != < <= > >=`
+- Operadores lógicos `uka`, `jan uka`, `janiwa`, comparaciones `== != < <= > >=`
 - Comentarios `//` y `/* */`
 - Lectura de consola con `input()`
-
+- Longitud de cadenas con `length()`
+$ ./bin/archivo
 ## Compilación
 Para compilar un archivo `.aym` se ejecuta:
 
@@ -30,12 +31,52 @@ El compilador produce un archivo NASM, lo ensambla y enlaza automáticamente.
 - `return` fuera de una función
 
 ## Palabras clave
-`willt’aña`, `si`, `sino`, `mientras`, `do`, `para`, `in`, `break`, `continue`, `func`, `retorna`, `switch`, `case`, `default`, `and`, `or`, `not`, `int`, `float`, `bool`, `string`, `input`
+`willt’aña`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`
 
 ## Ejemplo
 ```aymara
-string nombre = input();
+qillqa nombre = input();
 willt’aña(nombre);
-int edad = input();
+jach’a edad = input();
 willt’aña(edad);
+willt’aña(length(nombre));
 ```
+
+### Recursividad
+```aymara
+luräwi fact(n) {
+    si (n == 0) {
+        kutiyana(1);
+    }
+    kutiyana(n * fact(n - 1));
+}
+
+willt’aña(fact(5));
+```
+
+## Glosario de palabras clave
+
+| Aimara / Español | Significado |
+|------------------|------------|
+| `willt’aña`      | imprimir |
+| `si`             | if |
+| `sino`           | else |
+| `mientras`       | while |
+| `haceña`         | do |
+| `para`           | for |
+| `en`             | in |
+| `tantachaña`     | switch |
+| `jamusa`         | case |
+| `akhamawa`       | default |
+| `jalña`          | break |
+| `sarantaña`      | continue |
+| `luräwi`         | func |
+| `kutiyana`       | return |
+| `jach’a`         | int |
+| `lliphiphi`      | float |
+| `chuymani`       | bool |
+| `qillqa`         | string |
+| `uka`            | and |
+| `jan uka`        | or |
+| `janiwa`         | not |
+
