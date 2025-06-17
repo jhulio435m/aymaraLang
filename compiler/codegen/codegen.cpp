@@ -35,10 +35,13 @@ public:
 
     std::vector<FunctionInfo> functions;
     std::vector<const Stmt*> mainStmts;
+    std::unordered_map<std::string, std::vector<std::string>> paramTypes;
+    std::unordered_map<std::string,bool> currentParamStrings;
 
     void emit(const std::vector<std::unique_ptr<Node>> &nodes,
               const std::string &path,
-              const std::unordered_set<std::string> &semGlobals);
+              const std::unordered_set<std::string> &semGlobals,
+              const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn);
 private:
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt, std::vector<std::string> &locs);
@@ -110,6 +113,10 @@ void CodeGenImpl::collectLocals(const Stmt *stmt, std::vector<std::string> &locs
         collectStrings(ret->getValue());
         return;
     }
+    if (auto *e = dynamic_cast<const ExprStmt*>(stmt)) {
+        collectStrings(e->getExpr());
+        return;
+    }
 }
 
 void CodeGenImpl::collectGlobal(const Stmt *stmt) {
@@ -153,6 +160,10 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
         collectStrings(ret->getValue());
         return;
     }
+    if (auto *e = dynamic_cast<const ExprStmt*>(stmt)) {
+        collectStrings(e->getExpr());
+        return;
+    }
 }
 
 void CodeGenImpl::emitFunction(const FunctionInfo &info) {
@@ -163,6 +174,17 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
         offsets[n] = off;
     }
     int stackSize = (off + 15) & ~15;
+
+    currentParamStrings.clear();
+    auto pit = paramTypes.find(info.node->getName());
+    if (pit != paramTypes.end()) {
+        size_t idx = 0;
+        for (const auto &p : info.node->getParams()) {
+            if (idx < pit->second.size() && pit->second[idx] == "string")
+                currentParamStrings[p] = true;
+            ++idx;
+        }
+    }
 
     std::string endLabel = genLabel("endfunc");
 
@@ -199,6 +221,17 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
             size_t idx = findString(s->getValue());
             out << "    lea rdi, [rel fmt_str]\n";
             out << "    lea rsi, [rel str" << idx << "]\n";
+            out << "    xor eax,eax\n";
+            out << "    call printf\n";
+        } else if (auto *v = dynamic_cast<VariableExpr *>(p->getExpr())) {
+            emitExpr(v, locals);
+            if (currentParamStrings.count(v->getName())) {
+                out << "    mov rsi, rax\n";
+                out << "    lea rdi, [rel fmt_str]\n";
+            } else {
+                out << "    mov rsi, rax\n";
+                out << "    lea rdi, [rel fmt_int]\n";
+            }
             out << "    xor eax,eax\n";
             out << "    call printf\n";
         } else {
@@ -239,11 +272,20 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         return;
     }
     if (auto *i = dynamic_cast<const IfStmt *>(stmt)) {
+        std::string elseLbl = genLabel("else");
         std::string end = genLabel("endif");
         emitExpr(i->getCondition(), locals);
         out << "    cmp rax,0\n";
-        out << "    je " << end << "\n";
-        emitStmt(i->getThen(), locals, endLabel);
+        if (i->getElse()) {
+            out << "    je " << elseLbl << "\n";
+            emitStmt(i->getThen(), locals, endLabel);
+            out << "    jmp " << end << "\n";
+            out << elseLbl << ":\n";
+            emitStmt(i->getElse(), locals, endLabel);
+        } else {
+            out << "    je " << end << "\n";
+            emitStmt(i->getThen(), locals, endLabel);
+        }
         out << end << ":\n";
         return;
     }
@@ -255,6 +297,22 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         out << "    cmp rax,0\n";
         out << "    je " << end << "\n";
         emitStmt(w->getBody(), locals, endLabel);
+        out << "    jmp " << loop << "\n";
+        out << end << ":\n";
+        return;
+    }
+    if (auto *f = dynamic_cast<const ForStmt *>(stmt)) {
+        std::string loop = genLabel("forloop");
+        std::string cont = genLabel("forcont");
+        std::string end = genLabel("forend");
+        emitStmt(f->getInit(), locals, endLabel);
+        out << loop << ":\n";
+        emitExpr(f->getCondition(), locals);
+        out << "    cmp rax,0\n";
+        out << "    je " << end << "\n";
+        emitStmt(f->getBody(), locals, endLabel);
+        out << cont << ":\n";
+        emitStmt(f->getPost(), locals, endLabel);
         out << "    jmp " << loop << "\n";
         out << end << ":\n";
         return;
@@ -333,8 +391,10 @@ void CodeGenImpl::emitExpr(const Expr *expr,
 
 void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::string &path,
-                       const std::unordered_set<std::string> &semGlobals) {
+                       const std::unordered_set<std::string> &semGlobals,
+                       const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn) {
     globals = semGlobals;
+    paramTypes = paramTypesIn;
 
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
@@ -375,6 +435,8 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "    mov eax,0\n";
     out << "    ret\n";
 
+    out << "section .note.GNU-stack noalloc noexec nowrite progbits\n";
+
     out.close();
 
     std::string obj = path.substr(0, path.find_last_of('.')) + ".o";
@@ -389,9 +451,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 
 void CodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes,
                              const std::string &outputPath,
-                             const std::unordered_set<std::string> &globals) {
+                             const std::unordered_set<std::string> &globals,
+                             const std::unordered_map<std::string,std::vector<std::string>> &paramTypes) {
     CodeGenImpl impl;
-    impl.emit(nodes, outputPath, globals);
+    impl.emit(nodes, outputPath, globals, paramTypes);
 }
 
 } // namespace aym

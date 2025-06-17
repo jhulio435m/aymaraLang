@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
     sem.analyze(nodes);
 
     aym::CodeGenerator cg;
-    cg.generate(nodes, output + ".asm", sem.getGlobals());
+    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes());
 
     return 0;
 }

@@ -127,6 +127,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
             match(TokenType::Semicolon);
             return std::make_unique<AssignStmt>(name, std::move(value));
         }
+        // not an assignment, rewind so expression parsing sees the identifier
+        --pos;
     }
 
     // Fallback: expression statement
