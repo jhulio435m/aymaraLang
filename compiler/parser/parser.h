@@ -26,6 +26,8 @@ private:
     std::unique_ptr<Stmt> parseSingleStatement();
     std::unique_ptr<Expr> parseExpression();
     std::unique_ptr<Expr> parseLogic();
+    std::unique_ptr<Expr> parseEquality();
+    std::unique_ptr<Expr> parseComparison();
     std::unique_ptr<Expr> parseAdd();
     std::unique_ptr<Expr> parseTerm();
     std::unique_ptr<Expr> parsePower();

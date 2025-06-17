@@ -168,14 +168,52 @@ std::unique_ptr<Expr> Parser::parseExpression() {
 }
 
 std::unique_ptr<Expr> Parser::parseLogic() {
+    auto lhs = parseEquality();
+    while (true) {
+        if (match(TokenType::KeywordAnd) || match(TokenType::AmpAmp)) {
+            auto rhs = parseEquality();
+            lhs = std::make_unique<BinaryExpr>('&', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::KeywordOr) || match(TokenType::PipePipe)) {
+            auto rhs = parseEquality();
+            lhs = std::make_unique<BinaryExpr>('|', std::move(lhs), std::move(rhs));
+        } else {
+            break;
+        }
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseEquality() {
+    auto lhs = parseComparison();
+    while (true) {
+        if (match(TokenType::EqualEqual)) {
+            auto rhs = parseComparison();
+            lhs = std::make_unique<BinaryExpr>('s', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::BangEqual)) {
+            auto rhs = parseComparison();
+            lhs = std::make_unique<BinaryExpr>('d', std::move(lhs), std::move(rhs));
+        } else {
+            break;
+        }
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseComparison() {
     auto lhs = parseAdd();
     while (true) {
-        if (match(TokenType::KeywordAnd)) {
+        if (match(TokenType::Less)) {
             auto rhs = parseAdd();
-            lhs = std::make_unique<BinaryExpr>('&', std::move(lhs), std::move(rhs));
-        } else if (match(TokenType::KeywordOr)) {
+            lhs = std::make_unique<BinaryExpr>('<', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::LessEqual)) {
             auto rhs = parseAdd();
-            lhs = std::make_unique<BinaryExpr>('|', std::move(lhs), std::move(rhs));
+            lhs = std::make_unique<BinaryExpr>('l', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::Greater)) {
+            auto rhs = parseAdd();
+            lhs = std::make_unique<BinaryExpr>('>', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::GreaterEqual)) {
+            auto rhs = parseAdd();
+            lhs = std::make_unique<BinaryExpr>('g', std::move(lhs), std::move(rhs));
         } else {
             break;
         }
@@ -228,7 +266,7 @@ std::unique_ptr<Expr> Parser::parsePower() {
 }
 
 std::unique_ptr<Expr> Parser::parseFactor() {
-    if (match(TokenType::KeywordNot)) {
+    if (match(TokenType::KeywordNot) || match(TokenType::Bang)) {
         auto e = parseFactor();
         return std::make_unique<UnaryExpr>('!', std::move(e));
     }

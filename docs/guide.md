@@ -39,3 +39,16 @@ si (1 and not 0) {
 
 ## Comentarios
 Usa `//` para comentarios de línea y `/* ... */` para bloques.
+
+## Lectura con `input()`
+```aymara
+numero = input();
+willt’aña(numero);
+```
+
+## Comparaciones
+```aymara
+si (5 >= 3) {
+    willt’aña("mayor");
+}
+```

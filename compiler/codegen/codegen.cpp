@@ -429,6 +429,24 @@ void CodeGenImpl::emitExpr(const Expr *expr,
                 out << "    cmp rbx,0\n    setne bl\n    movzx rbx,bl\n";
                 out << "    or rax, rbx\n";
                 break;
+            case '<':
+                out << "    cmp rax, rbx\n    setl al\n    movzx rax,al\n";
+                break;
+            case 'l':
+                out << "    cmp rax, rbx\n    setle al\n    movzx rax,al\n";
+                break;
+            case '>':
+                out << "    cmp rax, rbx\n    setg al\n    movzx rax,al\n";
+                break;
+            case 'g':
+                out << "    cmp rax, rbx\n    setge al\n    movzx rax,al\n";
+                break;
+            case 's':
+                out << "    cmp rax, rbx\n    sete al\n    movzx rax,al\n";
+                break;
+            case 'd':
+                out << "    cmp rax, rbx\n    setne al\n    movzx rax,al\n";
+                break;
         }
         return;
     }
@@ -456,6 +474,13 @@ void CodeGenImpl::emitExpr(const Expr *expr,
                 out << "    xor eax,eax\n";
                 out << "    call printf\n";
             }
+            return;
+        } else if (c->getName() == "input") {
+            out << "    lea rdi, [rel fmt_read_int]\n";
+            out << "    lea rsi, [rel input_val]\n";
+            out << "    xor eax,eax\n";
+            out << "    call scanf\n";
+            out << "    mov rax, [rel input_val]\n";
             return;
         }
         // user function call
@@ -498,9 +523,12 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out.swap(fout);
 
     out << "extern printf\n";
+    out << "extern scanf\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
+    out << "fmt_read_int: db \"%ld\",0\n";
+    out << "input_val: dq 0\n";
 
     for (size_t i=0;i<strings.size();++i) {
         out << "str" << i << ": db \"" << strings[i] << "\",0\n";

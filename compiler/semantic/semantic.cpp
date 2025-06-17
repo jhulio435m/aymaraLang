@@ -34,6 +34,7 @@ std::string SemanticAnalyzer::lookup(const std::string &name) const {
 void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) {
     pushScope();
     functions["willt’aña"] = 1;
+    functions["input"] = 0;
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
             functions[fn->getName()] = fn->getParams().size();
@@ -177,6 +178,9 @@ std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
         if (l != r) {
             std::cerr << "Error: tipos incompatibles en operacion" << std::endl;
         }
+        char op = b->getOp();
+        if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
+            return "int";
         return l;
     }
     if (auto *u = dynamic_cast<const UnaryExpr *>(expr)) {
