@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include <filesystem>
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
@@ -672,13 +673,25 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 
     out.close();
 
+    namespace fs = std::filesystem;
+    fs::create_directories("build");
+    fs::create_directories("bin");
+
     std::string obj = path.substr(0, path.find_last_of('.')) + ".o";
-    std::string bin = path.substr(0, path.find_last_of('.'));
+    std::string base = path.substr(path.find_last_of("/\\") + 1);
+    base = base.substr(0, base.find_last_of('.'));
+    std::string bin = std::string("bin/") + base;
     std::string cmd1 = "nasm -felf64 " + path + " -o " + obj;
-    std::string cmd2 = "gcc -no-pie " + obj + " -o " + bin + " -lc";
-    if (std::system(cmd1.c_str()) != 0 || std::system(cmd2.c_str()) != 0) {
-        std::cerr << "Error assembling or linking" << std::endl;
+    if (std::system(cmd1.c_str()) != 0) {
+        std::cerr << "Error ensamblando " << path << std::endl;
+        return;
     }
+    std::string cmd2 = "gcc -no-pie " + obj + " -o " + bin + " -lc";
+    if (std::system(cmd2.c_str()) != 0) {
+        std::cerr << "Error enlazando " << obj << std::endl;
+        return;
+    }
+    std::cout << "[aymc] Ejecutable generado: " << bin << std::endl;
 }
 
 

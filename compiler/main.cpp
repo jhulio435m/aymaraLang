@@ -12,7 +12,8 @@
 
 int main(int argc, char** argv) {
     std::vector<std::string> inputs;
-    std::string output = "build/out";
+    std::string output;
+    bool outputProvided = false;
     bool debug = false;
     bool dumpAst = false;
     for (int i = 1; i < argc; ++i) {
@@ -22,6 +23,7 @@ int main(int argc, char** argv) {
             return 0;
         } else if (arg == "-o" && i + 1 < argc) {
             output = argv[++i];
+            outputProvided = true;
         } else if (arg == "--debug") {
             debug = true;
         } else if (arg == "--dump-ast") {
@@ -34,6 +36,15 @@ int main(int argc, char** argv) {
     if (inputs.empty()) {
         aym::error("Se requiere un archivo de entrada");
         return 1;
+    }
+
+    if (!outputProvided) {
+        std::string base = inputs[0];
+        size_t slash = base.find_last_of("/\\");
+        if (slash != std::string::npos) base = base.substr(slash + 1);
+        size_t dot = base.find_last_of('.');
+        if (dot != std::string::npos) base = base.substr(0, dot);
+        output = "build/" + base;
     }
 
     std::string source;

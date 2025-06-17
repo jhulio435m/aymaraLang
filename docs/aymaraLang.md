@@ -13,7 +13,7 @@ AymaraLang (`aym`) es un lenguaje de programación experimental con sintaxis ins
 - Comentarios `//` y `/* */`
 - Lectura de consola con `input()`
 - Longitud de cadenas con `length()`
-- 
+$ ./bin/archivo
 ## Compilación
 Para compilar un archivo `.aym` se ejecuta:
 
