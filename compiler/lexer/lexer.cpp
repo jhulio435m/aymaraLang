@@ -27,7 +27,7 @@ std::vector<Token> Lexer::tokenize() {
             }
         }
 
-        if (std::isalpha(static_cast<unsigned char>(c)) || c == '\xc3' || c == '\xE2') {
+        if (std::isalpha(static_cast<unsigned char>(c)) || (c & 0x80)) {
             std::string word;
             while (pos < src.size()) {
                 char ch = peek();
@@ -67,8 +67,24 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordDefault, word});
             } else if (word == "uka") {
                 tokens.push_back({TokenType::KeywordAnd, word});
-            } else if (word == "jan uka") {
-                tokens.push_back({TokenType::KeywordOr, word});
+            } else if (word == "jan") {
+                size_t save = pos;
+                while (pos < src.size() && std::isspace(static_cast<unsigned char>(src[pos]))) ++pos;
+                std::string rest;
+                while (pos < src.size()) {
+                    char ch = peek();
+                    if (std::isalnum(static_cast<unsigned char>(ch)) || ch == '_' || (ch & 0x80)) {
+                        rest += get();
+                    } else {
+                        break;
+                    }
+                }
+                if (rest == "uka") {
+                    tokens.push_back({TokenType::KeywordOr, "jan uka"});
+                } else {
+                    pos = save;
+                    tokens.push_back({TokenType::Identifier, word});
+                }
             } else if (word == "janiwa") {
                 tokens.push_back({TokenType::KeywordNot, word});
             } else if (word == "jach’a") {

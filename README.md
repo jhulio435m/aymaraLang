@@ -78,6 +78,18 @@ y = x * 2 + 3;
 willt’aña(y);
 ```
 
+### `recursion.aym`
+```aymara
+luräwi fact(n) {
+    si (n == 0) {
+        kutiyana(1);
+    }
+    kutiyana(n * fact(n - 1));
+}
+
+willt’aña(fact(5));
+```
+
 
 ### Compilación y Ejecución
 
@@ -106,6 +118,12 @@ loop
 $ ./bin/aymc samples/vars.aym
 $ ./build/out
 13
+```
+
+```bash
+$ ./bin/aymc samples/recursion.aym
+$ ./build/out
+120
 ```
 
 ```bash

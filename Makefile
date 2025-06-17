@@ -7,7 +7,7 @@ LD = ld
 
 SRC_DIR = ./compiler
 BUILD_DIR = ./build
-	BIN_DIR = ./bin
+BIN_DIR = ./bin
 	
 MAIN_SRC = $(SRC_DIR)/main.cpp
 

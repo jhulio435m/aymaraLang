@@ -42,6 +42,18 @@ willt’aña(edad);
 willt’aña(length(nombre));
 ```
 
+### Recursividad
+```aymara
+luräwi fact(n) {
+    si (n == 0) {
+        kutiyana(1);
+    }
+    kutiyana(n * fact(n - 1));
+}
+
+willt’aña(fact(5));
+```
+
 ## Glosario de palabras clave
 
 | Aimara / Español | Significado |

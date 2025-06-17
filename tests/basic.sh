@@ -21,4 +21,6 @@ make >/dev/null
 ./build/out | grep -q ok
 ./bin/aymc samples/comments.aym >/dev/null
 ./build/out | grep -q 1
+./bin/aymc samples/recursion.aym >/dev/null
+./build/out | grep -q 120
 
