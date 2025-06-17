@@ -33,7 +33,13 @@ std::string SemanticAnalyzer::lookup(const std::string &name) const {
 
 void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) {
     pushScope();
-    functions["willt’aña"] = 1; // built-in print function
+    functions["willt’aña"] = 1;
+    for (const auto &n : nodes) {
+        if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
+            functions[fn->getName()] = fn->getParams().size();
+            paramTypes[fn->getName()] = std::vector<std::string>(fn->getParams().size(), "int");
+        }
+    }
     for (const auto &n : nodes) {
         analyzeStmt(static_cast<const Stmt *>(n.get()));
     }
@@ -102,10 +108,16 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         return;
     }
     if (auto *fn = dynamic_cast<const FunctionStmt *>(stmt)) {
-        functions[fn->getName()] = fn->getParams().size();
         pushScope();
         ++functionDepth;
-        for (const auto &pname : fn->getParams()) declare(pname, "int");
+        auto it = paramTypes.find(fn->getName());
+        size_t idx = 0;
+        for (const auto &pname : fn->getParams()) {
+            std::string t = "int";
+            if (it != paramTypes.end() && idx < it->second.size()) t = it->second[idx];
+            declare(pname, t);
+            ++idx;
+        }
         analyzeStmt(fn->getBody());
         --functionDepth;
         popScope();
@@ -161,7 +173,15 @@ std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
         } else if (c->getArgs().size() != it->second) {
             std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c->getName() << "'" << std::endl;
         }
-        for (const auto &arg : c->getArgs()) analyzeExpr(arg.get());
+        size_t idx = 0;
+        auto pit = paramTypes.find(c->getName());
+        for (const auto &arg : c->getArgs()) {
+            std::string t = analyzeExpr(arg.get());
+            if (pit != paramTypes.end() && idx < pit->second.size()) {
+                if (t == "string") pit->second[idx] = "string";
+            }
+            ++idx;
+        }
         return "int";
     }
     return "";
