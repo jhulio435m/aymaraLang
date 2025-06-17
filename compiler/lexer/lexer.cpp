@@ -43,45 +43,45 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordIf, word});
             } else if (word == "sino") {
                 tokens.push_back({TokenType::KeywordElse, word});
-            } else if (word == "mientras" || word == "while") {
+            } else if (word == "mientras") {
                 tokens.push_back({TokenType::KeywordWhile, word});
-            } else if (word == "do") {
+            } else if (word == "haceña") {
                 tokens.push_back({TokenType::KeywordDo, word});
-            } else if (word == "para" || word == "for") {
+            } else if (word == "para") {
                 tokens.push_back({TokenType::KeywordFor, word});
-            } else if (word == "in") {
+            } else if (word == "en") {
                 tokens.push_back({TokenType::KeywordIn, word});
-            } else if (word == "break") {
+            } else if (word == "jalña") {
                 tokens.push_back({TokenType::KeywordBreak, word});
-            } else if (word == "continue") {
+            } else if (word == "sarantaña") {
                 tokens.push_back({TokenType::KeywordContinue, word});
-            } else if (word == "func") {
+            } else if (word == "luräwi") {
                 tokens.push_back({TokenType::KeywordFunc, word});
-            } else if (word == "retorna") {
+            } else if (word == "kutiyana") {
                 tokens.push_back({TokenType::KeywordReturn, word});
-            } else if (word == "switch") {
+            } else if (word == "tantachaña") {
                 tokens.push_back({TokenType::KeywordSwitch, word});
-            } else if (word == "case") {
+            } else if (word == "jamusa") {
                 tokens.push_back({TokenType::KeywordCase, word});
-            } else if (word == "default") {
+            } else if (word == "akhamawa") {
                 tokens.push_back({TokenType::KeywordDefault, word});
-            } else if (word == "and") {
+            } else if (word == "uka") {
                 tokens.push_back({TokenType::KeywordAnd, word});
-            } else if (word == "or") {
+            } else if (word == "jan uka") {
                 tokens.push_back({TokenType::KeywordOr, word});
-            } else if (word == "not") {
+            } else if (word == "janiwa") {
                 tokens.push_back({TokenType::KeywordNot, word});
-            } else if (word == "int") {
+            } else if (word == "jach’a") {
                 tokens.push_back({TokenType::KeywordInt, word});
-            } else if (word == "float") {
+            } else if (word == "lliphiphi") {
                 tokens.push_back({TokenType::KeywordFloat, word});
-            } else if (word == "bool") {
+            } else if (word == "chuymani") {
                 tokens.push_back({TokenType::KeywordBool, word});
-            } else if (word == "string") {
+            } else if (word == "qillqa") {
                 tokens.push_back({TokenType::KeywordString, word});
-            } else if (word == "true") {
+            } else if (word == "cheka") {
                 tokens.push_back({TokenType::Number, "1"});
-            } else if (word == "false") {
+            } else if (word == "jan cheka") {
                 tokens.push_back({TokenType::Number, "0"});
             } else {
                 tokens.push_back({TokenType::Identifier, word});

@@ -35,10 +35,12 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
     pushScope();
     functions["willt’aña"] = 1;
     functions["input"] = 0;
+    functions["length"] = 1;
+    paramTypes["length"] = {"qillqa"};
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
             functions[fn->getName()] = fn->getParams().size();
-            paramTypes[fn->getName()] = std::vector<std::string>(fn->getParams().size(), "int");
+            paramTypes[fn->getName()] = std::vector<std::string>(fn->getParams().size(), "jach’a");
         }
     }
     for (const auto &n : nodes) {
@@ -66,6 +68,9 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
         std::string t = analyzeExpr(a->getValue());
+        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()=="input") {
+            t = lookup(a->getName());
+        }
         if (!isDeclared(a->getName())) {
             declare(a->getName(), t);
         } else if (lookup(a->getName()) != t && !t.empty()) {
@@ -76,6 +81,11 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
         std::string t = "";
         if (v->getInit()) t = analyzeExpr(v->getInit());
+        if (v->getInit()) {
+            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()=="input") {
+                t = v->getType();
+            }
+        }
         declare(v->getName(), v->getType());
         if (!t.empty() && t != v->getType()) {
             std::cerr << "Error: tipo incompatible en declaracion de '" << v->getName() << "'" << std::endl;
@@ -136,7 +146,7 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         auto it = paramTypes.find(fn->getName());
         size_t idx = 0;
         for (const auto &pname : fn->getParams()) {
-            std::string t = "int";
+            std::string t = "jach’a";
             if (it != paramTypes.end() && idx < it->second.size()) t = it->second[idx];
             declare(pname, t);
             ++idx;
@@ -169,10 +179,10 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
 
 std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
     if (dynamic_cast<const NumberExpr *>(expr)) {
-        return "int";
+        return "jach’a";
     }
     if (dynamic_cast<const StringExpr *>(expr)) {
-        return "string";
+        return "qillqa";
     }
     if (auto *v = dynamic_cast<const VariableExpr *>(expr)) {
         if (!isDeclared(v->getName())) {
@@ -189,12 +199,12 @@ std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
         }
         char op = b->getOp();
         if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
-            return "int";
+            return "jach’a";
         return l;
     }
     if (auto *u = dynamic_cast<const UnaryExpr *>(expr)) {
         analyzeExpr(u->getExpr());
-        return "int";
+        return "jach’a";
     }
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
         auto it = functions.find(c->getName());
@@ -208,11 +218,11 @@ std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
         for (const auto &arg : c->getArgs()) {
             std::string t = analyzeExpr(arg.get());
             if (pit != paramTypes.end() && idx < pit->second.size()) {
-                if (t == "string") pit->second[idx] = "string";
+                if (t == "qillqa") pit->second[idx] = "qillqa";
             }
             ++idx;
         }
-        return "int";
+        return "jach’a";
     }
     return "";
 }
