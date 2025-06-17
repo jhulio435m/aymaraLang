@@ -38,6 +38,8 @@ public:
     std::unordered_map<std::string, std::vector<std::string>> paramTypes;
     std::unordered_map<std::string,bool> currentParamStrings;
     std::unordered_map<std::string,std::string> globalTypes;
+    std::vector<std::string> breakLabels;
+    std::vector<std::string> continueLabels;
 
     void emit(const std::vector<std::unique_ptr<Node>> &nodes,
               const std::string &path,
@@ -108,6 +110,11 @@ void CodeGenImpl::collectLocals(const Stmt *stmt, std::vector<std::string> &locs
         collectLocals(w->getBody(), locs);
         return;
     }
+    if (auto *dw = dynamic_cast<const DoWhileStmt*>(stmt)) {
+        collectLocals(dw->getBody(), locs);
+        collectStrings(dw->getCondition());
+        return;
+    }
     if (auto *f = dynamic_cast<const ForStmt*>(stmt)) {
         collectLocals(f->getInit(), locs);
         collectStrings(f->getCondition());
@@ -162,6 +169,11 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
     if (auto *w = dynamic_cast<const WhileStmt*>(stmt)) {
         collectStrings(w->getCondition());
         collectGlobal(w->getBody());
+        return;
+    }
+    if (auto *dw = dynamic_cast<const DoWhileStmt*>(stmt)) {
+        collectGlobal(dw->getBody());
+        collectStrings(dw->getCondition());
         return;
     }
     if (auto *f = dynamic_cast<const ForStmt*>(stmt)) {
@@ -321,14 +333,20 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
     }
     if (auto *w = dynamic_cast<const WhileStmt *>(stmt)) {
         std::string loop = genLabel("loop");
+        std::string cont = genLabel("cont");
         std::string end = genLabel("endloop");
+        breakLabels.push_back(end);
+        continueLabels.push_back(cont);
         out << loop << ":\n";
         emitExpr(w->getCondition(), locals);
         out << "    cmp rax,0\n";
         out << "    je " << end << "\n";
         emitStmt(w->getBody(), locals, endLabel);
+        out << cont << ":\n";
         out << "    jmp " << loop << "\n";
         out << end << ":\n";
+        breakLabels.pop_back();
+        continueLabels.pop_back();
         return;
     }
     if (auto *f = dynamic_cast<const ForStmt *>(stmt)) {
@@ -336,6 +354,8 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         std::string cont = genLabel("forcont");
         std::string end = genLabel("forend");
         emitStmt(f->getInit(), locals, endLabel);
+        breakLabels.push_back(end);
+        continueLabels.push_back(cont);
         out << loop << ":\n";
         emitExpr(f->getCondition(), locals);
         out << "    cmp rax,0\n";
@@ -345,25 +365,69 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         emitStmt(f->getPost(), locals, endLabel);
         out << "    jmp " << loop << "\n";
         out << end << ":\n";
+        breakLabels.pop_back();
+        continueLabels.pop_back();
+        return;
+    }
+    if (auto *dw = dynamic_cast<const DoWhileStmt *>(stmt)) {
+        std::string loop = genLabel("doloop");
+        std::string cont = genLabel("docont");
+        std::string end = genLabel("doend");
+        breakLabels.push_back(end);
+        continueLabels.push_back(cont);
+        out << loop << ":\n";
+        emitStmt(dw->getBody(), locals, endLabel);
+        out << cont << ":\n";
+        emitExpr(dw->getCondition(), locals);
+        out << "    cmp rax,0\n";
+        out << "    jne " << loop << "\n";
+        out << end << ":\n";
+        breakLabels.pop_back();
+        continueLabels.pop_back();
         return;
     }
     if (auto *sw = dynamic_cast<const SwitchStmt *>(stmt)) {
         emitExpr(sw->getExpr(), locals);
         out << "    mov rbx, rax\n";
         std::string end = genLabel("switchend");
+        breakLabels.push_back(end);
+        std::vector<std::string> labels;
+        for (size_t i = 0; i < sw->getCases().size(); ++i)
+            labels.push_back(genLabel("case"));
+        std::string defLabel = sw->getDefault() ? genLabel("defcase") : end;
+        size_t idx = 0;
         for (const auto &c : sw->getCases()) {
-            std::string next = genLabel("nextcase");
             emitExpr(c.first.get(), locals);
             out << "    cmp rbx, rax\n";
-            out << "    jne " << next << "\n";
-            emitStmt(c.second.get(), locals, endLabel);
+            out << "    je " << labels[idx] << "\n";
+            ++idx;
+        }
+        if (sw->getDefault())
+            out << "    jmp " << defLabel << "\n";
+        else
             out << "    jmp " << end << "\n";
-            out << next << ":\n";
+        idx = 0;
+        for (const auto &c : sw->getCases()) {
+            out << labels[idx] << ":\n";
+            emitStmt(c.second.get(), locals, endLabel);
+            ++idx;
         }
         if (sw->getDefault()) {
+            out << defLabel << ":\n";
             emitStmt(sw->getDefault(), locals, endLabel);
         }
         out << end << ":\n";
+        breakLabels.pop_back();
+        return;
+    }
+    if (dynamic_cast<const BreakStmt *>(stmt)) {
+        if (!breakLabels.empty())
+            out << "    jmp " << breakLabels.back() << "\n";
+        return;
+    }
+    if (dynamic_cast<const ContinueStmt *>(stmt)) {
+        if (!continueLabels.empty())
+            out << "    jmp " << continueLabels.back() << "\n";
         return;
     }
     if (auto *ret = dynamic_cast<const ReturnStmt *>(stmt)) {

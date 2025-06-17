@@ -198,6 +198,18 @@ private:
     std::unique_ptr<BlockStmt> body;
 };
 
+class DoWhileStmt : public Stmt {
+public:
+    DoWhileStmt(std::unique_ptr<BlockStmt> b,
+                std::unique_ptr<Expr> cond)
+        : body(std::move(b)), condition(std::move(cond)) {}
+    Expr *getCondition() const { return condition.get(); }
+    BlockStmt *getBody() const { return body.get(); }
+private:
+    std::unique_ptr<BlockStmt> body;
+    std::unique_ptr<Expr> condition;
+};
+
 class SwitchStmt : public Stmt {
 public:
     SwitchStmt(std::unique_ptr<Expr> e,

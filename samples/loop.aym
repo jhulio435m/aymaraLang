@@ -1,0 +1,11 @@
+int x = 0;
+
+while (x < 3) {
+    willt’aña(x);
+    x = x + 1;
+}
+
+do {
+    willt’aña(x);
+    x = x - 1;
+} while (x > 0);

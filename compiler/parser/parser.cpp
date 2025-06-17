@@ -74,12 +74,21 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         parseStatements(thenBlock->statements, true);
         std::unique_ptr<BlockStmt> elseBlock;
         if (match(TokenType::KeywordElse)) {
-            match(TokenType::LBrace);
-            elseBlock = std::make_unique<BlockStmt>();
-            parseStatements(elseBlock->statements, true);
+            if (match(TokenType::KeywordIf)) {
+                // else if -> treat as block containing nested if
+                --pos; // unread 'if' so parseSingleStatement sees it
+                auto nested = parseSingleStatement();
+                elseBlock = std::make_unique<BlockStmt>();
+                elseBlock->statements.push_back(std::move(nested));
+            } else {
+                match(TokenType::LBrace);
+                elseBlock = std::make_unique<BlockStmt>();
+                parseStatements(elseBlock->statements, true);
+            }
         }
         return std::make_unique<IfStmt>(std::move(cond), std::move(thenBlock), std::move(elseBlock));
     }
+
 
     if (match(TokenType::KeywordWhile)) {
         match(TokenType::LParen);
@@ -91,7 +100,41 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         return std::make_unique<WhileStmt>(std::move(cond), std::move(block));
     }
 
+    if (match(TokenType::KeywordDo)) {
+        match(TokenType::LBrace);
+        auto body = std::make_unique<BlockStmt>();
+        parseStatements(body->statements, true);
+        match(TokenType::KeywordWhile);
+        match(TokenType::LParen);
+        auto cond = parseExpression();
+        match(TokenType::RParen);
+        match(TokenType::Semicolon);
+        return std::make_unique<DoWhileStmt>(std::move(body), std::move(cond));
+    }
+
     if (match(TokenType::KeywordFor)) {
+        if (peek().type == TokenType::Identifier &&
+            tokens[pos+1].type == TokenType::KeywordIn) {
+            std::string name = get().text; // variable
+            match(TokenType::KeywordIn);
+            if (peek().type == TokenType::Identifier && peek().text == "range") {
+                get();
+                match(TokenType::LParen);
+                auto start = parseExpression();
+                match(TokenType::Comma);
+                auto end = parseExpression();
+                match(TokenType::RParen);
+                match(TokenType::LBrace);
+                auto body = std::make_unique<BlockStmt>();
+                parseStatements(body->statements, true);
+                auto init = std::make_unique<VarDeclStmt>("int", name, std::move(start));
+                auto cond = std::make_unique<BinaryExpr>('<', std::make_unique<VariableExpr>(name), std::move(end));
+                auto postExpr = std::make_unique<BinaryExpr>('+', std::make_unique<VariableExpr>(name), std::make_unique<NumberExpr>(1));
+                auto post = std::make_unique<AssignStmt>(name, std::move(postExpr));
+                return std::make_unique<ForStmt>(std::move(init), std::move(cond), std::move(post), std::move(body));
+            }
+        }
+
         match(TokenType::LParen);
         auto init = parseSingleStatement();
         auto cond = parseExpression();
@@ -114,14 +157,22 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         while (peek().type != TokenType::RBrace && peek().type != TokenType::EndOfFile) {
             if (match(TokenType::KeywordCase)) {
                 auto cval = parseExpression();
-                match(TokenType::LBrace);
+                match(TokenType::Colon);
                 auto blk = std::make_unique<BlockStmt>();
-                parseStatements(blk->statements, true);
+                while (peek().type != TokenType::KeywordCase &&
+                       peek().type != TokenType::KeywordDefault &&
+                       peek().type != TokenType::RBrace &&
+                       peek().type != TokenType::EndOfFile) {
+                    blk->statements.push_back(parseSingleStatement());
+                }
                 cases.emplace_back(std::move(cval), std::move(blk));
             } else if (match(TokenType::KeywordDefault)) {
-                match(TokenType::LBrace);
+                match(TokenType::Colon);
                 defCase = std::make_unique<BlockStmt>();
-                parseStatements(defCase->statements, true);
+                while (peek().type != TokenType::RBrace &&
+                       peek().type != TokenType::EndOfFile) {
+                    defCase->statements.push_back(parseSingleStatement());
+                }
             } else {
                 get();
             }

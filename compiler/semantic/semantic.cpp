@@ -101,6 +101,13 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         --loopDepth;
         return;
     }
+    if (auto *dw = dynamic_cast<const DoWhileStmt *>(stmt)) {
+        ++loopDepth;
+        analyzeStmt(dw->getBody());
+        --loopDepth;
+        analyzeExpr(dw->getCondition());
+        return;
+    }
     if (auto *f = dynamic_cast<const ForStmt *>(stmt)) {
         pushScope();
         analyzeStmt(f->getInit());
@@ -114,11 +121,13 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     }
     if (auto *sw = dynamic_cast<const SwitchStmt *>(stmt)) {
         analyzeExpr(sw->getExpr());
+        ++switchDepth;
         for (const auto &c : sw->getCases()) {
             analyzeExpr(c.first.get());
             analyzeStmt(c.second.get());
         }
         if (sw->getDefault()) analyzeStmt(sw->getDefault());
+        --switchDepth;
         return;
     }
     if (auto *fn = dynamic_cast<const FunctionStmt *>(stmt)) {
@@ -138,8 +147,8 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         return;
     }
     if (dynamic_cast<const BreakStmt *>(stmt)) {
-        if (loopDepth == 0) {
-            std::cerr << "Error: 'break' fuera de un ciclo" << std::endl;
+        if (loopDepth == 0 && switchDepth == 0) {
+            std::cerr << "Error: 'break' fuera de un ciclo o switch" << std::endl;
         }
         return;
     }
