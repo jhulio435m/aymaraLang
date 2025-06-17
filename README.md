@@ -1,4 +1,4 @@
-# AymaraLang (`aym`) 🇧🇴
+# AymaraLang (`aym`) 🇵🇪
 
 **AymaraLang** es un lenguaje de programación moderno basado en la lengua originaria aymara. Su compilador, `aymc`, ha sido desarrollado desde cero en **C++17**, y permite generar ejecutables nativos `.ayn`. El proyecto busca promover la inclusión tecnológica, la educación y la preservación lingüística.
 
