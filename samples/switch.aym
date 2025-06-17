@@ -1,12 +1,12 @@
-valor = 2;
-switch(valor) {
-    case 1 {
+int valor = 2;
+
+switch (valor) {
+    case 1:
         willt’aña("uno");
-    }
-    case 2 {
+        break;
+    case 2:
         willt’aña("dos");
-    }
-    default {
+        break;
+    default:
         willt’aña("otro");
-    }
 }

@@ -1,0 +1,20 @@
+int x = 2;
+
+if (x == 1) {
+    willt’aña(1);
+} else if (x == 2) {
+    willt’aña(2);
+} else {
+    willt’aña(0);
+}
+
+switch (x) {
+    case 1:
+        willt’aña(10);
+        break;
+    case 2:
+        willt’aña(20);
+        break;
+    default:
+        willt’aña(99);
+}

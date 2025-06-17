@@ -43,10 +43,14 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordIf, word});
             } else if (word == "sino") {
                 tokens.push_back({TokenType::KeywordElse, word});
-            } else if (word == "mientras") {
+            } else if (word == "mientras" || word == "while") {
                 tokens.push_back({TokenType::KeywordWhile, word});
-            } else if (word == "para") {
+            } else if (word == "do") {
+                tokens.push_back({TokenType::KeywordDo, word});
+            } else if (word == "para" || word == "for") {
                 tokens.push_back({TokenType::KeywordFor, word});
+            } else if (word == "in") {
+                tokens.push_back({TokenType::KeywordIn, word});
             } else if (word == "break") {
                 tokens.push_back({TokenType::KeywordBreak, word});
             } else if (word == "continue") {

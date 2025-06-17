@@ -23,6 +23,7 @@ private:
     std::unordered_set<std::string> globals;
     std::unordered_map<std::string, std::string> globalTypes;
     int loopDepth = 0;
+    int switchDepth = 0;
     int functionDepth = 0;
 
     void pushScope();
