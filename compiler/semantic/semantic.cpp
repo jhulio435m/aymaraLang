@@ -66,6 +66,9 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
         std::string t = analyzeExpr(a->getValue());
+        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()=="input") {
+            t = lookup(a->getName());
+        }
         if (!isDeclared(a->getName())) {
             declare(a->getName(), t);
         } else if (lookup(a->getName()) != t && !t.empty()) {
@@ -76,6 +79,11 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
         std::string t = "";
         if (v->getInit()) t = analyzeExpr(v->getInit());
+        if (v->getInit()) {
+            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()=="input") {
+                t = v->getType();
+            }
+        }
         declare(v->getName(), v->getType());
         if (!t.empty() && t != v->getType()) {
             std::cerr << "Error: tipo incompatible en declaracion de '" << v->getName() << "'" << std::endl;
