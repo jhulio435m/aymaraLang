@@ -14,6 +14,19 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
+        if (c == '/' && pos + 1 < src.size()) {
+            if (src[pos + 1] == '/') { // line comment
+                while (pos < src.size() && get() != '\n');
+                continue;
+            }
+            if (src[pos + 1] == '*') { // block comment
+                get(); get();
+                while (pos + 1 < src.size() && !(peek() == '*' && src[pos + 1] == '/')) get();
+                if (pos + 1 < src.size()) { get(); get(); }
+                continue;
+            }
+        }
+
         if (std::isalpha(static_cast<unsigned char>(c)) || c == '\xc3' || c == '\xE2') {
             std::string word;
             while (pos < src.size()) {
@@ -42,6 +55,18 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordFunc, word});
             } else if (word == "retorna") {
                 tokens.push_back({TokenType::KeywordReturn, word});
+            } else if (word == "switch") {
+                tokens.push_back({TokenType::KeywordSwitch, word});
+            } else if (word == "case") {
+                tokens.push_back({TokenType::KeywordCase, word});
+            } else if (word == "default") {
+                tokens.push_back({TokenType::KeywordDefault, word});
+            } else if (word == "and") {
+                tokens.push_back({TokenType::KeywordAnd, word});
+            } else if (word == "or") {
+                tokens.push_back({TokenType::KeywordOr, word});
+            } else if (word == "not") {
+                tokens.push_back({TokenType::KeywordNot, word});
             } else if (word == "int") {
                 tokens.push_back({TokenType::KeywordInt, word});
             } else if (word == "float") {
@@ -50,6 +75,10 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordBool, word});
             } else if (word == "string") {
                 tokens.push_back({TokenType::KeywordString, word});
+            } else if (word == "true") {
+                tokens.push_back({TokenType::Number, "1"});
+            } else if (word == "false") {
+                tokens.push_back({TokenType::Number, "0"});
             } else {
                 tokens.push_back({TokenType::Identifier, word});
             }
@@ -81,11 +110,66 @@ std::vector<Token> Lexer::tokenize() {
             case '-': tokens.push_back({TokenType::Minus, "-"}); get(); break;
             case '*': tokens.push_back({TokenType::Star, "*"}); get(); break;
             case '/': tokens.push_back({TokenType::Slash, "/"}); get(); break;
-            case '=': tokens.push_back({TokenType::Equal, "="}); get(); break;
+            case '%': tokens.push_back({TokenType::Percent, "%"}); get(); break;
+            case '^': tokens.push_back({TokenType::Caret, "^"}); get(); break;
+            case '&':
+                if (pos + 1 < src.size() && src[pos + 1] == '&') {
+                    tokens.push_back({TokenType::AmpAmp, "&&"});
+                    get(); get();
+                } else {
+                    get();
+                }
+                break;
+            case '|':
+                if (pos + 1 < src.size() && src[pos + 1] == '|') {
+                    tokens.push_back({TokenType::PipePipe, "||"});
+                    get(); get();
+                } else {
+                    get();
+                }
+                break;
+            case '!':
+                if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                    tokens.push_back({TokenType::BangEqual, "!="});
+                    get(); get();
+                } else {
+                    tokens.push_back({TokenType::Bang, "!"});
+                    get();
+                }
+                break;
+            case '=':
+                if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                    tokens.push_back({TokenType::EqualEqual, "=="});
+                    get(); get();
+                } else {
+                    tokens.push_back({TokenType::Equal, "="});
+                    get();
+                }
+                break;
+            case '<':
+                if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                    tokens.push_back({TokenType::LessEqual, "<="});
+                    get(); get();
+                } else {
+                    tokens.push_back({TokenType::Less, "<"});
+                    get();
+                }
+                break;
+            case '>':
+                if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                    tokens.push_back({TokenType::GreaterEqual, ">="});
+                    get(); get();
+                } else {
+                    tokens.push_back({TokenType::Greater, ">"});
+                    get();
+                }
+                break;
             case '(': tokens.push_back({TokenType::LParen, "("}); get(); break;
             case ')': tokens.push_back({TokenType::RParen, ")"}); get(); break;
             case '{': tokens.push_back({TokenType::LBrace, "{"}); get(); break;
             case '}': tokens.push_back({TokenType::RBrace, "}"}); get(); break;
+            case '[': tokens.push_back({TokenType::LBracket, "["}); get(); break;
+            case ']': tokens.push_back({TokenType::RBracket, "]"}); get(); break;
             case ':': tokens.push_back({TokenType::Colon, ":"}); get(); break;
             case ',': tokens.push_back({TokenType::Comma, ","}); get(); break;
             case ';': tokens.push_back({TokenType::Semicolon, ";"}); get(); break;

@@ -1,0 +1,5 @@
+si (5 >= 3) {
+    willt’aña("ok");
+} sino {
+    willt’aña("bad");
+}

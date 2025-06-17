@@ -37,11 +37,13 @@ public:
     std::vector<const Stmt*> mainStmts;
     std::unordered_map<std::string, std::vector<std::string>> paramTypes;
     std::unordered_map<std::string,bool> currentParamStrings;
+    std::unordered_map<std::string,std::string> globalTypes;
 
     void emit(const std::vector<std::unique_ptr<Node>> &nodes,
               const std::string &path,
               const std::unordered_set<std::string> &semGlobals,
-              const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn);
+              const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
+              const std::unordered_map<std::string,std::string> &globalTypesIn);
 private:
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt, std::vector<std::string> &locs);
@@ -65,6 +67,10 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
     if (auto *b = dynamic_cast<const BinaryExpr*>(expr)) {
         collectStrings(b->getLeft());
         collectStrings(b->getRight());
+        return;
+    }
+    if (auto *u = dynamic_cast<const UnaryExpr*>(expr)) {
+        collectStrings(u->getExpr());
         return;
     }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
@@ -107,6 +113,15 @@ void CodeGenImpl::collectLocals(const Stmt *stmt, std::vector<std::string> &locs
         collectStrings(f->getCondition());
         collectLocals(f->getPost(), locs);
         collectLocals(f->getBody(), locs);
+        return;
+    }
+    if (auto *sw = dynamic_cast<const SwitchStmt*>(stmt)) {
+        collectStrings(sw->getExpr());
+        for (const auto &c : sw->getCases()) {
+            collectStrings(c.first.get());
+            collectLocals(c.second.get(), locs);
+        }
+        if (sw->getDefault()) collectLocals(sw->getDefault(), locs);
         return;
     }
     if (auto *ret = dynamic_cast<const ReturnStmt*>(stmt)) {
@@ -154,6 +169,15 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
         collectStrings(f->getCondition());
         collectGlobal(f->getPost());
         collectGlobal(f->getBody());
+        return;
+    }
+    if (auto *sw = dynamic_cast<const SwitchStmt*>(stmt)) {
+        collectStrings(sw->getExpr());
+        for (const auto &c : sw->getCases()) {
+            collectStrings(c.first.get());
+            collectGlobal(c.second.get());
+        }
+        if (sw->getDefault()) collectGlobal(sw->getDefault());
         return;
     }
     if (auto *ret = dynamic_cast<const ReturnStmt*>(stmt)) {
@@ -225,7 +249,13 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
             out << "    call printf\n";
         } else if (auto *v = dynamic_cast<VariableExpr *>(p->getExpr())) {
             emitExpr(v, locals);
+            bool isStr = false;
             if (currentParamStrings.count(v->getName())) {
+                isStr = true;
+            } else if (!locals && globalTypes.count(v->getName()) && globalTypes[v->getName()] == "string") {
+                isStr = true;
+            }
+            if (isStr) {
                 out << "    mov rsi, rax\n";
                 out << "    lea rdi, [rel fmt_str]\n";
             } else {
@@ -317,6 +347,25 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         out << end << ":\n";
         return;
     }
+    if (auto *sw = dynamic_cast<const SwitchStmt *>(stmt)) {
+        emitExpr(sw->getExpr(), locals);
+        out << "    mov rbx, rax\n";
+        std::string end = genLabel("switchend");
+        for (const auto &c : sw->getCases()) {
+            std::string next = genLabel("nextcase");
+            emitExpr(c.first.get(), locals);
+            out << "    cmp rbx, rax\n";
+            out << "    jne " << next << "\n";
+            emitStmt(c.second.get(), locals, endLabel);
+            out << "    jmp " << end << "\n";
+            out << next << ":\n";
+        }
+        if (sw->getDefault()) {
+            emitStmt(sw->getDefault(), locals, endLabel);
+        }
+        out << end << ":\n";
+        return;
+    }
     if (auto *ret = dynamic_cast<const ReturnStmt *>(stmt)) {
         if (ret->getValue()) emitExpr(ret->getValue(), locals);
         out << "    jmp " << endLabel << "\n";
@@ -354,6 +403,59 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             case '-': out << "    sub rax, rbx\n"; break;
             case '*': out << "    imul rax, rbx\n"; break;
             case '/': out << "    cqo\n    idiv rbx\n"; break;
+            case '%': out << "    cqo\n    idiv rbx\n    mov rax, rdx\n"; break;
+            case '^': {
+                std::string loop = genLabel("pow");
+                std::string end = genLabel("powend");
+                out << "    mov rcx, rbx\n";
+                out << "    mov rbx, rax\n";
+                out << "    mov rax,1\n";
+                out << loop << ":\n";
+                out << "    cmp rcx,0\n";
+                out << "    je " << end << "\n";
+                out << "    imul rax, rbx\n";
+                out << "    dec rcx\n";
+                out << "    jmp " << loop << "\n";
+                out << end << ":\n";
+                break;
+            }
+            case '&':
+                out << "    cmp rax,0\n    setne al\n    movzx rax,al\n";
+                out << "    cmp rbx,0\n    setne bl\n    movzx rbx,bl\n";
+                out << "    and rax, rbx\n";
+                break;
+            case '|':
+                out << "    cmp rax,0\n    setne al\n    movzx rax,al\n";
+                out << "    cmp rbx,0\n    setne bl\n    movzx rbx,bl\n";
+                out << "    or rax, rbx\n";
+                break;
+            case '<':
+                out << "    cmp rax, rbx\n    setl al\n    movzx rax,al\n";
+                break;
+            case 'l':
+                out << "    cmp rax, rbx\n    setle al\n    movzx rax,al\n";
+                break;
+            case '>':
+                out << "    cmp rax, rbx\n    setg al\n    movzx rax,al\n";
+                break;
+            case 'g':
+                out << "    cmp rax, rbx\n    setge al\n    movzx rax,al\n";
+                break;
+            case 's':
+                out << "    cmp rax, rbx\n    sete al\n    movzx rax,al\n";
+                break;
+            case 'd':
+                out << "    cmp rax, rbx\n    setne al\n    movzx rax,al\n";
+                break;
+        }
+        return;
+    }
+    if (auto *u = dynamic_cast<const UnaryExpr *>(expr)) {
+        emitExpr(u->getExpr(), locals);
+        if (u->getOp() == '!') {
+            out << "    cmp rax,0\n";
+            out << "    sete al\n";
+            out << "    movzx rax,al\n";
         }
         return;
     }
@@ -372,6 +474,13 @@ void CodeGenImpl::emitExpr(const Expr *expr,
                 out << "    xor eax,eax\n";
                 out << "    call printf\n";
             }
+            return;
+        } else if (c->getName() == "input") {
+            out << "    lea rdi, [rel fmt_read_int]\n";
+            out << "    lea rsi, [rel input_val]\n";
+            out << "    xor eax,eax\n";
+            out << "    call scanf\n";
+            out << "    mov rax, [rel input_val]\n";
             return;
         }
         // user function call
@@ -392,9 +501,11 @@ void CodeGenImpl::emitExpr(const Expr *expr,
 void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::string &path,
                        const std::unordered_set<std::string> &semGlobals,
-                       const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn) {
+                       const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
+                       const std::unordered_map<std::string,std::string> &globalTypesIn) {
     globals = semGlobals;
     paramTypes = paramTypesIn;
+    globalTypes = globalTypesIn;
 
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
@@ -412,9 +523,12 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out.swap(fout);
 
     out << "extern printf\n";
+    out << "extern scanf\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
+    out << "fmt_read_int: db \"%ld\",0\n";
+    out << "input_val: dq 0\n";
 
     for (size_t i=0;i<strings.size();++i) {
         out << "str" << i << ": db \"" << strings[i] << "\",0\n";
@@ -452,9 +566,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 void CodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes,
                              const std::string &outputPath,
                              const std::unordered_set<std::string> &globals,
-                             const std::unordered_map<std::string,std::vector<std::string>> &paramTypes) {
+                             const std::unordered_map<std::string,std::vector<std::string>> &paramTypes,
+                             const std::unordered_map<std::string,std::string> &globalTypes) {
     CodeGenImpl impl;
-    impl.emit(nodes, outputPath, globals, paramTypes);
+    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes);
 }
 
 } // namespace aym

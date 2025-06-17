@@ -104,6 +104,32 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         return std::make_unique<ForStmt>(std::move(init), std::move(cond), std::move(post), std::move(body));
     }
 
+    if (match(TokenType::KeywordSwitch)) {
+        match(TokenType::LParen);
+        auto val = parseExpression();
+        match(TokenType::RParen);
+        match(TokenType::LBrace);
+        std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<BlockStmt>>> cases;
+        std::unique_ptr<BlockStmt> defCase;
+        while (peek().type != TokenType::RBrace && peek().type != TokenType::EndOfFile) {
+            if (match(TokenType::KeywordCase)) {
+                auto cval = parseExpression();
+                match(TokenType::LBrace);
+                auto blk = std::make_unique<BlockStmt>();
+                parseStatements(blk->statements, true);
+                cases.emplace_back(std::move(cval), std::move(blk));
+            } else if (match(TokenType::KeywordDefault)) {
+                match(TokenType::LBrace);
+                defCase = std::make_unique<BlockStmt>();
+                parseStatements(defCase->statements, true);
+            } else {
+                get();
+            }
+        }
+        match(TokenType::RBrace);
+        return std::make_unique<SwitchStmt>(std::move(val), std::move(cases), std::move(defCase));
+    }
+
     if (match(TokenType::KeywordFunc)) {
         std::string name = "";
         if (peek().type == TokenType::Identifier) name = get().text;
@@ -138,6 +164,64 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
 }
 
 std::unique_ptr<Expr> Parser::parseExpression() {
+    return parseLogic();
+}
+
+std::unique_ptr<Expr> Parser::parseLogic() {
+    auto lhs = parseEquality();
+    while (true) {
+        if (match(TokenType::KeywordAnd) || match(TokenType::AmpAmp)) {
+            auto rhs = parseEquality();
+            lhs = std::make_unique<BinaryExpr>('&', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::KeywordOr) || match(TokenType::PipePipe)) {
+            auto rhs = parseEquality();
+            lhs = std::make_unique<BinaryExpr>('|', std::move(lhs), std::move(rhs));
+        } else {
+            break;
+        }
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseEquality() {
+    auto lhs = parseComparison();
+    while (true) {
+        if (match(TokenType::EqualEqual)) {
+            auto rhs = parseComparison();
+            lhs = std::make_unique<BinaryExpr>('s', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::BangEqual)) {
+            auto rhs = parseComparison();
+            lhs = std::make_unique<BinaryExpr>('d', std::move(lhs), std::move(rhs));
+        } else {
+            break;
+        }
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseComparison() {
+    auto lhs = parseAdd();
+    while (true) {
+        if (match(TokenType::Less)) {
+            auto rhs = parseAdd();
+            lhs = std::make_unique<BinaryExpr>('<', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::LessEqual)) {
+            auto rhs = parseAdd();
+            lhs = std::make_unique<BinaryExpr>('l', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::Greater)) {
+            auto rhs = parseAdd();
+            lhs = std::make_unique<BinaryExpr>('>', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::GreaterEqual)) {
+            auto rhs = parseAdd();
+            lhs = std::make_unique<BinaryExpr>('g', std::move(lhs), std::move(rhs));
+        } else {
+            break;
+        }
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseAdd() {
     auto lhs = parseTerm();
     while (true) {
         if (match(TokenType::Plus)) {
@@ -154,14 +238,17 @@ std::unique_ptr<Expr> Parser::parseExpression() {
 }
 
 std::unique_ptr<Expr> Parser::parseTerm() {
-    auto lhs = parseFactor();
+    auto lhs = parsePower();
     while (true) {
         if (match(TokenType::Star)) {
-            auto rhs = parseFactor();
+            auto rhs = parsePower();
             lhs = std::make_unique<BinaryExpr>('*', std::move(lhs), std::move(rhs));
         } else if (match(TokenType::Slash)) {
-            auto rhs = parseFactor();
+            auto rhs = parsePower();
             lhs = std::make_unique<BinaryExpr>('/', std::move(lhs), std::move(rhs));
+        } else if (match(TokenType::Percent)) {
+            auto rhs = parsePower();
+            lhs = std::make_unique<BinaryExpr>('%', std::move(lhs), std::move(rhs));
         } else {
             break;
         }
@@ -169,7 +256,20 @@ std::unique_ptr<Expr> Parser::parseTerm() {
     return lhs;
 }
 
+std::unique_ptr<Expr> Parser::parsePower() {
+    auto lhs = parseFactor();
+    while (match(TokenType::Caret)) {
+        auto rhs = parseFactor();
+        lhs = std::make_unique<BinaryExpr>('^', std::move(lhs), std::move(rhs));
+    }
+    return lhs;
+}
+
 std::unique_ptr<Expr> Parser::parseFactor() {
+    if (match(TokenType::KeywordNot) || match(TokenType::Bang)) {
+        auto e = parseFactor();
+        return std::make_unique<UnaryExpr>('!', std::move(e));
+    }
     if (match(TokenType::Number)) {
         return std::make_unique<NumberExpr>(std::stol(tokens[pos-1].text));
     }

@@ -34,6 +34,7 @@ std::string SemanticAnalyzer::lookup(const std::string &name) const {
 void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) {
     pushScope();
     functions["willt’aña"] = 1;
+    functions["input"] = 0;
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
             functions[fn->getName()] = fn->getParams().size();
@@ -44,8 +45,12 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         analyzeStmt(static_cast<const Stmt *>(n.get()));
     }
     globals.clear();
+    globalTypes.clear();
     if (!scopes.empty()) {
-        for (const auto &p : scopes.front()) globals.insert(p.first);
+        for (const auto &p : scopes.front()) {
+            globals.insert(p.first);
+            globalTypes[p.first] = p.second;
+        }
     }
     popScope();
 }
@@ -107,6 +112,15 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         popScope();
         return;
     }
+    if (auto *sw = dynamic_cast<const SwitchStmt *>(stmt)) {
+        analyzeExpr(sw->getExpr());
+        for (const auto &c : sw->getCases()) {
+            analyzeExpr(c.first.get());
+            analyzeStmt(c.second.get());
+        }
+        if (sw->getDefault()) analyzeStmt(sw->getDefault());
+        return;
+    }
     if (auto *fn = dynamic_cast<const FunctionStmt *>(stmt)) {
         pushScope();
         ++functionDepth;
@@ -164,7 +178,14 @@ std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
         if (l != r) {
             std::cerr << "Error: tipos incompatibles en operacion" << std::endl;
         }
+        char op = b->getOp();
+        if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
+            return "int";
         return l;
+    }
+    if (auto *u = dynamic_cast<const UnaryExpr *>(expr)) {
+        analyzeExpr(u->getExpr());
+        return "int";
     }
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
         auto it = functions.find(c->getName());

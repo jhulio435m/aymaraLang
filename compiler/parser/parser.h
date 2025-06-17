@@ -25,7 +25,12 @@ private:
     void parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool stopAtBrace = false);
     std::unique_ptr<Stmt> parseSingleStatement();
     std::unique_ptr<Expr> parseExpression();
+    std::unique_ptr<Expr> parseLogic();
+    std::unique_ptr<Expr> parseEquality();
+    std::unique_ptr<Expr> parseComparison();
+    std::unique_ptr<Expr> parseAdd();
     std::unique_ptr<Expr> parseTerm();
+    std::unique_ptr<Expr> parsePower();
     std::unique_ptr<Expr> parseFactor();
     std::vector<std::unique_ptr<Expr>> parseArguments();
 };
