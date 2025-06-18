@@ -1,4 +1,5 @@
 #include "semantic.h"
+#include "../builtins/builtins.h"
 #include <iostream>
 
 namespace aym {
@@ -33,10 +34,14 @@ std::string SemanticAnalyzer::lookup(const std::string &name) const {
 
 void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) {
     pushScope();
-    functions["willt’aña"] = 1;
-    functions["input"] = 0;
-    functions["length"] = 1;
-    paramTypes["length"] = {"qillqa"};
+    for (const auto &p : getBuiltinFunctions()) {
+        functions[p.first] = p.second.argCount;
+        if (!p.second.paramTypes.empty()) {
+            std::vector<std::string> types;
+            for (auto t : p.second.paramTypes) types.push_back(typeName(t));
+            paramTypes[p.first] = types;
+        }
+    }
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
             functions[fn->getName()] = fn->getParams().size();
@@ -68,7 +73,7 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
     }
     if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
         std::string t = analyzeExpr(a->getValue());
-        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()=="input") {
+        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()==BUILTIN_INPUT) {
             t = lookup(a->getName());
         }
         if (!isDeclared(a->getName())) {
@@ -82,7 +87,7 @@ void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
         std::string t = "";
         if (v->getInit()) t = analyzeExpr(v->getInit());
         if (v->getInit()) {
-            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()=="input") {
+            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()==BUILTIN_INPUT) {
                 t = v->getType();
             }
         }
