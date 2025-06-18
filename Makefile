@@ -92,10 +92,6 @@ $(BUILD_DIR)/main.o: $(MAIN_SRC)
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/main.o: $(MAIN_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
 test: all
 	bash tests/run_tests.sh
 
