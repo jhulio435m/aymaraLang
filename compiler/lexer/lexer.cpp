@@ -14,6 +14,9 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
+        size_t startLine = line;
+        size_t startColumn = column;
+
         if (c == '/' && pos + 1 < src.size()) {
             if (src[pos + 1] == '/') { // line comment
                 while (pos < src.size() && get() != '\n');
@@ -38,35 +41,35 @@ std::vector<Token> Lexer::tokenize() {
                 }
             }
             if (word == "willt’aña") {
-                tokens.push_back({TokenType::KeywordPrint, word});
+                tokens.push_back({TokenType::KeywordPrint, word, startLine, startColumn});
             } else if (word == "si") {
-                tokens.push_back({TokenType::KeywordIf, word});
+                tokens.push_back({TokenType::KeywordIf, word, startLine, startColumn});
             } else if (word == "sino") {
-                tokens.push_back({TokenType::KeywordElse, word});
+                tokens.push_back({TokenType::KeywordElse, word, startLine, startColumn});
             } else if (word == "mientras") {
-                tokens.push_back({TokenType::KeywordWhile, word});
+                tokens.push_back({TokenType::KeywordWhile, word, startLine, startColumn});
             } else if (word == "haceña") {
-                tokens.push_back({TokenType::KeywordDo, word});
+                tokens.push_back({TokenType::KeywordDo, word, startLine, startColumn});
             } else if (word == "para") {
-                tokens.push_back({TokenType::KeywordFor, word});
+                tokens.push_back({TokenType::KeywordFor, word, startLine, startColumn});
             } else if (word == "en") {
-                tokens.push_back({TokenType::KeywordIn, word});
+                tokens.push_back({TokenType::KeywordIn, word, startLine, startColumn});
             } else if (word == "jalña") {
-                tokens.push_back({TokenType::KeywordBreak, word});
+                tokens.push_back({TokenType::KeywordBreak, word, startLine, startColumn});
             } else if (word == "sarantaña") {
-                tokens.push_back({TokenType::KeywordContinue, word});
+                tokens.push_back({TokenType::KeywordContinue, word, startLine, startColumn});
             } else if (word == "luräwi") {
-                tokens.push_back({TokenType::KeywordFunc, word});
+                tokens.push_back({TokenType::KeywordFunc, word, startLine, startColumn});
             } else if (word == "kutiyana") {
-                tokens.push_back({TokenType::KeywordReturn, word});
+                tokens.push_back({TokenType::KeywordReturn, word, startLine, startColumn});
             } else if (word == "tantachaña") {
-                tokens.push_back({TokenType::KeywordSwitch, word});
+                tokens.push_back({TokenType::KeywordSwitch, word, startLine, startColumn});
             } else if (word == "jamusa") {
-                tokens.push_back({TokenType::KeywordCase, word});
+                tokens.push_back({TokenType::KeywordCase, word, startLine, startColumn});
             } else if (word == "akhamawa") {
-                tokens.push_back({TokenType::KeywordDefault, word});
+                tokens.push_back({TokenType::KeywordDefault, word, startLine, startColumn});
             } else if (word == "uka") {
-                tokens.push_back({TokenType::KeywordAnd, word});
+                tokens.push_back({TokenType::KeywordAnd, word, startLine, startColumn});
             } else if (word == "jan") {
                 size_t save = pos;
                 while (pos < src.size() && std::isspace(static_cast<unsigned char>(src[pos]))) ++pos;
@@ -80,27 +83,27 @@ std::vector<Token> Lexer::tokenize() {
                     }
                 }
                 if (rest == "uka") {
-                    tokens.push_back({TokenType::KeywordOr, "jan uka"});
+                    tokens.push_back({TokenType::KeywordOr, "jan uka", startLine, startColumn});
                 } else {
                     pos = save;
-                    tokens.push_back({TokenType::Identifier, word});
+                    tokens.push_back({TokenType::Identifier, word, startLine, startColumn});
                 }
             } else if (word == "janiwa") {
-                tokens.push_back({TokenType::KeywordNot, word});
+                tokens.push_back({TokenType::KeywordNot, word, startLine, startColumn});
             } else if (word == "jach’a") {
-                tokens.push_back({TokenType::KeywordInt, word});
+                tokens.push_back({TokenType::KeywordInt, word, startLine, startColumn});
             } else if (word == "lliphiphi") {
-                tokens.push_back({TokenType::KeywordFloat, word});
+                tokens.push_back({TokenType::KeywordFloat, word, startLine, startColumn});
             } else if (word == "chuymani") {
-                tokens.push_back({TokenType::KeywordBool, word});
+                tokens.push_back({TokenType::KeywordBool, word, startLine, startColumn});
             } else if (word == "qillqa") {
-                tokens.push_back({TokenType::KeywordString, word});
+                tokens.push_back({TokenType::KeywordString, word, startLine, startColumn});
             } else if (word == "cheka") {
-                tokens.push_back({TokenType::Number, "1"});
+                tokens.push_back({TokenType::Number, "1", startLine, startColumn});
             } else if (word == "jan cheka") {
-                tokens.push_back({TokenType::Number, "0"});
+                tokens.push_back({TokenType::Number, "0", startLine, startColumn});
             } else {
-                tokens.push_back({TokenType::Identifier, word});
+                tokens.push_back({TokenType::Identifier, word, startLine, startColumn});
             }
             continue;
         }
@@ -110,7 +113,7 @@ std::vector<Token> Lexer::tokenize() {
             while (pos < src.size() && std::isdigit(static_cast<unsigned char>(peek()))) {
                 num += get();
             }
-            tokens.push_back({TokenType::Number, num});
+            tokens.push_back({TokenType::Number, num, startLine, startColumn});
             continue;
         }
 
@@ -121,20 +124,20 @@ std::vector<Token> Lexer::tokenize() {
                 str += get();
             }
             get(); // closing quote
-            tokens.push_back({TokenType::String, str});
+            tokens.push_back({TokenType::String, str, startLine, startColumn});
             continue;
         }
 
         switch (c) {
-            case '+': tokens.push_back({TokenType::Plus, "+"}); get(); break;
-            case '-': tokens.push_back({TokenType::Minus, "-"}); get(); break;
-            case '*': tokens.push_back({TokenType::Star, "*"}); get(); break;
-            case '/': tokens.push_back({TokenType::Slash, "/"}); get(); break;
-            case '%': tokens.push_back({TokenType::Percent, "%"}); get(); break;
-            case '^': tokens.push_back({TokenType::Caret, "^"}); get(); break;
+            case '+': tokens.push_back({TokenType::Plus, "+", startLine, startColumn}); get(); break;
+            case '-': tokens.push_back({TokenType::Minus, "-", startLine, startColumn}); get(); break;
+            case '*': tokens.push_back({TokenType::Star, "*", startLine, startColumn}); get(); break;
+            case '/': tokens.push_back({TokenType::Slash, "/", startLine, startColumn}); get(); break;
+            case '%': tokens.push_back({TokenType::Percent, "%", startLine, startColumn}); get(); break;
+            case '^': tokens.push_back({TokenType::Caret, "^", startLine, startColumn}); get(); break;
             case '&':
                 if (pos + 1 < src.size() && src[pos + 1] == '&') {
-                    tokens.push_back({TokenType::AmpAmp, "&&"});
+                    tokens.push_back({TokenType::AmpAmp, "&&", startLine, startColumn});
                     get(); get();
                 } else {
                     get();
@@ -142,7 +145,7 @@ std::vector<Token> Lexer::tokenize() {
                 break;
             case '|':
                 if (pos + 1 < src.size() && src[pos + 1] == '|') {
-                    tokens.push_back({TokenType::PipePipe, "||"});
+                    tokens.push_back({TokenType::PipePipe, "||", startLine, startColumn});
                     get(); get();
                 } else {
                     get();
@@ -150,54 +153,54 @@ std::vector<Token> Lexer::tokenize() {
                 break;
             case '!':
                 if (pos + 1 < src.size() && src[pos + 1] == '=') {
-                    tokens.push_back({TokenType::BangEqual, "!="});
+                    tokens.push_back({TokenType::BangEqual, "!=", startLine, startColumn});
                     get(); get();
                 } else {
-                    tokens.push_back({TokenType::Bang, "!"});
+                    tokens.push_back({TokenType::Bang, "!", startLine, startColumn});
                     get();
                 }
                 break;
             case '=':
                 if (pos + 1 < src.size() && src[pos + 1] == '=') {
-                    tokens.push_back({TokenType::EqualEqual, "=="});
+                    tokens.push_back({TokenType::EqualEqual, "==", startLine, startColumn});
                     get(); get();
                 } else {
-                    tokens.push_back({TokenType::Equal, "="});
+                    tokens.push_back({TokenType::Equal, "=", startLine, startColumn});
                     get();
                 }
                 break;
             case '<':
                 if (pos + 1 < src.size() && src[pos + 1] == '=') {
-                    tokens.push_back({TokenType::LessEqual, "<="});
+                    tokens.push_back({TokenType::LessEqual, "<=", startLine, startColumn});
                     get(); get();
                 } else {
-                    tokens.push_back({TokenType::Less, "<"});
+                    tokens.push_back({TokenType::Less, "<", startLine, startColumn});
                     get();
                 }
                 break;
             case '>':
                 if (pos + 1 < src.size() && src[pos + 1] == '=') {
-                    tokens.push_back({TokenType::GreaterEqual, ">="});
+                    tokens.push_back({TokenType::GreaterEqual, ">=", startLine, startColumn});
                     get(); get();
                 } else {
-                    tokens.push_back({TokenType::Greater, ">"});
+                    tokens.push_back({TokenType::Greater, ">", startLine, startColumn});
                     get();
                 }
                 break;
-            case '(': tokens.push_back({TokenType::LParen, "("}); get(); break;
-            case ')': tokens.push_back({TokenType::RParen, ")"}); get(); break;
-            case '{': tokens.push_back({TokenType::LBrace, "{"}); get(); break;
-            case '}': tokens.push_back({TokenType::RBrace, "}"}); get(); break;
-            case '[': tokens.push_back({TokenType::LBracket, "["}); get(); break;
-            case ']': tokens.push_back({TokenType::RBracket, "]"}); get(); break;
-            case ':': tokens.push_back({TokenType::Colon, ":"}); get(); break;
-            case ',': tokens.push_back({TokenType::Comma, ","}); get(); break;
-            case ';': tokens.push_back({TokenType::Semicolon, ";"}); get(); break;
+            case '(': tokens.push_back({TokenType::LParen, "(", startLine, startColumn}); get(); break;
+            case ')': tokens.push_back({TokenType::RParen, ")", startLine, startColumn}); get(); break;
+            case '{': tokens.push_back({TokenType::LBrace, "{", startLine, startColumn}); get(); break;
+            case '}': tokens.push_back({TokenType::RBrace, "}", startLine, startColumn}); get(); break;
+            case '[': tokens.push_back({TokenType::LBracket, "[", startLine, startColumn}); get(); break;
+            case ']': tokens.push_back({TokenType::RBracket, "]", startLine, startColumn}); get(); break;
+            case ':': tokens.push_back({TokenType::Colon, ":", startLine, startColumn}); get(); break;
+            case ',': tokens.push_back({TokenType::Comma, ",", startLine, startColumn}); get(); break;
+            case ';': tokens.push_back({TokenType::Semicolon, ";", startLine, startColumn}); get(); break;
             default: get(); break;
         }
     }
 
-    tokens.push_back({TokenType::EndOfFile, ""});
+    tokens.push_back({TokenType::EndOfFile, "", line, column});
     return tokens;
 }
 
@@ -206,7 +209,16 @@ char Lexer::peek() const {
 }
 
 char Lexer::get() {
-    if (pos < src.size()) return src[pos++];
+    if (pos < src.size()) {
+        char c = src[pos++];
+        if (c == '\n') {
+            ++line;
+            column = 1;
+        } else {
+            ++column;
+        }
+        return c;
+    }
     return '\0';
 }
 

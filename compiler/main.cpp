@@ -67,6 +67,9 @@ int main(int argc, char** argv) {
 
     aym::Parser parser(tokens);
     auto nodes = parser.parse();
+    if (parser.hasError()) {
+        return 1;
+    }
     if (dumpAst) {
         std::cout << "AST nodos: " << nodes.size() << std::endl;
     }

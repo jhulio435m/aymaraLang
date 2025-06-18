@@ -21,6 +21,13 @@ bool Parser::match(TokenType type) {
     return false;
 }
 
+void Parser::parseError(const std::string &msg) {
+    const Token &tok = peek();
+    std::cerr << "[parser] Error en linea " << tok.line << ", columna " << tok.column
+              << ": " << msg << std::endl;
+    hadError = true;
+}
+
 void Parser::parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool stopAtBrace) {
     while (pos < tokens.size() && peek().type != TokenType::EndOfFile) {
         if (stopAtBrace && peek().type == TokenType::RBrace) { get(); break; }
@@ -341,7 +348,9 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         match(TokenType::RParen);
         return expr;
     }
-    return std::make_unique<NumberExpr>(0);
+    parseError("token inesperado");
+    get();
+    return nullptr;
 }
 
 std::vector<std::unique_ptr<Expr>> Parser::parseArguments() {
