@@ -171,6 +171,26 @@ inicio
 1
 ```
 
+### Selección de plataforma
+
+`aymc` permite elegir el sistema operativo de destino. De forma predeterminada se
+usa la plataforma actual, pero pueden forzarse los siguientes modos:
+
+- `--windows` – genera un ejecutable de Windows (`.exe`).
+- `--linux` – genera un ejecutable para Linux.
+
+#### Ejemplo `--windows`
+
+```bash
+$ ./bin/aymc --windows samples/hola.aym
+```
+
+#### Ejemplo `--linux`
+
+```bash
+$ ./bin/aymc --linux samples/hola.aym
+```
+
 ### Uso en Windows
 
 1. Instalar [MinGW-w64](https://www.mingw-w64.org/) y la versión para Windows de `nasm`
