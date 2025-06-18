@@ -12,6 +12,8 @@ g++ -std=c++17 -Wall -O2 ^
   compiler\semantic\semantic.cpp ^
   compiler\utils\utils.cpp ^
   compiler\utils\error.cpp ^
+  compiler\interpreter\interpreter.cpp ^
   compiler\main.cpp ^
-  -o bin\aymc.exe
+  -o bin\aymc.exe ^
+  -lstdc++fs
 

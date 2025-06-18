@@ -10,7 +10,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include <filesystem>
+#include "utils/fs.h"
 
 int main(int argc, char** argv) {
     std::vector<std::string> inputs;
@@ -89,7 +89,6 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    namespace fs = std::filesystem;
     if (!outputProvided) {
         fs::path base = fs::path(inputs[0]).stem();
         output = (fs::path("build") / base).string();

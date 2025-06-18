@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
-#include <filesystem>
+#include "../utils/fs.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
@@ -688,7 +688,6 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 
     out.close();
 
-    namespace fs = std::filesystem;
     fs::create_directories("build");
     fs::create_directories("bin");
 

@@ -193,8 +193,10 @@ $ ./bin/aymc --linux samples/hola.aym
 
 ### Uso en Windows
 
-1. Instalar [MinGW-w64](https://www.mingw-w64.org/) y la versión para Windows de `nasm`
+1. Instalar [MinGW-w64](https://www.mingw-w64.org/) (GCC 9 o superior) y la versión para Windows de `nasm`.
 2. Ejecutar `build.bat` para compilar `aymc.exe`.
+   Asegúrate de que `g++ --version` reporte 9 o superior, de lo contrario
+   el encabezado `<filesystem>` no estará disponible.
 3. Compilar un archivo `.aym` con:
 
 ```cmd
