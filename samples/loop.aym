@@ -1,3 +1,4 @@
+// Ejemplos de while y do-while
 jach’a x = 0;
 
 mientras (x < 3) {

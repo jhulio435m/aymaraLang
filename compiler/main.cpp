@@ -1,6 +1,7 @@
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "codegen/codegen.h"
+#include "interpreter/interpreter.h"
 #include "utils/utils.h"
 #include "semantic/semantic.h"
 #include "utils/error.h"
@@ -9,6 +10,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 int main(int argc, char** argv) {
     std::vector<std::string> inputs;
@@ -16,6 +18,14 @@ int main(int argc, char** argv) {
     bool outputProvided = false;
     bool debug = false;
     bool dumpAst = false;
+    bool repl = false;
+    bool windowsTarget =
+#ifdef _WIN32
+        true;
+#else
+        false;
+#endif
+
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "-h" || arg == "--help") {
@@ -28,9 +38,50 @@ int main(int argc, char** argv) {
             debug = true;
         } else if (arg == "--dump-ast") {
             dumpAst = true;
+        } else if (arg == "--repl") {
+            repl = true;
+        } else if (arg == "--windows") {
+            windowsTarget = true;
+        } else if (arg == "--linux") {
+            windowsTarget = false;
         } else {
             inputs.push_back(arg);
         }
+    }
+
+    if (repl) {
+        std::cout << "AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)" << std::endl;
+        aym::Interpreter interp;
+        std::vector<std::unique_ptr<aym::Node>> program;
+        aym::SemanticAnalyzer sem;
+        std::string line;
+        while (true) {
+            std::cout << "aym> ";
+            if (!std::getline(std::cin, line)) break;
+            if (line == "salir" || line == "exit") break;
+            bool exprOnly = (line.find(';') == std::string::npos);
+            std::string src = line;
+            if (exprOnly) src += ";";
+            aym::Lexer lx(src);
+            auto toks = lx.tokenize();
+            aym::Parser p(toks);
+            auto nodes = p.parse();
+            if (p.hasError()) continue;
+            size_t start = program.size();
+            for (auto &n : nodes) program.push_back(std::move(n));
+            sem.analyze(program);
+            for (size_t i = start; i < program.size(); ++i) {
+                program[i]->accept(interp);
+            }
+            if (exprOnly && !nodes.empty()) {
+                auto val = interp.getLastValue();
+                if (val.type == aym::Value::Type::String)
+                    std::cout << val.s << std::endl;
+                else if (val.type == aym::Value::Type::Int)
+                    std::cout << val.i << std::endl;
+            }
+        }
+        return 0;
     }
 
     if (inputs.empty()) {
@@ -38,13 +89,10 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    namespace fs = std::filesystem;
     if (!outputProvided) {
-        std::string base = inputs[0];
-        size_t slash = base.find_last_of("/\\");
-        if (slash != std::string::npos) base = base.substr(slash + 1);
-        size_t dot = base.find_last_of('.');
-        if (dot != std::string::npos) base = base.substr(0, dot);
-        output = "build/" + base;
+        fs::path base = fs::path(inputs[0]).stem();
+        output = (fs::path("build") / base).string();
     }
 
     std::string source;
@@ -77,7 +125,7 @@ int main(int argc, char** argv) {
     sem.analyze(nodes);
 
     aym::CodeGenerator cg;
-    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes(), sem.getGlobalTypes());
+    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes(), sem.getGlobalTypes(), windowsTarget);
 
     return 0;
 }

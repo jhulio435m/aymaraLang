@@ -1,3 +1,4 @@
+// Función que imprime un saludo
 luräwi saludo(nombre) {
     willt’aña(nombre);
 }

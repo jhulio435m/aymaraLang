@@ -1,3 +1,4 @@
+// Factorial recursivo
 luräwi fact(n) {
     si (n == 0) {
         kutiyana(1);

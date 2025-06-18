@@ -2,6 +2,14 @@
 
 **AymaraLang** es un lenguaje de programación moderno basado en la lengua originaria aymara. Su compilador, `aymc`, ha sido desarrollado desde cero en **C++17**, y permite generar ejecutables nativos `.ayn`. El proyecto busca promover la inclusión tecnológica, la educación y la preservación lingüística.
 
+Palabras clave principales del lenguaje:
+
+- `jach’a`, `lliphiphi`, `qillqa`, `chuymani` – tipos primitivos (int, float, string, bool)
+- `willt’aña` – salida por pantalla
+- `input` – lectura de consola
+- `luräwi` / `kutiyana` – definición de funciones y retorno
+- `si`, `sino`, `mientras`, `haceña`, `para`, `tantachaña`
+
 ---
 
 ## 🔠 Identidad del Lenguaje
@@ -47,6 +55,34 @@ AST más completo, análisis semántico y generación de código en ensamblador.
 > ⚙️ Futuras mejoras incluirán soporte para LLVM como backend opcional.
 
 ---
+
+## Características del Lenguaje
+
+AymaraLang incluye un conjunto de construcciones inspiradas en Python pero con
+palabras clave en aymara. Entre ellas:
+
+```aymara
+// variables
+jach’a contador = 3;
+qillqa saludo = "kamisaraki";
+
+// condicional
+si (contador > 0) {
+    willt’aña(saludo);
+}
+
+// bucle for
+para i en range(0, 3) {
+    willt’aña(i);
+}
+
+luräwi inc(n) {
+    kutiyana n + 1;
+}
+```
+
+Las funciones integradas `input()` y `willt’aña()` permiten entrada/salida
+sencilla y `tantachaña` ofrece un control tipo `switch`.
 
 ## 🧪 Ejemplo de Código
 
@@ -135,18 +171,49 @@ inicio
 1
 ```
 
+### Uso en Windows
+
+1. Instalar [MinGW-w64](https://www.mingw-w64.org/) y `nasm` para Windows.
+2. Ejecutar `build.bat` para compilar `aymc.exe`.
+3. Compilar un archivo `.aym` con:
+
+```cmd
+> aymc archivo.aym --windows
+```
+
+Se generará `bin\archivo.exe` que podrá ejecutarse con doble clic o desde la consola.
+
+### Modo REPL
+
+El compilador incluye un modo interactivo que permite ejecutar código línea por línea:
+
+```bash
+$ ./bin/aymc --repl
+AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)
+aym> jach’a x = 5;
+aym> x + 2
+7
+aym> salir
+```
+
+### Errores comunes
+
+- **Variable no declarada:** usar una variable sin declararla mostrará un mensaje `Error: variable 'x' no declarada`.
+- **`break` fuera de ciclo:** si se usa `break` fuera de `mientras`, `para` o `tantachaña` se emitirá `Error: 'break' fuera de un ciclo o switch`.
+
+
 ---
 
 ## 🧰 Tecnologías y Herramientas
 
 * **Lenguaje:** C++17
-* **Arquitectura objetivo:** x86\_64 Linux
+* **Arquitectura objetivo:** x86\_64 Linux/Windows
 * **Assembler:** NASM
-* **Linker:** GNU LD
-* **Sistema de construcción:** Make
+* **Linker:** GNU LD / GCC (MinGW)
+* **Sistema de construcción:** Make (Linux) / `build.bat` (Windows)
 * **IDE recomendados:** CLion, VSCode, Vim
 * **Control de versiones:** Git + GitHub
-* **Tests:** Google Test (planificado)
+* **Tests:** `make test`
 
 ---
 

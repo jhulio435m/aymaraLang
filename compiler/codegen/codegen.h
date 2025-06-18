@@ -17,7 +17,8 @@ public:
                   const std::string &outputPath,
                   const std::unordered_set<std::string> &globals,
                   const std::unordered_map<std::string, std::vector<std::string>> &paramTypes,
-                  const std::unordered_map<std::string, std::string> &globalTypes);
+                  const std::unordered_map<std::string, std::string> &globalTypes,
+                  bool windows);
 };
 
 } // namespace aym

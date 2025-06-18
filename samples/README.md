@@ -1,3 +1,11 @@
 # Samples
 
-Este directorio contiene ejemplos de programas escritos en el lenguaje `aym`. Estos ejemplos muestran cómo utilizar las características del lenguaje y sirven como referencia para los usuarios. Se incluyen ejemplos de impresión básica (`hola.aym`), operaciones aritméticas (`ops.aym`), control de flujo (`condloop.aym`), uso de variables (`vars.aym`), bucles `for` (`for.aym`) y un ejemplo con azúcar sintáctico de `range` (`range_for.aym`) además de la ejecución de bucles en tiempo de ejecución (`runtime.aym`). También hay un ejemplo que combina condicionales y `switch` (`if_switch.aym`).
+Este directorio contiene ejemplos actualizados del lenguaje `aym`. Cada archivo muestra una característica distinta:
+
+- `hola.aym` – impresión simple.
+- `vars.aym` – declaraciones y asignaciones.
+- `func.aym` – definición de funciones.
+- `for.aym`, `range_for.aym` – bucles.
+- `condloop.aym`, `else.aym`, `if_switch.aym` – condicionales.
+- `recursion.aym` – llamadas recursivas.
+- `calculadora.aym` – programa interactivo con `input()`.
