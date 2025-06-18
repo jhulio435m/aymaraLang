@@ -42,15 +42,37 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
             paramTypes[p.first] = types;
         }
     }
-    for (const auto &n : nodes) {
-        if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
-            functions[fn->getName()] = fn->getParams().size();
-            paramTypes[fn->getName()] = std::vector<std::string>(fn->getParams().size(), "jach’a");
+
+    struct FuncCollector : ASTVisitor {
+        SemanticAnalyzer *self;
+        void visit(FunctionStmt &fn) override {
+            self->functions[fn.getName()] = fn.getParams().size();
+            self->paramTypes[fn.getName()] = std::vector<std::string>(fn.getParams().size(), "jach’a");
         }
-    }
-    for (const auto &n : nodes) {
-        analyzeStmt(static_cast<const Stmt *>(n.get()));
-    }
+        void visit(NumberExpr&) override {}
+        void visit(StringExpr&) override {}
+        void visit(VariableExpr&) override {}
+        void visit(BinaryExpr&) override {}
+        void visit(UnaryExpr&) override {}
+        void visit(CallExpr&) override {}
+        void visit(PrintStmt&) override {}
+        void visit(ExprStmt&) override {}
+        void visit(AssignStmt&) override {}
+        void visit(BlockStmt&) override {}
+        void visit(IfStmt&) override {}
+        void visit(ForStmt&) override {}
+        void visit(BreakStmt&) override {}
+        void visit(ContinueStmt&) override {}
+        void visit(ReturnStmt&) override {}
+        void visit(VarDeclStmt&) override {}
+        void visit(WhileStmt&) override {}
+        void visit(DoWhileStmt&) override {}
+        void visit(SwitchStmt&) override {}
+    } collector;
+    collector.self = this;
+    for (const auto &n : nodes) n->accept(collector);
+
+    for (const auto &n : nodes) n->accept(*this);
     globals.clear();
     globalTypes.clear();
     if (!scopes.empty()) {
@@ -62,174 +84,182 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
     popScope();
 }
 
-void SemanticAnalyzer::analyzeStmt(const Stmt *stmt) {
-    if (auto *p = dynamic_cast<const PrintStmt *>(stmt)) {
-        analyzeExpr(p->getExpr());
-        return;
-    }
-    if (auto *e = dynamic_cast<const ExprStmt *>(stmt)) {
-        analyzeExpr(e->getExpr());
-        return;
-    }
-    if (auto *a = dynamic_cast<const AssignStmt *>(stmt)) {
-        std::string t = analyzeExpr(a->getValue());
-        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()==BUILTIN_INPUT) {
-            t = lookup(a->getName());
-        }
-        if (!isDeclared(a->getName())) {
-            declare(a->getName(), t);
-        } else if (lookup(a->getName()) != t && !t.empty()) {
-            std::cerr << "Error: tipo incompatible en asignacion a '" << a->getName() << "'" << std::endl;
-        }
-        return;
-    }
-    if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
-        std::string t = "";
-        if (v->getInit()) t = analyzeExpr(v->getInit());
-        if (v->getInit()) {
-            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()==BUILTIN_INPUT) {
-                t = v->getType();
-            }
-        }
-        declare(v->getName(), v->getType());
-        if (!t.empty() && t != v->getType()) {
-            std::cerr << "Error: tipo incompatible en declaracion de '" << v->getName() << "'" << std::endl;
-        }
-        return;
-    }
-    if (auto *b = dynamic_cast<const BlockStmt *>(stmt)) {
-        pushScope();
-        for (const auto &s : b->statements) analyzeStmt(s.get());
-        popScope();
-        return;
-    }
-    if (auto *i = dynamic_cast<const IfStmt *>(stmt)) {
-        analyzeExpr(i->getCondition());
-        analyzeStmt(i->getThen());
-        if (i->getElse()) analyzeStmt(i->getElse());
-        return;
-    }
-    if (auto *w = dynamic_cast<const WhileStmt *>(stmt)) {
-        analyzeExpr(w->getCondition());
-        ++loopDepth;
-        analyzeStmt(w->getBody());
-        --loopDepth;
-        return;
-    }
-    if (auto *dw = dynamic_cast<const DoWhileStmt *>(stmt)) {
-        ++loopDepth;
-        analyzeStmt(dw->getBody());
-        --loopDepth;
-        analyzeExpr(dw->getCondition());
-        return;
-    }
-    if (auto *f = dynamic_cast<const ForStmt *>(stmt)) {
-        pushScope();
-        analyzeStmt(f->getInit());
-        analyzeExpr(f->getCondition());
-        analyzeStmt(f->getPost());
-        ++loopDepth;
-        analyzeStmt(f->getBody());
-        --loopDepth;
-        popScope();
-        return;
-    }
-    if (auto *sw = dynamic_cast<const SwitchStmt *>(stmt)) {
-        analyzeExpr(sw->getExpr());
-        ++switchDepth;
-        for (const auto &c : sw->getCases()) {
-            analyzeExpr(c.first.get());
-            analyzeStmt(c.second.get());
-        }
-        if (sw->getDefault()) analyzeStmt(sw->getDefault());
-        --switchDepth;
-        return;
-    }
-    if (auto *fn = dynamic_cast<const FunctionStmt *>(stmt)) {
-        pushScope();
-        ++functionDepth;
-        auto it = paramTypes.find(fn->getName());
-        size_t idx = 0;
-        for (const auto &pname : fn->getParams()) {
-            std::string t = "jach’a";
-            if (it != paramTypes.end() && idx < it->second.size()) t = it->second[idx];
-            declare(pname, t);
-            ++idx;
-        }
-        analyzeStmt(fn->getBody());
-        --functionDepth;
-        popScope();
-        return;
-    }
-    if (dynamic_cast<const BreakStmt *>(stmt)) {
-        if (loopDepth == 0 && switchDepth == 0) {
-            std::cerr << "Error: 'break' fuera de un ciclo o switch" << std::endl;
-        }
-        return;
-    }
-    if (dynamic_cast<const ContinueStmt *>(stmt)) {
-        if (loopDepth == 0) {
-            std::cerr << "Error: 'continue' fuera de un ciclo" << std::endl;
-        }
-        return;
-    }
-    if (auto *r = dynamic_cast<const ReturnStmt *>(stmt)) {
-        if (functionDepth == 0) {
-            std::cerr << "Error: 'return' fuera de una funcion" << std::endl;
-        }
-        if (r->getValue()) analyzeExpr(r->getValue());
-        return;
+void SemanticAnalyzer::visit(PrintStmt &p) {
+    p.getExpr()->accept(*this);
+}
+
+void SemanticAnalyzer::visit(ExprStmt &e) {
+    e.getExpr()->accept(*this);
+}
+
+void SemanticAnalyzer::visit(AssignStmt &a) {
+    a.getValue()->accept(*this);
+    std::string t = currentType;
+    if (lastInputCall) t = lookup(a.getName());
+    if (!isDeclared(a.getName())) {
+        declare(a.getName(), t);
+    } else if (lookup(a.getName()) != t && !t.empty()) {
+        std::cerr << "Error: tipo incompatible en asignacion a '" << a.getName() << "'" << std::endl;
     }
 }
 
-std::string SemanticAnalyzer::analyzeExpr(const Expr *expr) {
-    if (dynamic_cast<const NumberExpr *>(expr)) {
-        return "jach’a";
+void SemanticAnalyzer::visit(VarDeclStmt &v) {
+    std::string t = "";
+    if (v.getInit()) {
+        v.getInit()->accept(*this);
+        t = currentType;
+        if (lastInputCall) t = v.getType();
     }
-    if (dynamic_cast<const StringExpr *>(expr)) {
-        return "qillqa";
+    declare(v.getName(), v.getType());
+    if (!t.empty() && t != v.getType()) {
+        std::cerr << "Error: tipo incompatible en declaracion de '" << v.getName() << "'" << std::endl;
     }
-    if (auto *v = dynamic_cast<const VariableExpr *>(expr)) {
-        if (!isDeclared(v->getName())) {
-            std::cerr << "Error: variable '" << v->getName() << "' no declarada" << std::endl;
-            return "";
+}
+
+void SemanticAnalyzer::visit(BlockStmt &b) {
+    pushScope();
+    for (const auto &s : b.statements) s->accept(*this);
+    popScope();
+}
+
+void SemanticAnalyzer::visit(IfStmt &i) {
+    i.getCondition()->accept(*this);
+    i.getThen()->accept(*this);
+    if (i.getElse()) i.getElse()->accept(*this);
+}
+
+void SemanticAnalyzer::visit(WhileStmt &w) {
+    w.getCondition()->accept(*this);
+    ++loopDepth;
+    w.getBody()->accept(*this);
+    --loopDepth;
+}
+
+void SemanticAnalyzer::visit(DoWhileStmt &dw) {
+    ++loopDepth;
+    dw.getBody()->accept(*this);
+    --loopDepth;
+    dw.getCondition()->accept(*this);
+}
+
+void SemanticAnalyzer::visit(ForStmt &f) {
+    pushScope();
+    f.getInit()->accept(*this);
+    f.getCondition()->accept(*this);
+    f.getPost()->accept(*this);
+    ++loopDepth;
+    f.getBody()->accept(*this);
+    --loopDepth;
+    popScope();
+}
+
+void SemanticAnalyzer::visit(SwitchStmt &sw) {
+    sw.getExpr()->accept(*this);
+    ++switchDepth;
+    for (const auto &c : sw.getCases()) {
+        c.first->accept(*this);
+        c.second->accept(*this);
+    }
+    if (sw.getDefault()) sw.getDefault()->accept(*this);
+    --switchDepth;
+}
+
+void SemanticAnalyzer::visit(FunctionStmt &fn) {
+    pushScope();
+    ++functionDepth;
+    auto it = paramTypes.find(fn.getName());
+    size_t idx = 0;
+    for (const auto &pname : fn.getParams()) {
+        std::string t = "jach’a";
+        if (it != paramTypes.end() && idx < it->second.size()) t = it->second[idx];
+        declare(pname, t);
+        ++idx;
+    }
+    fn.getBody()->accept(*this);
+    --functionDepth;
+    popScope();
+}
+
+void SemanticAnalyzer::visit(BreakStmt &) {
+    if (loopDepth == 0 && switchDepth == 0) {
+        std::cerr << "Error: 'break' fuera de un ciclo o switch" << std::endl;
+    }
+}
+
+void SemanticAnalyzer::visit(ContinueStmt &) {
+    if (loopDepth == 0) {
+        std::cerr << "Error: 'continue' fuera de un ciclo" << std::endl;
+    }
+}
+
+void SemanticAnalyzer::visit(ReturnStmt &r) {
+    if (functionDepth == 0) {
+        std::cerr << "Error: 'return' fuera de una funcion" << std::endl;
+    }
+    if (r.getValue()) r.getValue()->accept(*this);
+}
+
+void SemanticAnalyzer::visit(NumberExpr &) {
+    currentType = "jach’a";
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(StringExpr &) {
+    currentType = "qillqa";
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(VariableExpr &v) {
+    if (!isDeclared(v.getName())) {
+        std::cerr << "Error: variable '" << v.getName() << "' no declarada" << std::endl;
+        currentType = "";
+    } else {
+        currentType = lookup(v.getName());
+    }
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(BinaryExpr &b) {
+    b.getLeft()->accept(*this);
+    std::string l = currentType;
+    b.getRight()->accept(*this);
+    std::string r = currentType;
+    if (l != r) {
+        std::cerr << "Error: tipos incompatibles en operacion" << std::endl;
+    }
+    char op = b.getOp();
+    if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
+        currentType = "jach’a";
+    else
+        currentType = l;
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(UnaryExpr &u) {
+    u.getExpr()->accept(*this);
+    currentType = "jach’a";
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(CallExpr &c) {
+    auto it = functions.find(c.getName());
+    if (it == functions.end()) {
+        std::cerr << "Error: funcion '" << c.getName() << "' no declarada" << std::endl;
+    } else if (c.getArgs().size() != it->second) {
+        std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c.getName() << "'" << std::endl;
+    }
+    size_t idx = 0;
+    auto pit = paramTypes.find(c.getName());
+    for (const auto &arg : c.getArgs()) {
+        arg->accept(*this);
+        std::string t = currentType;
+        if (pit != paramTypes.end() && idx < pit->second.size()) {
+            if (t == "qillqa") pit->second[idx] = "qillqa";
         }
-        return lookup(v->getName());
+        ++idx;
     }
-    if (auto *b = dynamic_cast<const BinaryExpr *>(expr)) {
-        std::string l = analyzeExpr(b->getLeft());
-        std::string r = analyzeExpr(b->getRight());
-        if (l != r) {
-            std::cerr << "Error: tipos incompatibles en operacion" << std::endl;
-        }
-        char op = b->getOp();
-        if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
-            return "jach’a";
-        return l;
-    }
-    if (auto *u = dynamic_cast<const UnaryExpr *>(expr)) {
-        analyzeExpr(u->getExpr());
-        return "jach’a";
-    }
-    if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
-        auto it = functions.find(c->getName());
-        if (it == functions.end()) {
-            std::cerr << "Error: funcion '" << c->getName() << "' no declarada" << std::endl;
-        } else if (c->getArgs().size() != it->second) {
-            std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c->getName() << "'" << std::endl;
-        }
-        size_t idx = 0;
-        auto pit = paramTypes.find(c->getName());
-        for (const auto &arg : c->getArgs()) {
-            std::string t = analyzeExpr(arg.get());
-            if (pit != paramTypes.end() && idx < pit->second.size()) {
-                if (t == "qillqa") pit->second[idx] = "qillqa";
-            }
-            ++idx;
-        }
-        return "jach’a";
-    }
-    return "";
+    currentType = "jach’a";
+    lastInputCall = (c.getName() == BUILTIN_INPUT);
 }
 
 } // namespace aym
