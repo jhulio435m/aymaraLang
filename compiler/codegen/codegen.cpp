@@ -1,5 +1,6 @@
 #include "codegen.h"
 #include "../ast/ast.h"
+#include "../builtins/builtins.h"
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
@@ -304,7 +305,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         if (locals && currentLocalStrings.count(a->getName())) str = currentLocalStrings[a->getName()];
         else if (!locals && globalTypes.count(a->getName()) && globalTypes[a->getName()] == "qillqa") str = true;
 
-        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()=="input") {
+        if (auto *call = dynamic_cast<const CallExpr*>(a->getValue()); call && call->getName()==BUILTIN_INPUT) {
             if (str)
                 emitInput(true);
             else
@@ -322,7 +323,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
     if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
         if (v->getInit()) {
             bool str = (v->getType() == "qillqa");
-            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()=="input") {
+            if (auto *call = dynamic_cast<const CallExpr*>(v->getInit()); call && call->getName()==BUILTIN_INPUT) {
                 emitInput(str);
             } else {
                 emitExpr(v->getInit(), locals);
@@ -550,7 +551,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         return;
     }
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
-        if (c->getName() == "willt’aña" && !c->getArgs().empty()) {
+        if (c->getName() == BUILTIN_PRINT && !c->getArgs().empty()) {
             if (auto *s = dynamic_cast<StringExpr *>(c->getArgs()[0].get())) {
                 size_t idx = findString(s->getValue());
                 out << "    lea rdi, [rel fmt_str]\n";
@@ -565,14 +566,14 @@ void CodeGenImpl::emitExpr(const Expr *expr,
                 out << "    call printf\n";
             }
             return;
-        } else if (c->getName() == "input") {
+        } else if (c->getName() == BUILTIN_INPUT) {
             out << "    lea rdi, [rel fmt_read_int]\n";
             out << "    lea rsi, [rel input_val]\n";
             out << "    xor eax,eax\n";
             out << "    call scanf\n";
             out << "    mov rax, [rel input_val]\n";
             return;
-        } else if (c->getName() == "length") {
+        } else if (c->getName() == BUILTIN_LENGTH) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov rdi, rax\n";
             out << "    call strlen\n";

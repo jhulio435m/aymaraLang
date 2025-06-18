@@ -18,6 +18,7 @@ CODEGEN_SRC = $(SRC_DIR)/codegen/*.cpp
 UTILS_SRC = $(SRC_DIR)/utils/utils.cpp
 ERROR_SRC = $(SRC_DIR)/utils/error.cpp
 SEMANTIC_SRC = $(SRC_DIR)/semantic/*.cpp
+BUILTINS_SRC = $(SRC_DIR)/builtins/*.cpp
 
 OBJS = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/parser.o \
@@ -26,6 +27,7 @@ OBJS = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/utils.o \
        $(BUILD_DIR)/error.o \
        $(BUILD_DIR)/semantic.o \
+       $(BUILD_DIR)/builtins.o \
        $(BUILD_DIR)/main.o
 
 all: $(BIN_DIR)/aymc
@@ -59,6 +61,10 @@ $(BUILD_DIR)/error.o: $(ERROR_SRC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/semantic.o: $(SEMANTIC_SRC)
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/builtins.o: $(BUILTINS_SRC)
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
