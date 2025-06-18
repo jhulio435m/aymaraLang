@@ -19,6 +19,7 @@ UTILS_SRC = $(SRC_DIR)/utils/utils.cpp
 ERROR_SRC = $(SRC_DIR)/utils/error.cpp
 SEMANTIC_SRC = $(SRC_DIR)/semantic/*.cpp
 BUILTINS_SRC = $(SRC_DIR)/builtins/*.cpp
+INTERPRETER_SRC = $(SRC_DIR)/interpreter/*.cpp
 
 OBJS = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/parser.o \
@@ -27,7 +28,8 @@ OBJS = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/utils.o \
        $(BUILD_DIR)/error.o \
        $(BUILD_DIR)/semantic.o \
-       $(BUILD_DIR)/builtins.o
+       $(BUILD_DIR)/builtins.o \
+       $(BUILD_DIR)/interpreter.o
 
 OBJS_NO_MAIN = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/parser.o \
@@ -36,7 +38,8 @@ OBJS_NO_MAIN = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/utils.o \
        $(BUILD_DIR)/error.o \
        $(BUILD_DIR)/semantic.o \
-       $(BUILD_DIR)/builtins.o
+       $(BUILD_DIR)/builtins.o \
+       $(BUILD_DIR)/interpreter.o
 
 TEST_SRC = tests/unittests/test_compiler.cpp
 TEST_OBJ = $(BUILD_DIR)/test_compiler.o
@@ -78,6 +81,10 @@ $(BUILD_DIR)/semantic.o: $(SEMANTIC_SRC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/builtins.o: $(BUILTINS_SRC)
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/interpreter.o: $(INTERPRETER_SRC)
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 

@@ -64,7 +64,11 @@ TEST(CodeGenTest, GeneratesAssembly) {
     ASSERT_FALSE(parser.hasError());
 
     CodeGenerator cg;
-    cg.generate(nodes, "build/test_output.asm", {}, {}, {});
+#ifdef _WIN32
+    cg.generate(nodes, "build/test_output.asm", {}, {}, {}, true);
+#else
+    cg.generate(nodes, "build/test_output.asm", {}, {}, {}, false);
+#endif
 
     std::ifstream in("build/test_output.asm");
     ASSERT_TRUE(in.is_open());
@@ -73,8 +77,13 @@ TEST(CodeGenTest, GeneratesAssembly) {
     EXPECT_NE(contents.find("ok"), std::string::npos);
 
     std::remove("build/test_output.asm");
+#ifdef _WIN32
+    std::remove("build/test_output.obj");
+    std::remove("bin/test_output.exe");
+#else
     std::remove("build/test_output.o");
     std::remove("bin/test_output");
+#endif
 }
 
 int main(int argc, char **argv) {

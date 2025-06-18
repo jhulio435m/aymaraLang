@@ -16,6 +16,15 @@ size_t labelCounter = 0;
 std::string genLabel(const std::string &base) {
     return base + std::to_string(labelCounter++);
 }
+
+std::vector<std::string> paramRegs(bool windows) {
+    if (windows)
+        return {"rcx","rdx","r8","r9"};
+    return {"rdi","rsi","rdx","rcx","r8","r9"};
+}
+
+std::string reg1(bool windows) { return windows ? "rcx" : "rdi"; }
+std::string reg2(bool windows) { return windows ? "rdx" : "rsi"; }
 }
 
 class CodeGenImpl {
@@ -23,6 +32,7 @@ public:
     std::ofstream out;
     std::unordered_set<std::string> globals;
     std::vector<std::string> strings;
+    bool windows = false;
     size_t findString(const std::string &val) const {
         for (size_t i = 0; i < strings.size(); ++i) {
             if (strings[i] == val) return i;
@@ -49,7 +59,8 @@ public:
               const std::string &path,
               const std::unordered_set<std::string> &semGlobals,
               const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
-              const std::unordered_map<std::string,std::string> &globalTypesIn);
+              const std::unordered_map<std::string,std::string> &globalTypesIn,
+              bool windows);
 private:
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt,
@@ -242,7 +253,7 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     if (stackSize) out << "    sub rsp, " << stackSize << "\n";
 
     // store parameters
-    std::vector<std::string> regs = {"rdi","rsi","rdx","rcx","r8","r9"};
+    std::vector<std::string> regs = paramRegs(this->windows);
     size_t idx = 0;
     for (const auto &p : info.node->getParams()) {
         if (idx < regs.size()) {
@@ -266,8 +277,8 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
     if (auto *p = dynamic_cast<const PrintStmt *>(stmt)) {
         if (auto *s = dynamic_cast<StringExpr *>(p->getExpr())) {
             size_t idx = findString(s->getValue());
-            out << "    lea rdi, [rel fmt_str]\n";
-            out << "    lea rsi, [rel str" << idx << "]\n";
+            out << "    lea " << reg1(this->windows) << ", [rel fmt_str]\n";
+            out << "    lea " << reg2(this->windows) << ", [rel str" << idx << "]\n";
             out << "    xor eax,eax\n";
             out << "    call printf\n";
         } else if (auto *v = dynamic_cast<VariableExpr *>(p->getExpr())) {
@@ -279,18 +290,18 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
                 isStr = true;
             }
             if (isStr) {
-                out << "    mov rsi, rax\n";
-                out << "    lea rdi, [rel fmt_str]\n";
+                out << "    mov " << reg2(this->windows) << ", rax\n";
+                out << "    lea " << reg1(this->windows) << ", [rel fmt_str]\n";
             } else {
-                out << "    mov rsi, rax\n";
-                out << "    lea rdi, [rel fmt_int]\n";
+                out << "    mov " << reg2(this->windows) << ", rax\n";
+                out << "    lea " << reg1(this->windows) << ", [rel fmt_int]\n";
             }
             out << "    xor eax,eax\n";
             out << "    call printf\n";
         } else {
             emitExpr(p->getExpr(), locals);
-            out << "    mov rsi, rax\n";
-            out << "    lea rdi, [rel fmt_int]\n";
+            out << "    mov " << reg2(this->windows) << ", rax\n";
+            out << "    lea " << reg1(this->windows) << ", [rel fmt_int]\n";
             out << "    xor eax,eax\n";
             out << "    call printf\n";
         }
@@ -554,33 +565,33 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         if (c->getName() == BUILTIN_PRINT && !c->getArgs().empty()) {
             if (auto *s = dynamic_cast<StringExpr *>(c->getArgs()[0].get())) {
                 size_t idx = findString(s->getValue());
-                out << "    lea rdi, [rel fmt_str]\n";
-                out << "    lea rsi, [rel str" << idx << "]\n";
+                out << "    lea " << reg1(this->windows) << ", [rel fmt_str]\n";
+                out << "    lea " << reg2(this->windows) << ", [rel str" << idx << "]\n";
                 out << "    xor eax,eax\n";
                 out << "    call printf\n";
             } else {
                 emitExpr(c->getArgs()[0].get(), locals);
-                out << "    mov rsi, rax\n";
-                out << "    lea rdi, [rel fmt_int]\n";
+                out << "    mov " << reg2(this->windows) << ", rax\n";
+                out << "    lea " << reg1(this->windows) << ", [rel fmt_int]\n";
                 out << "    xor eax,eax\n";
                 out << "    call printf\n";
             }
             return;
         } else if (c->getName() == BUILTIN_INPUT) {
-            out << "    lea rdi, [rel fmt_read_int]\n";
-            out << "    lea rsi, [rel input_val]\n";
+            out << "    lea " << reg1(this->windows) << ", [rel fmt_read_int]\n";
+            out << "    lea " << reg2(this->windows) << ", [rel input_val]\n";
             out << "    xor eax,eax\n";
             out << "    call scanf\n";
             out << "    mov rax, [rel input_val]\n";
             return;
         } else if (c->getName() == BUILTIN_LENGTH) {
             emitExpr(c->getArgs()[0].get(), locals);
-            out << "    mov rdi, rax\n";
+            out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call strlen\n";
             return;
         }
         // user function call
-        std::vector<std::string> regs = {"rdi","rsi","rdx","rcx","r8","r9"};
+        std::vector<std::string> regs = paramRegs(this->windows);
         size_t idx = 0;
         for (const auto &a : c->getArgs()) {
             emitExpr(a.get(), locals);
@@ -596,14 +607,14 @@ void CodeGenImpl::emitExpr(const Expr *expr,
 
 void CodeGenImpl::emitInput(bool asString) {
     if (asString) {
-        out << "    lea rdi, [rel fmt_read_str]\n";
-        out << "    lea rsi, [rel input_buf]\n";
+        out << "    lea " << reg1(this->windows) << ", [rel fmt_read_str]\n";
+        out << "    lea " << reg2(this->windows) << ", [rel input_buf]\n";
         out << "    xor eax,eax\n";
         out << "    call scanf\n";
         out << "    lea rax, [rel input_buf]\n";
     } else {
-        out << "    lea rdi, [rel fmt_read_int]\n";
-        out << "    lea rsi, [rel input_val]\n";
+        out << "    lea " << reg1(this->windows) << ", [rel fmt_read_int]\n";
+        out << "    lea " << reg2(this->windows) << ", [rel input_val]\n";
         out << "    xor eax,eax\n";
         out << "    call scanf\n";
         out << "    mov rax, [rel input_val]\n";
@@ -614,7 +625,9 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::string &path,
                        const std::unordered_set<std::string> &semGlobals,
                        const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
-                       const std::unordered_map<std::string,std::string> &globalTypesIn) {
+                       const std::unordered_map<std::string,std::string> &globalTypesIn,
+                       bool windows) {
+    this->windows = windows;
     globals = semGlobals;
     paramTypes = paramTypesIn;
     globalTypes = globalTypesIn;
@@ -670,7 +683,8 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "    mov eax,0\n";
     out << "    ret\n";
 
-    out << "section .note.GNU-stack noalloc noexec nowrite progbits\n";
+    if (!windows)
+        out << "section .note.GNU-stack noalloc noexec nowrite progbits\n";
 
     out.close();
 
@@ -678,21 +692,25 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     fs::create_directories("build");
     fs::create_directories("bin");
 
-    std::string obj = path.substr(0, path.find_last_of('.')) + ".o";
-    std::string base = path.substr(path.find_last_of("/\\") + 1);
-    base = base.substr(0, base.find_last_of('.'));
-    std::string bin = std::string("bin/") + base;
-    std::string cmd1 = "nasm -felf64 " + path + " -o " + obj;
+    fs::path obj = fs::path(path).replace_extension(windows ? ".obj" : ".o");
+    fs::path base = fs::path(path).stem();
+    fs::path bin = fs::path("bin") / base;
+    if (windows) bin.replace_extension(".exe");
+    std::string cmd1 = std::string("nasm ") + (windows ? "-f win64 " : "-felf64 ") + path + " -o " + obj.string();
     if (std::system(cmd1.c_str()) != 0) {
         std::cerr << "Error ensamblando " << path << std::endl;
         return;
     }
-    std::string cmd2 = "gcc -no-pie " + obj + " -o " + bin + " -lc";
+    std::string cmd2;
+    if (windows)
+        cmd2 = "gcc " + obj.string() + " -o " + bin.string();
+    else
+        cmd2 = "gcc -no-pie " + obj.string() + " -o " + bin.string() + " -lc";
     if (std::system(cmd2.c_str()) != 0) {
-        std::cerr << "Error enlazando " << obj << std::endl;
+        std::cerr << "Error enlazando " << obj.string() << std::endl;
         return;
     }
-    std::cout << "[aymc] Ejecutable generado: " << bin << std::endl;
+    std::cout << "[aymc] Ejecutable generado: " << bin.string() << std::endl;
 }
 
 
@@ -700,9 +718,10 @@ void CodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes,
                              const std::string &outputPath,
                              const std::unordered_set<std::string> &globals,
                              const std::unordered_map<std::string,std::vector<std::string>> &paramTypes,
-                             const std::unordered_map<std::string,std::string> &globalTypes) {
+                             const std::unordered_map<std::string,std::string> &globalTypes,
+                             bool windows) {
     CodeGenImpl impl;
-    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes);
+    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes, windows);
 }
 
 } // namespace aym

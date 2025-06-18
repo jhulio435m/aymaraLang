@@ -135,15 +135,41 @@ inicio
 1
 ```
 
+### Uso en Windows
+
+1. Instalar [MinGW-w64](https://www.mingw-w64.org/) y la versión para Windows de `nasm`.
+2. Ejecutar `build.bat` para compilar `aymc.exe`.
+3. Compilar un archivo `.aym` con:
+
+```cmd
+> aymc archivo.aym
+```
+
+Se generará `bin\archivo.exe` que podrá ejecutarse con doble clic o desde la consola.
+
+### Modo REPL
+
+El compilador incluye un modo interactivo que permite ejecutar código línea por línea:
+
+```bash
+$ ./bin/aymc --repl
+AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)
+aym> jach’a x = 5;
+aym> x + 2
+7
+aym> salir
+```
+
+
 ---
 
 ## 🧰 Tecnologías y Herramientas
 
 * **Lenguaje:** C++17
-* **Arquitectura objetivo:** x86\_64 Linux
+* **Arquitectura objetivo:** x86\_64 Linux/Windows
 * **Assembler:** NASM
-* **Linker:** GNU LD
-* **Sistema de construcción:** Make
+* **Linker:** GNU LD / GCC (MinGW)
+* **Sistema de construcción:** Make (Linux) / `build.bat` (Windows)
 * **IDE recomendados:** CLion, VSCode, Vim
 * **Control de versiones:** Git + GitHub
 * **Tests:** Google Test (planificado)
