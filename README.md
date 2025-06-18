@@ -255,10 +255,7 @@ aym> salir
 
 ## 📜 Licencia
 
-**Por definir.** Sugerencias:
-
-* MIT: abierta, sencilla, ideal para educación.
-* GPLv3: mayor protección de libertad de software.
+Este proyecto se distribuye bajo la **licencia MIT**.
 
 ---
 
