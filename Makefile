@@ -27,8 +27,21 @@ OBJS = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/utils.o \
        $(BUILD_DIR)/error.o \
        $(BUILD_DIR)/semantic.o \
-       $(BUILD_DIR)/builtins.o \
-       $(BUILD_DIR)/main.o
+       $(BUILD_DIR)/builtins.o
+
+OBJS_NO_MAIN = $(BUILD_DIR)/lexer.o \
+       $(BUILD_DIR)/parser.o \
+       $(BUILD_DIR)/ast.o \
+       $(BUILD_DIR)/codegen.o \
+       $(BUILD_DIR)/utils.o \
+       $(BUILD_DIR)/error.o \
+       $(BUILD_DIR)/semantic.o \
+       $(BUILD_DIR)/builtins.o
+
+TEST_SRC = tests/unittests/test_compiler.cpp
+TEST_OBJ = $(BUILD_DIR)/test_compiler.o
+
+OBJS += $(BUILD_DIR)/main.o
 
 all: $(BIN_DIR)/aymc
 
@@ -71,6 +84,17 @@ $(BUILD_DIR)/builtins.o: $(BUILTINS_SRC)
 $(BUILD_DIR)/main.o: $(MAIN_SRC)
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(TEST_OBJ): $(TEST_SRC)
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -I. -c $< -o $@
+
+$(BIN_DIR)/unittests: $(OBJS_NO_MAIN) $(TEST_OBJ)
+	mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lgtest -lgtest_main -pthread
+
+test: $(BIN_DIR)/unittests
+	$<
 
 clean:
 	rm -rf $(BUILD_DIR)/*.o $(BIN_DIR)/aymc
