@@ -9,6 +9,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 int main(int argc, char** argv) {
     std::vector<std::string> inputs;
@@ -16,6 +17,13 @@ int main(int argc, char** argv) {
     bool outputProvided = false;
     bool debug = false;
     bool dumpAst = false;
+    bool windowsTarget =
+#ifdef _WIN32
+        true;
+#else
+        false;
+#endif
+
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "-h" || arg == "--help") {
@@ -28,6 +36,10 @@ int main(int argc, char** argv) {
             debug = true;
         } else if (arg == "--dump-ast") {
             dumpAst = true;
+        } else if (arg == "--windows") {
+            windowsTarget = true;
+        } else if (arg == "--linux") {
+            windowsTarget = false;
         } else {
             inputs.push_back(arg);
         }
@@ -38,13 +50,10 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    namespace fs = std::filesystem;
     if (!outputProvided) {
-        std::string base = inputs[0];
-        size_t slash = base.find_last_of("/\\");
-        if (slash != std::string::npos) base = base.substr(slash + 1);
-        size_t dot = base.find_last_of('.');
-        if (dot != std::string::npos) base = base.substr(0, dot);
-        output = "build/" + base;
+        fs::path base = fs::path(inputs[0]).stem();
+        output = (fs::path("build") / base).string();
     }
 
     std::string source;
@@ -77,7 +86,7 @@ int main(int argc, char** argv) {
     sem.analyze(nodes);
 
     aym::CodeGenerator cg;
-    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes(), sem.getGlobalTypes());
+    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes(), sem.getGlobalTypes(), windowsTarget);
 
     return 0;
 }
