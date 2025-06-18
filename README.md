@@ -147,6 +147,20 @@ inicio
 
 Se generará `bin\archivo.exe` que podrá ejecutarse con doble clic o desde la consola.
 
+### Modo REPL
+
+El compilador incluye un modo interactivo que permite ejecutar código línea por línea:
+
+```bash
+$ ./bin/aymc --repl
+AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)
+aym> jach’a x = 5;
+aym> x + 2
+7
+aym> salir
+```
+
+
 ---
 
 ## 🧰 Tecnologías y Herramientas
