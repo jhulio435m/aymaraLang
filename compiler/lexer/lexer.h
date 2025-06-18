@@ -62,6 +62,8 @@ enum class TokenType {
 struct Token {
     TokenType type;
     std::string text;
+    size_t line;
+    size_t column;
 };
 
 class Lexer {
@@ -74,6 +76,8 @@ private:
 
     std::string src;
     size_t pos = 0;
+    size_t line = 1;
+    size_t column = 1;
 };
 
 } // namespace aym
