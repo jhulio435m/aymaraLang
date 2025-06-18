@@ -33,6 +33,26 @@ El compilador produce un archivo NASM, lo ensambla y enlaza automáticamente.
 ## Palabras clave
 `willt’aña`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`
 
+### Valores booleanos
+En `aym` los literales lógicos utilizan vocabulario aimara. La palabra
+`cheka` representa **verdadero** (`true`) y la expresión `jan cheka`
+equivale a **falso** (`false`). Son útiles para inicializar variables y
+para las condiciones en estructuras de control.
+
+```aymara
+chuymani bandera = cheka;
+si (bandera) {
+    willt’aña("activado");
+}
+
+chuymani otra = jan cheka;
+si (otra) {
+    willt’aña("esto no se imprime");
+} sino {
+    willt’aña("desactivado");
+}
+```
+
 ## Ejemplo
 ```aymara
 qillqa nombre = input();
