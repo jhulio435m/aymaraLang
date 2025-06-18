@@ -41,6 +41,9 @@ OBJS_NO_MAIN = $(BUILD_DIR)/lexer.o \
        $(BUILD_DIR)/builtins.o \
        $(BUILD_DIR)/interpreter.o
 
+TEST_SRC = tests/unittests/test_compiler.cpp
+TEST_OBJ = $(BUILD_DIR)/test_compiler.o
+
 OBJS += $(BUILD_DIR)/main.o
 
 all: $(BIN_DIR)/aymc
@@ -82,6 +85,10 @@ $(BUILD_DIR)/builtins.o: $(BUILTINS_SRC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/interpreter.o: $(INTERPRETER_SRC)
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/main.o: $(MAIN_SRC)
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 

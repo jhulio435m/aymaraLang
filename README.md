@@ -173,12 +173,12 @@ inicio
 
 ### Uso en Windows
 
-1. Instalar [MinGW-w64](https://www.mingw-w64.org/) y `nasm` para Windows.
+1. Instalar [MinGW-w64](https://www.mingw-w64.org/) y la versión para Windows de `nasm`
 2. Ejecutar `build.bat` para compilar `aymc.exe`.
 3. Compilar un archivo `.aym` con:
 
 ```cmd
-> aymc archivo.aym --windows
+> aymc archivo.aym
 ```
 
 Se generará `bin\archivo.exe` que podrá ejecutarse con doble clic o desde la consola.
@@ -196,11 +196,11 @@ aym> x + 2
 aym> salir
 ```
 
+
 ### Errores comunes
 
 - **Variable no declarada:** usar una variable sin declararla mostrará un mensaje `Error: variable 'x' no declarada`.
 - **`break` fuera de ciclo:** si se usa `break` fuera de `mientras`, `para` o `tantachaña` se emitirá `Error: 'break' fuera de un ciclo o switch`.
-
 
 ---
 
