@@ -92,16 +92,12 @@ $(BUILD_DIR)/main.o: $(MAIN_SRC)
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(TEST_OBJ): $(TEST_SRC)
+$(BUILD_DIR)/main.o: $(MAIN_SRC)
 	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -I. -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(BIN_DIR)/unittests: $(OBJS_NO_MAIN) $(TEST_OBJ)
-	mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) -o $@ $^ -lgtest -lgtest_main -pthread
-
-test: $(BIN_DIR)/unittests
-	$<
+test: all
+	bash tests/run_tests.sh
 
 clean:
 	rm -rf $(BUILD_DIR)/*.o $(BIN_DIR)/aymc

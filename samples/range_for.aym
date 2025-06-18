@@ -1,3 +1,4 @@
+// Azúcar sintáctico para bucles con range
 para i en range(0, 4) {
     willt’aña(i);
 }

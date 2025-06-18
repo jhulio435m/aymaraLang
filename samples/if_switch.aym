@@ -1,3 +1,4 @@
+// Condicionales encadenados y switch
 jach’a x = 2;
 
 si (x == 1) {

@@ -1,3 +1,4 @@
+// Uso de 'return'
 luräwi inc(n) {
     kutiyana n + 1;
 }

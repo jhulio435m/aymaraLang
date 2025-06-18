@@ -1,3 +1,4 @@
+// Comparaciones con operadores relacionales
 si (5 >= 3) {
     willt’aña("ok");
 } sino {

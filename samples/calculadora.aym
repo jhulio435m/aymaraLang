@@ -1,0 +1,4 @@
+// Calculadora muy simple: suma dos numeros
+jach’a a = input();
+jach’a b = input();
+willt’aña(a + b);
