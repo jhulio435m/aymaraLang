@@ -74,6 +74,18 @@ luräwi fact(n) {
 willt’aña(fact(5));
 ```
 
+### Bucle con `range`
+La forma `para x en range(inicio, fin)` simplifica la iteración sobre rangos
+numéricos.
+
+```aymara
+para x en range(0, 4) {
+    willt’aña(x);
+}
+```
+
+Este fragmento puede encontrarse en `samples/range_for.aym`.
+
 ## Glosario de palabras clave
 
 | Aimara / Español | Significado |
