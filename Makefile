@@ -1,99 +1,45 @@
 # Makefile for AymaraLang Compiler (aymc)
 
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-NASM = nasm
-LD = ld
+CXX ?= g++
+CXXFLAGS ?= -std=c++17 -Wall -Wextra -O2
 
-SRC_DIR = ./compiler
-BUILD_DIR = ./build
-BIN_DIR = ./bin
-	
-MAIN_SRC = $(SRC_DIR)/main.cpp
+SRC_DIR := compiler
+BUILD_DIR := build
+BIN_DIR := bin
 
-LEXER_SRC = $(SRC_DIR)/lexer/*.cpp
-PARSER_SRC = $(SRC_DIR)/parser/*.cpp
-AST_SRC = $(SRC_DIR)/ast/*.cpp
-CODEGEN_SRC = $(SRC_DIR)/codegen/*.cpp
-UTILS_SRC = $(SRC_DIR)/utils/utils.cpp
-ERROR_SRC = $(SRC_DIR)/utils/error.cpp
-SEMANTIC_SRC = $(SRC_DIR)/semantic/*.cpp
-BUILTINS_SRC = $(SRC_DIR)/builtins/*.cpp
-INTERPRETER_SRC = $(SRC_DIR)/interpreter/*.cpp
+# Source files (explicit globs per subdir for portability)
+MAIN_SRC := $(SRC_DIR)/main.cpp
+LEXER_SRC := $(wildcard $(SRC_DIR)/lexer/*.cpp)
+PARSER_SRC := $(wildcard $(SRC_DIR)/parser/*.cpp)
+AST_SRC := $(wildcard $(SRC_DIR)/ast/*.cpp)
+CODEGEN_SRC := $(wildcard $(SRC_DIR)/codegen/*.cpp)
+UTILS_SRC := $(SRC_DIR)/utils/utils.cpp
+ERROR_SRC := $(SRC_DIR)/utils/error.cpp
+SEMANTIC_SRC := $(wildcard $(SRC_DIR)/semantic/*.cpp)
+BUILTINS_SRC := $(wildcard $(SRC_DIR)/builtins/*.cpp)
+INTERPRETER_SRC := $(wildcard $(SRC_DIR)/interpreter/*.cpp)
 
-OBJS = $(BUILD_DIR)/lexer.o \
-       $(BUILD_DIR)/parser.o \
-       $(BUILD_DIR)/ast.o \
-       $(BUILD_DIR)/codegen.o \
-       $(BUILD_DIR)/utils.o \
-       $(BUILD_DIR)/error.o \
-       $(BUILD_DIR)/semantic.o \
-       $(BUILD_DIR)/builtins.o \
-       $(BUILD_DIR)/interpreter.o
+SRCS := $(MAIN_SRC) $(LEXER_SRC) $(PARSER_SRC) $(AST_SRC) $(CODEGEN_SRC) \
+        $(UTILS_SRC) $(ERROR_SRC) $(SEMANTIC_SRC) $(BUILTINS_SRC) $(INTERPRETER_SRC)
 
-OBJS_NO_MAIN = $(BUILD_DIR)/lexer.o \
-       $(BUILD_DIR)/parser.o \
-       $(BUILD_DIR)/ast.o \
-       $(BUILD_DIR)/codegen.o \
-       $(BUILD_DIR)/utils.o \
-       $(BUILD_DIR)/error.o \
-       $(BUILD_DIR)/semantic.o \
-       $(BUILD_DIR)/builtins.o \
-       $(BUILD_DIR)/interpreter.o
+# Map each source to an object in build/ mirroring folder structure
+OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 
-TEST_SRC = tests/unittests/test_compiler.cpp
-TEST_OBJ = $(BUILD_DIR)/test_compiler.o
-
-OBJS += $(BUILD_DIR)/main.o
+.PHONY: all clean test
 
 all: $(BIN_DIR)/aymc
 
 $(BIN_DIR)/aymc: $(OBJS)
-	mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
-$(BUILD_DIR)/lexer.o: $(LEXER_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/parser.o: $(PARSER_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/ast.o: $(AST_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/codegen.o: $(CODEGEN_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/utils.o: $(UTILS_SRC)
-	       mkdir -p $(BUILD_DIR)
-	       $(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/error.o: $(ERROR_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/semantic.o: $(SEMANTIC_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/builtins.o: $(BUILTINS_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/interpreter.o: $(INTERPRETER_SRC)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/main.o: $(MAIN_SRC)
-	mkdir -p $(BUILD_DIR)
+# Pattern rule: compile any compiler/*.cpp to build/*.o
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 test: all
 	bash tests/run_tests.sh
 
 clean:
-	rm -rf $(BUILD_DIR)/*.o $(BIN_DIR)/aymc
+	rm -rf $(BUILD_DIR) $(BIN_DIR)/aymc

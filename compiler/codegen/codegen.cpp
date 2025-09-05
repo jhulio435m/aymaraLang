@@ -230,7 +230,9 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
         off += 8;
         offsets[n] = off;
     }
-    int stackSize = (off + 15) & ~15;
+    // Reserve Win64 shadow space (32 bytes) so calls are ABI-compliant
+    int shadow = this->windows ? 32 : 0;
+    int stackSize = (off + shadow + 15) & ~15;
 
     currentParamStrings.clear();
     currentLocalStrings = info.stringLocals;
@@ -249,6 +251,7 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     out << info.node->getName() << ":\n";
     out << "    push rbp\n";
     out << "    mov rbp, rsp\n";
+    // rbx is callee-saved on both SysV and Win64 ABIs
     out << "    push rbx\n";
     if (stackSize) out << "    sub rsp, " << stackSize << "\n";
 
@@ -676,9 +679,24 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "main:\n";
     out << "    push rbp\n";
     out << "    mov rbp, rsp\n";
+    // Preserve rbx (callee-saved) as we use it in expressions
+    out << "    push rbx\n";
+    if (this->windows) {
+        // Reserve shadow space for Win64 calls
+        out << "    sub rsp, 32\n";
+    } else {
+        // Align stack to 16 bytes before calls on SysV ABI
+        out << "    sub rsp, 8\n";
+    }
     std::string mainEnd = genLabel("endmain");
     for (const auto *s : mainStmts) emitStmt(s, nullptr, mainEnd);
     out << mainEnd << ":\n";
+    if (this->windows) {
+        out << "    add rsp, 32\n";
+    } else {
+        out << "    add rsp, 8\n";
+    }
+    out << "    pop rbx\n";
     out << "    pop rbp\n";
     out << "    mov eax,0\n";
     out << "    ret\n";
