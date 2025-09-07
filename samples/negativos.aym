@@ -1,0 +1,4 @@
+// Demostración de operadores unarios y números negativos
+jach’a n = -10;
+jach’a m = +3;
+willt’aña(n + m);

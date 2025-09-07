@@ -557,10 +557,17 @@ void CodeGenImpl::emitExpr(const Expr *expr,
     }
     if (auto *u = dynamic_cast<const UnaryExpr *>(expr)) {
         emitExpr(u->getExpr(), locals);
-        if (u->getOp() == '!') {
-            out << "    cmp rax,0\n";
-            out << "    sete al\n";
-            out << "    movzx rax,al\n";
+        switch (u->getOp()) {
+            case '!':
+                out << "    cmp rax,0\n";
+                out << "    sete al\n";
+                out << "    movzx rax,al\n";
+                break;
+            case '-':
+                out << "    neg rax\n";
+                break;
+            default:
+                break; // '+' is a no-op
         }
         return;
     }

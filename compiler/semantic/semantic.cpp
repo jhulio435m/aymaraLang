@@ -237,7 +237,9 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
 
 void SemanticAnalyzer::visit(UnaryExpr &u) {
     u.getExpr()->accept(*this);
-    currentType = "jach’a";
+    if (u.getOp() == '!') {
+        currentType = "jach’a";
+    }
     lastInputCall = false;
 }
 

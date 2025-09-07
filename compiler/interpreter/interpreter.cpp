@@ -129,8 +129,20 @@ void Interpreter::visit(BinaryExpr &b) {
 
 void Interpreter::visit(UnaryExpr &u) {
     Value v = eval(u.getExpr());
-    if (u.getOp()=='!') lastValue = Value::Bool(!(v.i!=0));
-    else lastValue = Value::Int(0);
+    switch (u.getOp()) {
+    case '!':
+        lastValue = Value::Bool(!(v.i != 0));
+        break;
+    case '-':
+        lastValue = Value::Int(-v.i);
+        break;
+    case '+':
+        lastValue = Value::Int(v.i);
+        break;
+    default:
+        lastValue = Value::Int(0);
+        break;
+    }
 }
 
 void Interpreter::visit(CallExpr &c) {
