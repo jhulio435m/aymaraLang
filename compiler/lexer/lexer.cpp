@@ -71,7 +71,6 @@ std::vector<Token> Lexer::tokenize() {
             } else if (word == "uka") {
                 tokens.push_back({TokenType::KeywordAnd, word, startLine, startColumn});
             } else if (word == "jan") {
-                // Look ahead without mutating lexer state to detect multi-word tokens
                 size_t i = pos;
                 while (i < src.size() && std::isspace(static_cast<unsigned char>(src[i]))) ++i;
                 std::string next;
@@ -85,7 +84,6 @@ std::vector<Token> Lexer::tokenize() {
                     }
                 }
                 if (next == "uka") {
-                    // consume whitespace and the following word 'uka'
                     while (pos < src.size() && std::isspace(static_cast<unsigned char>(peek()))) get();
                     for (size_t j = 0; j < 3 && pos < src.size(); ++j) get();
                     tokens.push_back({TokenType::KeywordOr, "jan uka", startLine, startColumn});

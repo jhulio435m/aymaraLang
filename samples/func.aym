@@ -1,6 +1,6 @@
 // Función que imprime un saludo
-luräwi saludo(nombre) {
-    willt’aña(nombre);
+luräwi hola(saludo) {
+    willt’aña(saludo);
 }
 
-saludo("Kamisaraki!");
+hola("hola!");

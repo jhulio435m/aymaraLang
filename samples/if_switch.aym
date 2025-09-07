@@ -1,5 +1,5 @@
 // Condicionales encadenados y switch
-jach’a x = 2;
+jach’a x = 30;
 
 si (x == 1) {
     willt’aña(1);

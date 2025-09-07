@@ -1,6 +1,6 @@
 // Bucle for tradicional
-jach’a contador = 3;
-para (contador = 3; contador; contador = contador - 1;) {
+jach’a contador = 10;
+para (contador; contador; contador = contador - 1;) {
     willt’aña(contador);
 }
 

@@ -1,4 +1,7 @@
 // Calculadora muy simple: suma dos numeros
+willt’aña("Ingrese el primer número: ")
 jach’a a = input();
+willt’aña("Ingrese el segundo número: ")
 jach’a b = input();
+willt’aña("La suma es: ")
 willt’aña(a + b);

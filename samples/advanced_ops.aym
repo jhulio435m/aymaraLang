@@ -1,3 +1,3 @@
 // Operadores avanzados: modulo y potencia
-willt’aña(5 % 2);
-willt’aña(2 ^ 3);
+willt’aña(9 % 7);
+willt’aña(2 ^ 10);

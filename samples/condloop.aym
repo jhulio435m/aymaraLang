@@ -1,4 +1,5 @@
 // Condición seguida de un ciclo while
+
 si (1) {
     willt’aña("cond");
 }
