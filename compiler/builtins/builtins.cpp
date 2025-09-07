@@ -5,7 +5,8 @@ namespace aym {
 static const std::unordered_map<std::string, BuiltinInfo> builtins = {
     {BUILTIN_PRINT, {1, {}}},
     {BUILTIN_INPUT, {0, {}}},
-    {BUILTIN_LENGTH, {1, {Type::String}}}
+    {BUILTIN_LENGTH, {1, {Type::String}}},
+    {BUILTIN_RANDOM, {1, {Type::Int}}}
 };
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions() {

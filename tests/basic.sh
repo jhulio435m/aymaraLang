@@ -27,3 +27,7 @@ make >/dev/null
 ./bin/aymc samples/negativos.aym >/dev/null
 ./bin/negativos | grep -q -- -7
 
+./bin/aymc samples/random.aym >/dev/null
+./bin/random >/dev/null
+
+

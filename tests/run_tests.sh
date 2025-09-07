@@ -25,6 +25,9 @@ run advanced_ops 8
 run string Kamisaraki
 run range_for 3
 run negativos -7
+./bin/aymc samples/random.aym >/dev/null
+./bin/random >/dev/null
+
 ./bin/aymc samples/calculadora.aym >/dev/null
 printf "3\n4\n" | ./bin/calculadora | grep -q 7
 

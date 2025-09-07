@@ -1,6 +1,8 @@
 #include "interpreter.h"
 #include "../builtins/builtins.h"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 namespace aym {
 
@@ -74,6 +76,17 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
         if (!args.empty() && args[0].type == Value::Type::String)
             return Value::Int(args[0].s.size());
         return Value::Int(0);
+    }
+    if (name == BUILTIN_RANDOM) {
+        static bool seeded = false;
+        if (!seeded) {
+            std::srand(std::time(nullptr));
+            seeded = true;
+        }
+        if (!args.empty() && args[0].i > 0) {
+            return Value::Int(std::rand() % args[0].i);
+        }
+        return Value::Int(std::rand());
     }
     return Value::Void();
 }
