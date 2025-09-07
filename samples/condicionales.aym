@@ -1,0 +1,37 @@
+// Ejemplos de estructuras condicionales
+
+jach’a x = 5;
+jach’a y = 3;
+
+// if simple
+si (x > y) {
+    willt’aña("x es mayor que y");
+}
+
+// if-else
+si (x == y) {
+    willt’aña("iguales");
+} sino {
+    willt’aña("diferentes");
+}
+
+// if-else if-else
+si (x < y) {
+    willt’aña("menor");
+} sino si (x == y) {
+    willt’aña("igual");
+} sino {
+    willt’aña("mayor");
+}
+
+// switch
+tantachaña (x) {
+    jamusa 1:
+        willt’aña("uno");
+        jalña;
+    jamusa 5:
+        willt’aña("cinco");
+        jalña;
+    akhamawa:
+        willt’aña("otro");
+}

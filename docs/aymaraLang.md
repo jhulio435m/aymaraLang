@@ -8,12 +8,13 @@ AymaraLang (`aym`) es un lenguaje de programación experimental con sintaxis ins
 - Impresión con `willt’aña(expr)`
 - Control de flujo: `si`/`sino`, `mientras`, `haceña...mientras`, `para`, `tantachaña`
 - Funciones con `luräwi nombre(params) { ... }`
-- Expresiones aritméticas `+ - * / % ^`
+- Expresiones aritméticas `+ - * / % ^` y operadores unarios `-expr`, `+expr`, `!expr`
 - Operadores lógicos `uka`, `jan uka`, `janiwa`, comparaciones `== != < <= > >=`
 - Comentarios `//` y `/* */`
 - Lectura de consola con `input()`
 - Longitud de cadenas con `length()`
-$ ./bin/archivo
+- Números aleatorios con `random(max)`
+ 
 ## Compilación
 Para compilar un archivo `.aym` se ejecuta:
 
@@ -31,7 +32,7 @@ El compilador produce un archivo NASM, lo ensambla y enlaza automáticamente.
 - `return` fuera de una función
 
 ## Palabras clave
-`willt’aña`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`
+`willt’aña`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`, `random`
 
 ### Valores booleanos
 En `aym` los literales lógicos utilizan vocabulario aimara. La palabra

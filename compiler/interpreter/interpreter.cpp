@@ -1,6 +1,8 @@
 #include "interpreter.h"
 #include "../builtins/builtins.h"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 namespace aym {
 
@@ -75,6 +77,17 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
             return Value::Int(args[0].s.size());
         return Value::Int(0);
     }
+    if (name == BUILTIN_RANDOM) {
+        static bool seeded = false;
+        if (!seeded) {
+            std::srand(std::time(nullptr));
+            seeded = true;
+        }
+        if (!args.empty() && args[0].i > 0) {
+            return Value::Int(std::rand() % args[0].i);
+        }
+        return Value::Int(std::rand());
+    }
     return Value::Void();
 }
 
@@ -129,8 +142,20 @@ void Interpreter::visit(BinaryExpr &b) {
 
 void Interpreter::visit(UnaryExpr &u) {
     Value v = eval(u.getExpr());
-    if (u.getOp()=='!') lastValue = Value::Bool(!(v.i!=0));
-    else lastValue = Value::Int(0);
+    switch (u.getOp()) {
+    case '!':
+        lastValue = Value::Bool(!(v.i != 0));
+        break;
+    case '-':
+        lastValue = Value::Int(-v.i);
+        break;
+    case '+':
+        lastValue = Value::Int(v.i);
+        break;
+    default:
+        lastValue = Value::Int(0);
+        break;
+    }
 }
 
 void Interpreter::visit(CallExpr &c) {

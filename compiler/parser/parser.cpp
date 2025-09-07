@@ -324,6 +324,14 @@ std::unique_ptr<Expr> Parser::parsePower() {
 }
 
 std::unique_ptr<Expr> Parser::parseFactor() {
+    if (match(TokenType::Minus)) {
+        auto e = parseFactor();
+        return std::make_unique<UnaryExpr>('-', std::move(e));
+    }
+    if (match(TokenType::Plus)) {
+        auto e = parseFactor();
+        return std::make_unique<UnaryExpr>('+', std::move(e));
+    }
     if (match(TokenType::KeywordNot) || match(TokenType::Bang)) {
         auto e = parseFactor();
         return std::make_unique<UnaryExpr>('!', std::move(e));

@@ -557,10 +557,17 @@ void CodeGenImpl::emitExpr(const Expr *expr,
     }
     if (auto *u = dynamic_cast<const UnaryExpr *>(expr)) {
         emitExpr(u->getExpr(), locals);
-        if (u->getOp() == '!') {
-            out << "    cmp rax,0\n";
-            out << "    sete al\n";
-            out << "    movzx rax,al\n";
+        switch (u->getOp()) {
+            case '!':
+                out << "    cmp rax,0\n";
+                out << "    sete al\n";
+                out << "    movzx rax,al\n";
+                break;
+            case '-':
+                out << "    neg rax\n";
+                break;
+            default:
+                break; // '+' is a no-op
         }
         return;
     }
@@ -591,6 +598,11 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call strlen\n";
+            return;
+        } else if (c->getName() == BUILTIN_RANDOM) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_random\n";
             return;
         }
         // user function call
@@ -656,6 +668,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern printf\n";
     out << "extern scanf\n";
     out << "extern strlen\n";
+    out << "extern aym_random\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
@@ -720,9 +733,9 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     }
     std::string cmd2;
     if (windows)
-        cmd2 = "gcc " + obj.string() + " -o " + bin.string();
+        cmd2 = "gcc " + obj.string() + " runtime/runtime.c -o " + bin.string();
     else
-        cmd2 = "gcc -no-pie " + obj.string() + " -o " + bin.string() + " -lc";
+        cmd2 = "gcc -no-pie " + obj.string() + " runtime/runtime.c -o " + bin.string() + " -lc";
     if (std::system(cmd2.c_str()) != 0) {
         std::cerr << "Error enlazando " << obj.string() << std::endl;
         return;
