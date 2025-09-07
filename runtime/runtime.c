@@ -37,18 +37,18 @@ void aym_sleep(int ms) {
 #endif
 }
 
-long aym_array_new(long size) {
+intptr_t aym_array_new(long size) {
     if (size <= 0) return 0;
     long *arr = calloc((size_t)size, sizeof(long));
-    return (long)arr;
+    return (intptr_t)arr;
 }
 
-long aym_array_get(long arr, long idx) {
+long aym_array_get(intptr_t arr, long idx) {
     long *a = (long*)arr;
     return a[idx];
 }
 
-long aym_array_set(long arr, long idx, long val) {
+long aym_array_set(intptr_t arr, long idx, long val) {
     long *a = (long*)arr;
     a[idx] = val;
     return val;
