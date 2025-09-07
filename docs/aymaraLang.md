@@ -8,7 +8,7 @@ AymaraLang (`aym`) es un lenguaje de programación experimental con sintaxis ins
 - Impresión con `willt’aña(expr)`
 - Control de flujo: `si`/`sino`, `mientras`, `haceña...mientras`, `para`, `tantachaña`
 - Funciones con `luräwi nombre(params) { ... }`
-- Expresiones aritméticas `+ - * / % ^`
+- Expresiones aritméticas `+ - * / % ^` y operadores unarios `-expr`, `+expr`, `!expr`
 - Operadores lógicos `uka`, `jan uka`, `janiwa`, comparaciones `== != < <= > >=`
 - Comentarios `//` y `/* */`
 - Lectura de consola con `input()`
