@@ -6,7 +6,12 @@ static const std::unordered_map<std::string, BuiltinInfo> builtins = {
     {BUILTIN_PRINT, {1, {}}},
     {BUILTIN_INPUT, {0, {}}},
     {BUILTIN_LENGTH, {1, {Type::String}}},
-    {BUILTIN_RANDOM, {1, {Type::Int}}}
+    {BUILTIN_RANDOM, {1, {Type::Int}}},
+    {BUILTIN_SLEEP, {1, {Type::Int}}},
+    {BUILTIN_ARRAY_NEW, {1, {Type::Int}}},
+    {BUILTIN_ARRAY_GET, {2, {Type::Int, Type::Int}}},
+    {BUILTIN_ARRAY_SET, {3, {Type::Int, Type::Int, Type::Int}}},
+    {BUILTIN_WRITE, {1, {Type::String}}}
 };
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions() {

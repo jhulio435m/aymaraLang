@@ -2,6 +2,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdint.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 void leer_linea(char *buf, int size) {
     if (fgets(buf, size, stdin)) {
@@ -20,5 +26,31 @@ int aym_random(int max) {
     }
     if (max > 0) return rand() % max;
     return rand();
+}
+
+void aym_sleep(int ms) {
+    if (ms <= 0) return;
+#ifdef _WIN32
+    Sleep(ms);
+#else
+    usleep((useconds_t)ms * 1000);
+#endif
+}
+
+long aym_array_new(long size) {
+    if (size <= 0) return 0;
+    long *arr = calloc((size_t)size, sizeof(long));
+    return (long)arr;
+}
+
+long aym_array_get(long arr, long idx) {
+    long *a = (long*)arr;
+    return a[idx];
+}
+
+long aym_array_set(long arr, long idx, long val) {
+    long *a = (long*)arr;
+    a[idx] = val;
+    return val;
 }
 
