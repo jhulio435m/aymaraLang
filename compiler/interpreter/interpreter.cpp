@@ -109,14 +109,14 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
         return Value::Int(handle);
     }
     if (name == BUILTIN_ARRAY_GET) {
-        if (args.size() >= 2 && args[0].i < arrays.size()) {
-            return Value::Int(arrays[args[0].i][args[1].i]);
+        if (args.size() >= 2 && args[0].i >= 0 && static_cast<size_t>(args[0].i) < arrays.size()) {
+            return Value::Int(arrays[static_cast<size_t>(args[0].i)][args[1].i]);
         }
         return Value::Int(0);
     }
     if (name == BUILTIN_ARRAY_SET) {
-        if (args.size() >= 3 && args[0].i < arrays.size()) {
-            arrays[args[0].i][args[1].i] = args[2].i;
+        if (args.size() >= 3 && args[0].i >= 0 && static_cast<size_t>(args[0].i) < arrays.size()) {
+            arrays[static_cast<size_t>(args[0].i)][args[1].i] = args[2].i;
         }
         return Value::Void();
     }
