@@ -15,6 +15,9 @@ luräwi fijar(x, y, v) {
 }
 
 luräwi dibujar() {
+    // limpiar pantalla y posicionar cursor
+    write("\x1b[H\x1b[2J");
+
     jach’a y = 0;
     mientras (y < alto) {
         jach’a x = 0;
@@ -69,7 +72,27 @@ poner(px, py, 1);
 
 mientras (1) {
     dibujar();
-    sleep(300);
+
+    // leer entrada del usuario para mover la pieza
+    qillqa c = input();
+    si (c == "a" && puede(px - 1, py)) {
+        poner(px, py, 0);
+        px = px - 1;
+        poner(px, py, 1);
+    } sino si (c == "d" && puede(px + 1, py)) {
+        poner(px, py, 0);
+        px = px + 1;
+        poner(px, py, 1);
+    } sino si (c == "s" && puede(px, py + 1)) {
+        poner(px, py, 0);
+        py = py + 1;
+        poner(px, py, 1);
+    } sino si (c == "q") {
+        willt’aña("Game Over");
+        jalña;
+    }
+
+    // gravedad: la pieza cae automáticamente
     si (puede(px, py + 1)) {
         poner(px, py, 0);
         py = py + 1;
