@@ -12,9 +12,18 @@
 | **Compilador**          | `aymc`                             |
 | **Extensión fuente**    | `.aym`                             |
 | **Ejecutable final**    | `.ayn`                             |
-| **Inspiración**         | Python (sintaxis), C++ (backend)   |
+| **Inspiración**         | Sintaxis con bloques indentados y palabras clave en aymara; backend en C++ |
 | **Paradigmas**          | Imperativo, orientado a objetos    |
 | **Tipado**              | Estático, fuerte                   |
+
+---
+
+## 🧩 Sintaxis del Lenguaje
+
+- Los bloques de código se definen mediante `:` y niveles de sangría.
+- Todas las palabras clave y estructuras de control utilizan vocabulario aymara.
+- `jaqichawi` actúa como punto de entrada del programa.
+- Los comentarios se introducen con `#`.
 
 ---
 
