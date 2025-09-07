@@ -30,3 +30,4 @@ make >/dev/null
 ./bin/aymc samples/random.aym >/dev/null
 ./bin/random >/dev/null
 
+

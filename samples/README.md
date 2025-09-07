@@ -15,6 +15,7 @@ Este directorio contiene ejemplos actualizados del lenguaje `aym`. Cada archivo 
 - `negativos.aym` – demostración de operadores unarios y números negativos.
 - `random.aym` – generación de números aleatorios.
 
+
 Este directorio contiene ejemplos de programas escritos en el lenguaje `aym`. Estos ejemplos muestran cómo utilizar las características del lenguaje y sirven como referencia para los usuarios.
 
 ## Lista de ejemplos
@@ -27,3 +28,4 @@ Este directorio contiene ejemplos de programas escritos en el lenguaje `aym`. Es
 - `funciones.aym`: ejemplos de funciones y recursión.
 - `negativos.aym`: operadores unarios y números negativos.
 - `random.aym`: uso de la función `random`.
+
