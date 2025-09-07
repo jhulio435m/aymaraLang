@@ -3,6 +3,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
+#include <thread>
+#include <chrono>
 
 namespace aym {
 
@@ -41,6 +44,7 @@ Value Interpreter::eval(Expr *expr) {
 }
 
 Value Interpreter::callFunction(const std::string &name, const std::vector<Value>& args) {
+    static std::vector<std::vector<long>> arrays;
     auto it = functions.find(name);
     if (it != functions.end()) {
         pushScope();
@@ -87,6 +91,34 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
             return Value::Int(std::rand() % args[0].i);
         }
         return Value::Int(std::rand());
+    }
+    if (name == BUILTIN_WRITE) {
+        if (!args.empty() && args[0].type == Value::Type::String)
+            std::cout << args[0].s;
+        return Value::Void();
+    }
+    if (name == BUILTIN_SLEEP) {
+        if (!args.empty()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(args[0].i));
+        }
+        return Value::Void();
+    }
+    if (name == BUILTIN_ARRAY_NEW) {
+        long handle = arrays.size();
+        arrays.push_back(std::vector<long>(args.empty() ? 0 : args[0].i));
+        return Value::Int(handle);
+    }
+    if (name == BUILTIN_ARRAY_GET) {
+        if (args.size() >= 2 && args[0].i < arrays.size()) {
+            return Value::Int(arrays[args[0].i][args[1].i]);
+        }
+        return Value::Int(0);
+    }
+    if (name == BUILTIN_ARRAY_SET) {
+        if (args.size() >= 3 && args[0].i < arrays.size()) {
+            arrays[args[0].i][args[1].i] = args[2].i;
+        }
+        return Value::Void();
     }
     return Value::Void();
 }

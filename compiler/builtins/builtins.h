@@ -23,6 +23,11 @@ constexpr const char BUILTIN_PRINT[] = "willt’aña";
 constexpr const char BUILTIN_INPUT[] = "input";
 constexpr const char BUILTIN_LENGTH[] = "length";
 constexpr const char BUILTIN_RANDOM[] = "random";
+constexpr const char BUILTIN_WRITE[] = "write";
+constexpr const char BUILTIN_SLEEP[] = "sleep";
+constexpr const char BUILTIN_ARRAY_NEW[] = "array";
+constexpr const char BUILTIN_ARRAY_GET[] = "array_get";
+constexpr const char BUILTIN_ARRAY_SET[] = "array_set";
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions();
 std::string typeName(Type t);

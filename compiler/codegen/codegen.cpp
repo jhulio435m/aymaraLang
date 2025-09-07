@@ -604,6 +604,40 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_random\n";
             return;
+        } else if (c->getName() == BUILTIN_SLEEP) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_sleep\n";
+            return;
+        } else if (c->getName() == BUILTIN_ARRAY_NEW) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_array_new\n";
+            return;
+        } else if (c->getName() == BUILTIN_ARRAY_GET) {
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << reg2(this->windows) << ", rax\n";
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_array_get\n";
+            return;
+        } else if (c->getName() == BUILTIN_ARRAY_SET) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[2].get(), locals);
+            out << "    mov " << regs[2] << ", rax\n";
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << regs[0] << ", rax\n";
+            out << "    call aym_array_set\n";
+            return;
+        } else if (c->getName() == BUILTIN_WRITE) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg2(this->windows) << ", rax\n";
+            out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
+            out << "    xor eax,eax\n";
+            out << "    call printf\n";
+            return;
         }
         // user function call
         std::vector<std::string> regs = paramRegs(this->windows);
@@ -669,9 +703,14 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern scanf\n";
     out << "extern strlen\n";
     out << "extern aym_random\n";
+    out << "extern aym_sleep\n";
+    out << "extern aym_array_new\n";
+    out << "extern aym_array_get\n";
+    out << "extern aym_array_set\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
+    out << "fmt_raw: db \"%s\",0\n";
     out << "fmt_read_int: db \"%ld\",0\n";
     out << "fmt_read_str: db \"%255s\",0\n";
     out << "input_val: dq 0\n";
