@@ -1,0 +1,28 @@
+# Ejemplos de uso del bucle "for" en el lenguaje aym
+# Recorriendo un rango numérico simple
+jaqichawi:
+    # bucle desde 0 hasta 4
+    kutiriyäwi i 0 jichha 5:
+        willt’aña(i);
+
+    # bucle con paso específico
+    kutiriyäwi j 0 jichha 10 sara 2:
+        willt’aña(j);
+
+    # recorrer una lista
+    frutas = ["manzana", "plátano", "cereza"]
+    kutiriyäwi fruta frutas:
+        willt’aña(fruta);
+
+    # bucles anidados
+    kutiriyäwi x 1 jichha 3:
+        kutiriyäwi y 1 jichha 3:
+            willt’aña(x * y);
+
+    # uso de continue y break
+    kutiriyäwi n 0 jichha 10:
+        ukhamaraki n == 5:
+            sarnaqaña;
+        ukhamaraki n == 8:
+            tukuyaña;
+        willt’aña(n);
