@@ -105,28 +105,51 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
         return Value::Void();
     }
     if (name == BUILTIN_ARRAY_NEW) {
-        long handle = arrays.size();
-        arrays.push_back(std::vector<long>(args.empty() ? 0 : args[0].i));
-        arraysValid.push_back(true);
+        long handle = 0;
+        try {
+            arrays.emplace_back(args.empty() ? 0 : args[0].i);
+            arraysValid.push_back(true);
+            handle = arrays.size();
+        } catch (const std::bad_alloc &) {
+            handle = 0;
+        }
         return Value::Int(handle);
     }
     if (name == BUILTIN_ARRAY_GET) {
-        if (args.size() >= 2 && args[0].i >= 0 && static_cast<size_t>(args[0].i) < arrays.size() && arraysValid[static_cast<size_t>(args[0].i)]) {
-            return Value::Int(arrays[static_cast<size_t>(args[0].i)][args[1].i]);
+        if (args.size() >= 2) {
+            long handle = args[0].i;
+            if (handle > 0) {
+                size_t idx = static_cast<size_t>(handle - 1);
+                if (idx < arrays.size() && arraysValid[idx]) {
+                    return Value::Int(arrays[idx][args[1].i]);
+                }
+            }
         }
         return Value::Int(0);
     }
     if (name == BUILTIN_ARRAY_SET) {
-        if (args.size() >= 3 && args[0].i >= 0 && static_cast<size_t>(args[0].i) < arrays.size() && arraysValid[static_cast<size_t>(args[0].i)]) {
-            arrays[static_cast<size_t>(args[0].i)][args[1].i] = args[2].i;
+        if (args.size() >= 3) {
+            long handle = args[0].i;
+            if (handle > 0) {
+                size_t idx = static_cast<size_t>(handle - 1);
+                if (idx < arrays.size() && arraysValid[idx]) {
+                    arrays[idx][args[1].i] = args[2].i;
+                }
+            }
         }
         return Value::Void();
     }
     if (name == BUILTIN_ARRAY_FREE) {
-        if (args.size() >= 1 && args[0].i >= 0 && static_cast<size_t>(args[0].i) < arrays.size() && arraysValid[static_cast<size_t>(args[0].i)]) {
-            arrays[static_cast<size_t>(args[0].i)].clear();
-            arrays[static_cast<size_t>(args[0].i)].shrink_to_fit();
-            arraysValid[static_cast<size_t>(args[0].i)] = false;
+        if (args.size() >= 1) {
+            long handle = args[0].i;
+            if (handle > 0) {
+                size_t idx = static_cast<size_t>(handle - 1);
+                if (idx < arrays.size() && arraysValid[idx]) {
+                    arrays[idx].clear();
+                    arrays[idx].shrink_to_fit();
+                    arraysValid[idx] = false;
+                }
+            }
         }
         return Value::Void();
     }
