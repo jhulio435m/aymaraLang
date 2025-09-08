@@ -70,6 +70,10 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
                 std::cout << args[0].s << std::endl;
             else if (args[0].type == Value::Type::Int)
                 std::cout << args[0].i << std::endl;
+            else if (args[0].type == Value::Type::Float)
+                std::cout << args[0].f << std::endl;
+            else if (args[0].type == Value::Type::Bool)
+                std::cout << (args[0].b ? "cheka" : "janiwa") << std::endl;
         }
         return Value::Void();
     }
