@@ -9,6 +9,8 @@
 
 namespace aym {
 
+Interpreter::Interpreter() = default;
+
 void Interpreter::pushScope() {
     scopes.emplace_back();
 }
@@ -44,8 +46,6 @@ Value Interpreter::eval(Expr *expr) {
 }
 
 Value Interpreter::callFunction(const std::string &name, const std::vector<Value>& args) {
-    static std::vector<std::vector<long>> arrays;
-    static std::vector<bool> arraysValid;
     auto it = functions.find(name);
     if (it != functions.end()) {
         pushScope();
@@ -107,9 +107,9 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
     if (name == BUILTIN_ARRAY_NEW) {
         long handle = 0;
         try {
-            arrays.emplace_back(args.empty() ? 0 : args[0].i);
-            arraysValid.push_back(true);
-            handle = arrays.size();
+            this->arrays.emplace_back(args.empty() ? 0 : args[0].i);
+            this->arraysValid.push_back(true);
+            handle = this->arrays.size();
         } catch (const std::bad_alloc &) {
             handle = 0;
         }
@@ -120,8 +120,8 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
             long handle = args[0].i;
             if (handle > 0) {
                 size_t idx = static_cast<size_t>(handle - 1);
-                if (idx < arrays.size() && arraysValid[idx]) {
-                    return Value::Int(arrays[idx][args[1].i]);
+                if (idx < this->arrays.size() && this->arraysValid[idx]) {
+                    return Value::Int(this->arrays[idx][args[1].i]);
                 }
             }
         }
@@ -132,8 +132,8 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
             long handle = args[0].i;
             if (handle > 0) {
                 size_t idx = static_cast<size_t>(handle - 1);
-                if (idx < arrays.size() && arraysValid[idx]) {
-                    arrays[idx][args[1].i] = args[2].i;
+                if (idx < this->arrays.size() && this->arraysValid[idx]) {
+                    this->arrays[idx][args[1].i] = args[2].i;
                 }
             }
         }
@@ -144,10 +144,10 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
             long handle = args[0].i;
             if (handle > 0) {
                 size_t idx = static_cast<size_t>(handle - 1);
-                if (idx < arrays.size() && arraysValid[idx]) {
-                    arrays[idx].clear();
-                    arrays[idx].shrink_to_fit();
-                    arraysValid[idx] = false;
+                if (idx < this->arrays.size() && this->arraysValid[idx]) {
+                    this->arrays[idx].clear();
+                    this->arrays[idx].shrink_to_fit();
+                    this->arraysValid[idx] = false;
                 }
             }
         }
