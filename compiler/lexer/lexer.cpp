@@ -124,10 +124,25 @@ std::vector<Token> Lexer::tokenize() {
         if (c == '"') {
             get();
             std::string str;
-            while (pos < src.size() && peek() != '"') {
-                str += get();
+            while (pos < src.size()) {
+                char ch = get();
+                if (ch == '"') break;
+                if (ch == '\\') {
+                    if (pos >= src.size()) break;
+                    char esc = get();
+                    switch (esc) {
+                        case 'n': str += '\n'; break;
+                        case 't': str += '\t'; break;
+                        case 'r': str += '\r'; break;
+                        case '\\': str += '\\'; break;
+                        case '"': str += '"'; break;
+                        case '0': str += '\0'; break;
+                        default: str += esc; break;
+                    }
+                } else {
+                    str += ch;
+                }
             }
-            get(); // closing quote
             tokens.push_back({TokenType::String, str, startLine, startColumn});
             continue;
         }
