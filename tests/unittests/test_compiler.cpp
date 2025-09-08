@@ -28,6 +28,15 @@ TEST(LexerTest, SimpleTokenize) {
     EXPECT_EQ(tokens[5].type, TokenType::EndOfFile);
 }
 
+TEST(LexerTest, EscapedString) {
+    Lexer lexer(R"("line1\nline2\t\"quoted\"\\")");
+    auto tokens = lexer.tokenize();
+    ASSERT_EQ(tokens.size(), 2u);
+    EXPECT_EQ(tokens[0].type, TokenType::String);
+    EXPECT_EQ(tokens[0].text, std::string("line1\nline2\t\"quoted\"\\"));
+    EXPECT_EQ(tokens[1].type, TokenType::EndOfFile);
+}
+
 TEST(ParserTest, ParsePrintStmt) {
     Lexer lexer("willt’aña(1);");
     auto tokens = lexer.tokenize();
