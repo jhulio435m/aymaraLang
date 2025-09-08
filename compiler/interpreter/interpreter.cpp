@@ -206,8 +206,22 @@ void Interpreter::visit(BinaryExpr &b) {
         break;
     case '-': lastValue = Value::Int(l.i - r.i); break;
     case '*': lastValue = Value::Int(l.i * r.i); break;
-    case '/': lastValue = Value::Int(r.i ? l.i / r.i : 0); break;
-    case '%': lastValue = Value::Int(r.i ? l.i % r.i : 0); break;
+    case '/':
+        if (r.i == 0) {
+            std::cerr << "Runtime error: division by zero" << std::endl;
+            lastValue = Value::Int(0);
+        } else {
+            lastValue = Value::Int(l.i / r.i);
+        }
+        break;
+    case '%':
+        if (r.i == 0) {
+            std::cerr << "Runtime error: modulo by zero" << std::endl;
+            lastValue = Value::Int(0);
+        } else {
+            lastValue = Value::Int(l.i % r.i);
+        }
+        break;
     case '^': {
         long res = 1; for (long i=0;i<r.i;++i) res*=l.i; lastValue = Value::Int(res); break; }
     case '<': lastValue = Value::Bool(l.i < r.i); break;
