@@ -23,6 +23,7 @@ struct Value {
 
 class Interpreter : public ASTVisitor {
 public:
+    Interpreter();
     void execute(const std::vector<std::unique_ptr<Node>> &nodes);
     Value getLastValue() const { return lastValue; }
 
@@ -57,6 +58,8 @@ private:
 
     std::vector<std::unordered_map<std::string, Value>> scopes{1};
     std::unordered_map<std::string, FunctionStmt*> functions;
+    std::vector<std::vector<long>> arrays;
+    std::vector<bool> arraysValid;
 
     void pushScope();
     void popScope();
