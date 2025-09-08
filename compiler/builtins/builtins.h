@@ -28,6 +28,7 @@ constexpr const char BUILTIN_SLEEP[] = "sleep";
 constexpr const char BUILTIN_ARRAY_NEW[] = "array";
 constexpr const char BUILTIN_ARRAY_GET[] = "array_get";
 constexpr const char BUILTIN_ARRAY_SET[] = "array_set";
+constexpr const char BUILTIN_ARRAY_FREE[] = "array_free";
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions();
 std::string typeName(Type t);

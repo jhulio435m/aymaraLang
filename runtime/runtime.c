@@ -63,3 +63,11 @@ long aym_array_set(intptr_t arr, long idx, long val) {
     return val;
 }
 
+void aym_array_free(intptr_t arr) {
+    if (!arr) return;
+    long *a = (long*)arr;
+    long *base = a - 1;
+    base[0] = 0; // clear length bookkeeping
+    free(base);
+}
+
