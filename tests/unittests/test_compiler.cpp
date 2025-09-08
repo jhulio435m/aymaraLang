@@ -3,6 +3,12 @@
 #include "compiler/parser/parser.h"
 #include "compiler/codegen/codegen.h"
 #include "compiler/ast/ast.h"
+#define private public
+#define protected public
+#include "compiler/interpreter/interpreter.h"
+#undef private
+#undef protected
+#include "compiler/builtins/builtins.h"
 #include <fstream>
 #include <cstdio>
 
@@ -84,6 +90,23 @@ TEST(CodeGenTest, GeneratesAssembly) {
     std::remove("build/test_output.o");
     std::remove("bin/test_output");
 #endif
+}
+
+TEST(InterpreterTest, BuiltinPrintFloat) {
+    Interpreter interp;
+    testing::internal::CaptureStdout();
+    interp.callFunction(BUILTIN_PRINT, {Value::Float(3.14)});
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, std::string("3.14\n"));
+}
+
+TEST(InterpreterTest, BuiltinPrintBool) {
+    Interpreter interp;
+    testing::internal::CaptureStdout();
+    interp.callFunction(BUILTIN_PRINT, {Value::Bool(true)});
+    interp.callFunction(BUILTIN_PRINT, {Value::Bool(false)});
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, std::string("cheka\njaniwa\n"));
 }
 
 int main(int argc, char **argv) {

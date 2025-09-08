@@ -10,12 +10,14 @@
 namespace aym {
 
 struct Value {
-    enum class Type { Int, Bool, String, Void } type = Type::Void;
+    enum class Type { Int, Float, Bool, String, Void } type = Type::Void;
     long i = 0;
+    double f = 0.0;
     bool b = false;
     std::string s;
 
     static Value Int(long v) { Value val; val.type = Type::Int; val.i = v; return val; }
+    static Value Float(double v) { Value val; val.type = Type::Float; val.f = v; return val; }
     static Value Bool(bool v) { Value val; val.type = Type::Bool; val.b = v; return val; }
     static Value String(std::string v) { Value val; val.type = Type::String; val.s = std::move(v); return val; }
     static Value Void() { return Value(); }
