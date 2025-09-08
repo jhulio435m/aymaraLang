@@ -6,6 +6,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <stdexcept>
 
 namespace aym {
 
@@ -118,10 +119,15 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
     if (name == BUILTIN_ARRAY_GET) {
         if (args.size() >= 2) {
             long handle = args[0].i;
+            long index = args[1].i;
             if (handle > 0) {
                 size_t idx = static_cast<size_t>(handle - 1);
                 if (idx < this->arrays.size() && this->arraysValid[idx]) {
-                    return Value::Int(this->arrays[idx][args[1].i]);
+                    auto &arr = this->arrays[idx];
+                    if (index >= 0 && static_cast<size_t>(index) < arr.size()) {
+                        return Value::Int(arr[static_cast<size_t>(index)]);
+                    }
+                    return Value::Int(0);
                 }
             }
         }
@@ -130,10 +136,16 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
     if (name == BUILTIN_ARRAY_SET) {
         if (args.size() >= 3) {
             long handle = args[0].i;
+            long index = args[1].i;
             if (handle > 0) {
                 size_t idx = static_cast<size_t>(handle - 1);
                 if (idx < this->arrays.size() && this->arraysValid[idx]) {
-                    this->arrays[idx][args[1].i] = args[2].i;
+                    auto &arr = this->arrays[idx];
+                    if (index >= 0 && static_cast<size_t>(index) < arr.size()) {
+                        arr[static_cast<size_t>(index)] = args[2].i;
+                    } else {
+                        throw std::runtime_error("array index out of bounds");
+                    }
                 }
             }
         }
