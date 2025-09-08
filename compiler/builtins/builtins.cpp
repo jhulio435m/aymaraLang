@@ -11,6 +11,7 @@ static const std::unordered_map<std::string, BuiltinInfo> builtins = {
     {BUILTIN_ARRAY_NEW, {1, {Type::Int}}},
     {BUILTIN_ARRAY_GET, {2, {Type::Int, Type::Int}}},
     {BUILTIN_ARRAY_SET, {3, {Type::Int, Type::Int, Type::Int}}},
+    {BUILTIN_ARRAY_FREE, {1, {Type::Int}}},
     {BUILTIN_WRITE, {1, {Type::String}}}
 };
 

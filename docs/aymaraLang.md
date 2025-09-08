@@ -16,7 +16,7 @@ AymaraLang (`aym`) es un lenguaje de programación experimental con sintaxis ins
 - Números aleatorios con `random(max)`
 - Pausa de ejecución con `sleep(ms)`
 - Impresión sin salto de línea con `write(str)`
-- Arreglos dinámicos con `array(n)`, `array_get(arr, i)`, `array_set(arr, i, v)`
+- Arreglos dinámicos con `array(n)`, `array_get(arr, i)`, `array_set(arr, i, v)`, `array_free(arr)`
  
 ## Compilación
 Para compilar un archivo `.aym` se ejecuta:
@@ -35,7 +35,7 @@ El compilador produce un archivo NASM, lo ensambla y enlaza automáticamente.
 - `return` fuera de una función
 
 ## Palabras clave
-`willt’aña`, `write`, `sleep`, `array`, `array_get`, `array_set`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`, `random`
+`willt’aña`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`, `random`
 
 ### Valores booleanos
 En `aym` los literales lógicos utilizan vocabulario aimara. La palabra
