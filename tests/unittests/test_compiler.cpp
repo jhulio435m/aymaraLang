@@ -11,6 +11,7 @@
 #include "compiler/builtins/builtins.h"
 #include <fstream>
 #include <cstdio>
+#include <stdexcept>
 
 using namespace aym;
 
@@ -107,6 +108,11 @@ TEST(InterpreterTest, BuiltinPrintBool) {
     interp.callFunction(BUILTIN_PRINT, {Value::Bool(false)});
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, std::string("cheka\njaniwa\n"));
+}
+
+TEST(InterpreterTest, LookupUndefinedVariableThrows) {
+    Interpreter interp;
+    EXPECT_THROW(interp.lookup("missing"), std::runtime_error);
 }
 
 int main(int argc, char **argv) {

@@ -26,7 +26,8 @@ Value Interpreter::lookup(const std::string &name) {
         auto f = it->find(name);
         if (f != it->end()) return f->second;
     }
-    return Value::Int(0);
+    std::cerr << "Error: undefined identifier '" << name << "'" << std::endl;
+    throw std::runtime_error("undefined identifier: " + name);
 }
 
 void Interpreter::assign(const std::string &name, const Value &val) {
