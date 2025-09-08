@@ -39,17 +39,26 @@ void aym_sleep(int ms) {
 
 intptr_t aym_array_new(long size) {
     if (size <= 0) return 0;
-    long *arr = calloc((size_t)size, sizeof(long));
-    return (intptr_t)arr;
+    // allocate extra slot to store array length
+    long *arr = calloc((size_t)size + 1, sizeof(long));
+    if (!arr) return 0;
+    arr[0] = size;            // store length at the first position
+    return (intptr_t)(arr + 1); // return pointer to data region
 }
 
 long aym_array_get(intptr_t arr, long idx) {
+    if (!arr) return 0;
     long *a = (long*)arr;
+    long len = *(a - 1);
+    if (idx < 0 || idx >= len) return 0;
     return a[idx];
 }
 
 long aym_array_set(intptr_t arr, long idx, long val) {
+    if (!arr) return 0;
     long *a = (long*)arr;
+    long len = *(a - 1);
+    if (idx < 0 || idx >= len) return 0;
     a[idx] = val;
     return val;
 }
