@@ -41,7 +41,10 @@ intptr_t aym_array_new(long size) {
     if (size <= 0) return 0;
     // allocate extra slot to store array length
     long *arr = calloc((size_t)size + 1, sizeof(long));
-    if (!arr) return 0;
+    if (!arr) {
+        fprintf(stderr, "aym_array_new: allocation failed\n");
+        return 0;
+    }
     arr[0] = size;            // store length at the first position
     return (intptr_t)(arr + 1); // return pointer to data region
 }
