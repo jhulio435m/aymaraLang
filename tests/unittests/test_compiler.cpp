@@ -144,6 +144,66 @@ TEST(InterpreterTest, BuiltinArrayLength) {
     interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
 }
 
+TEST(InterpreterTest, ArrayNewAndDefaultValues) {
+    Interpreter interp;
+    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(3)}, 0, 0);
+    ASSERT_GT(handle.i, 0);
+    auto len = interp.callFunction(BUILTIN_ARRAY_LENGTH, {handle}, 0, 0);
+    EXPECT_EQ(len.i, 3);
+    for (int i = 0; i < 3; ++i) {
+        auto val = interp.callFunction(BUILTIN_ARRAY_GET, {handle, Value::Int(i)}, 1, 1);
+        EXPECT_EQ(val.i, 0);
+    }
+    interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
+}
+
+TEST(InterpreterTest, ArraySetAndGet) {
+    Interpreter interp;
+    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(2)}, 0, 0);
+    interp.callFunction(BUILTIN_ARRAY_SET,
+                        {handle, Value::Int(1), Value::Int(42)}, 1, 1);
+    auto val = interp.callFunction(BUILTIN_ARRAY_GET,
+                                   {handle, Value::Int(1)}, 1, 1);
+    EXPECT_EQ(val.i, 42);
+    interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
+}
+
+TEST(InterpreterTest, ArrayGetOutOfBoundsThrows) {
+    Interpreter interp;
+    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(2)}, 0, 0);
+    EXPECT_THROW(interp.callFunction(BUILTIN_ARRAY_GET,
+                                    {handle, Value::Int(2)}, 1, 1),
+                 std::runtime_error);
+    interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
+}
+
+TEST(InterpreterTest, ArraySetOutOfBoundsThrows) {
+    Interpreter interp;
+    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(2)}, 0, 0);
+    EXPECT_THROW(interp.callFunction(BUILTIN_ARRAY_SET,
+                                    {handle, Value::Int(2), Value::Int(99)}, 1, 1),
+                 std::runtime_error);
+    interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
+}
+
+TEST(InterpreterTest, ArrayGetInvalidHandleReturnsZero) {
+    Interpreter interp;
+    auto val = interp.callFunction(BUILTIN_ARRAY_GET,
+                                   {Value::Int(0), Value::Int(0)}, 1, 1);
+    EXPECT_EQ(val.i, 0);
+    val = interp.callFunction(BUILTIN_ARRAY_GET,
+                               {Value::Int(99), Value::Int(0)}, 1, 1);
+    EXPECT_EQ(val.i, 0);
+}
+
+TEST(InterpreterTest, ArrayLengthInvalidHandleReturnsZero) {
+    Interpreter interp;
+    auto len = interp.callFunction(BUILTIN_ARRAY_LENGTH, {Value::Int(0)}, 0, 0);
+    EXPECT_EQ(len.i, 0);
+    len = interp.callFunction(BUILTIN_ARRAY_LENGTH, {Value::Int(123)}, 0, 0);
+    EXPECT_EQ(len.i, 0);
+}
+
 TEST(InterpreterTest, ArrayGetNegativeIndexThrows) {
     Interpreter interp;
     auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(3)}, 0, 0);
