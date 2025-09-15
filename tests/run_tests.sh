@@ -25,6 +25,7 @@ run advanced_ops 8
 run string Kamisaraki
 run range_for 3
 run negativos -7
+run array_length 3
 ./bin/aymc samples/random.aym >/dev/null
 ./bin/random >/dev/null
 

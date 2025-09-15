@@ -170,6 +170,19 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
         }
         return Value::Void();
     }
+    if (name == BUILTIN_ARRAY_LENGTH) {
+        if (args.size() >= 1) {
+            long handle = args[0].i;
+            if (handle > 0) {
+                size_t idx = static_cast<size_t>(handle - 1);
+                if (idx < this->arrays.size() && this->arraysValid[idx]) {
+                    auto &arr = this->arrays[idx];
+                    return Value::Int(arr.size());
+                }
+            }
+        }
+        return Value::Int(0);
+    }
     return Value::Void();
 }
 

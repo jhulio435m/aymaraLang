@@ -30,4 +30,7 @@ make >/dev/null
 ./bin/aymc samples/random.aym >/dev/null
 ./bin/random >/dev/null
 
+./bin/aymc samples/array_length.aym >/dev/null
+./bin/array_length | grep -q -- 3
+
 

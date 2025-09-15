@@ -136,6 +136,14 @@ TEST(InterpreterTest, BuiltinPrintBool) {
     EXPECT_EQ(output, std::string("cheka\njaniwa\n"));
 }
 
+TEST(InterpreterTest, BuiltinArrayLength) {
+    Interpreter interp;
+    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(5)});
+    auto len = interp.callFunction(BUILTIN_ARRAY_LENGTH, {handle});
+    EXPECT_EQ(len.i, 5);
+    interp.callFunction(BUILTIN_ARRAY_FREE, {handle});
+}
+
 TEST(InterpreterTest, LookupUndefinedVariableThrows) {
     Interpreter interp;
     EXPECT_THROW(interp.lookup("missing"), std::runtime_error);
