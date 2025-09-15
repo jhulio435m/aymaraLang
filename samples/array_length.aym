@@ -1,0 +1,6 @@
+jach’a arr = array(3);
+array_set(arr, 0, 10);
+array_set(arr, 1, 20);
+array_set(arr, 2, 30);
+willt’aña(array_length(arr));
+array_free(arr);

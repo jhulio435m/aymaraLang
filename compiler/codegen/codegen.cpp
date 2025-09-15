@@ -636,6 +636,11 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_array_free\n";
             return;
+        } else if (c->getName() == BUILTIN_ARRAY_LENGTH) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_array_length\n";
+            return;
         } else if (c->getName() == BUILTIN_WRITE) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg2(this->windows) << ", rax\n";
@@ -713,6 +718,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern aym_array_get\n";
     out << "extern aym_array_set\n";
     out << "extern aym_array_free\n";
+    out << "extern aym_array_length\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";

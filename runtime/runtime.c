@@ -74,3 +74,10 @@ void aym_array_free(intptr_t arr) {
     free(base);
 }
 
+long aym_array_length(intptr_t arr) {
+    if (!arr) return 0;
+    long *a = (long*)arr;
+    long len = *(a - 1);
+    return len;
+}
+
