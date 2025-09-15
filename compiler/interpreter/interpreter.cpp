@@ -7,8 +7,33 @@
 #include <thread>
 #include <chrono>
 #include <stdexcept>
+#include <cmath>
 
 namespace aym {
+
+namespace {
+
+double valueToDouble(const Value &v) {
+    switch (v.type) {
+    case Value::Type::Int:
+        return static_cast<double>(v.i);
+    case Value::Type::Float:
+        return v.f;
+    case Value::Type::Bool:
+        return v.b ? 1.0 : 0.0;
+    default:
+        return 0.0;
+    }
+}
+
+double getArgOrDefault(const std::vector<Value> &args, size_t index, double fallback) {
+    if (index < args.size()) {
+        return valueToDouble(args[index]);
+    }
+    return fallback;
+}
+
+} // namespace
 
 Interpreter::Interpreter()
     : moduleResolver(fs::current_path()),
@@ -124,6 +149,67 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
         if (!args.empty() && args[0].type == Value::Type::String)
             std::cout << args[0].s;
         return Value::Void();
+    }
+    if (name == BUILTIN_SIN) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::sin(x));
+    }
+    if (name == BUILTIN_COS) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::cos(x));
+    }
+    if (name == BUILTIN_TAN) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::tan(x));
+    }
+    if (name == BUILTIN_ASIN) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::asin(x));
+    }
+    if (name == BUILTIN_ACOS) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::acos(x));
+    }
+    if (name == BUILTIN_ATAN) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::atan(x));
+    }
+    if (name == BUILTIN_SQRT) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::sqrt(x));
+    }
+    if (name == BUILTIN_POW) {
+        double base = getArgOrDefault(args, 0, 0.0);
+        double exponent = getArgOrDefault(args, 1, 1.0);
+        return Value::Float(std::pow(base, exponent));
+    }
+    if (name == BUILTIN_EXP) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::exp(x));
+    }
+    if (name == BUILTIN_LOG) {
+        double x = getArgOrDefault(args, 0, 1.0);
+        return Value::Float(std::log(x));
+    }
+    if (name == BUILTIN_LOG10) {
+        double x = getArgOrDefault(args, 0, 1.0);
+        return Value::Float(std::log10(x));
+    }
+    if (name == BUILTIN_FLOOR) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::floor(x));
+    }
+    if (name == BUILTIN_CEIL) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::ceil(x));
+    }
+    if (name == BUILTIN_ROUND) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::round(x));
+    }
+    if (name == BUILTIN_FABS) {
+        double x = getArgOrDefault(args, 0, 0.0);
+        return Value::Float(std::fabs(x));
     }
     if (name == BUILTIN_SLEEP) {
         if (!args.empty()) {

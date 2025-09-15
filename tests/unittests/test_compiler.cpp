@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <stdexcept>
 #include <filesystem>
+#include <cmath>
 
 using namespace aym;
 namespace fs = std::filesystem;
@@ -181,6 +182,36 @@ TEST(InterpreterTest, BuiltinPrintBool) {
     interp.callFunction(BUILTIN_PRINT, {Value::Bool(false)}, 0, 0);
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, std::string("cheka\njaniwa\n"));
+}
+
+TEST(InterpreterTest, MathBuiltinsProduceFloats) {
+    Interpreter interp;
+
+    auto sinVal = interp.callFunction(BUILTIN_SIN, {Value::Float(0.0)}, 0, 0);
+    EXPECT_EQ(sinVal.type, Value::Type::Float);
+    EXPECT_NEAR(sinVal.f, 0.0, 1e-9);
+
+    auto cosVal = interp.callFunction(BUILTIN_COS, {Value::Float(0.0)}, 0, 0);
+    EXPECT_EQ(cosVal.type, Value::Type::Float);
+    EXPECT_NEAR(cosVal.f, 1.0, 1e-9);
+
+    auto sqrtVal = interp.callFunction(BUILTIN_SQRT, {Value::Float(9.0)}, 0, 0);
+    EXPECT_EQ(sqrtVal.type, Value::Type::Float);
+    EXPECT_NEAR(sqrtVal.f, 3.0, 1e-9);
+
+    auto powVal = interp.callFunction(BUILTIN_POW,
+                                      {Value::Float(2.0), Value::Float(3.0)}, 0, 0);
+    EXPECT_EQ(powVal.type, Value::Type::Float);
+    EXPECT_NEAR(powVal.f, 8.0, 1e-9);
+
+    auto logVal = interp.callFunction(BUILTIN_LOG,
+                                      {Value::Float(std::exp(1.0))}, 0, 0);
+    EXPECT_EQ(logVal.type, Value::Type::Float);
+    EXPECT_NEAR(logVal.f, 1.0, 1e-9);
+
+    auto fabsVal = interp.callFunction(BUILTIN_FABS, {Value::Float(-3.5)}, 0, 0);
+    EXPECT_EQ(fabsVal.type, Value::Type::Float);
+    EXPECT_NEAR(fabsVal.f, 3.5, 1e-9);
 }
 
 TEST(InterpreterTest, BuiltinArrayLength) {

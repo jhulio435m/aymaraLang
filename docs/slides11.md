@@ -130,7 +130,7 @@ Notas del orador: `willt'aña(1);` → `PrintStmt(NumberExpr(1))`.
 
 - Archivos: `compiler/semantic/semantic.h`, `compiler/semantic/semantic.cpp`.
 - Escopos/Tipos: declaraciones, uso, verificación de tipos, contextos de control.
-- Builtins: `compiler/builtins/` para `willt'aña`, `input`, `length`, `random`.
+- Builtins: `compiler/builtins/` para `willt'aña`, `input`, `length`, `random`, arreglos y matemáticas (`sin`, `cos`, `sqrt`, ...).
 - Exporta a CodeGen: globales, tipos de parámetros y globales.
 
 Notas del orador: Inferencia básica de strings en parámetros por uso.
@@ -162,7 +162,7 @@ Notas del orador: Ventajas de delegar a toolchain estándar.
 
 - REPL: `./bin/aymc --repl`.
 - Intérprete: `compiler/interpreter/interpreter.h`, `compiler/interpreter/interpreter.cpp`.
-- Builtins: `willt'aña`, `input`, `length`, `random`.
+- Builtins: `willt'aña`, `input`, `length`, `random`, utilidades de arreglos y funciones matemáticas (`sin`, `cos`, `sqrt`, ...).
 
 Notas del orador: Útil para enseñar sin compilar a binario.
 

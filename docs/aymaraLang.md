@@ -17,6 +17,7 @@ AymaraLang (`aym`) es un lenguaje de programación experimental con sintaxis ins
 - Pausa de ejecución con `sleep(ms)`
 - Impresión sin salto de línea con `write(str)`
 - Arreglos dinámicos con `array(n)`, `array_get(arr, i)`, `array_set(arr, i, v)`, `array_free(arr)`, `array_length(arr)`
+- Funciones matemáticas con `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`
  
 ## Compilación
 Para compilar un archivo `.aym` se ejecuta:
@@ -35,7 +36,7 @@ El compilador produce un archivo NASM, lo ensambla y enlaza automáticamente.
 - `return` fuera de una función
 
 ## Palabras clave
-`willt’aña`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`, `array_length`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`, `random`
+`willt’aña`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`, `array_length`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`, `random`
 
 ### Valores booleanos
 En `aym` los literales lógicos utilizan vocabulario aimara. La palabra

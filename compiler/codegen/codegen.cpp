@@ -793,9 +793,9 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     }
     std::string cmd2;
     if (windows)
-        cmd2 = "gcc " + obj.string() + " runtime/runtime.c -o " + bin.string();
+        cmd2 = "gcc " + obj.string() + " runtime/runtime.c runtime/math.c -o " + bin.string() + " -lm";
     else
-        cmd2 = "gcc -no-pie " + obj.string() + " runtime/runtime.c -o " + bin.string() + " -lc";
+        cmd2 = "gcc -no-pie " + obj.string() + " runtime/runtime.c runtime/math.c -o " + bin.string() + " -lm -lc";
     if (std::system(cmd2.c_str()) != 0) {
         std::cerr << "Error enlazando " << obj.string() << std::endl;
         return;
