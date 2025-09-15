@@ -65,12 +65,12 @@ private:
 
     void pushScope();
     void popScope();
-    Value lookup(const std::string &name);
+    Value lookup(const std::string &name, size_t line, size_t column);
     void assign(const std::string &name, const Value &val);
     void declare(const std::string &name, const Value &val);
 
     Value eval(Expr* expr);
-    Value callFunction(const std::string &name, const std::vector<Value>& args);
+    Value callFunction(const std::string &name, const std::vector<Value>& args, size_t line, size_t column);
 };
 
 } // namespace aym

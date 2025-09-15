@@ -122,7 +122,7 @@ TEST(CodeGenTest, GeneratesAssembly) {
 TEST(InterpreterTest, BuiltinPrintFloat) {
     Interpreter interp;
     testing::internal::CaptureStdout();
-    interp.callFunction(BUILTIN_PRINT, {Value::Float(3.14)});
+    interp.callFunction(BUILTIN_PRINT, {Value::Float(3.14)}, 0, 0);
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, std::string("3.14\n"));
 }
@@ -130,23 +130,23 @@ TEST(InterpreterTest, BuiltinPrintFloat) {
 TEST(InterpreterTest, BuiltinPrintBool) {
     Interpreter interp;
     testing::internal::CaptureStdout();
-    interp.callFunction(BUILTIN_PRINT, {Value::Bool(true)});
-    interp.callFunction(BUILTIN_PRINT, {Value::Bool(false)});
+    interp.callFunction(BUILTIN_PRINT, {Value::Bool(true)}, 0, 0);
+    interp.callFunction(BUILTIN_PRINT, {Value::Bool(false)}, 0, 0);
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, std::string("cheka\njaniwa\n"));
 }
 
 TEST(InterpreterTest, BuiltinArrayLength) {
     Interpreter interp;
-    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(5)});
-    auto len = interp.callFunction(BUILTIN_ARRAY_LENGTH, {handle});
+    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(5)}, 0, 0);
+    auto len = interp.callFunction(BUILTIN_ARRAY_LENGTH, {handle}, 0, 0);
     EXPECT_EQ(len.i, 5);
-    interp.callFunction(BUILTIN_ARRAY_FREE, {handle});
+    interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
 }
 
 TEST(InterpreterTest, LookupUndefinedVariableThrows) {
     Interpreter interp;
-    EXPECT_THROW(interp.lookup("missing"), std::runtime_error);
+    EXPECT_THROW(interp.lookup("missing", 0, 0), std::runtime_error);
 }
 
 int main(int argc, char **argv) {
