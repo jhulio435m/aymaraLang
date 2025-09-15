@@ -37,6 +37,23 @@ TEST(LexerTest, EscapedString) {
     EXPECT_EQ(tokens[1].type, TokenType::EndOfFile);
 }
 
+TEST(LexerTest, UnterminatedString) {
+    Lexer lexer("\"missing end");
+    try {
+        lexer.tokenize();
+        FAIL() << "Expected std::runtime_error";
+    } catch (const std::runtime_error &e) {
+        std::string msg = e.what();
+        EXPECT_NE(msg.find("line 1"), std::string::npos);
+        EXPECT_NE(msg.find("column 1"), std::string::npos);
+    }
+}
+
+TEST(LexerTest, UnterminatedBlockComment) {
+    Lexer lexer("/* comment");
+    EXPECT_THROW(lexer.tokenize(), std::runtime_error);
+}
+
 TEST(ParserTest, ParsePrintStmt) {
     Lexer lexer("willt’aña(1);");
     auto tokens = lexer.tokenize();

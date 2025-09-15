@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include <cctype>
+#include <stdexcept>
 
 namespace aym {
 
@@ -25,7 +26,12 @@ std::vector<Token> Lexer::tokenize() {
             if (src[pos + 1] == '*') { // block comment
                 get(); get();
                 while (pos + 1 < src.size() && !(peek() == '*' && src[pos + 1] == '/')) get();
-                if (pos + 1 < src.size()) { get(); get(); }
+                if (pos + 1 >= src.size()) {
+                    throw std::runtime_error(
+                        "Unterminated block comment starting at line " + std::to_string(startLine) +
+                        ", column " + std::to_string(startColumn));
+                }
+                get(); get();
                 continue;
             }
         }
@@ -124,9 +130,10 @@ std::vector<Token> Lexer::tokenize() {
         if (c == '"') {
             get();
             std::string str;
+            bool terminated = false;
             while (pos < src.size()) {
                 char ch = get();
-                if (ch == '"') break;
+                if (ch == '"') { terminated = true; break; }
                 if (ch == '\\') {
                     if (pos >= src.size()) break;
                     char esc = get();
@@ -142,6 +149,11 @@ std::vector<Token> Lexer::tokenize() {
                 } else {
                     str += ch;
                 }
+            }
+            if (!terminated) {
+                throw std::runtime_error(
+                    "Unterminated string starting at line " + std::to_string(startLine) +
+                    ", column " + std::to_string(startColumn));
             }
             tokens.push_back({TokenType::String, str, startLine, startColumn});
             continue;
