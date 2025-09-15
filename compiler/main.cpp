@@ -1,6 +1,7 @@
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "codegen/codegen.h"
+#include "codegen/llvm/llvm_codegen.h"
 #include "interpreter/interpreter.h"
 #include "utils/utils.h"
 #include "semantic/semantic.h"
@@ -28,6 +29,7 @@ int main(int argc, char** argv) {
 #endif
     long seed = 0;
     bool seedProvided = false;
+    bool useLLVMBackend = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -50,6 +52,8 @@ int main(int argc, char** argv) {
         } else if (arg == "--seed" && i + 1 < argc) {
             seed = std::stol(argv[++i]);
             seedProvided = true;
+        } else if (arg == "--llvm") {
+            useLLVMBackend = true;
         } else {
             inputs.push_back(arg);
         }
@@ -147,8 +151,24 @@ int main(int argc, char** argv) {
     aym::SemanticAnalyzer sem;
     sem.analyze(nodes);
 
-    aym::CodeGenerator cg;
-    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes(), sem.getGlobalTypes(), windowsTarget, seedProvided ? seed : -1);
+    if (useLLVMBackend) {
+        aym::LLVMCodeGenerator llvmCg;
+        llvmCg.generate(nodes,
+                        output + ".ll",
+                        sem.getGlobals(),
+                        sem.getParamTypes(),
+                        sem.getGlobalTypes(),
+                        seedProvided ? seed : -1);
+    } else {
+        aym::CodeGenerator cg;
+        cg.generate(nodes,
+                    output + ".asm",
+                    sem.getGlobals(),
+                    sem.getParamTypes(),
+                    sem.getGlobalTypes(),
+                    windowsTarget,
+                    seedProvided ? seed : -1);
+    }
 
     return 0;
 }

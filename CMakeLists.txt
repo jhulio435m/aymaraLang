@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(aymaraLang CXX)
+project(aymaraLang CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,6 +17,16 @@ file(GLOB_RECURSE AYM_SOURCES CONFIGURE_DEPENDS
 )
 
 add_executable(aymc ${AYM_SOURCES})
+
+find_package(LLVM REQUIRED CONFIG)
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+
+set(AYM_LLVM_COMPONENTS core support)
+llvm_map_components_to_libnames(AYM_LLVM_LIBS ${AYM_LLVM_COMPONENTS})
+
+target_include_directories(aymc PRIVATE ${LLVM_INCLUDE_DIRS})
+target_compile_definitions(aymc PRIVATE ${LLVM_DEFINITIONS})
+target_link_libraries(aymc PRIVATE ${AYM_LLVM_LIBS})
 
 # Put binaries into bin/ inside the build directory
 set_target_properties(aymc PROPERTIES

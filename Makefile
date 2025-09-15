@@ -2,6 +2,14 @@
 
 CXX ?= g++
 CXXFLAGS ?= -std=c++17 -Wall -Wextra -O2
+LDFLAGS ?=
+
+LLVM_CONFIG ?= llvm-config
+LLVM_CXXFLAGS := $(shell $(LLVM_CONFIG) --cxxflags 2>/dev/null)
+LLVM_LDFLAGS := $(shell $(LLVM_CONFIG) --ldflags --libs core support 2>/dev/null)
+
+CXXFLAGS += $(LLVM_CXXFLAGS)
+LDFLAGS += $(LLVM_LDFLAGS)
 
 SRC_DIR := compiler
 BUILD_DIR := build
@@ -13,6 +21,7 @@ LEXER_SRC := $(wildcard $(SRC_DIR)/lexer/*.cpp)
 PARSER_SRC := $(wildcard $(SRC_DIR)/parser/*.cpp)
 AST_SRC := $(wildcard $(SRC_DIR)/ast/*.cpp)
 CODEGEN_SRC := $(wildcard $(SRC_DIR)/codegen/*.cpp)
+LLVM_CODEGEN_SRC := $(wildcard $(SRC_DIR)/codegen/llvm/*.cpp)
 UTILS_SRC := $(SRC_DIR)/utils/utils.cpp
 MODULE_RESOLVER_SRC := $(SRC_DIR)/utils/module_resolver.cpp
 ERROR_SRC := $(SRC_DIR)/utils/error.cpp
@@ -20,7 +29,7 @@ SEMANTIC_SRC := $(wildcard $(SRC_DIR)/semantic/*.cpp)
 BUILTINS_SRC := $(wildcard $(SRC_DIR)/builtins/*.cpp)
 INTERPRETER_SRC := $(wildcard $(SRC_DIR)/interpreter/*.cpp)
 
-SRCS := $(MAIN_SRC) $(LEXER_SRC) $(PARSER_SRC) $(AST_SRC) $(CODEGEN_SRC) \
+SRCS := $(MAIN_SRC) $(LEXER_SRC) $(PARSER_SRC) $(AST_SRC) $(CODEGEN_SRC) $(LLVM_CODEGEN_SRC) \
         $(UTILS_SRC) $(MODULE_RESOLVER_SRC) $(ERROR_SRC) $(SEMANTIC_SRC) \
         $(BUILTINS_SRC) $(INTERPRETER_SRC)
 
@@ -32,8 +41,8 @@ OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 all: $(BIN_DIR)/aymc
 
 $(BIN_DIR)/aymc: $(OBJS)
-	@mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+        @mkdir -p $(BIN_DIR)
+        $(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 # Pattern rule: compile any compiler/*.cpp to build/*.o
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp

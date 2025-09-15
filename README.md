@@ -45,7 +45,7 @@ El compilador `aymc` está estructurado en varias etapas clásicas de diseño de
 3. **Construcción del AST** – Representación semántica abstracta.
 4. **Análisis Semántico** – Tipado, resolución de símbolos, validaciones.
 5. **Optimización Intermedia** – (opcional) Reescritura del AST para mejoras.
-6. **Generación de Código** – Código ensamblador x86_64.
+6. **Generación de Código** – Código ensamblador x86_64 o LLVM IR (backend experimental).
 7. **Ensamblado y Enlace** – Uso de `nasm` y `gcc` para crear `.ayn`.
 
 Las estructuras ahora incluyen `else`, ciclos `for` y funciones simples.
@@ -53,7 +53,7 @@ Las estructuras ahora incluyen `else`, ciclos `for` y funciones simples.
 Las condiciones y bucles ahora se ejecutan en tiempo de ejecución gracias a un
 AST más completo, análisis semántico y generación de código en ensamblador.
 
-> ⚙️ Futuras mejoras incluirán soporte para LLVM como backend opcional.
+> ⚙️ El backend LLVM está disponible de forma experimental mediante `aymc --llvm`.
 
 ---
 
@@ -184,9 +184,21 @@ inicio
 
 ## 🛠️ Construcción del compilador
 
+### Backend LLVM experimental
+
+El backend basado en LLVM IR se puede invocar añadiendo la bandera `--llvm` al compilador.
+Genera un archivo `.ll` con un módulo LLVM que describe de forma resumida el programa analizado.
+
+```bash
+$ ./bin/aymc --llvm samples/hola.aym
+$ cat build/hola.ll
+```
+
+El IR generado imprime por consola un resumen del AST, útil para validar la integración con LLVM antes de ampliar el backend.
+
 ### Linux
 
-1. Dependencias: `g++` (>= 10), `make`, `nasm` y `gcc`/`ld` para el enlace final.
+1. Dependencias: `g++` (>= 10), `make`, `nasm`, `gcc`/`ld` para el enlace final y `llvm-config` con las bibliotecas de desarrollo de LLVM (>= 14).
 2. Ejecuta `make` para compilar el binario en `bin/aymc`.
 3. (Opcional) Lanza `make test` para correr el paquete de pruebas automatizadas.
 
@@ -197,6 +209,8 @@ inicio
    ```bash
    xcode-select --install
    ```
+
+   Se recomienda instalar LLVM mediante Homebrew (`brew install llvm`) para habilitar el backend experimental.
 
 2. Instala [Homebrew](https://brew.sh/) si aún no lo tienes disponible.
 3. Con Homebrew, instala las dependencias necesarias:
