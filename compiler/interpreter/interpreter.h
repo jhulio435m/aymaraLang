@@ -26,6 +26,8 @@ struct Value {
 class Interpreter : public ASTVisitor {
 public:
     Interpreter();
+    explicit Interpreter(unsigned int seed);
+    void setSeed(unsigned int seed);
     void execute(const std::vector<std::unique_ptr<Node>> &nodes);
     Value getLastValue() const { return lastValue; }
 
@@ -53,6 +55,7 @@ public:
 
 private:
     Value lastValue;
+    bool randSeeded = false;
     bool breakFlag = false;
     bool continueFlag = false;
     bool returnFlag = false;

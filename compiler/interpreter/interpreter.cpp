@@ -12,6 +12,15 @@ namespace aym {
 
 Interpreter::Interpreter() = default;
 
+Interpreter::Interpreter(unsigned int seed) {
+    setSeed(seed);
+}
+
+void Interpreter::setSeed(unsigned int seed) {
+    std::srand(seed);
+    randSeeded = true;
+}
+
 void Interpreter::pushScope() {
     scopes.emplace_back();
 }
@@ -90,10 +99,9 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
         return Value::Int(0);
     }
     if (name == BUILTIN_RANDOM) {
-        static bool seeded = false;
-        if (!seeded) {
+        if (!randSeeded) {
             std::srand(std::time(nullptr));
-            seeded = true;
+            randSeeded = true;
         }
         if (!args.empty() && args[0].i > 0) {
             return Value::Int(std::rand() % args[0].i);

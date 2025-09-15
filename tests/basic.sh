@@ -27,8 +27,10 @@ make >/dev/null
 ./bin/aymc samples/negativos.aym >/dev/null
 ./bin/negativos | grep -q -- -7
 
-./bin/aymc samples/random.aym >/dev/null
-./bin/random >/dev/null
+./bin/aymc --seed 1 samples/random.aym >/dev/null
+out1=$(./bin/random)
+out2=$(./bin/random)
+[ "$out1" = "$out2" ]
 
 ./bin/aymc samples/array_length.aym >/dev/null
 ./bin/array_length | grep -q -- 3

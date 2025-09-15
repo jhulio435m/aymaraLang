@@ -54,13 +54,15 @@ public:
     std::unordered_map<std::string,std::string> globalTypes;
     std::vector<std::string> breakLabels;
     std::vector<std::string> continueLabels;
+    long seed = -1;
 
     void emit(const std::vector<std::unique_ptr<Node>> &nodes,
               const std::string &path,
               const std::unordered_set<std::string> &semGlobals,
               const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
               const std::unordered_map<std::string,std::string> &globalTypesIn,
-              bool windows);
+              bool windows,
+              long seedIn);
 private:
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt,
@@ -685,11 +687,13 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::unordered_set<std::string> &semGlobals,
                        const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
                        const std::unordered_map<std::string,std::string> &globalTypesIn,
-                       bool windows) {
+                       bool windows,
+                       long seedIn) {
     this->windows = windows;
     globals = semGlobals;
     paramTypes = paramTypesIn;
     globalTypes = globalTypesIn;
+    seed = seedIn;
 
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
@@ -713,6 +717,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern scanf\n";
     out << "extern strlen\n";
     out << "extern aym_random\n";
+    out << "extern aym_srand\n";
     out << "extern aym_sleep\n";
     out << "extern aym_array_new\n";
     out << "extern aym_array_get\n";
@@ -751,6 +756,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     } else {
         // Align stack to 16 bytes before calls on SysV ABI
         out << "    sub rsp, 8\n";
+    }
+    if (seed >= 0) {
+        out << "    mov " << reg1(this->windows) << ", " << seed << "\n";
+        out << "    call aym_srand\n";
     }
     std::string mainEnd = genLabel("endmain");
     for (const auto *s : mainStmts) emitStmt(s, nullptr, mainEnd);
@@ -800,9 +809,10 @@ void CodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes,
                              const std::unordered_set<std::string> &globals,
                              const std::unordered_map<std::string,std::vector<std::string>> &paramTypes,
                              const std::unordered_map<std::string,std::string> &globalTypes,
-                             bool windows) {
+                             bool windows,
+                             long seed) {
     CodeGenImpl impl;
-    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes, windows);
+    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes, windows, seed);
 }
 
 } // namespace aym

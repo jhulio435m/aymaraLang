@@ -191,6 +191,17 @@ $ ./bin/aymc --windows samples/hola.aym
 $ ./bin/aymc --linux samples/hola.aym
 ```
 
+### Semilla de números aleatorios
+
+El compilador acepta `--seed <valor>` para fijar la semilla del generador de
+números aleatorios tanto en el intérprete como en los ejecutables generados.
+Esto permite reproducir secuencias de `random()` de manera determinista.
+
+```bash
+$ ./bin/aymc --seed 42 samples/random.aym
+$ ./bin/random
+```
+
 ### Uso en Windows
 
 1. Instalar [MinGW-w64](https://www.mingw-w64.org/) (GCC 9 o superior) y la versión para Windows de `nasm`.

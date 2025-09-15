@@ -18,11 +18,16 @@ void leer_linea(char *buf, int size) {
     }
 }
 
+static int seeded = 0;
+
+void aym_srand(unsigned int seed) {
+    srand(seed);
+    seeded = 1;
+}
+
 int aym_random(int max) {
-    static int seeded = 0;
     if (!seeded) {
-        srand((unsigned)time(NULL));
-        seeded = 1;
+        aym_srand((unsigned)time(NULL));
     }
     if (max > 0) return rand() % max;
     return rand();
