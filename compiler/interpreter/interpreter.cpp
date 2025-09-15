@@ -21,12 +21,13 @@ void Interpreter::popScope() {
         scopes.pop_back();
 }
 
-Value Interpreter::lookup(const std::string &name) {
+Value Interpreter::lookup(const std::string &name, size_t line, size_t column) {
     for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
         auto f = it->find(name);
         if (f != it->end()) return f->second;
     }
-    std::cerr << "Error: undefined identifier '" << name << "'" << std::endl;
+    std::cerr << "Error en linea " << line << ", columna " << column
+              << ": undefined identifier '" << name << "'" << std::endl;
     throw std::runtime_error("undefined identifier: " + name);
 }
 
@@ -47,7 +48,7 @@ Value Interpreter::eval(Expr *expr) {
     return lastValue;
 }
 
-Value Interpreter::callFunction(const std::string &name, const std::vector<Value>& args) {
+Value Interpreter::callFunction(const std::string &name, const std::vector<Value>& args, size_t line, size_t column) {
     auto it = functions.find(name);
     if (it != functions.end()) {
         pushScope();
@@ -149,7 +150,9 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
                     if (index >= 0 && static_cast<size_t>(index) < arr.size()) {
                         arr[static_cast<size_t>(index)] = args[2].i;
                     } else {
-                        throw std::runtime_error("array index out of bounds");
+                        throw std::runtime_error("array index out of bounds at line " +
+                                               std::to_string(line) + ", column " +
+                                               std::to_string(column));
                     }
                 }
             }
@@ -201,7 +204,7 @@ void Interpreter::visit(StringExpr &s) {
 }
 
 void Interpreter::visit(VariableExpr &v) {
-    lastValue = lookup(v.getName());
+    lastValue = lookup(v.getName(), v.getLine(), v.getColumn());
 }
 
 void Interpreter::visit(BinaryExpr &b) {
@@ -221,7 +224,8 @@ void Interpreter::visit(BinaryExpr &b) {
     case '*': lastValue = Value::Int(l.i * r.i); break;
     case '/':
         if (r.i == 0) {
-            std::cerr << "Runtime error: division by zero" << std::endl;
+            std::cerr << "Runtime error en linea " << b.getLine() << ", columna "
+                      << b.getColumn() << ": division by zero" << std::endl;
             lastValue = Value::Int(0);
         } else {
             lastValue = Value::Int(l.i / r.i);
@@ -229,7 +233,8 @@ void Interpreter::visit(BinaryExpr &b) {
         break;
     case '%':
         if (r.i == 0) {
-            std::cerr << "Runtime error: modulo by zero" << std::endl;
+            std::cerr << "Runtime error en linea " << b.getLine() << ", columna "
+                      << b.getColumn() << ": modulo by zero" << std::endl;
             lastValue = Value::Int(0);
         } else {
             lastValue = Value::Int(l.i % r.i);
@@ -270,7 +275,7 @@ void Interpreter::visit(UnaryExpr &u) {
 void Interpreter::visit(CallExpr &c) {
     std::vector<Value> args;
     for (const auto &a : c.getArgs()) args.push_back(eval(a.get()));
-    lastValue = callFunction(c.getName(), args);
+    lastValue = callFunction(c.getName(), args, c.getLine(), c.getColumn());
 }
 
 void Interpreter::visit(PrintStmt &p) {

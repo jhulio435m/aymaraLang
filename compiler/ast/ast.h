@@ -55,8 +55,18 @@ public:
 
 class Node {
 public:
+    Node() = default;
+    Node(size_t line, size_t column) : line(line), column(column) {}
     virtual ~Node() = default;
+
+    size_t getLine() const { return line; }
+    size_t getColumn() const { return column; }
+    void setLocation(size_t l, size_t c) { line = l; column = c; }
+
     virtual void accept(ASTVisitor &) = 0;
+private:
+    size_t line = 0;
+    size_t column = 0;
 };
 
 class Expr : public Node {
