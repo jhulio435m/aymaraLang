@@ -25,6 +25,7 @@ private:
     const Token &get();
     bool match(TokenType type);
     void parseError(const std::string &msg);
+    void synchronize();
     void parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool stopAtBrace = false);
     std::unique_ptr<Stmt> parseSingleStatement();
     std::unique_ptr<Expr> parseExpression();
