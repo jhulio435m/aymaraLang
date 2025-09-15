@@ -182,6 +182,57 @@ inicio
 1
 ```
 
+## 🛠️ Construcción del compilador
+
+### Linux
+
+1. Dependencias: `g++` (>= 10), `make`, `nasm` y `gcc`/`ld` para el enlace final.
+2. Ejecuta `make` para compilar el binario en `bin/aymc`.
+3. (Opcional) Lanza `make test` para correr el paquete de pruebas automatizadas.
+
+### macOS
+
+1. Instala las *Command Line Tools* de Xcode:
+
+   ```bash
+   xcode-select --install
+   ```
+
+2. Instala [Homebrew](https://brew.sh/) si aún no lo tienes disponible.
+3. Con Homebrew, instala las dependencias necesarias:
+
+   ```bash
+   brew install llvm nasm cmake make
+   ```
+
+4. Asegura que el `clang++` de Homebrew esté en tu `PATH` (ajusta la ruta según Apple Silicon `/opt/homebrew` o Intel `/usr/local`):
+
+   ```bash
+   export PATH="$(brew --prefix llvm)/bin:$PATH"
+   export LDFLAGS="-L$(brew --prefix llvm)/lib"
+   export CPPFLAGS="-I$(brew --prefix llvm)/include"
+   ```
+
+5. Compila el proyecto usando el *Makefile* específico para macOS:
+
+   ```bash
+   make -f Makefile.macos
+   ```
+
+   El binario `bin/aymc` quedará listo para compilar programas `.aym` (los ejecutables generados siguen siendo ELF o PE según el modo seleccionado).
+6. Como alternativa, puedes usar CMake con `clang++`:
+
+   ```bash
+   cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++
+   cmake --build build -j
+   ```
+
+### Windows (resumen)
+
+1. Instala [MinGW-w64](https://www.mingw-w64.org/) (GCC 9 o superior) y `nasm` para Windows.
+2. Ejecuta `build.bat` desde la terminal de MinGW para generar `aymc.exe`.
+3. Consulta la sección [**Uso en Windows**](#uso-en-windows) para más detalles sobre la ejecución.
+
 ### Selección de plataforma
 
 `aymc` permite elegir el sistema operativo de destino. De forma predeterminada se
