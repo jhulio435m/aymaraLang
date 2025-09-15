@@ -144,6 +144,15 @@ TEST(InterpreterTest, BuiltinArrayLength) {
     interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
 }
 
+TEST(InterpreterTest, ArrayGetNegativeIndexThrows) {
+    Interpreter interp;
+    auto handle = interp.callFunction(BUILTIN_ARRAY_NEW, {Value::Int(3)}, 0, 0);
+    EXPECT_THROW(interp.callFunction(BUILTIN_ARRAY_GET,
+                                    {handle, Value::Int(-1)}, 1, 1),
+                 std::runtime_error);
+    interp.callFunction(BUILTIN_ARRAY_FREE, {handle}, 0, 0);
+}
+
 TEST(InterpreterTest, LookupUndefinedVariableThrows) {
     Interpreter interp;
     EXPECT_THROW(interp.lookup("missing", 0, 0), std::runtime_error);
