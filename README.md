@@ -13,6 +13,12 @@ Palabras clave principales del lenguaje:
 
 ---
 
+## 📚 Documentación
+
+- [Gramática formal del lenguaje](docs/grammar.md)
+
+---
+
 ## 🔠 Identidad del Lenguaje
 
 | Elemento                | Valor                              |
