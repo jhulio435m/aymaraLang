@@ -12,6 +12,7 @@
 #include <fstream>
 #include <cstdio>
 #include <stdexcept>
+#include <filesystem>
 
 using namespace aym;
 
@@ -88,6 +89,25 @@ TEST(ParserTest, ExpressionPrecedence) {
     EXPECT_EQ(mul->getOp(), '*');
 }
 
+TEST(ParserTest, MultipleErrorsRecovery) {
+    Lexer lexer("; willt’aña(1); *; willt’aña(2);");
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+    auto nodes = parser.parse();
+    EXPECT_TRUE(parser.hasError());
+    ASSERT_GE(nodes.size(), 4u);
+    auto *print1 = dynamic_cast<PrintStmt*>(nodes[1].get());
+    ASSERT_NE(print1, nullptr);
+    auto *num1 = dynamic_cast<NumberExpr*>(print1->getExpr());
+    ASSERT_NE(num1, nullptr);
+    EXPECT_EQ(num1->getValue(), 1);
+    auto *print2 = dynamic_cast<PrintStmt*>(nodes[3].get());
+    ASSERT_NE(print2, nullptr);
+    auto *num2 = dynamic_cast<NumberExpr*>(print2->getExpr());
+    ASSERT_NE(num2, nullptr);
+    EXPECT_EQ(num2->getValue(), 2);
+}
+
 TEST(CodeGenTest, GeneratesAssembly) {
     std::string src = "willt’aña(\"ok\");";
     Lexer lexer(src);
@@ -95,12 +115,13 @@ TEST(CodeGenTest, GeneratesAssembly) {
     Parser parser(tokens);
     auto nodes = parser.parse();
     ASSERT_FALSE(parser.hasError());
-
+    std::filesystem::create_directory("build");
+    std::filesystem::create_directory("bin");
     CodeGenerator cg;
 #ifdef _WIN32
-    cg.generate(nodes, "build/test_output.asm", {}, {}, {}, true);
+    cg.generate(nodes, "build/test_output.asm", {}, {}, {}, true, 0);
 #else
-    cg.generate(nodes, "build/test_output.asm", {}, {}, {}, false);
+    cg.generate(nodes, "build/test_output.asm", {}, {}, {}, false, 0);
 #endif
 
     std::ifstream in("build/test_output.asm");

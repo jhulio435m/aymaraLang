@@ -26,6 +26,16 @@ void Parser::parseError(const std::string &msg) {
     std::cerr << "[parser] Error en linea " << tok.line << ", columna " << tok.column
               << ": " << msg << std::endl;
     hadError = true;
+    synchronize();
+}
+
+void Parser::synchronize() {
+    while (pos < tokens.size()) {
+        TokenType t = peek().type;
+        if (t == TokenType::Semicolon) { get(); break; }
+        if (t == TokenType::RBrace || t == TokenType::EndOfFile) break;
+        get();
+    }
 }
 
 void Parser::parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool stopAtBrace) {
@@ -488,7 +498,6 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         return expr;
     }
     parseError("token inesperado");
-    get();
     return nullptr;
 }
 
