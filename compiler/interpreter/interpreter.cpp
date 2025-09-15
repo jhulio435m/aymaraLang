@@ -132,8 +132,11 @@ Value Interpreter::callFunction(const std::string &name, const std::vector<Value
                     auto &arr = this->arrays[idx];
                     if (index >= 0 && static_cast<size_t>(index) < arr.size()) {
                         return Value::Int(arr[static_cast<size_t>(index)]);
+                    } else {
+                        throw std::runtime_error("array index out of bounds at line " +
+                                               std::to_string(line) + ", column " +
+                                               std::to_string(column));
                     }
-                    return Value::Int(0);
                 }
             }
         }

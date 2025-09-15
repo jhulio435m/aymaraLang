@@ -53,7 +53,11 @@ long aym_array_get(intptr_t arr, long idx) {
     if (!arr) return 0;
     long *a = (long*)arr;
     long len = *(a - 1);
-    if (idx < 0 || idx >= len) return 0;
+    if (idx < 0) {
+        fprintf(stderr, "aym_array_get: negative index %ld\n", idx);
+        return 0; // default value on error
+    }
+    if (idx >= len) return 0;
     return a[idx];
 }
 
@@ -61,7 +65,11 @@ long aym_array_set(intptr_t arr, long idx, long val) {
     if (!arr) return 0;
     long *a = (long*)arr;
     long len = *(a - 1);
-    if (idx < 0 || idx >= len) return 0;
+    if (idx < 0) {
+        fprintf(stderr, "aym_array_set: negative index %ld\n", idx);
+        return 0; // indicate error
+    }
+    if (idx >= len) return 0;
     a[idx] = val;
     return val;
 }
