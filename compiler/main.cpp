@@ -25,6 +25,8 @@ int main(int argc, char** argv) {
 #else
         false;
 #endif
+    long seed = 0;
+    bool seedProvided = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -44,6 +46,9 @@ int main(int argc, char** argv) {
             windowsTarget = true;
         } else if (arg == "--linux") {
             windowsTarget = false;
+        } else if (arg == "--seed" && i + 1 < argc) {
+            seed = std::stol(argv[++i]);
+            seedProvided = true;
         } else {
             inputs.push_back(arg);
         }
@@ -52,6 +57,7 @@ int main(int argc, char** argv) {
     if (repl) {
         std::cout << "AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)" << std::endl;
         aym::Interpreter interp;
+        if (seedProvided) interp.setSeed(static_cast<unsigned int>(seed));
         std::vector<std::unique_ptr<aym::Node>> program;
         aym::SemanticAnalyzer sem;
         std::string line;
@@ -124,7 +130,7 @@ int main(int argc, char** argv) {
     sem.analyze(nodes);
 
     aym::CodeGenerator cg;
-    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes(), sem.getGlobalTypes(), windowsTarget);
+    cg.generate(nodes, output + ".asm", sem.getGlobals(), sem.getParamTypes(), sem.getGlobalTypes(), windowsTarget, seedProvided ? seed : -1);
 
     return 0;
 }

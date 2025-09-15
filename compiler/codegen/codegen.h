@@ -18,7 +18,8 @@ public:
                   const std::unordered_set<std::string> &globals,
                   const std::unordered_map<std::string, std::vector<std::string>> &paramTypes,
                   const std::unordered_map<std::string, std::string> &globalTypes,
-                  bool windows);
+                  bool windows,
+                  long seed);
 };
 
 } // namespace aym
