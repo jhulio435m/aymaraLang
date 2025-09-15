@@ -52,3 +52,25 @@ si (5 >= 3) {
     willt’aña("mayor");
 }
 ```
+
+## Módulos (`apu`)
+
+Desde ahora es posible dividir el código en varios archivos y reutilizarlo con la
+declaración `apu`.
+
+```aymara
+apu "modules/aritmetica";
+
+jach’a total = suma(3, 4);
+willt’aña(total);
+```
+
+Coloca el archivo `modules/aritmetica.aym` junto al programa o dentro de una
+carpeta `modules/`. El resolvedor busca módulos en:
+
+- El directorio del archivo principal.
+- Una carpeta `modules/` dentro de ese directorio.
+- Rutas adicionales indicadas en la variable de entorno `AYM_PATH`.
+
+Cada módulo se procesa una sola vez y puede importar a su vez otros módulos con
+`apu`.

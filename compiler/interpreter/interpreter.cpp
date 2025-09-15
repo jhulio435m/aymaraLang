@@ -10,15 +10,27 @@
 
 namespace aym {
 
-Interpreter::Interpreter() = default;
+Interpreter::Interpreter()
+    : moduleResolver(fs::current_path()),
+      moduleBaseDir(fs::current_path()) {}
 
-Interpreter::Interpreter(unsigned int seed) {
+Interpreter::Interpreter(unsigned int seed)
+    : Interpreter() {
     setSeed(seed);
 }
 
 void Interpreter::setSeed(unsigned int seed) {
     std::srand(seed);
     randSeeded = true;
+}
+
+void Interpreter::setModuleBase(const fs::path &baseDir) {
+    moduleBaseDir = baseDir;
+    moduleResolver.setEntryDir(baseDir);
+}
+
+void Interpreter::addModuleSearchPath(const fs::path &path) {
+    moduleResolver.addSearchPath(path);
 }
 
 void Interpreter::pushScope() {
@@ -389,6 +401,21 @@ void Interpreter::visit(SwitchStmt &sw) {
     }
     if (!matched && sw.getDefault()) {
         sw.getDefault()->accept(*this);
+    }
+}
+
+void Interpreter::visit(ImportStmt &imp) {
+    try {
+        auto loaded = moduleResolver.load(imp.getModule(), moduleBaseDir,
+                                          imp.getLine(), imp.getColumn());
+        for (auto &node : loaded) {
+            moduleNodes.push_back(std::move(node));
+            Node *raw = moduleNodes.back().get();
+            if (raw) raw->accept(*this);
+        }
+    } catch (const std::runtime_error &e) {
+        std::cerr << e.what() << std::endl;
+        throw;
     }
 }
 

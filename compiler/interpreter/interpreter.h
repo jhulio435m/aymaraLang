@@ -2,6 +2,8 @@
 #define AYM_INTERPRETER_H
 
 #include "../ast/ast.h"
+#include "../utils/fs.h"
+#include "../utils/module_resolver.h"
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -29,6 +31,8 @@ public:
     explicit Interpreter(unsigned int seed);
     void setSeed(unsigned int seed);
     void execute(const std::vector<std::unique_ptr<Node>> &nodes);
+    void setModuleBase(const fs::path &baseDir);
+    void addModuleSearchPath(const fs::path &path);
     Value getLastValue() const { return lastValue; }
 
     // ASTVisitor overrides
@@ -52,6 +56,7 @@ public:
     void visit(WhileStmt&) override;
     void visit(DoWhileStmt&) override;
     void visit(SwitchStmt&) override;
+    void visit(ImportStmt&) override;
 
 private:
     Value lastValue;
@@ -65,6 +70,9 @@ private:
     std::unordered_map<std::string, FunctionStmt*> functions;
     std::vector<std::vector<long>> arrays;
     std::vector<bool> arraysValid;
+    ModuleResolver moduleResolver;
+    fs::path moduleBaseDir;
+    std::vector<std::unique_ptr<Node>> moduleNodes;
 
     void pushScope();
     void popScope();

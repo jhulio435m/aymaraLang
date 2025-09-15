@@ -14,13 +14,15 @@ PARSER_SRC := $(wildcard $(SRC_DIR)/parser/*.cpp)
 AST_SRC := $(wildcard $(SRC_DIR)/ast/*.cpp)
 CODEGEN_SRC := $(wildcard $(SRC_DIR)/codegen/*.cpp)
 UTILS_SRC := $(SRC_DIR)/utils/utils.cpp
+MODULE_RESOLVER_SRC := $(SRC_DIR)/utils/module_resolver.cpp
 ERROR_SRC := $(SRC_DIR)/utils/error.cpp
 SEMANTIC_SRC := $(wildcard $(SRC_DIR)/semantic/*.cpp)
 BUILTINS_SRC := $(wildcard $(SRC_DIR)/builtins/*.cpp)
 INTERPRETER_SRC := $(wildcard $(SRC_DIR)/interpreter/*.cpp)
 
 SRCS := $(MAIN_SRC) $(LEXER_SRC) $(PARSER_SRC) $(AST_SRC) $(CODEGEN_SRC) \
-        $(UTILS_SRC) $(ERROR_SRC) $(SEMANTIC_SRC) $(BUILTINS_SRC) $(INTERPRETER_SRC)
+        $(UTILS_SRC) $(MODULE_RESOLVER_SRC) $(ERROR_SRC) $(SEMANTIC_SRC) \
+        $(BUILTINS_SRC) $(INTERPRETER_SRC)
 
 # Map each source to an object in build/ mirroring folder structure
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))

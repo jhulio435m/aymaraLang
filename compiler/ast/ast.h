@@ -27,6 +27,7 @@ class FunctionStmt;
 class WhileStmt;
 class DoWhileStmt;
 class SwitchStmt;
+class ImportStmt;
 
 class ASTVisitor {
 public:
@@ -51,6 +52,7 @@ public:
     virtual void visit(WhileStmt &) = 0;
     virtual void visit(DoWhileStmt &) = 0;
     virtual void visit(SwitchStmt &) = 0;
+    virtual void visit(ImportStmt &) = 0;
 };
 
 class Node {
@@ -298,6 +300,16 @@ private:
     std::unique_ptr<Expr> expr;
     std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<BlockStmt>>> cases;
     std::unique_ptr<BlockStmt> defaultCase;
+};
+
+class ImportStmt : public Stmt {
+public:
+    explicit ImportStmt(std::string module)
+        : moduleName(std::move(module)) {}
+    const std::string &getModule() const { return moduleName; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::string moduleName;
 };
 
 

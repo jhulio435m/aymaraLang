@@ -1,0 +1,7 @@
+luräwi suma(a, b) {
+    kutiyana(a + b);
+}
+
+luräwi resta(a, b) {
+    kutiyana(a - b);
+}

@@ -9,6 +9,7 @@ Palabras clave principales del lenguaje:
 - `input` – lectura de consola
 - `luräwi` / `kutiyana` – definición de funciones y retorno
 - `si`, `sino`, `mientras`, `haceña`, `para`, `tantachaña`
+- `apu` – importación de módulos desde otros archivos
 
 ---
 
@@ -124,6 +125,16 @@ luräwi fact(n) {
 }
 
 willt’aña(fact(5));
+```
+
+### `module_demo.aym`
+```aymara
+apu "modules/aritmetica";
+
+jach’a base = 10;
+jach’a incremento = 5;
+willt’aña("suma: " + suma(base, incremento));
+willt’aña("resta: " + resta(base, incremento));
 ```
 
 

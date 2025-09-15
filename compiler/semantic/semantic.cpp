@@ -68,6 +68,7 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         void visit(WhileStmt&) override {}
         void visit(DoWhileStmt&) override {}
         void visit(SwitchStmt&) override {}
+        void visit(ImportStmt&) override {}
     } collector;
     collector.self = this;
     for (const auto &n : nodes) n->accept(collector);
@@ -162,6 +163,10 @@ void SemanticAnalyzer::visit(SwitchStmt &sw) {
     }
     if (sw.getDefault()) sw.getDefault()->accept(*this);
     --switchDepth;
+}
+
+void SemanticAnalyzer::visit(ImportStmt &) {
+    // Los modulos se resuelven antes del analisis semantico.
 }
 
 void SemanticAnalyzer::visit(FunctionStmt &fn) {
