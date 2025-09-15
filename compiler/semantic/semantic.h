@@ -55,6 +55,7 @@ private:
     void visit(WhileStmt &) override;
     void visit(DoWhileStmt &) override;
     void visit(SwitchStmt &) override;
+    void visit(ImportStmt &) override;
 }; 
 
 } // namespace aym

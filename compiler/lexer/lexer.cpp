@@ -110,6 +110,8 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordBool, word, startLine, startColumn});
             } else if (word == "qillqa") {
                 tokens.push_back({TokenType::KeywordString, word, startLine, startColumn});
+            } else if (word == "apu") {
+                tokens.push_back({TokenType::KeywordImport, word, startLine, startColumn});
             } else if (word == "cheka") {
                 tokens.push_back({TokenType::Number, "1", startLine, startColumn});
             } else {

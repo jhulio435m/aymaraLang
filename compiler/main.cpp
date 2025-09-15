@@ -5,6 +5,7 @@
 #include "utils/utils.h"
 #include "semantic/semantic.h"
 #include "utils/error.h"
+#include "utils/module_resolver.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -57,9 +58,11 @@ int main(int argc, char** argv) {
     if (repl) {
         std::cout << "AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)" << std::endl;
         aym::Interpreter interp;
+        interp.setModuleBase(fs::current_path());
         if (seedProvided) interp.setSeed(static_cast<unsigned int>(seed));
         std::vector<std::unique_ptr<aym::Node>> program;
         aym::SemanticAnalyzer sem;
+        aym::ModuleResolver resolver(fs::current_path());
         std::string line;
         while (true) {
             std::cout << "aym> ";
@@ -73,6 +76,7 @@ int main(int argc, char** argv) {
             aym::Parser p(toks);
             auto nodes = p.parse();
             if (p.hasError()) continue;
+            resolver.resolve(nodes, fs::current_path());
             size_t start = program.size();
             for (auto &n : nodes) program.push_back(std::move(n));
             sem.analyze(program);
@@ -123,6 +127,20 @@ int main(int argc, char** argv) {
     if (parser.hasError()) {
         return 1;
     }
+    fs::path entryDir = fs::current_path();
+    if (!inputs.empty()) {
+        fs::path first = fs::path(inputs[0]);
+        if (!first.is_absolute()) first = fs::absolute(first);
+        if (fs::is_directory(first)) entryDir = first;
+        else if (first.has_parent_path()) entryDir = first.parent_path();
+    }
+    aym::ModuleResolver resolver(entryDir);
+    for (const auto &in : inputs) {
+        fs::path p = fs::path(in);
+        if (!p.is_absolute()) p = fs::absolute(p);
+        if (p.has_parent_path()) resolver.addSearchPath(p.parent_path());
+    }
+    resolver.resolve(nodes, entryDir);
     if (dumpAst) {
         std::cout << "AST nodos: " << nodes.size() << std::endl;
     }

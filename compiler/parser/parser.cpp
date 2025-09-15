@@ -46,6 +46,24 @@ void Parser::parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool sto
 }
 
 std::unique_ptr<Stmt> Parser::parseSingleStatement() {
+    if (match(TokenType::KeywordImport)) {
+        Token importTok = tokens[pos-1];
+        std::string moduleName;
+        if (peek().type == TokenType::Identifier) {
+            moduleName = get().text;
+        } else if (peek().type == TokenType::String) {
+            moduleName = get().text;
+        } else {
+            parseError("se esperaba el nombre del modulo despues de 'apu'");
+        }
+        if (!match(TokenType::Semicolon)) {
+            parseError("se esperaba ';' despues de la declaracion de modulo");
+        }
+        auto node = std::make_unique<ImportStmt>(moduleName);
+        node->setLocation(importTok.line, importTok.column);
+        return node;
+    }
+
     if (match(TokenType::KeywordInt) || match(TokenType::KeywordFloat) ||
         match(TokenType::KeywordBool) || match(TokenType::KeywordString)) {
         Token typeTok = tokens[pos-1];

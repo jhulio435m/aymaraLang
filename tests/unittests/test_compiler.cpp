@@ -3,6 +3,7 @@
 #include "compiler/parser/parser.h"
 #include "compiler/codegen/codegen.h"
 #include "compiler/ast/ast.h"
+#include "compiler/utils/module_resolver.h"
 #define private public
 #define protected public
 #include "compiler/interpreter/interpreter.h"
@@ -15,6 +16,7 @@
 #include <filesystem>
 
 using namespace aym;
+namespace fs = std::filesystem;
 
 TEST(LexerTest, SimpleTokenize) {
     Lexer lexer("willt’aña(1);");
@@ -138,6 +140,30 @@ TEST(CodeGenTest, GeneratesAssembly) {
     std::remove("build/test_output.o");
     std::remove("bin/test_output");
 #endif
+}
+
+TEST(ModuleResolverTest, LoadsModuleFromRelativeDirectory) {
+    fs::path base = fs::current_path() / "tests" / "tmp_modules";
+    fs::create_directories(base / "modules");
+    std::ofstream mod(base / "modules" / "util.aym");
+    mod << "luräwi util() { kutiyana(1); }\n";
+    mod.close();
+
+    Lexer lexer("apu \"modules/util\";");
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+    auto nodes = parser.parse();
+    ASSERT_FALSE(parser.hasError());
+
+    ModuleResolver resolver(base);
+    resolver.resolve(nodes, base);
+
+    ASSERT_FALSE(nodes.empty());
+    auto *fn = dynamic_cast<FunctionStmt*>(nodes[0].get());
+    ASSERT_NE(fn, nullptr);
+    EXPECT_EQ(fn->getName(), "util");
+
+    fs::remove_all(base);
 }
 
 TEST(InterpreterTest, BuiltinPrintFloat) {

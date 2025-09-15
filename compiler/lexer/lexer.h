@@ -56,6 +56,7 @@ enum class TokenType {
     KeywordFloat,
     KeywordBool,
     KeywordString,
+    KeywordImport,
     EndOfFile
 };
 
