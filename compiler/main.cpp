@@ -1,7 +1,9 @@
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "codegen/codegen.h"
+#ifdef AYM_WITH_LLVM
 #include "codegen/llvm/llvm_codegen.h"
+#endif
 #include "interpreter/interpreter.h"
 #include "utils/utils.h"
 #include "semantic/semantic.h"
@@ -53,7 +55,12 @@ int main(int argc, char** argv) {
             seed = std::stol(argv[++i]);
             seedProvided = true;
         } else if (arg == "--llvm") {
+#ifdef AYM_WITH_LLVM
             useLLVMBackend = true;
+#else
+            aym::error("El backend LLVM no está disponible en esta compilación. Recompila con soporte de LLVM.");
+            return 1;
+#endif
         } else {
             inputs.push_back(arg);
         }
@@ -151,6 +158,7 @@ int main(int argc, char** argv) {
     aym::SemanticAnalyzer sem;
     sem.analyze(nodes);
 
+#ifdef AYM_WITH_LLVM
     if (useLLVMBackend) {
         aym::LLVMCodeGenerator llvmCg;
         llvmCg.generate(nodes,
@@ -159,16 +167,20 @@ int main(int argc, char** argv) {
                         sem.getParamTypes(),
                         sem.getGlobalTypes(),
                         seedProvided ? seed : -1);
-    } else {
-        aym::CodeGenerator cg;
-        cg.generate(nodes,
-                    output + ".asm",
-                    sem.getGlobals(),
-                    sem.getParamTypes(),
-                    sem.getGlobalTypes(),
-                    windowsTarget,
-                    seedProvided ? seed : -1);
+        return 0;
     }
+#else
+    (void)useLLVMBackend; // suprimir advertencias cuando LLVM está deshabilitado
+#endif
+
+    aym::CodeGenerator cg;
+    cg.generate(nodes,
+                output + ".asm",
+                sem.getGlobals(),
+                sem.getParamTypes(),
+                sem.getGlobalTypes(),
+                windowsTarget,
+                seedProvided ? seed : -1);
 
     return 0;
 }

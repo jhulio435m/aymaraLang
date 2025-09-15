@@ -2,6 +2,8 @@
 
 #include "../../ast/ast.h"
 
+#ifdef AYM_WITH_LLVM
+
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
@@ -88,3 +90,28 @@ void LLVMCodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes
 }
 
 } // namespace aym
+
+#else // !AYM_WITH_LLVM
+
+#include "../../utils/error.h"
+
+namespace aym {
+
+void LLVMCodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes,
+                                 const std::string &outputPath,
+                                 const std::unordered_set<std::string> &globals,
+                                 const std::unordered_map<std::string, std::vector<std::string>> &paramTypes,
+                                 const std::unordered_map<std::string, std::string> &globalTypes,
+                                 long seed) {
+    (void)nodes;
+    (void)outputPath;
+    (void)globals;
+    (void)paramTypes;
+    (void)globalTypes;
+    (void)seed;
+    error("El backend LLVM no está disponible en esta compilación. Recompila con soporte de LLVM.");
+}
+
+} // namespace aym
+
+#endif
