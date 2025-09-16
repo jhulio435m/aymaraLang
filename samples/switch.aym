@@ -1,0 +1,13 @@
+// Sentencia switch (tantachaña)
+jach’a valor = 2;
+
+tantachaña (valor) {
+    jamusa 1:
+        willt’aña("uno");
+        jalña;
+    jamusa 2:
+        willt’aña("dos");
+        jalña;
+    akhamawa:
+        willt’aña("otro");
+}

@@ -1,0 +1,6 @@
+// Operadores logicos
+si (1 uka janiwa 0) {
+    willt’aña("ok");
+} sino {
+    willt’aña("fail");
+}

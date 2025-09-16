@@ -1,0 +1,24 @@
+// Ejemplos de funciones
+
+// función sin retorno
+luräwi saludar(nombre) {
+    willt’aña("Kamisaraki");
+    willt’aña(nombre);
+}
+
+// función con retorno
+luräwi sumar(a, b) {
+    kutiyana(a + b);
+}
+
+// función recursiva
+luräwi fact(n) {
+    si (n == 0) {
+        kutiyana(1);
+    }
+    kutiyana(n * fact(n - 1));
+}
+
+saludar("mundo");
+willt’aña(sumar(3, 4));
+willt’aña(fact(5));

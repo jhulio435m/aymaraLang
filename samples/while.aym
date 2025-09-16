@@ -1,0 +1,39 @@
+// Ejemplos detallados del bucle while
+
+// while simple
+jach’a a = 0;
+mientras (a < 3) {
+    willt’aña(a);
+    a = a + 1;
+}
+
+// while con decremento
+jach’a b = 5;
+mientras (b > 0) {
+    willt’aña(b);
+    b = b - 1;
+}
+
+// while con continue y break
+jach’a c = 0;
+mientras (c < 10) {
+    c = c + 1;
+    si (c == 3) {
+        sarantaña;
+    }
+    si (c == 7) {
+        jalña;
+    }
+    willt’aña(c);
+}
+
+// while anidado
+jach’a x = 0;
+mientras (x < 2) {
+    jach’a y = 0;
+    mientras (y < 2) {
+        willt’aña(x + y);
+        y = y + 1;
+    }
+    x = x + 1;
+}

@@ -1,0 +1,6 @@
+// Uso de 'return'
+luräwi inc(n) {
+    kutiyana n + 1;
+}
+
+willt’aña(inc(4));

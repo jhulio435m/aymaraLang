@@ -1,0 +1,9 @@
+// Factorial recursivo
+luräwi fact(n) {
+    si (n == 0) {
+        kutiyana(1);
+    }
+    kutiyana(n * fact(n - 1));
+}
+
+willt’aña(fact(5));

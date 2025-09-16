@@ -1,0 +1,4 @@
+// Declaración de variables y operaciones aritméticas
+jach’a x = 5;
+jach’a y = x * 2 + 3;
+willt’aña(y); // imprime 13

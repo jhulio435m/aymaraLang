@@ -1,0 +1,10 @@
+// Ejemplo combinado de condicional y bucle while
+jach’a contador = 3;
+si (1) {
+    willt’aña("inicio");
+}
+
+mientras (contador) {
+    willt’aña(contador);
+    contador = contador - 1;
+}

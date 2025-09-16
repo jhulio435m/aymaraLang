@@ -1,0 +1,21 @@
+// Condicionales encadenados y switch
+jach’a x = 30;
+
+si (x == 1) {
+    willt’aña(1);
+} sino si (x == 2) {
+    willt’aña(2);
+} sino {
+    willt’aña(0);
+}
+
+tantachaña (x) {
+    jamusa 1:
+        willt’aña(10);
+        jalña;
+    jamusa 2:
+        willt’aña(20);
+        jalña;
+    akhamawa:
+        willt’aña(99);
+}

@@ -1,0 +1,12 @@
+// Ejemplos de while y do-while
+jach’a x = 0;
+
+mientras (x < 3) {
+    willt’aña(x);
+    x = x + 1;
+}
+
+haceña {
+    willt’aña(x);
+    x = x - 1;
+} mientras (x > 0);

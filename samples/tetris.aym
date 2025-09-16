@@ -1,0 +1,111 @@
+jach’a ancho = 10;
+jach’a alto = 20;
+jach’a tablero = array(ancho * alto);
+
+luräwi indice(x, y) {
+    kutiyana(y * ancho + x);
+}
+
+luräwi obtener(x, y) {
+    kutiyana(array_get(tablero, indice(x, y)));
+}
+
+luräwi fijar(x, y, v) {
+    array_set(tablero, indice(x, y), v);
+}
+
+luräwi dibujar() {
+    // limpiar pantalla y posicionar cursor
+    write("\x1b[H\x1b[2J");
+
+    jach’a y = 0;
+    mientras (y < alto) {
+        jach’a x = 0;
+        mientras (x < ancho) {
+            si (obtener(x, y)) {
+                write("#");
+            } sino {
+                write(".");
+            }
+            x = x + 1;
+        }
+        willt’aña("");
+        y = y + 1;
+    }
+}
+
+luräwi puede(x, y) {
+    jach’a i = 0;
+    mientras (i < 2) {
+        jach’a j = 0;
+        mientras (j < 2) {
+            jach’a nx = x + j;
+            jach’a ny = y + i;
+            si (nx >= ancho || ny >= alto) {
+                kutiyana(0);
+            }
+            si (obtener(nx, ny)) {
+                kutiyana(0);
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    kutiyana(1);
+}
+
+luräwi poner(x, y, v) {
+    jach’a i = 0;
+    mientras (i < 2) {
+        jach’a j = 0;
+        mientras (j < 2) {
+            fijar(x + j, y + i, v);
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+jach’a px = ancho / 2 - 1;
+jach’a py = 0;
+poner(px, py, 1);
+
+mientras (1) {
+    dibujar();
+
+    // leer entrada del usuario para mover la pieza
+    qillqa c = input();
+    si (c == "a" && puede(px - 1, py)) {
+        poner(px, py, 0);
+        px = px - 1;
+        poner(px, py, 1);
+    } sino si (c == "d" && puede(px + 1, py)) {
+        poner(px, py, 0);
+        px = px + 1;
+        poner(px, py, 1);
+    } sino si (c == "s" && puede(px, py + 1)) {
+        poner(px, py, 0);
+        py = py + 1;
+        poner(px, py, 1);
+    } sino si (c == "q") {
+        willt’aña("Game Over");
+        jalña;
+    }
+
+    // gravedad: la pieza cae automáticamente
+    si (puede(px, py + 1)) {
+        poner(px, py, 0);
+        py = py + 1;
+        poner(px, py, 1);
+    } sino {
+        py = 0;
+        px = random(ancho - 1);
+        si (!puede(px, py)) {
+            willt’aña("Game Over");
+            jalña;
+        }
+        poner(px, py, 1);
+    }
+}
+
+array_free(tablero);

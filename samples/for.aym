@@ -1,0 +1,39 @@
+// Ejemplos detallados del bucle for
+
+// for con inicialización y aumento
+para (jach’a i = 0; i < 5; i = i + 1;) {
+    willt’aña(i);
+}
+
+// for con decremento
+para (jach’a j = 5; j > 0; j = j - 1;) {
+    willt’aña(j);
+}
+
+// for con paso personalizado
+para (jach’a k = 0; k < 10; k = k + 2;) {
+    willt’aña(k);
+}
+
+// for con range
+para n en range(0, 5) {
+    willt’aña(n);
+}
+
+// for con continue y break
+para (jach’a m = 0; m < 10; m = m + 1;) {
+    si (m == 3) {
+        sarantaña;
+    }
+    si (m == 7) {
+        jalña;
+    }
+    willt’aña(m);
+}
+
+// for anidado
+para (jach’a x = 1; x <= 2; x = x + 1;) {
+    para (jach’a y = 1; y <= 2; y = y + 1;) {
+        willt’aña(x * y);
+    }
+}

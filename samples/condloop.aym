@@ -1,0 +1,9 @@
+// Condición seguida de un ciclo while
+
+si (1) {
+    willt’aña("cond");
+}
+
+mientras (3) {
+    willt’aña("loop");
+}
