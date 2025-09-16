@@ -25,6 +25,7 @@ g++ -std=c++17 -Wall -O2 %LLVM_CXXFLAGS% %LLVM_DEFINE% ^
   compiler\parser\parser.cpp ^
   compiler\semantic\semantic.cpp ^
   compiler\utils\utils.cpp ^
+  compiler\utils\module_resolver.cpp ^
   compiler\utils\error.cpp ^
   compiler\interpreter\interpreter.cpp ^
   compiler\main.cpp ^
