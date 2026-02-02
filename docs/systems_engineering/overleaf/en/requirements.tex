@@ -1,0 +1,121 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+\title{System Requirements and Systems Engineering Documentation\\AymaraLang (SEBOK/INCOSE)}
+\author{AymaraLang Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Purpose}
+Define the requirements for the \textbf{AymaraLang (aym)} system and its \textbf{aymc} compiler, as well as the operational context, stakeholders, interfaces, constraints, and verification criteria, following SEBOK and INCOSE practices.
+
+\section{System scope}
+\textbf{System of interest (SoS):}
+\begin{itemize}
+    \item \texttt{aymc} compiler (C++17) and executable generation backend.
+    \item Interpreter (REPL mode and AST execution).
+    \item AymaraLang language (\texttt{.aym} source files).
+    \item Minimal runtime for I/O and standard utilities.
+\end{itemize}
+
+\textbf{Out of scope:}
+\begin{itemize}
+    \item IDEs or editor extensions.
+    \item Additional external standard libraries.
+    \item Integration with cloud services.
+\end{itemize}
+
+\section{Stakeholders and needs}
+\begin{longtable}{@{}p{4cm}p{8cm}p{2cm}@{}}
+\toprule
+\textbf{Stakeholder} & \textbf{Need/goal} & \textbf{Priority} \\ \midrule
+Teachers and students & Accessible language representative of Aymara & High \\
+Compiler developers & Modular, maintainable architecture & High \\
+End users & Fast native executables & High \\
+Cultural community & Language preservation and educational materials & Medium \\ \bottomrule
+\end{longtable}
+
+\section{Concept of operations (ConOps)}
+\begin{enumerate}
+    \item The user writes \texttt{.aym} code with Aymara syntax.
+    \item They run \texttt{aymc} to compile into a native binary (\texttt{.ayn} or \texttt{.exe}).
+    \item The compiler performs: lexer $\rightarrow$ parser $\rightarrow$ AST $\rightarrow$ semantic analysis $\rightarrow$ codegen $\rightarrow$ assembly/linking.
+    \item The resulting executable runs on the target system.
+    \item Optionally, the user uses REPL mode for interactive execution.
+\end{enumerate}
+
+\section{System context and boundaries}
+\textbf{Operational environment:}
+\begin{itemize}
+    \item Linux/Windows systems (with toolchain support for NASM/LD/GCC or MinGW).
+    \item Build dependencies: \texttt{g++}/\texttt{clang++}, \texttt{nasm}, \texttt{gcc/ld}.
+\end{itemize}
+
+\textbf{Key external interfaces:}
+\begin{itemize}
+    \item Compiler CLI (\texttt{aymc}).
+    \item File system (read \texttt{.aym}, write \texttt{.asm}/\texttt{.ll} and binaries).
+    \item LLVM backend (optional, enabled with \texttt{--llvm}).
+\end{itemize}
+
+\section{Functional architecture (summary)}
+\begin{longtable}{@{}p{4cm}p{5cm}p{5cm}@{}}
+\toprule
+\textbf{Function} & \textbf{Input} & \textbf{Output} \\ \midrule
+Lexical analysis & \texttt{.aym} code & Tokens \\
+Syntax analysis & Tokens & AST \\
+Semantic analysis & AST & Validated AST + symbols \\
+Code generation & Validated AST & \texttt{.asm}/\texttt{.ll} \\
+Assembly/linking & \texttt{.asm} & Native binary \\
+REPL/Interpreter & Line of code & Console result \\ \bottomrule
+\end{longtable}
+
+\section{System requirements}
+
+\subsection{Functional requirements (FR)}
+\begin{itemize}
+    \item \textbf{FR-01} The system shall accept one or more \texttt{.aym} files as CLI input.
+    \item \textbf{FR-02} The system shall tokenize source code and produce tokens according to language keywords and symbols.
+    \item \textbf{FR-03} The system shall generate a valid AST via LL syntactic analysis.
+    \item \textbf{FR-04} The system shall validate semantics (types, symbols, and calls) before code generation.
+    \item \textbf{FR-05} The system shall generate NASM x86\_64 assembly and link a native executable.
+    \item \textbf{FR-06} The system shall allow selecting a Linux or Windows target via CLI.
+    \item \textbf{FR-07} The system shall provide REPL mode for interactive execution.
+    \item \textbf{FR-08} The system shall support an experimental LLVM backend that outputs \texttt{.ll}.
+    \item \textbf{FR-09} The system shall support imported modules from external files.
+    \item \textbf{FR-10} The system shall include built-in functions (I/O, math, arrays, randomness).
+\end{itemize}
+
+\subsection{Non-functional requirements (NFR)}
+\begin{itemize}
+    \item \textbf{NFR-01} The compiler shall run on Linux and Windows with a standard toolchain.
+    \item \textbf{NFR-02} Compilation time shall be suitable for educational programs (\textless= 2s for small files on classroom machines).
+    \item \textbf{NFR-03} The system shall provide readable error messages for lexical, syntactic, and semantic errors.
+    \item \textbf{NFR-04} The codebase shall maintain a modular structure (lexer/parser/ast/semantic/codegen).
+    \item \textbf{NFR-05} The project shall compile with C++17.
+\end{itemize}
+
+\subsection{Interface requirements (IR)}
+\begin{itemize}
+    \item \textbf{IR-01} Primary CLI: \texttt{aymc [options] file.aym ...}.
+    \item \textbf{IR-02} Options: \texttt{--repl}, \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
+    \item \textbf{IR-03} Output files: \texttt{.asm} (NASM), \texttt{.ll} (LLVM), and native executable.
+\end{itemize}
+
+\section{Constraints and assumptions}
+\begin{itemize}
+    \item The toolchain (NASM and GCC/LD or MinGW) must be available in PATH.
+    \item The LLVM backend is optional and depends on a build with support enabled.
+    \item The language is designed for static typing and constructs defined in the grammar.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,63 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Systems Engineering Management Plan (SEMP)\\AymaraLang}
+\author{AymaraLang Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+Establish the systems engineering strategy, processes, and deliverables for AymaraLang.
+
+\section{Scope}
+\begin{itemize}
+    \item Requirements definition (SRD).
+    \item Architecture and design.
+    \item Verification and validation.
+    \item Configuration and risk management.
+\end{itemize}
+
+\section{Core processes}
+\begin{longtable}{@{}p{4cm}p{9cm}@{}}
+\toprule
+\textbf{Process} & \textbf{Activities} \\ \midrule
+Requirements & Capture, analysis, traceability \\
+Architecture & Modular definition and interfaces \\
+Implementation & Iterative development in C++17 \\
+V\&V & Testing, inspections, demonstrations \\
+Change management & Git + PR review \\ \bottomrule
+\end{longtable}
+
+\section{Deliverables}
+\begin{itemize}
+    \item Requirements specification.
+    \item ConOps.
+    \item Architecture document.
+    \item ICD.
+    \item V\&V plan.
+    \item Risk register.
+\end{itemize}
+
+\section{Configuration management}
+\begin{itemize}
+    \item Git repository as the single source of truth.
+    \item Semantic versioning for releases.
+    \item Change control via PR.
+\end{itemize}
+
+\section{Metrics}
+\begin{itemize}
+    \item Percentage of requirements verified.
+    \item Test coverage in \texttt{tests/}.
+    \item Average compilation time.
+\end{itemize}
+
+\end{document}

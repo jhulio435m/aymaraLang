@@ -3,6 +3,9 @@
 Esta guía resume los comandos mínimos para compilar AymaraLang en las
 plataformas soportadas.
 
+Si buscas instrucciones más detalladas por sistema operativo, consulta
+[Compilación, instalación y uso](build.md).
+
 ## Requisitos
 
 - **Linux:** `g++` (>=8), `nasm`, `gcc` (para enlazar), `cmake` (>=3.15).
