@@ -1,48 +1,22 @@
-# AymaraLang
+# Referencia del lenguaje
 
-AymaraLang (`aym`) es un lenguaje de programación experimental con sintaxis inspirada en Python y un compilador escrito en C++17. Genera código NASM para x86_64 y enlaza con `gcc`.
+Esta referencia describe la sintaxis completa, operadores, palabras clave y
+funciones integradas de AymaraLang. Está pensada para consulta rápida durante el
+desarrollo.
 
-## Sintaxis soportada
-- Tipos: `jach’a`, `lliphiphi`, `chuymani`, `qillqa`
-- Variables y asignación
-- Impresión con `willt’aña(expr)`
-- Control de flujo: `si`/`sino`, `mientras`, `haceña...mientras`, `para`, `tantachaña`
-- Funciones con `luräwi nombre(params) { ... }`
-- Expresiones aritméticas `+ - * / % ^` y operadores unarios `-expr`, `+expr`, `!expr`
-- Operadores lógicos `uka`, `jan uka`, `janiwa`, comparaciones `== != < <= > >=`
-- Comentarios `//` y `/* */`
-- Lectura de consola con `input()`
-- Longitud de cadenas con `length()`
-- Números aleatorios con `random(max)`
-- Pausa de ejecución con `sleep(ms)`
-- Impresión sin salto de línea con `write(str)`
-- Arreglos dinámicos con `array(n)`, `array_get(arr, i)`, `array_set(arr, i, v)`, `array_free(arr)`, `array_length(arr)`
-- Funciones matemáticas con `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`
- 
-## Compilación
-Para compilar un archivo `.aym` se ejecuta:
+## Tipos soportados
 
-```bash
-$ ./bin/aymc samples/archivo.aym
-$ ./build/out
-```
-
-El compilador produce un archivo NASM, lo ensambla y enlaza automáticamente.
-
-## Errores comunes
-- Variable no declarada
-- Tipos incompatibles en asignaciones o expresiones
-- Uso de `break` o `continue` fuera de bucles
-- `return` fuera de una función
-
-## Palabras clave
-`willt’aña`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`, `array_length`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `si`, `sino`, `mientras`, `haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`, `jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`, `chuymani`, `qillqa`, `input`, `length`, `random`
+- `jach’a` → enteros
+- `lliphiphi` → flotantes
+- `chuymani` → booleanos
+- `qillqa` → cadenas
 
 ### Valores booleanos
-En `aym` los literales lógicos utilizan vocabulario aimara. La palabra
-`cheka` representa **verdadero** (`true`) y la expresión `jan cheka`
-equivale a **falso** (`false`). Son útiles para inicializar variables y
-para las condiciones en estructuras de control.
+
+En `aym` los literales lógicos utilizan vocabulario aymara. La palabra `cheka`
+representa **verdadero** (`true`) y la expresión `jan cheka` equivale a **falso**
+(`false`). Son útiles para inicializar variables y para las condiciones en
+estructuras de control.
 
 ```aymara
 chuymani bandera = cheka;
@@ -58,16 +32,44 @@ si (otra) {
 }
 ```
 
-## Ejemplo
+## Sintaxis soportada
+
+- Variables y asignación.
+- Impresión con `willt’aña(expr)` y `write(str)`.
+- Control de flujo: `si`/`sino`, `mientras`, `haceña...mientras`, `para`, `tantachaña`.
+- Funciones con `luräwi nombre(params) { ... }`.
+- Expresiones aritméticas `+ - * / % ^` y operadores unarios `-expr`, `+expr`, `!expr`.
+- Operadores lógicos `uka`, `jan uka`, `janiwa`, comparaciones `== != < <= > >=`.
+- Comentarios `//` y `/* */`.
+- Lectura de consola con `input()`.
+- Longitud de cadenas con `length()`.
+- Números aleatorios con `random(max)`.
+- Pausa de ejecución con `sleep(ms)`.
+- Arreglos dinámicos con `array(n)`, `array_get(arr, i)`, `array_set(arr, i, v)`,
+  `array_free(arr)`, `array_length(arr)`.
+- Funciones matemáticas con `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`,
+  `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`.
+
+## Ejemplos de sintaxis
+
+### Entrada y salida
 ```aymara
 qillqa nombre = input();
 willt’aña(nombre);
-jach’a edad = input();
-willt’aña(edad);
-willt’aña(length(nombre));
 ```
 
-### Recursividad
+### Arreglos dinámicos
+```aymara
+jach’a size = 3;
+jach’a arr = array(size);
+array_set(arr, 0, 10);
+array_set(arr, 1, 20);
+array_set(arr, 2, 30);
+willt’aña(array_get(arr, 1));
+array_free(arr);
+```
+
+### Funciones y recursividad
 ```aymara
 luräwi fact(n) {
     si (n == 0) {
@@ -80,6 +82,7 @@ willt’aña(fact(5));
 ```
 
 ### Bucle con `range`
+
 La forma `para x en range(inicio, fin)` simplifica la iteración sobre rangos
 numéricos.
 
@@ -90,6 +93,22 @@ para x en range(0, 4) {
 ```
 
 Este fragmento puede encontrarse en `samples/range_for.aym`.
+
+## Errores comunes
+
+- Variable no declarada.
+- Tipos incompatibles en asignaciones o expresiones.
+- Uso de `break` o `continue` fuera de bucles.
+- `return` fuera de una función.
+
+## Palabras clave
+
+`willt’aña`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`,
+`array_length`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`,
+`log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `si`, `sino`, `mientras`,
+`haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`,
+`jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`,
+`chuymani`, `qillqa`, `input`, `length`, `random`.
 
 ## Glosario de palabras clave
 
@@ -118,3 +137,6 @@ Este fragmento puede encontrarse en `samples/range_for.aym`.
 | `jan uka`        | or |
 | `janiwa`         | not |
 
+---
+
+**Anterior:** [Guía de características](guide.md) | **Siguiente:** [Gramática formal](grammar.md)

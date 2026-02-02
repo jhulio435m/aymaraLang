@@ -23,3 +23,7 @@ aym> salir
 ```
 
 Todas las variables y funciones definidas se mantienen vivas mientras la sesión esté activa.
+
+---
+
+**Anterior:** [CLI y flujo de compilación](compiler.md) | **Siguiente:** [Compilación y uso](build.md)

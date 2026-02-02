@@ -8,6 +8,7 @@ además de cómo producir binarios listos para distribución con CPack.
 - CMake >= 3.15
 - Compilador C++17 (`g++`, `clang++` o MSVC)
 - `nasm` y `gcc`/`ld` para el ensamblado y enlace en Linux/Windows (MinGW)
+- Paquetes de desarrollo de LLVM si se usa `--llvm`
 
 ## Flujo base (todas las plataformas)
 
@@ -65,3 +66,7 @@ Los paquetes generados contienen `bin/aymc` y los archivos de runtime en
    ```
 
 El DMG empaqueta el binario `aymc` y el runtime.
+
+---
+
+**Anterior:** [Compilación y uso](build.md) | **Siguiente:** [Guía del proyecto](project.md)

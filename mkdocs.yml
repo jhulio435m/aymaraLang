@@ -1,0 +1,27 @@
+site_name: AymaraLang
+site_description: Documentación oficial de AymaraLang
+site_author: Comunidad AymaraLang
+repo_url: https://github.com/aymaraLang/aymaraLang
+theme:
+  name: readthedocs
+  language: es
+nav:
+  - Inicio: index.md
+  - Visión general: overview.md
+  - Lenguaje:
+      - Primeros pasos: language.md
+      - Guía de características: guide.md
+      - Referencia del lenguaje: aymaraLang.md
+      - Gramática formal: grammar.md
+  - Compilador:
+      - Arquitectura: arquitectura.md
+      - CLI y flujo de compilación: compiler.md
+      - REPL: repl.md
+  - Construcción e instalación:
+      - Compilación y uso: build.md
+      - Instaladores: installers.md
+  - Proyecto: project.md
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
