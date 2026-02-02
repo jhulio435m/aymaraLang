@@ -20,7 +20,7 @@ lenguaje, la arquitectura del compilador y las guías de instalación.
 1. **Visión general**: identidad, objetivos y conceptos clave.
 2. **Lenguaje**: sintaxis base, ejemplos y guía de características.
 3. **Referencia**: operadores, funciones integradas, palabras clave y gramática.
-4. **Compilador**: arquitectura, REPL y flujo de compilación.
+4. **Compilador**: arquitectura y flujo de compilación.
 5. **Construcción e instalación**: pasos por plataforma y generación de instaladores.
 6. **Proyecto**: estructura del repo, contribuciones y roadmap.
 7. **Sistemas de ingeniería**: documentos de arquitectura, requisitos y validación.

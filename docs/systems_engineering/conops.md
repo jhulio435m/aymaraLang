@@ -15,11 +15,6 @@ Describir cómo los usuarios interactúan con AymaraLang y su compilador `aymc` 
 2. Publicación de ejemplos y ejercicios.
 3. Ejecución en equipos modestos sin depender de conexión a internet.
 
-### 2.3 Modo REPL para aprendizaje rápido
-1. Usuario inicia `aymc --repl`.
-2. Escribe instrucciones de una línea.
-3. Observa resultados inmediatos.
-
 ## 3. Actores y responsabilidades
 | Actor | Responsabilidad |
 |---|---|

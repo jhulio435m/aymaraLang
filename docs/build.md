@@ -28,6 +28,22 @@ cmake --build build -j
 
 Binario resultante: `build/bin/aymc.exe`.
 
+## Uso del compilador
+
+### Linux/macOS
+
+```bash
+./build/bin/aymc samples/basics/hola.aym
+./build/bin/hola
+```
+
+### Windows
+
+```cmd
+build\\bin\\aymc.exe samples\\basics\\hola.aym
+bin\\hola.exe
+```
+
 ## Alternativas legacy
 
 - **Linux:** `make`

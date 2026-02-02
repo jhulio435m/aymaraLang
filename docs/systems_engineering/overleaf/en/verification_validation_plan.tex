@@ -22,7 +22,6 @@ Define how AymaraLang and its compiler will be verified and validated to ensure 
     \item \texttt{aymc} compiler (lexer, parser, semantic, codegen).
     \item Experimental LLVM backend.
     \item Minimal runtime.
-    \item REPL mode.
 \end{itemize}
 
 \section{V\&V strategy}
@@ -31,7 +30,6 @@ Define how AymaraLang and its compiler will be verified and validated to ensure 
 \textbf{Type} & \textbf{Description} \\ \midrule
 Inspection & Code and documentation review \\
 Test & Execution of automated test cases \\
-Demonstration & Interactive REPL execution \\
 Analysis & Comparison against expected results \\ \bottomrule
 \end{longtable}
 
@@ -41,8 +39,7 @@ Analysis & Comparison against expected results \\ \bottomrule
 \textbf{Requirement} & \textbf{Method} & \textbf{Evidence} \\ \midrule
 FR-01 & Test & Compiles multiple \texttt{.aym} files \\
 FR-05 & Test & Binary runs examples \\
-FR-07 & Demonstration & REPL returns results \\
-FR-08 & Test & \texttt{.ll} generation \\
+FR-07 & Test & \texttt{.ll} generation \\
 NFR-03 & Inspection & Readable error messages \\ \bottomrule
 \end{longtable}
 

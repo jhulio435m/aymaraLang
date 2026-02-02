@@ -8,7 +8,6 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 ## 2. Alcance del sistema
 **Sistema bajo estudio (SoS):**
 - Compilador `aymc` (C++17) y backend de generación de ejecutables.
-- Intérprete (modo REPL y ejecución por AST).
 - Lenguaje AymaraLang (archivos fuente `.aym`).
 - Runtime mínimo para E/S y utilidades estándar.
 
@@ -30,7 +29,6 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 2. Ejecuta `aymc` para compilar a un binario nativo (`.ayn` o `.exe`).
 3. El compilador realiza: lexer → parser → AST → análisis semántico → codegen → ensamblado/enlace.
 4. El ejecutable resultante corre en el sistema objetivo.
-5. Opcionalmente, el usuario utiliza el modo REPL para ejecución interactiva.
 
 ## 5. Contexto del sistema y límites
 **Entorno operativo:**
@@ -50,7 +48,6 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 | Análisis semántico | AST | AST validado + símbolos |
 | Generación de código | AST validado | `.asm`/`.ll` |
 | Ensamblado/enlace | `.asm` | Binario nativo |
-| REPL/Intérprete | Línea de código | Resultado en consola |
 
 ## 7. Requisitos del sistema
 
@@ -67,13 +64,11 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 
 **FR-06** El sistema debe permitir seleccionar objetivo Linux o Windows desde la CLI.
 
-**FR-07** El sistema debe ofrecer modo REPL para ejecución interactiva.
+**FR-07** El sistema debe admitir un backend LLVM experimental que genere `.ll`.
 
-**FR-08** El sistema debe admitir un backend LLVM experimental que genere `.ll`.
+**FR-08** El sistema debe soportar módulos importados desde archivos externos.
 
-**FR-09** El sistema debe soportar módulos importados desde archivos externos.
-
-**FR-10** El sistema debe incluir funciones integradas (E/S, matemáticas, arreglos, aleatoriedad).
+**FR-09** El sistema debe incluir funciones integradas (E/S, matemáticas, arreglos, aleatoriedad).
 
 ### 7.2 Requisitos no funcionales (NFR)
 **NFR-01** El compilador debe ejecutarse en Linux y Windows con toolchain estándar.
@@ -89,7 +84,7 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 ### 7.3 Requisitos de interfaz (IR)
 **IR-01** CLI principal: `aymc [opciones] archivo.aym ...`.
 
-**IR-02** Opciones: `--repl`, `--debug`, `--dump-ast`, `--seed`, `--llvm`, `--windows`, `--linux`, `-o`.
+**IR-02** Opciones: `--debug`, `--dump-ast`, `--seed`, `--llvm`, `--windows`, `--linux`, `-o`.
 
 **IR-03** Archivos de salida: `.asm` (NASM), `.ll` (LLVM), y ejecutable nativo.
 
@@ -103,8 +98,7 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 |---|---|---|
 | FR-01 | Inspección/Prueba | `aymc archivo.aym` compila sin errores |
 | FR-05 | Prueba | Se genera `.asm` y binario ejecutable |
-| FR-07 | Demostración | REPL ejecuta expresiones interactivas |
-| FR-08 | Prueba | Se genera archivo `.ll` |
+| FR-07 | Prueba | Se genera archivo `.ll` |
 | NFR-05 | Inspección | Uso de `-std=c++17` en build |
 
 ## 10. Trazabilidad (resumen)
@@ -115,10 +109,9 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 | FR-03 | `parser/` | Construcción de AST |
 | FR-04 | `semantic/` | Análisis de tipos |
 | FR-05 | `codegen/` | Generación NASM |
-| FR-07 | `interpreter/` | REPL |
-| FR-08 | `codegen/llvm/` | LLVM IR |
-| FR-09 | `module_resolver` | Resolución de módulos |
-| FR-10 | `builtins/` | Funciones integradas |
+| FR-07 | `codegen/llvm/` | LLVM IR |
+| FR-08 | `module_resolver` | Resolución de módulos |
+| FR-09 | `builtins/` | Funciones integradas |
 
 ## 11. Riesgos técnicos (alto nivel)
 - Dependencia de toolchain externo para ensamblado/enlace.
@@ -127,6 +120,5 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 
 ## 12. Glosario
 - **AST:** Árbol de Sintaxis Abstracta.
-- **REPL:** Read–Eval–Print Loop, modo interactivo.
 - **V&V:** Verificación y validación.
 - **ConOps:** Concepto de operaciones.

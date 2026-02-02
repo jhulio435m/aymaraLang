@@ -22,7 +22,6 @@ Define the requirements for the \textbf{AymaraLang (aym)} system and its \textbf
 \textbf{System of interest (SoS):}
 \begin{itemize}
     \item \texttt{aymc} compiler (C++17) and executable generation backend.
-    \item Interpreter (REPL mode and AST execution).
     \item AymaraLang language (\texttt{.aym} source files).
     \item Minimal runtime for I/O and standard utilities.
 \end{itemize}
@@ -50,7 +49,6 @@ Cultural community & Language preservation and educational materials & Medium \\
     \item They run \texttt{aymc} to compile into a native binary (\texttt{.ayn} or \texttt{.exe}).
     \item The compiler performs: lexer $\rightarrow$ parser $\rightarrow$ AST $\rightarrow$ semantic analysis $\rightarrow$ codegen $\rightarrow$ assembly/linking.
     \item The resulting executable runs on the target system.
-    \item Optionally, the user uses REPL mode for interactive execution.
 \end{enumerate}
 
 \section{System context and boundaries}
@@ -76,7 +74,7 @@ Syntax analysis & Tokens & AST \\
 Semantic analysis & AST & Validated AST + symbols \\
 Code generation & Validated AST & \texttt{.asm}/\texttt{.ll} \\
 Assembly/linking & \texttt{.asm} & Native binary \\
-REPL/Interpreter & Line of code & Console result \\ \bottomrule
+\bottomrule
 \end{longtable}
 
 \section{System requirements}
@@ -89,10 +87,9 @@ REPL/Interpreter & Line of code & Console result \\ \bottomrule
     \item \textbf{FR-04} The system shall validate semantics (types, symbols, and calls) before code generation.
     \item \textbf{FR-05} The system shall generate NASM x86\_64 assembly and link a native executable.
     \item \textbf{FR-06} The system shall allow selecting a Linux or Windows target via CLI.
-    \item \textbf{FR-07} The system shall provide REPL mode for interactive execution.
-    \item \textbf{FR-08} The system shall support an experimental LLVM backend that outputs \texttt{.ll}.
-    \item \textbf{FR-09} The system shall support imported modules from external files.
-    \item \textbf{FR-10} The system shall include built-in functions (I/O, math, arrays, randomness).
+    \item \textbf{FR-07} The system shall support an experimental LLVM backend that outputs \texttt{.ll}.
+    \item \textbf{FR-08} The system shall support imported modules from external files.
+    \item \textbf{FR-09} The system shall include built-in functions (I/O, math, arrays, randomness).
 \end{itemize}
 
 \subsection{Non-functional requirements (NFR)}
@@ -107,7 +104,7 @@ REPL/Interpreter & Line of code & Console result \\ \bottomrule
 \subsection{Interface requirements (IR)}
 \begin{itemize}
     \item \textbf{IR-01} Primary CLI: \texttt{aymc [options] file.aym ...}.
-    \item \textbf{IR-02} Options: \texttt{--repl}, \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
+    \item \textbf{IR-02} Options: \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
     \item \textbf{IR-03} Output files: \texttt{.asm} (NASM), \texttt{.ll} (LLVM), and native executable.
 \end{itemize}
 

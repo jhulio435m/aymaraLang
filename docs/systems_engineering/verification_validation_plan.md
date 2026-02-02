@@ -7,14 +7,12 @@ Definir cómo se verificará y validará AymaraLang y su compilador para asegura
 - Compilador `aymc` (lexer, parser, semantic, codegen).
 - Backend LLVM experimental.
 - Runtime mínimo.
-- Modo REPL.
 
 ## 3. Estrategia de V&V
 | Tipo | Descripción |
 |---|---|
 | Inspección | Revisión de código y documentación |
 | Prueba | Ejecución de casos de prueba automatizados |
-| Demostración | Ejecución interactiva en REPL |
 | Análisis | Comparación de resultados esperados |
 
 ## 4. Matriz de verificación (resumen)
@@ -22,8 +20,7 @@ Definir cómo se verificará y validará AymaraLang y su compilador para asegura
 |---|---|---|
 | FR-01 | Prueba | Compila múltiples archivos `.aym` |
 | FR-05 | Prueba | Binario ejecuta ejemplos | 
-| FR-07 | Demostración | REPL devuelve resultados | 
-| FR-08 | Prueba | Generación de `.ll` |
+| FR-07 | Prueba | Generación de `.ll` |
 | NFR-03 | Inspección | Mensajes de error legibles |
 
 ## 5. Criterios de aceptación

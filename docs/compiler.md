@@ -10,12 +10,13 @@ el flujo de trabajo típico al compilar programas `.aym`.
 ```
 
 El compilador genera un ejecutable en `bin/` con el mismo nombre del archivo de
-entrada. También produce archivos intermedios en `build/`.
+entrada. También produce archivos intermedios en `build/`. El flujo es
+exclusivamente de compilación: no hay ejecución interactiva dentro del
+compilador.
 
 ## Opciones principales
 
 - `--llvm` genera un archivo LLVM IR (`.ll`) con un resumen del AST.
-- `--repl` inicia el modo interactivo.
 - `--windows` fuerza la salida a un ejecutable de Windows (`.exe`).
 - `--linux` fuerza la salida a un ejecutable de Linux.
 - `--seed <valor>` fija la semilla del generador aleatorio.
@@ -42,4 +43,4 @@ entrada. También produce archivos intermedios en `build/`.
 
 ---
 
-**Anterior:** [Arquitectura del compilador](arquitectura.md) | **Siguiente:** [REPL](repl.md)
+**Anterior:** [Arquitectura del compilador](arquitectura.md) | **Siguiente:** [Compilación y uso](build.md)
