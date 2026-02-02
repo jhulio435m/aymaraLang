@@ -16,7 +16,6 @@ Este índice agrupa la documentación principal del proyecto. Cada documento est
 ### Compilador
 - [Arquitectura del compilador](arquitectura.md)
 - [CLI y flujo de compilación](compiler.md)
-- [REPL](repl.md)
 
 ### Construcción e instalación
 - [Compilación e instalación](build.md)

@@ -6,7 +6,7 @@ Definir las interfaces principales del sistema AymaraLang y sus contratos de uso
 ## 2. Interfaces externas
 ### 2.1 CLI del compilador
 - **Comando:** `aymc [opciones] archivo.aym ...`
-- **Opciones principales:** `--repl`, `--debug`, `--dump-ast`, `--seed`, `--llvm`, `--windows`, `--linux`, `-o`.
+- **Opciones principales:** `--debug`, `--dump-ast`, `--seed`, `--llvm`, `--windows`, `--linux`, `-o`.
 
 ### 2.2 Sistema de archivos
 - **Entradas:** archivos `.aym`.

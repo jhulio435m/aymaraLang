@@ -4,7 +4,6 @@
 #ifdef AYM_WITH_LLVM
 #include "codegen/llvm/llvm_codegen.h"
 #endif
-#include "interpreter/interpreter.h"
 #include "utils/utils.h"
 #include "semantic/semantic.h"
 #include "utils/error.h"
@@ -22,7 +21,6 @@ int main(int argc, char** argv) {
     bool outputProvided = false;
     bool debug = false;
     bool dumpAst = false;
-    bool repl = false;
     bool windowsTarget =
 #ifdef _WIN32
         true;
@@ -45,8 +43,6 @@ int main(int argc, char** argv) {
             debug = true;
         } else if (arg == "--dump-ast") {
             dumpAst = true;
-        } else if (arg == "--repl") {
-            repl = true;
         } else if (arg == "--windows") {
             windowsTarget = true;
         } else if (arg == "--linux") {
@@ -61,48 +57,12 @@ int main(int argc, char** argv) {
             aym::error("El backend LLVM no está disponible en esta compilación. Recompila con soporte de LLVM.");
             return 1;
 #endif
+        } else if (!arg.empty() && arg[0] == '-') {
+            aym::error("Opción no reconocida: " + arg);
+            return 1;
         } else {
             inputs.push_back(arg);
         }
-    }
-
-    if (repl) {
-        std::cout << "AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)" << std::endl;
-        aym::Interpreter interp;
-        interp.setModuleBase(fs::current_path());
-        if (seedProvided) interp.setSeed(static_cast<unsigned int>(seed));
-        std::vector<std::unique_ptr<aym::Node>> program;
-        aym::SemanticAnalyzer sem;
-        aym::ModuleResolver resolver(fs::current_path());
-        std::string line;
-        while (true) {
-            std::cout << "aym> ";
-            if (!std::getline(std::cin, line)) break;
-            if (line == "salir" || line == "exit") break;
-            bool exprOnly = (line.find(';') == std::string::npos);
-            std::string src = line;
-            if (exprOnly) src += ";";
-            aym::Lexer lx(src);
-            auto toks = lx.tokenize();
-            aym::Parser p(toks);
-            auto nodes = p.parse();
-            if (p.hasError()) continue;
-            resolver.resolve(nodes, fs::current_path());
-            size_t start = program.size();
-            for (auto &n : nodes) program.push_back(std::move(n));
-            sem.analyze(program);
-            for (size_t i = start; i < program.size(); ++i) {
-                program[i]->accept(interp);
-            }
-            if (exprOnly && !nodes.empty()) {
-                auto val = interp.getLastValue();
-                if (val.type == aym::Value::Type::String)
-                    std::cout << val.s << std::endl;
-                else if (val.type == aym::Value::Type::Int)
-                    std::cout << val.i << std::endl;
-            }
-        }
-        return 0;
     }
 
     if (inputs.empty()) {

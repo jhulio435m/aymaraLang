@@ -27,8 +27,6 @@ g++ -std=c++17 -Wall -O2 %LLVM_CXXFLAGS% %LLVM_DEFINE% ^
   compiler\utils\utils.cpp ^
   compiler\utils\module_resolver.cpp ^
   compiler\utils\error.cpp ^
-  compiler\interpreter\interpreter.cpp ^
   compiler\main.cpp ^
   -o bin\aymc.exe ^
   -lstdc++fs %LLVM_LDFLAGS%
-

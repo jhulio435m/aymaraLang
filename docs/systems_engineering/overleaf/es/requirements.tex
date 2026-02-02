@@ -22,7 +22,6 @@ Definir los requisitos del sistema \textbf{AymaraLang (aym)} y su compilador \te
 \textbf{Sistema bajo estudio (SoS):}
 \begin{itemize}
     \item Compilador \texttt{aymc} (C++17) y backend de generación de ejecutables.
-    \item Intérprete (modo REPL y ejecución por AST).
     \item Lenguaje AymaraLang (archivos fuente \texttt{.aym}).
     \item Runtime mínimo para E/S y utilidades estándar.
 \end{itemize}
@@ -50,7 +49,6 @@ Comunidad cultural & Preservación lingüística y material educativo & Media \\
     \item Ejecuta \texttt{aymc} para compilar a un binario nativo (\texttt{.ayn} o \texttt{.exe}).
     \item El compilador realiza: lexer $\rightarrow$ parser $\rightarrow$ AST $\rightarrow$ análisis semántico $\rightarrow$ codegen $\rightarrow$ ensamblado/enlace.
     \item El ejecutable resultante corre en el sistema objetivo.
-    \item Opcionalmente, el usuario utiliza el modo REPL para ejecución interactiva.
 \end{enumerate}
 
 \section{Contexto del sistema y límites}
@@ -76,7 +74,7 @@ Análisis sintáctico & Tokens & AST \\
 Análisis semántico & AST & AST validado + símbolos \\
 Generación de código & AST validado & \texttt{.asm}/\texttt{.ll} \\
 Ensamblado/enlace & \texttt{.asm} & Binario nativo \\
-REPL/Intérprete & Línea de código & Resultado en consola \\ \bottomrule
+\bottomrule
 \end{longtable}
 
 \section{Requisitos del sistema}
@@ -89,10 +87,9 @@ REPL/Intérprete & Línea de código & Resultado en consola \\ \bottomrule
     \item \textbf{FR-04} El sistema debe validar semántica (tipado, símbolos y llamadas) antes de generar código.
     \item \textbf{FR-05} El sistema debe generar ensamblador NASM x86\_64 y enlazar un ejecutable nativo.
     \item \textbf{FR-06} El sistema debe permitir seleccionar objetivo Linux o Windows desde la CLI.
-    \item \textbf{FR-07} El sistema debe ofrecer modo REPL para ejecución interactiva.
-    \item \textbf{FR-08} El sistema debe admitir un backend LLVM experimental que genere \texttt{.ll}.
-    \item \textbf{FR-09} El sistema debe soportar módulos importados desde archivos externos.
-    \item \textbf{FR-10} El sistema debe incluir funciones integradas (E/S, matemáticas, arreglos, aleatoriedad).
+    \item \textbf{FR-07} El sistema debe admitir un backend LLVM experimental que genere \texttt{.ll}.
+    \item \textbf{FR-08} El sistema debe soportar módulos importados desde archivos externos.
+    \item \textbf{FR-09} El sistema debe incluir funciones integradas (E/S, matemáticas, arreglos, aleatoriedad).
 \end{itemize}
 
 \subsection{Requisitos no funcionales (NFR)}
@@ -107,7 +104,7 @@ REPL/Intérprete & Línea de código & Resultado en consola \\ \bottomrule
 \subsection{Requisitos de interfaz (IR)}
 \begin{itemize}
     \item \textbf{IR-01} CLI principal: \texttt{aymc [opciones] archivo.aym ...}.
-    \item \textbf{IR-02} Opciones: \texttt{--repl}, \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
+    \item \textbf{IR-02} Opciones: \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
     \item \textbf{IR-03} Archivos de salida: \texttt{.asm} (NASM), \texttt{.ll} (LLVM), y ejecutable nativo.
 \end{itemize}
 
@@ -124,8 +121,7 @@ REPL/Intérprete & Línea de código & Resultado en consola \\ \bottomrule
 \textbf{Requisito} & \textbf{Método} & \textbf{Evidencia esperada} \\ \midrule
 FR-01 & Inspección/Prueba & \texttt{aymc archivo.aym} compila sin errores \\
 FR-05 & Prueba & Se genera \texttt{.asm} y binario ejecutable \\
-FR-07 & Demostración & REPL ejecuta expresiones interactivas \\
-FR-08 & Prueba & Se genera archivo \texttt{.ll} \\
+FR-07 & Prueba & Se genera archivo \texttt{.ll} \\
 NFR-05 & Inspección & Uso de \texttt{-std=c++17} en build \\ \bottomrule
 \end{longtable}
 
@@ -138,10 +134,9 @@ FR-02 & \texttt{lexer/} & Tokenización \\
 FR-03 & \texttt{parser/} & Construcción de AST \\
 FR-04 & \texttt{semantic/} & Análisis de tipos \\
 FR-05 & \texttt{codegen/} & Generación NASM \\
-FR-07 & \texttt{interpreter/} & REPL \\
-FR-08 & \texttt{codegen/llvm/} & LLVM IR \\
-FR-09 & \texttt{module\_resolver} & Resolución de módulos \\
-FR-10 & \texttt{builtins/} & Funciones integradas \\ \bottomrule
+FR-07 & \texttt{codegen/llvm/} & LLVM IR \\
+FR-08 & \texttt{module\_resolver} & Resolución de módulos \\
+FR-09 & \texttt{builtins/} & Funciones integradas \\ \bottomrule
 \end{longtable}
 
 \section{Riesgos técnicos (alto nivel)}
@@ -154,7 +149,6 @@ FR-10 & \texttt{builtins/} & Funciones integradas \\ \bottomrule
 \section{Glosario}
 \begin{itemize}
     \item \textbf{AST:} Árbol de Sintaxis Abstracta.
-    \item \textbf{REPL:} Read--Eval--Print Loop, modo interactivo.
     \item \textbf{V\&V:} Verificación y validación.
     \item \textbf{ConOps:} Concepto de operaciones.
 \end{itemize}

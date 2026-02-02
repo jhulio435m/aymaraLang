@@ -11,7 +11,6 @@ AymaraLang está compuesto por un compilador modular (`aymc`), un runtime mínim
 | Semantic | Análisis semántico y tipos | AST | AST validado + símbolos |
 | Codegen | Generación de NASM/LLVM | AST validado | `.asm`/`.ll` |
 | Linker | Ensamblado/enlace | `.asm` | Binario |
-| Interpreter | Evaluación en REPL | AST | Resultados |
 
 ## 3. Arquitectura física (deployment)
 - **Entorno local:** Linux/Windows.

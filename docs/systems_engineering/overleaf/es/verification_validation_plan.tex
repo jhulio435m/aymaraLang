@@ -22,7 +22,6 @@ Definir cómo se verificará y validará AymaraLang y su compilador para asegura
     \item Compilador \texttt{aymc} (lexer, parser, semantic, codegen).
     \item Backend LLVM experimental.
     \item Runtime mínimo.
-    \item Modo REPL.
 \end{itemize}
 
 \section{Estrategia de V\&V}
@@ -31,7 +30,6 @@ Definir cómo se verificará y validará AymaraLang y su compilador para asegura
 \textbf{Tipo} & \textbf{Descripción} \\ \midrule
 Inspección & Revisión de código y documentación \\
 Prueba & Ejecución de casos de prueba automatizados \\
-Demostración & Ejecución interactiva en REPL \\
 Análisis & Comparación de resultados esperados \\ \bottomrule
 \end{longtable}
 
@@ -41,8 +39,7 @@ Análisis & Comparación de resultados esperados \\ \bottomrule
 \textbf{Requisito} & \textbf{Método} & \textbf{Evidencia} \\ \midrule
 FR-01 & Prueba & Compila múltiples archivos \texttt{.aym} \\
 FR-05 & Prueba & Binario ejecuta ejemplos \\
-FR-07 & Demostración & REPL devuelve resultados \\
-FR-08 & Prueba & Generación de \texttt{.ll} \\
+FR-07 & Prueba & Generación de \texttt{.ll} \\
 NFR-03 & Inspección & Mensajes de error legibles \\ \bottomrule
 \end{longtable}
 
