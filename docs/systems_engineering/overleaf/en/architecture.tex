@@ -1,0 +1,60 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{System Architecture Description\\AymaraLang}
+\author{AymaraLang Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+AymaraLang is composed of a modular compiler (\texttt{aymc}), a minimal runtime, and supporting tools. The architecture follows the classic compiler pipeline with decoupled modules.
+
+\section{Functional architecture}
+\begin{longtable}{@{}p{3cm}p{4cm}p{4cm}p{4cm}@{}}
+\toprule
+\textbf{Module} & \textbf{Responsibility} & \textbf{Inputs} & \textbf{Outputs} \\ \midrule
+Lexer & Source code tokenization & \texttt{.aym} & Tokens \\
+Parser & AST construction & Tokens & AST \\
+Semantic & Semantic and type analysis & AST & Validated AST + symbols \\
+Codegen & NASM/LLVM generation & Validated AST & \texttt{.asm}/\texttt{.ll} \\
+Linker & Assembly/linking & \texttt{.asm} & Binary \\
+Interpreter & REPL evaluation & AST & Results \\ \bottomrule
+\end{longtable}
+
+\section{Physical architecture (deployment)}
+\begin{itemize}
+    \item \textbf{Local environment:} Linux/Windows.
+    \item \textbf{Dependencies:} NASM, GCC/LD or MinGW, C++17 compiler.
+    \item \textbf{Artifacts:} \texttt{.asm}, \texttt{.ll}, native binary, error logs.
+\end{itemize}
+
+\section{Key interfaces}
+\begin{itemize}
+    \item \textbf{CLI:} \texttt{aymc [options] file.aym}.
+    \item \textbf{File system:} source reads, artifact writes.
+    \item \textbf{Runtime:} basic I/O functions used by the executable.
+\end{itemize}
+
+\section{Data and information}
+\begin{itemize}
+    \item \textbf{Tokens:} type, text, line, and column.
+    \item \textbf{AST:} expression and statement nodes.
+    \item \textbf{Symbols:} scope tables for variables and functions.
+\end{itemize}
+
+\section{Design constraints}
+\begin{itemize}
+    \item C++17 as the baseline standard.
+    \item x86\_64 NASM codegen as the primary backend.
+    \item LLVM as an experimental backend.
+\end{itemize}
+
+\end{document}

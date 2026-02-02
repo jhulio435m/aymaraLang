@@ -15,7 +15,7 @@
 
 La extensión básica para resaltado de sintaxis vive en `vscode-extension/`.
 Para empaquetar un `.vsix`, sigue las instrucciones en
-[`vscode-extension/README.md`](../vscode-extension/README.md).
+[`vscode-extension/README.md`](https://github.com/aymaraLang/aymaraLang/blob/main/vscode-extension/README.md).
 
 ## Documentación
 

@@ -1,0 +1,44 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Risk Management Plan\\AymaraLang}
+\author{AymaraLang Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+Identify, assess, and mitigate technical and project risks associated with developing and using AymaraLang.
+
+\section{Methodology}
+\begin{itemize}
+    \item Risk identification.
+    \item Probability and impact assessment.
+    \item Mitigation and contingency plans.
+\end{itemize}
+
+\section{Risk register}
+\begin{longtable}{@{}p{1cm}p{5cm}p{2cm}p{2cm}p{5cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Risk} & \textbf{Prob.} & \textbf{Impact} & \textbf{Mitigation} \\ \midrule
+R-01 & Dependency on external toolchain & Medium & High & Document dependencies and validate in CI \\
+R-02 & Incomplete LLVM backend & Medium & Medium & Keep NASM backend as primary \\
+R-03 & Compatibility limited to x86\_64 & High & Medium & Define multi-architecture roadmap \\
+R-04 & Learning curve for Aymara syntax & Medium & Medium & Create accessible guides and examples \\
+R-05 & Lack of resources for Windows testing & Medium & Medium & Automate tests and use multi-OS runners \\ \bottomrule
+\end{longtable}
+
+\section{Monitoring}
+\begin{itemize}
+    \item Quarterly reviews of the risk register.
+    \item Tracking issues in GitHub.
+\end{itemize}
+
+\end{document}

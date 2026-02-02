@@ -1,5 +1,8 @@
 # Compilación, instalación y uso
 
+Si necesitas una guía corta con comandos mínimos, revisa
+[Instrucciones rápidas](build-quick.md).
+
 ## Compilación y ejecución rápida
 
 ```bash

@@ -23,6 +23,8 @@ lenguaje, la arquitectura del compilador y las guías de instalación.
 4. **Compilador**: arquitectura, REPL y flujo de compilación.
 5. **Construcción e instalación**: pasos por plataforma y generación de instaladores.
 6. **Proyecto**: estructura del repo, contribuciones y roadmap.
+7. **Sistemas de ingeniería**: documentos de arquitectura, requisitos y validación.
+8. **Recursos**: presentaciones y material complementario.
 
 ## Construir la documentación con MkDocs
 
