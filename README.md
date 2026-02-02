@@ -32,7 +32,7 @@ Empieza aquí y navega por la documentación en módulos más pequeños:
 Compila y ejecuta un ejemplo sencillo:
 
 ```bash
-$ ./bin/aymc samples/hola.aym
+$ ./bin/aymc samples/basics/hola.aym
 $ ./bin/hola
 Kamisaraki!
 ```

@@ -68,7 +68,7 @@ El analizador semántico maneja un vector de mapas `scopes` donde cada mapa asoc
 
 ## Ejemplo paso a paso
 
-Tomemos `samples/hola.aym`:
+Tomemos `samples/basics/hola.aym`:
 ```aymara
 willt’aña("Kamisaraki!");
 ```

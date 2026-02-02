@@ -7,8 +7,9 @@ theme:
   language: es
 nav:
   - Inicio: index.md
-  - Índice rápido: indice.md
-  - Visión general: overview.md
+  - Guías:
+      - Visión general: overview.md
+      - Índice rápido: indice.md
   - Lenguaje:
       - Primeros pasos: language.md
       - Guía de características: guide.md
@@ -19,10 +20,10 @@ nav:
       - CLI y flujo de compilación: compiler.md
       - REPL: repl.md
   - Construcción e instalación:
-      - Compilación y uso: build.md
-      - Instrucciones rápidas: build-quick.md
+      - Compilación e instalación: build.md
       - Instaladores: installers.md
-  - Proyecto: project.md
+  - Proyecto:
+      - Guía del proyecto: project.md
   - Sistemas de ingeniería:
       - Arquitectura: systems_engineering/architecture.md
       - CONOPS: systems_engineering/conops.md
@@ -39,3 +40,5 @@ markdown_extensions:
   - fenced_code
 extra_css:
   - stylesheets/extra.css
+extra_javascript:
+  - javascripts/scroll-top.js

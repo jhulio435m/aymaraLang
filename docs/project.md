@@ -38,7 +38,7 @@ mkdocs serve
 │   ├── codegen/     # Generador de código
 │   └── utils/       # Utilidades comunes
 ├── runtime/         # Biblioteca estándar mínima
-├── samples/         # Ejemplos en .aym
+├── samples/         # Ejemplos en .aym (basics/, control_flow/, functions/, data/)
 ├── tests/           # Tests automatizados
 ├── docs/            # Documentación técnica (MkDocs)
 ├── build/           # Archivos generados
