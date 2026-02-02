@@ -1,81 +1,76 @@
-# Características y ejemplos
+# Primeros pasos con AymaraLang
 
-## Características del lenguaje
+Esta sección introduce la sintaxis básica del lenguaje con ejemplos cortos.
+Si buscas detalles exhaustivos de operadores y funciones integradas, consulta la
+[Referencia del lenguaje](aymaraLang.md).
 
-AymaraLang incluye un conjunto de construcciones inspiradas en Python pero con
-palabras clave en aymara. Entre ellas:
+## Hola mundo
 
-```aymara
-// variables
-jach’a contador = 3;
-qillqa saludo = "kamisaraki";
-
-// condicional
-si (contador > 0) {
-    willt’aña(saludo);
-}
-
-// bucle for
-para i en range(0, 3) {
-    willt’aña(i);
-}
-
-luräwi inc(n) {
-    kutiyana n + 1;
-}
-```
-
-Las funciones integradas `input()` y `willt’aña()` permiten entrada/salida
-sencilla y `tantachaña` ofrece un control tipo `switch`.
-
-## Ejemplos de código
-
-### `hola.aym`
 ```aymara
 willt’aña("Kamisaraki!");
 ```
 
-### `ops.aym`
+## Tipos y variables
+
 ```aymara
-willt’aña(3 + 4 * 2);
+jach’a contador = 3;
+lliphiphi promedio = 3.14;
+qillqa saludo = "kamisaraki";
+chuymani activo = cheka;
 ```
 
-### `condloop.aym`
+## Condicionales
+
 ```aymara
-si (1) {
-    willt’aña("cond");
+si (contador > 0) {
+    willt’aña(saludo);
+} sino {
+    willt’aña("janiwa");
+}
+```
+
+## Bucles
+
+```aymara
+para i en range(0, 3) {
+    willt’aña(i);
 }
 
-mientras (3) {
-    willt’aña("loop");
+mientras (contador > 0) {
+    contador = contador - 1;
 }
 ```
 
-### `vars.aym`
-```aymara
-x = 5;
-y = x * 2 + 3;
-willt’aña(y);
-```
+## Funciones
 
-### `recursion.aym`
 ```aymara
-luräwi fact(n) {
-    si (n == 0) {
-        kutiyana(1);
-    }
-    kutiyana(n * fact(n - 1));
+luräwi inc(n) {
+    kutiyana n + 1;
 }
 
-willt’aña(fact(5));
+willt’aña(inc(5));
 ```
 
-### `module_demo.aym`
+## Módulos
+
 ```aymara
 apu "modules/aritmetica";
 
-jach’a base = 10;
-jach’a incremento = 5;
-willt’aña("suma: " + suma(base, incremento));
-willt’aña("resta: " + resta(base, incremento));
+willt’aña("suma: " + suma(3, 4));
 ```
+
+Los módulos se resuelven desde el directorio del archivo principal, desde una
+carpeta `modules/` y desde rutas adicionales definidas en la variable de entorno
+`AYM_PATH`.
+
+## Comentarios
+
+```aymara
+# comentario estilo aym
+// comentario estilo C
+/* bloque de comentario */
+```
+
+---
+
+**Anterior:** [Visión general](overview.md) | **Siguiente:** [Guía de características](guide.md)

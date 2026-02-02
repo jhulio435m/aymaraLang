@@ -82,3 +82,7 @@ Kamisaraki!
 ```
 
 Este mismo flujo aplica a programas más grandes, incluyendo funciones, bucles y estructuras de control.
+
+---
+
+**Anterior:** [Gramática formal](grammar.md) | **Siguiente:** [CLI y flujo de compilación](compiler.md)

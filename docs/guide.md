@@ -1,4 +1,6 @@
-# Nuevas características de AymaraLang
+# Guía de características
+
+Esta guía agrupa las funcionalidades más usadas de AymaraLang con ejemplos.
 
 ## Variables string
 ```aymara
@@ -56,7 +58,7 @@ si (5 >= 3) {
 ## Módulos (`apu`)
 
 Desde ahora es posible dividir el código en varios archivos y reutilizarlo con la
-declaración `apu`.
+ declaración `apu`.
 
 ```aymara
 apu "modules/aritmetica";
@@ -74,3 +76,26 @@ carpeta `modules/`. El resolvedor busca módulos en:
 
 Cada módulo se procesa una sola vez y puede importar a su vez otros módulos con
 `apu`.
+
+## Arreglos dinámicos
+
+```aymara
+jach’a n = 5;
+jach’a arr = array(n);
+array_set(arr, 0, 10);
+willt’aña(array_get(arr, 0));
+willt’aña(array_length(arr));
+array_free(arr);
+```
+
+## Funciones matemáticas
+
+```aymara
+lliphiphi ang = 1.57;
+willt’aña(sin(ang));
+willt’aña(sqrt(9));
+```
+
+---
+
+**Anterior:** [Primeros pasos](language.md) | **Siguiente:** [Referencia del lenguaje](aymaraLang.md)

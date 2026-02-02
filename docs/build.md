@@ -145,3 +145,7 @@ $ ./bin/random
 ```
 
 Se generará `bin\archivo.exe` que podrá ejecutarse con doble clic o desde la consola.
+
+---
+
+**Anterior:** [REPL](repl.md) | **Siguiente:** [Instaladores](installers.md)

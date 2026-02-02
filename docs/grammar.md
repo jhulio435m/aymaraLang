@@ -223,3 +223,7 @@ El flujo sintáctico concluye cuando se consume el token `EndOfFile`, añadido e
 ---
 
 Este documento debe mantenerse sincronizado con el código fuente para reflejar cualquier cambio en la gramática del lenguaje.
+
+---
+
+**Anterior:** [Referencia del lenguaje](aymaraLang.md) | **Siguiente:** [Arquitectura del compilador](arquitectura.md)

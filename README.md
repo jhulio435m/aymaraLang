@@ -17,7 +17,7 @@ Palabras clave principales del lenguaje:
 
 Empieza aquí y navega por la documentación en módulos más pequeños:
 
-- [Índice de documentación](docs/README.md)
+- [Inicio de la documentación](docs/index.md)
 - [Visión general del lenguaje](docs/overview.md)
 - [Características y ejemplos](docs/language.md)
 - [Arquitectura del compilador](docs/compiler.md)
@@ -39,3 +39,10 @@ Kamisaraki!
 
 Para pasos detallados por sistema operativo, revisa la guía de compilación en
 [`docs/build.md`](docs/build.md).
+
+Para levantar el sitio de documentación con MkDocs:
+
+```bash
+pip install mkdocs
+mkdocs serve
+```

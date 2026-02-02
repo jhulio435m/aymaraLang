@@ -17,6 +17,16 @@ La extensión básica para resaltado de sintaxis vive en `vscode-extension/`.
 Para empaquetar un `.vsix`, sigue las instrucciones en
 [`vscode-extension/README.md`](../vscode-extension/README.md).
 
+## Documentación
+
+El sitio de documentación está gestionado con **MkDocs** y vive en `docs/`.
+Para levantarlo en local:
+
+```bash
+pip install mkdocs
+mkdocs serve
+```
+
 ## Estructura del repositorio
 
 ```
@@ -30,7 +40,7 @@ Para empaquetar un `.vsix`, sigue las instrucciones en
 ├── runtime/         # Biblioteca estándar mínima
 ├── samples/         # Ejemplos en .aym
 ├── tests/           # Tests automatizados
-├── docs/            # Documentación técnica
+├── docs/            # Documentación técnica (MkDocs)
 ├── build/           # Archivos generados
 ├── Makefile
 └── README.md
@@ -62,3 +72,7 @@ Este proyecto es abierto a toda colaboración. Nos interesa especialmente:
 * Educadores y promotores de software libre
 
 > ✨ ¡Únete al desarrollo y forma parte del cambio tecnológico-cultural!
+
+---
+
+**Anterior:** [Instaladores](installers.md)

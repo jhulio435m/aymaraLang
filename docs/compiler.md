@@ -1,48 +1,45 @@
-# Arquitectura del compilador
+# CLI y flujo de compilación
 
-El compilador `aymc` está estructurado en varias etapas clásicas de diseño de compiladores:
+Esta sección describe cómo usar el compilador `aymc`, sus banderas principales y
+el flujo de trabajo típico al compilar programas `.aym`.
 
-1. **Análisis Léxico** – Tokenización de entrada `.aym`.
-2. **Análisis Sintáctico** – Construcción del árbol de derivación según la gramática LL(k).
-3. **Construcción del AST** – Representación semántica abstracta.
-4. **Análisis Semántico** – Tipado, resolución de símbolos, validaciones.
-5. **Optimización Intermedia** – (opcional) Reescritura del AST para mejoras.
-6. **Generación de Código** – Código ensamblador x86_64 o LLVM IR (backend experimental).
-7. **Ensamblado y Enlace** – Uso de `nasm` y `gcc` para crear `.ayn`.
-
-Las estructuras ahora incluyen `else`, ciclos `for` y funciones simples.
-
-Las condiciones y bucles ahora se ejecutan en tiempo de ejecución gracias a un
-AST más completo, análisis semántico y generación de código en ensamblador.
-
-> ⚙️ El backend LLVM está disponible de forma experimental mediante `aymc --llvm`.
-
-## Backend LLVM experimental
-
-El backend basado en LLVM IR se puede invocar añadiendo la bandera `--llvm` al compilador.
-Genera un archivo `.ll` con un módulo LLVM que describe de forma resumida el programa analizado.
+## Uso básico
 
 ```bash
-$ ./bin/aymc --llvm samples/hola.aym
-$ cat build/hola.ll
+./bin/aymc archivo.aym
 ```
 
-El IR generado imprime por consola un resumen del AST, útil para validar la integración con LLVM antes de ampliar el backend.
+El compilador genera un ejecutable en `bin/` con el mismo nombre del archivo de
+entrada. También produce archivos intermedios en `build/`.
 
-## Modo REPL
+## Opciones principales
 
-El compilador incluye un modo interactivo que permite ejecutar código línea por línea:
+- `--llvm` genera un archivo LLVM IR (`.ll`) con un resumen del AST.
+- `--repl` inicia el modo interactivo.
+- `--windows` fuerza la salida a un ejecutable de Windows (`.exe`).
+- `--linux` fuerza la salida a un ejecutable de Linux.
+- `--seed <valor>` fija la semilla del generador aleatorio.
 
-```bash
-$ ./bin/aymc --repl
-AymaraLang REPL - escribe código línea por línea (escribe 'salir' para terminar)
-aym> jach’a x = 5;
-aym> x + 2
-7
-aym> salir
-```
+## Flujo de compilación
 
-## Errores comunes
+1. **Lexer**: tokeniza el código fuente.
+2. **Parser**: construye el AST y valida la estructura.
+3. **Análisis semántico**: verifica tipos, símbolos y alcance.
+4. **Codegen**: produce NASM o LLVM IR.
+5. **Ensamblado y enlace**: genera el ejecutable final.
 
-- **Variable no declarada:** usar una variable sin declararla mostrará un mensaje `Error: variable 'x' no declarada`.
-- **`break` fuera de ciclo:** si se usa `break` fuera de `mientras`, `para` o `tantachaña` se emitirá `Error: 'break' fuera de un ciclo o switch`.
+## Archivos generados
+
+- `build/<nombre>.asm`: salida NASM.
+- `build/<nombre>.o`: objeto ensamblado.
+- `bin/<nombre>` o `bin/<nombre>.exe`: ejecutable final.
+
+## Consejos de depuración
+
+- Usa `--llvm` para inspeccionar el resumen del AST.
+- Si aparece un error de símbolos, revisa declaraciones y ámbito.
+- Para reproducir resultados aleatorios, fija `--seed`.
+
+---
+
+**Anterior:** [Arquitectura del compilador](arquitectura.md) | **Siguiente:** [REPL](repl.md)
