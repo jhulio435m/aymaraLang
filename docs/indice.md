@@ -10,3 +10,5 @@ Este índice agrupa la documentación principal del proyecto. Cada documento est
 - [Compilación, instalación y uso](build.md)
 - [Guía del proyecto](project.md)
 - [Gramática formal](grammar.md)
+- [Documentos de sistemas de ingeniería](systems_engineering/architecture.md)
+- [Presentación del proyecto](slides11.md)

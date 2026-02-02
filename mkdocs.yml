@@ -7,6 +7,7 @@ theme:
   language: es
 nav:
   - Inicio: index.md
+  - Índice rápido: indice.md
   - Visión general: overview.md
   - Lenguaje:
       - Primeros pasos: language.md
@@ -19,9 +20,22 @@ nav:
       - REPL: repl.md
   - Construcción e instalación:
       - Compilación y uso: build.md
+      - Instrucciones rápidas (BUILD.md): BUILD.md
       - Instaladores: installers.md
   - Proyecto: project.md
+  - Sistemas de ingeniería:
+      - Arquitectura: systems_engineering/architecture.md
+      - CONOPS: systems_engineering/conops.md
+      - Documento de control de interfaces: systems_engineering/interface_control_document.md
+      - Requisitos: systems_engineering/requirements.md
+      - Gestión de riesgos: systems_engineering/risk_management.md
+      - Plan de gestión: systems_engineering/systems_engineering_management_plan.md
+      - Verificación y validación: systems_engineering/verification_validation_plan.md
+  - Recursos:
+      - Presentación (slides11): slides11.md
 markdown_extensions:
   - admonition
   - toc:
       permalink: true
+  - tables
+  - fenced_code
