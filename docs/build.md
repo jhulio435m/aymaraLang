@@ -1,7 +1,7 @@
-# Instrucciones rápidas de compilación
+# Compilación e instalación
 
-Esta guía resume los comandos mínimos para compilar AymaraLang en las
-plataformas soportadas.
+Esta guía resume los comandos recomendados para compilar e instalar
+AymaraLang en las plataformas soportadas.
 
 ## Requisitos
 

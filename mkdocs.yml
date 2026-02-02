@@ -7,8 +7,8 @@ theme:
   language: es
 nav:
   - Inicio: index.md
-  - Índice rápido: indice.md
   - Visión general: overview.md
+  - Índice rápido: indice.md
   - Lenguaje:
       - Primeros pasos: language.md
       - Guía de características: guide.md
@@ -20,7 +20,6 @@ nav:
       - REPL: repl.md
   - Construcción e instalación:
       - Compilación y uso: build.md
-      - Instrucciones rápidas: build-quick.md
       - Instaladores: installers.md
   - Proyecto: project.md
   - Sistemas de ingeniería:
@@ -39,3 +38,5 @@ markdown_extensions:
   - fenced_code
 extra_css:
   - stylesheets/extra.css
+extra_javascript:
+  - javascripts/scroll-top.js
