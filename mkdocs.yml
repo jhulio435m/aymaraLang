@@ -5,31 +5,39 @@ repo_url: https://github.com/aymaraLang/aymaraLang
 theme:
   name: readthedocs
   language: es
-  navigation_depth: 3
+  navigation_depth: 2
   collapse_navigation: true
   sticky_navigation: true
 nav:
   - Inicio:
-      - Inicio: index.md
+      - Bienvenida: index.md
       - Visión general: overview.md
       - Índice rápido: indice.md
-      - Primeros pasos: language.md
+
+  - Primeros pasos:
+      - Introducción al lenguaje: language.md
+      - Instalación y compilación: build.md
+      - Instaladores: installers.md
+      - CLI y flujo de compilación: compiler.md
+      - Guía del proyecto: project.md
+
+  - Lenguaje:
       - Guía de características: guide.md
       - Referencia del lenguaje: aymaraLang.md
       - Gramática formal: grammar.md
-      - Arquitectura: arquitectura.md
-      - CLI y flujo de compilación: compiler.md
-      - Compilación e instalación: build.md
-      - Instaladores: installers.md
-      - Guía del proyecto: project.md
-      - Sistemas de ingeniería:
-          - Arquitectura: systems_engineering/architecture.md
-          - CONOPS: systems_engineering/conops.md
-          - Documento de control de interfaces: systems_engineering/interface_control_document.md
-          - Requisitos: systems_engineering/requirements.md
-          - Gestión de riesgos: systems_engineering/risk_management.md
-          - Plan de gestión: systems_engineering/systems_engineering_management_plan.md
-          - Verificación y validación: systems_engineering/verification_validation_plan.md
+
+  - Arquitectura:
+      - Visión general del sistema: arquitectura.md
+      - Diseño interno del compilador: systems_engineering/architecture.md
+
+  - Sistemas de ingeniería:
+      - Visión general: systems_engineering/index.md
+      - CONOPS (Concepto de Operaciones): systems_engineering/conops.md
+      - Requisitos del sistema: systems_engineering/requirements.md
+      - Documento de control de interfaces (ICD): systems_engineering/interface_control_document.md
+      - Gestión de riesgos: systems_engineering/risk_management.md
+      - Plan de gestión de ingeniería: systems_engineering/systems_engineering_management_plan.md
+      - Verificación y validación (V&V): systems_engineering/verification_validation_plan.md
 markdown_extensions:
   - admonition
   - toc:
