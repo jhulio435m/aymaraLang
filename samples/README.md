@@ -1,33 +1,57 @@
 # Samples
 
-Este directorio contiene ejemplos actualizados del lenguaje `aym`. Cada archivo muestra una característica distinta:
+Este directorio contiene ejemplos del lenguaje `aym` organizados por tema.
+Cada archivo destaca una característica específica para que puedas explorar
+el lenguaje de forma incremental.
 
-- `hola.aym` – impresión simple.
-- `vars.aym` – declaraciones y asignaciones.
-- `func.aym` – definición de funciones.
-- `funciones.aym` – funciones con retorno y recursión.
-- `for.aym`, `while.aym`, `do_while.aym`, `range_for.aym` – bucles.
-- `bucles.aym` – iteración con `mientras`, `haceña`, `para` y `range`.
-- `condloop.aym`, `else.aym`, `if_switch.aym` – condicionales.
-- `condicionales.aym` – uso de `if`, `else` y `tantachaña`.
-- `recursion.aym` – llamadas recursivas.
-- `calculadora.aym` – programa interactivo con `input()`.
-- `negativos.aym` – demostración de operadores unarios y números negativos.
-- `random.aym` – generación de números aleatorios.
-- `tetris.aym` – ejemplo con arreglos dinámicos.
+## Básicos
 
+- `basics/hola.aym` – impresión simple.
+- `basics/vars.aym` – declaraciones y asignaciones.
+- `basics/comments.aym` – comentarios.
+- `basics/input.aym` – entrada por consola.
 
-Este directorio contiene ejemplos de programas escritos en el lenguaje `aym`. Estos ejemplos muestran cómo utilizar las características del lenguaje y sirven como referencia para los usuarios.
+## Control de flujo
 
-## Lista de ejemplos
+- `control_flow/if_switch.aym`, `control_flow/condicionales.aym`,
+  `control_flow/else.aym` – condicionales.
+- `control_flow/for.aym`, `control_flow/for_loops.aym`,
+  `control_flow/while.aym`, `control_flow/do_while.aym`,
+  `control_flow/range_for.aym` – bucles.
+- `control_flow/bucles.aym`, `control_flow/condloop.aym`,
+  `control_flow/loop.aym`, `control_flow/switch.aym` – variantes y combinaciones.
 
-- `for.aym`: variantes del bucle `para`.
-- `while.aym`: usos del bucle `mientras`.
-- `do_while.aym`: ejemplos del bucle `haceña`/`mientras`.
-- `condicionales.aym`: ejemplos completos de condicionales.
-- `bucles.aym`: demostración de bucles y control de flujo.
-- `funciones.aym`: ejemplos de funciones y recursión.
-- `negativos.aym`: operadores unarios y números negativos.
-- `random.aym`: uso de la función `random`.
-- `tetris.aym`: uso de arreglos dinámicos y `array_free`.
+## Funciones
 
+- `functions/func.aym` – definición de funciones.
+- `functions/funciones.aym` – funciones con retorno y recursión.
+- `functions/recursion.aym` – llamadas recursivas.
+- `functions/return.aym` – retornos tempranos.
+
+## Datos
+
+- `data/array_length.aym` – longitud de arreglos.
+- `data/length.aym` – longitudes y conteos.
+- `data/string.aym` – operaciones con cadenas.
+
+## Operadores
+
+- `operators/ops.aym`, `operators/advanced_ops.aym` – operadores básicos y avanzados.
+- `operators/logic.aym`, `operators/compare.aym` – lógica y comparaciones.
+- `operators/negativos.aym` – operadores unarios y números negativos.
+
+## Módulos
+
+- `modules/module_demo.aym` – uso de módulos.
+- `modules/aritmetica.aym` – módulo de apoyo para el ejemplo.
+
+## Programas completos
+
+- `programs/calculadora.aym` – programa interactivo con `input()`.
+- `programs/random.aym` – generación de números aleatorios.
+- `programs/runtime.aym` – comportamiento en tiempo de ejecución.
+- `programs/tetris.aym` – ejemplo con arreglos dinámicos.
+
+## Errores
+
+- `errors/bad_break.aym` – caso de error para validación.

@@ -92,7 +92,7 @@ para x en range(0, 4) {
 }
 ```
 
-Este fragmento puede encontrarse en `samples/range_for.aym`.
+Este fragmento puede encontrarse en `samples/control_flow/range_for.aym`.
 
 ## Errores comunes
 

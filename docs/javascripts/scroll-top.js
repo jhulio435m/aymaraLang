@@ -8,13 +8,25 @@
     if (nav) {
       nav.scrollTop = 0;
     }
+    const navScroll = document.querySelector(".wy-side-scroll");
+    if (navScroll) {
+      navScroll.scrollTop = 0;
+    }
   };
 
   window.addEventListener("load", () => {
     scrollToTop();
     requestAnimationFrame(scrollToTop);
+    setTimeout(scrollToTop, 100);
   });
 
   window.addEventListener("pageshow", scrollToTop);
   window.addEventListener("hashchange", scrollToTop);
+
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest(".wy-nav-side a");
+    if (link) {
+      requestAnimationFrame(scrollToTop);
+    }
+  });
 })();

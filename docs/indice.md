@@ -4,8 +4,10 @@ Este índice agrupa la documentación principal del proyecto. Cada documento est
 
 ## Índice
 
-### Lenguaje
+### Guías introductorias
 - [Visión general](overview.md)
+
+### Lenguaje
 - [Primeros pasos](language.md)
 - [Guía de características](guide.md)
 - [Referencia del lenguaje](aymaraLang.md)

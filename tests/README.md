@@ -8,7 +8,7 @@ $ make test
 ```
 
 El script `run_tests.sh` compila el compilador, genera cada ejemplo en
-`samples/` y comprueba su salida. También valida que se reporten errores
+`samples/` (incluyendo subcarpetas) y comprueba su salida. También valida que se reporten errores
 cuando corresponde.
 
 Además, ejecuta una prueba rápida de empaquetado con CPack si `cmake` y `cpack`

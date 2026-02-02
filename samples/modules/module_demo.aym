@@ -1,4 +1,4 @@
-apu "modules/aritmetica";
+apu "aritmetica";
 
 jach’a base = 10;
 jach’a incremento = 5;
