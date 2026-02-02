@@ -1,20 +1,34 @@
-Build instructions
+# Instrucciones rápidas de compilación
 
-- Prerequisites:
-  - Linux: `g++` (>=8), `nasm`, `gcc` (for linking), `cmake` (>=3.15)
-  - Windows: MinGW-w64 (`g++`), `nasm`, `cmake` (or use `build.bat`)
+Esta guía resume los comandos mínimos para compilar AymaraLang en las
+plataformas soportadas.
 
-- CMake (cross‑platform):
-  - Linux/macOS:
-    - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`
-    - `cmake --build build -j`
-    - Binary at `build/bin/aymc`
-  - Windows (MinGW Makefiles):
-    - `cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release`
-    - `cmake --build build -j`
-    - Binary at `build/bin/aymc.exe`
+## Requisitos
 
-- Legacy:
-  - Linux: `make`
-  - Windows: `build.bat`
+- **Linux:** `g++` (>=8), `nasm`, `gcc` (para enlazar), `cmake` (>=3.15).
+- **Windows:** MinGW-w64 (`g++`), `nasm`, `cmake` (o usa `build.bat`).
 
+## CMake (recomendado, multiplataforma)
+
+### Linux/macOS
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+Binario resultante: `build/bin/aymc`.
+
+### Windows (MinGW Makefiles)
+
+```bash
+cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+Binario resultante: `build/bin/aymc.exe`.
+
+## Alternativas legacy
+
+- **Linux:** `make`
+- **Windows:** `build.bat`
