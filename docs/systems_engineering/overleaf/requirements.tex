@@ -1,0 +1,162 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+\title{Especificación de requisitos y documentación de ingeniería de sistemas\\AymaraLang (SEBOK/INCOSE)}
+\author{Proyecto AymaraLang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Propósito}
+Definir los requisitos del sistema \textbf{AymaraLang (aym)} y su compilador \textbf{aymc}, así como el contexto operativo, stakeholders, interfaces, restricciones y criterios de verificación, siguiendo prácticas de SEBOK e INCOSE.
+
+\section{Alcance del sistema}
+\textbf{Sistema bajo estudio (SoS):}
+\begin{itemize}
+    \item Compilador \texttt{aymc} (C++17) y backend de generación de ejecutables.
+    \item Intérprete (modo REPL y ejecución por AST).
+    \item Lenguaje AymaraLang (archivos fuente \texttt{.aym}).
+    \item Runtime mínimo para E/S y utilidades estándar.
+\end{itemize}
+
+\textbf{Fuera de alcance:}
+\begin{itemize}
+    \item IDEs o extensiones de editor.
+    \item Librerías estándar externas adicionales.
+    \item Integración con servicios en la nube.
+\end{itemize}
+
+\section{Stakeholders y necesidades}
+\begin{longtable}{@{}p{4cm}p{8cm}p{2cm}@{}}
+\toprule
+\textbf{Stakeholder} & \textbf{Necesidad/objetivo} & \textbf{Prioridad} \\ \midrule
+Docentes y estudiantes & Lenguaje accesible y representativo del aymara & Alta \\
+Desarrolladores del compilador & Arquitectura modular y mantenible & Alta \\
+Usuarios finales & Ejecutables nativos rápidos & Alta \\
+Comunidad cultural & Preservación lingüística y material educativo & Media \\ \bottomrule
+\end{longtable}
+
+\section{Concepto de operaciones (ConOps)}
+\begin{enumerate}
+    \item El usuario escribe código \texttt{.aym} con sintaxis en aymara.
+    \item Ejecuta \texttt{aymc} para compilar a un binario nativo (\texttt{.ayn} o \texttt{.exe}).
+    \item El compilador realiza: lexer $\rightarrow$ parser $\rightarrow$ AST $\rightarrow$ análisis semántico $\rightarrow$ codegen $\rightarrow$ ensamblado/enlace.
+    \item El ejecutable resultante corre en el sistema objetivo.
+    \item Opcionalmente, el usuario utiliza el modo REPL para ejecución interactiva.
+\end{enumerate}
+
+\section{Contexto del sistema y límites}
+\textbf{Entorno operativo:}
+\begin{itemize}
+    \item Sistemas Linux/Windows (con soporte de toolchain para NASM/LD/GCC o MinGW).
+    \item Dependencias de compilación: \texttt{g++}/\texttt{clang++}, \texttt{nasm}, \texttt{gcc/ld}.
+\end{itemize}
+
+\textbf{Interfaces externas clave:}
+\begin{itemize}
+    \item CLI del compilador (\texttt{aymc}).
+    \item Sistema de archivos (lectura \texttt{.aym}, escritura \texttt{.asm}/\texttt{.ll} y binarios).
+    \item Backend LLVM (opcional, activado con \texttt{--llvm}).
+\end{itemize}
+
+\section{Arquitectura funcional (resumen)}
+\begin{longtable}{@{}p{4cm}p{5cm}p{5cm}@{}}
+\toprule
+\textbf{Función} & \textbf{Entrada} & \textbf{Salida} \\ \midrule
+Análisis léxico & Código \texttt{.aym} & Tokens \\
+Análisis sintáctico & Tokens & AST \\
+Análisis semántico & AST & AST validado + símbolos \\
+Generación de código & AST validado & \texttt{.asm}/\texttt{.ll} \\
+Ensamblado/enlace & \texttt{.asm} & Binario nativo \\
+REPL/Intérprete & Línea de código & Resultado en consola \\ \bottomrule
+\end{longtable}
+
+\section{Requisitos del sistema}
+
+\subsection{Requisitos funcionales (FR)}
+\begin{itemize}
+    \item \textbf{FR-01} El sistema debe aceptar uno o más archivos \texttt{.aym} como entrada por CLI.
+    \item \textbf{FR-02} El sistema debe tokenizar el código fuente y producir tokens conforme a palabras clave y símbolos del lenguaje.
+    \item \textbf{FR-03} El sistema debe generar un AST válido mediante análisis sintáctico LL.
+    \item \textbf{FR-04} El sistema debe validar semántica (tipado, símbolos y llamadas) antes de generar código.
+    \item \textbf{FR-05} El sistema debe generar ensamblador NASM x86\_64 y enlazar un ejecutable nativo.
+    \item \textbf{FR-06} El sistema debe permitir seleccionar objetivo Linux o Windows desde la CLI.
+    \item \textbf{FR-07} El sistema debe ofrecer modo REPL para ejecución interactiva.
+    \item \textbf{FR-08} El sistema debe admitir un backend LLVM experimental que genere \texttt{.ll}.
+    \item \textbf{FR-09} El sistema debe soportar módulos importados desde archivos externos.
+    \item \textbf{FR-10} El sistema debe incluir funciones integradas (E/S, matemáticas, arreglos, aleatoriedad).
+\end{itemize}
+
+\subsection{Requisitos no funcionales (NFR)}
+\begin{itemize}
+    \item \textbf{NFR-01} El compilador debe ejecutarse en Linux y Windows con toolchain estándar.
+    \item \textbf{NFR-02} El tiempo de compilación debe ser adecuado para programas educativos (\textless= 2s para archivos pequeños en equipos de clase).
+    \item \textbf{NFR-03} El sistema debe proporcionar mensajes de error legibles para errores léxicos, sintácticos y semánticos.
+    \item \textbf{NFR-04} El código debe mantener una estructura modular (lexer/parser/ast/semantic/codegen).
+    \item \textbf{NFR-05} El proyecto debe compilarse con C++17.
+\end{itemize}
+
+\subsection{Requisitos de interfaz (IR)}
+\begin{itemize}
+    \item \textbf{IR-01} CLI principal: \texttt{aymc [opciones] archivo.aym ...}.
+    \item \textbf{IR-02} Opciones: \texttt{--repl}, \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
+    \item \textbf{IR-03} Archivos de salida: \texttt{.asm} (NASM), \texttt{.ll} (LLVM), y ejecutable nativo.
+\end{itemize}
+
+\section{Restricciones y supuestos}
+\begin{itemize}
+    \item Se requiere toolchain (NASM y GCC/LD o MinGW) disponible en PATH.
+    \item El backend LLVM es opcional y depende de compilación con soporte.
+    \item El lenguaje está orientado a tipado estático y a constructs definidos en la gramática.
+\end{itemize}
+
+\section{Verificación y validación (V\&V)}
+\begin{longtable}{@{}p{3cm}p{3cm}p{8cm}@{}}
+\toprule
+\textbf{Requisito} & \textbf{Método} & \textbf{Evidencia esperada} \\ \midrule
+FR-01 & Inspección/Prueba & \texttt{aymc archivo.aym} compila sin errores \\
+FR-05 & Prueba & Se genera \texttt{.asm} y binario ejecutable \\
+FR-07 & Demostración & REPL ejecuta expresiones interactivas \\
+FR-08 & Prueba & Se genera archivo \texttt{.ll} \\
+NFR-05 & Inspección & Uso de \texttt{-std=c++17} en build \\ \bottomrule
+\end{longtable}
+
+\section{Trazabilidad (resumen)}
+\begin{longtable}{@{}p{3cm}p{5cm}p{6cm}@{}}
+\toprule
+\textbf{Requisito} & \textbf{Elemento de diseño} & \textbf{Evidencia técnica} \\ \midrule
+FR-01 & CLI \texttt{main.cpp} & Parsing de argumentos \\
+FR-02 & \texttt{lexer/} & Tokenización \\
+FR-03 & \texttt{parser/} & Construcción de AST \\
+FR-04 & \texttt{semantic/} & Análisis de tipos \\
+FR-05 & \texttt{codegen/} & Generación NASM \\
+FR-07 & \texttt{interpreter/} & REPL \\
+FR-08 & \texttt{codegen/llvm/} & LLVM IR \\
+FR-09 & \texttt{module\_resolver} & Resolución de módulos \\
+FR-10 & \texttt{builtins/} & Funciones integradas \\ \bottomrule
+\end{longtable}
+
+\section{Riesgos técnicos (alto nivel)}
+\begin{itemize}
+    \item Dependencia de toolchain externo para ensamblado/enlace.
+    \item Backend LLVM incompleto o experimental.
+    \item Compatibilidad limitada con arquitecturas distintas de x86\_64.
+\end{itemize}
+
+\section{Glosario}
+\begin{itemize}
+    \item \textbf{AST:} Árbol de Sintaxis Abstracta.
+    \item \textbf{REPL:} Read--Eval--Print Loop, modo interactivo.
+    \item \textbf{V\&V:} Verificación y validación.
+    \item \textbf{ConOps:} Concepto de operaciones.
+\end{itemize}
+
+\end{document}

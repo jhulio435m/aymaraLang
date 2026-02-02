@@ -1,0 +1,44 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Plan de Gestión de Riesgos\\AymaraLang}
+\author{Proyecto AymaraLang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Objetivo}
+Identificar, evaluar y mitigar riesgos técnicos y de proyecto asociados al desarrollo y uso de AymaraLang.
+
+\section{Metodología}
+\begin{itemize}
+    \item Identificación de riesgos.
+    \item Evaluación de probabilidad e impacto.
+    \item Planes de mitigación y contingencia.
+\end{itemize}
+
+\section{Registro de riesgos}
+\begin{longtable}{@{}p{1cm}p{5cm}p{2cm}p{2cm}p{5cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Riesgo} & \textbf{Prob.} & \textbf{Impacto} & \textbf{Mitigación} \\ \midrule
+R-01 & Dependencia de toolchain externo & Media & Alta & Documentar dependencias y validar en CI \\
+R-02 & Backend LLVM incompleto & Media & Media & Mantener backend NASM como principal \\
+R-03 & Compatibilidad limitada a x86\_64 & Alta & Media & Definir roadmap multi-arquitectura \\
+R-04 & Curva de aprendizaje de sintaxis aymara & Media & Media & Crear guías y ejemplos accesibles \\
+R-05 & Falta de recursos para pruebas en Windows & Media & Media & Automatizar tests y usar runners multi-OS \\ \bottomrule
+\end{longtable}
+
+\section{Monitoreo}
+\begin{itemize}
+    \item Revisiones trimestrales del registro de riesgos.
+    \item Seguimiento de issues en GitHub.
+\end{itemize}
+
+\end{document}

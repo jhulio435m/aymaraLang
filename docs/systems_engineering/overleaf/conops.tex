@@ -1,0 +1,71 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Concepto de Operaciones (ConOps)\\AymaraLang}
+\author{Proyecto AymaraLang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Propósito}
+Describir cómo los usuarios interactúan con AymaraLang y su compilador \texttt{aymc} en escenarios reales, incluyendo flujos operativos, roles y restricciones.
+
+\section{Escenarios operativos}
+\subsection{Uso educativo en aula}
+\begin{enumerate}
+    \item Docente distribuye ejemplos \texttt{.aym}.
+    \item Estudiantes editan el código en un editor de texto.
+    \item Ejecutan \texttt{aymc} para compilar y correr los binarios.
+    \item Se analiza salida para reforzar conceptos de programación.
+\end{enumerate}
+
+\subsection{Uso comunitario y cultural}
+\begin{enumerate}
+    \item Creación de materiales educativos en aymara.
+    \item Publicación de ejemplos y ejercicios.
+    \item Ejecución en equipos modestos sin depender de conexión a internet.
+\end{enumerate}
+
+\subsection{Modo REPL para aprendizaje rápido}
+\begin{enumerate}
+    \item Usuario inicia \texttt{aymc --repl}.
+    \item Escribe instrucciones de una línea.
+    \item Observa resultados inmediatos.
+\end{enumerate}
+
+\section{Actores y responsabilidades}
+\begin{longtable}{@{}p{4cm}p{9cm}@{}}
+\toprule
+\textbf{Actor} & \textbf{Responsabilidad} \\ \midrule
+Usuario final & Escribir y ejecutar programas \texttt{.aym} \\
+Docente & Diseñar ejercicios y guiar el aprendizaje \\
+Desarrollador del compilador & Mantener el compilador y documentación \\ \bottomrule
+\end{longtable}
+
+\section{Supuestos}
+\begin{itemize}
+    \item El entorno cuenta con compilador C++ y herramientas de ensamblado/enlace.
+    \item El usuario dispone de acceso de lectura/escritura al sistema de archivos.
+\end{itemize}
+
+\section{Limitaciones operativas}
+\begin{itemize}
+    \item El backend LLVM es opcional y puede no estar disponible.
+    \item Soporte limitado a x86\_64 en la generación nativa.
+\end{itemize}
+
+\section{Criterios de éxito operacional}
+\begin{itemize}
+    \item Compilación exitosa en menos de 2 segundos para ejemplos educativos.
+    \item Ejecución consistente en Windows y Linux.
+    \item Mensajes de error comprensibles para estudiantes.
+\end{itemize}
+
+\end{document}
