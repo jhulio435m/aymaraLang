@@ -199,6 +199,12 @@ inicio
 
 ## 🛠️ Construcción del compilador
 
+### Instaladores y distribución
+
+Para crear instaladores en Windows, paquetes en Linux o un DMG en macOS usando
+CMake + CPack, revisa la guía en [`docs/installers.md`](docs/installers.md).
+Incluye pasos para generar instaladores NSIS, paquetes `.deb`/`.rpm` y un DMG.
+
 ### Backend LLVM experimental
 
 El backend basado en LLVM IR se puede invocar añadiendo la bandera `--llvm` al compilador.
@@ -341,6 +347,14 @@ aym> salir
 
 ---
 
+## 🧩 Extensión para Visual Studio Code
+
+La extensión básica para resaltado de sintaxis vive en `vscode-extension/`.
+Para empaquetar un `.vsix`, sigue las instrucciones en
+[`vscode-extension/README.md`](vscode-extension/README.md).
+
+---
+
 ## 📁 Estructura del Repositorio
 
 ```
@@ -392,5 +406,4 @@ Este proyecto es abierto a toda colaboración. Nos interesa especialmente:
 * Educadores y promotores de software libre
 
 > ✨ ¡Únete al desarrollo y forma parte del cambio tecnológico-cultural!
-
 

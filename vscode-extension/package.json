@@ -1,0 +1,36 @@
+{
+  "name": "aymaralang",
+  "displayName": "AymaraLang",
+  "description": "Syntax highlighting and language configuration for AymaraLang (.aym).",
+  "version": "0.1.0",
+  "publisher": "aymaralang",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "aymara",
+        "aliases": [
+          "AymaraLang",
+          "aymara",
+          "aym"
+        ],
+        "extensions": [
+          ".aym"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "aymara",
+        "scopeName": "source.aymara",
+        "path": "./syntaxes/aymara.tmLanguage.json"
+      }
+    ]
+  }
+}

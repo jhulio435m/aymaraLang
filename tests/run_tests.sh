@@ -44,3 +44,5 @@ grep -q "Error" tmp.log
 rm tmp.log
 
 echo "[test] all samples compiled and ran successfully"
+
+./tests/packaging_smoke.sh
