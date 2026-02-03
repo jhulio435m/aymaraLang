@@ -71,8 +71,13 @@ int main(int argc, char** argv) {
     }
 
     if (!outputProvided) {
-        fs::path base = fs::path(inputs[0]).stem();
-        output = (fs::path("build") / base).string();
+        fs::path inputPath = fs::path(inputs[0]);
+        fs::path base = inputPath.stem();
+        if (inputPath.has_parent_path()) {
+            output = (inputPath.parent_path() / base).string();
+        } else {
+            output = base.string();
+        }
     }
 
     std::string source;
@@ -133,6 +138,11 @@ int main(int argc, char** argv) {
     (void)useLLVMBackend; // suprimir advertencias cuando LLVM está deshabilitado
 #endif
 
+    fs::path runtimeDir = fs::path(aym::executableDir()) / "runtime";
+    if (!fs::exists(runtimeDir)) {
+        runtimeDir = fs::path("runtime");
+    }
+
     aym::CodeGenerator cg;
     cg.generate(nodes,
                 output + ".asm",
@@ -140,7 +150,8 @@ int main(int argc, char** argv) {
                 sem.getParamTypes(),
                 sem.getGlobalTypes(),
                 windowsTarget,
-                seedProvided ? seed : -1);
+                seedProvided ? seed : -1,
+                runtimeDir.string());
 
     return 0;
 }

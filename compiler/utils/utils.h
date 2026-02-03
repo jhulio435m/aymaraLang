@@ -6,6 +6,7 @@
 namespace aym {
 
 std::string readFile(const std::string &path);
+std::string executableDir();
 
 } // namespace aym
 

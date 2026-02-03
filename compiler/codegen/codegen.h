@@ -19,7 +19,8 @@ public:
                   const std::unordered_map<std::string, std::vector<std::string>> &paramTypes,
                   const std::unordered_map<std::string, std::string> &globalTypes,
                   bool windows,
-                  long seed);
+                  long seed,
+                  const std::string &runtimeDir);
 };
 
 } // namespace aym
