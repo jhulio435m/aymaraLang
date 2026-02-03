@@ -10,28 +10,28 @@ Las siguientes tablas resumen cada `TokenType` expuesto por el compilador y el l
 
 | Token | Lexema(s) aceptado(s) | Uso sintáctico | Referencia |
 |-------|-----------------------|----------------|------------|
-| `KeywordPrint` | `willt’aña` | Sentencia de impresión | [lexer.cpp#L49-L50](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L49-L50) |
-| `KeywordIf` | `si` | Condicional `if` | [lexer.cpp#L51-L52](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L51-L52) |
-| `KeywordElse` | `sino` | Rama `else` / `else if` | [lexer.cpp#L53-L54](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L53-L54) |
-| `KeywordWhile` | `mientras` | Bucle `while` | [lexer.cpp#L55-L56](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L55-L56) |
-| `KeywordDo` | `haceña` | Bucle `do … while` | [lexer.cpp#L57-L58](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L57-L58) |
-| `KeywordFor` | `para` | Bucle `for` | [lexer.cpp#L59-L60](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L59-L60) |
-| `KeywordIn` | `en` | Azúcar de `for … in range` | [lexer.cpp#L61-L62](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L61-L62) |
-| `KeywordBreak` | `jalña` | Sentencia `break` | [lexer.cpp#L63-L64](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L63-L64) |
-| `KeywordContinue` | `sarantaña` | Sentencia `continue` | [lexer.cpp#L65-L66](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L65-L66) |
-| `KeywordFunc` | `luräwi` | Definición de funciones | [lexer.cpp#L67-L68](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L67-L68) |
-| `KeywordReturn` | `kutiyana` | Sentencia `return` | [lexer.cpp#L69-L70](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L69-L70) |
-| `KeywordSwitch` | `tantachaña` | Sentencia `switch` | [lexer.cpp#L71-L72](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L71-L72) |
-| `KeywordCase` | `jamusa` | Cláusulas `case` | [lexer.cpp#L73-L74](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L73-L74) |
-| `KeywordDefault` | `akhamawa` | Cláusula `default` | [lexer.cpp#L75-L76](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L75-L76) |
-| `KeywordAnd` | `uka` | Operador lógico AND | [lexer.cpp#L77-L78](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L77-L78) |
-| `KeywordOr` | `jan uka` | Operador lógico OR compuesto | [lexer.cpp#L79-L100](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L100) |
-| `KeywordNot` | `janiwa` | Operador lógico NOT | [lexer.cpp#L103-L104](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L103-L104) |
-| `KeywordInt` | `jach’a` | Declaración de enteros | [lexer.cpp#L105-L106](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L105-L106) |
-| `KeywordFloat` | `lliphiphi` | Declaración de flotantes | [lexer.cpp#L107-L108](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L107-L108) |
-| `KeywordBool` | `chuymani` | Declaración de booleanos | [lexer.cpp#L109-L110](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L109-L110) |
-| `KeywordString` | `qillqa` | Declaración de cadenas | [lexer.cpp#L111-L112](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L111-L112) |
-| `KeywordImport` | `apu` | Importación de módulos | [lexer.cpp#L113-L114](https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L113-L114) |
+| `KeywordPrint` | `willt’aña` | Sentencia de impresión | [lexer.cpp#L49-L50](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L49-L50) |
+| `KeywordIf` | `si` | Condicional `if` | [lexer.cpp#L51-L52](https://github.com/jhulio435m/jhulio435m/blob/main/compiler/lexer/lexer.cpp#L51-L52) |
+| `KeywordElse` | `sino` | Rama `else` / `else if` | [lexer.cpp#L53-L54](https://github.comjhulio435mg/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L53-L54) |
+| `KeywordWhile` | `mientras` | Bucle `while` | [lexer.cpp#L55-L56](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L55-L56) |
+| `KeywordDo` | `haceña` | Bucle `do … while` | [lexer.cpp#L57-L58](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L57-L58) |
+| `KeywordFor` | `para` | Bucle `for` | [lexer.cpp#L59-L60](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L59-L60) |
+| `KeywordIn` | `en` | Azúcar de `for … in range` | [lexer.cpp#L61-L62](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L61-L62) |
+| `KeywordBreak` | `jalña` | Sentencia `break` | [lexer.cpp#L63-L64](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L63-L64) |
+| `KeywordContinue` | `sarantaña` | Sentencia `continue` | [lexer.cpp#L65-L66](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L65-L66) |
+| `KeywordFunc` | `luräwi` | Definición de funciones | [lexer.cpp#L67-L68](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L67-L68) |
+| `KeywordReturn` | `kutiyana` | Sentencia `return` | [lexer.cpp#L69-L70](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L69-L70) |
+| `KeywordSwitch` | `tantachaña` | Sentencia `switch` | [lexer.cpp#L71-L72](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L71-L72) |
+| `KeywordCase` | `jamusa` | Cláusulas `case` | [lexer.cpp#L73-L74](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L73-L74) |
+| `KeywordDefault` | `akhamawa` | Cláusula `default` | [lexer.cpp#L75-L76](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L75-L76) |
+| `KeywordAnd` | `uka` | Operador lógico AND | [lexer.cpp#L77-L78](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L77-L78) |
+| `KeywordOr` | `jan uka` | Operador lógico OR compuesto | [lexer.cpp#L79-L100](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L100) |
+| `KeywordNot` | `janiwa` | Operador lógico NOT | [lexer.cpp#L103-L104](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L103-L104) |
+| `KeywordInt` | `jach’a` | Declaración de enteros | [lexer.cpp#L105-L106](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L105-L106) |
+| `KeywordFloat` | `lliphiphi` | Declaración de flotantes | [lexer.cpp#L107-L108](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L107-L108) |
+| `KeywordBool` | `chuymani` | Declaración de booleanos | [lexer.cpp#L109-L110](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L109-L110) |
+| `KeywordString` | `qillqa` | Declaración de cadenas | [lexer.cpp#L111-L112](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L111-L112) |
+| `KeywordImport` | `apu` | Importación de módulos | [lexer.cpp#L113-L114](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L113-L114) |
 
 ### Operadores y delimitadores
 
