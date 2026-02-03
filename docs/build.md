@@ -35,8 +35,37 @@ Ejecuta el script de PowerShell desde la raíz del proyecto:
 ```
 
 El script intenta usar `winget`, `choco` o `scoop` para instalar CMake, NASM,
-NSIS y LLVM (opcional). Si no encuentra gestor de paquetes, mostrará la lista
-de dependencias a instalar manualmente.
+NSIS, WiX Toolset y LLVM (opcional). Si no encuentra gestor de paquetes,
+mostrará la lista de dependencias a instalar manualmente.
+
+### Generar instaladores de Windows (MSI y EXE)
+
+Puedes generar un MSI (WiX Toolset) y/o un EXE (NSIS) con interfaz gráfica
+similar al instalador de Python. Ambos incluyen el compilador, la carpeta
+`runtime` y el script de dependencias de Windows.
+
+1. Compila el binario primero:
+
+```powershell
+cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+2. Genera el MSI (recomendado si necesitas un instalador corporativo):
+
+```powershell
+./scripts/build_windows_installer_msi.ps1 -AppVersion 0.1.0
+```
+
+El MSI resultante se guarda en `dist/AymaraLang-Setup-<versión>.msi`.
+
+3. Genera el EXE (NSIS):
+
+```powershell
+./scripts/build_windows_installer.ps1 -AppVersion 0.1.0
+```
+
+El EXE resultante se guarda en `dist/AymaraLang-Setup-<versión>.exe`.
 
 ### Generar el paquete `.tar.gz` para GitHub
 

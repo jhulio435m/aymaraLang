@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product
+    Id="*"
+    Name="AymaraLang"
+    Language="1034"
+    Version="$(var.ProductVersion)"
+    Manufacturer="AymaraLang"
+    UpgradeCode="2B6A9E11-9D2F-4D74-9D0B-3A9D5F6D3C1A">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="Una versión más reciente ya está instalada." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Icon Id="AymaraIcon" SourceFile="$(var.SourceDir)\bin\aymc.exe" />
+    <Property Id="ARPPRODUCTICON" Value="AymaraIcon" />
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="Instalación completada. Puedes abrir el README desde el menú Inicio." />
+
+    <Feature Id="ProductFeature" Title="AymaraLang" Level="1">
+      <ComponentGroupRef Id="AymaraFiles" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLDIR" Name="AymaraLang" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="AymaraProgramMenu" Name="AymaraLang" />
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="AymaraProgramMenu">
+      <Component Id="StartMenuShortcut" Guid="*">
+        <Shortcut Id="ReadmeShortcut"
+                  Name="AymaraLang Readme"
+                  Target="[INSTALLDIR]README.md"
+                  WorkingDirectory="INSTALLDIR" />
+        <RemoveFolder Id="CleanStartMenu" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\AymaraLang" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Product>
+</Wix>
