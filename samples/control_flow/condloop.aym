@@ -4,6 +4,8 @@ si (1) {
     willt’aña("cond");
 }
 
-mientras (3) {
+jach’a i = 0;
+mientras (i < 3) {
     willt’aña("loop");
+    i = i + 1;
 }
