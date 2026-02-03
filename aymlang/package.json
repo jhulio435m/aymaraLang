@@ -1,0 +1,27 @@
+{
+  "name": "aymlang",
+  "displayName": "aymLang",
+  "description": "Exteniòn para el lenguaje de programaciòn AymaraLang",
+  "version": "0.0.1",
+  "publisher": "JhulioMoran",
+  "engines": {
+    "vscode": "^1.108.1"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "aym",
+      "aliases": ["aymlang", "aym"],
+      "extensions": [".aym"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "aym",
+      "scopeName": "main.aym",
+      "path": "./syntaxes/aym.tmLanguage.json"
+    }]
+  },
+  "license": "LICENSE"
+}
