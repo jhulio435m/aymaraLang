@@ -13,12 +13,15 @@ function Invoke-Step {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Label,
+
         [Parameter(Mandatory = $true)]
         [string]$ScriptPath,
-        [string[]]$Arguments = @()
+
+        [hashtable]$Arguments = @{}
     )
 
     Write-Host "==> $Label"
+
     if ($Arguments.Count -gt 0) {
         & $ScriptPath @Arguments
     } else {
@@ -30,18 +33,13 @@ function Invoke-Step {
     }
 }
 
-$distArgs = @()
-if ($EnableLLVM.IsPresent) {
-    $distArgs += "-EnableLLVM"
-}
-if (-not [string]::IsNullOrWhiteSpace($LLVMDir)) {
-    $distArgs += "-LLVMDir"
-    $distArgs += $LLVMDir
-}
+$distArgs = @{}
+if ($EnableLLVM.IsPresent) { $distArgs.EnableLLVM = $true }
+if (-not [string]::IsNullOrWhiteSpace($LLVMDir)) { $distArgs.LLVMDir = $LLVMDir }
 
 Invoke-Step -Label "build_dist.ps1" -ScriptPath (Join-Path $PSScriptRoot "build_dist.ps1") -Arguments $distArgs
 Invoke-Step -Label "build_nsis.ps1" -ScriptPath (Join-Path $PSScriptRoot "build_nsis.ps1")
-Invoke-Step -Label "build_msi.ps1" -ScriptPath (Join-Path $PSScriptRoot "build_msi.ps1")
+Invoke-Step -Label "build_msi.ps1"  -ScriptPath (Join-Path $PSScriptRoot "build_msi.ps1")
 
 $exePath = Join-Path $artifactsDir "AymaraLang-Setup.exe"
 $msiPath = Join-Path $artifactsDir "AymaraLang-Setup.msi"
