@@ -2,14 +2,16 @@
   "name": "aymlang",
   "displayName": "aymLang",
   "description": "Exteniòn para el lenguaje de programaciòn AymaraLang",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "JhulioMoran",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jhulio435m/aymaraLang"
+  },
   "engines": {
     "vscode": "^1.108.1"
   },
-  "activationEvents": [
-    "onLanguage:aym"
-  ],
   "categories": [
     "Programming Languages"
   ],
