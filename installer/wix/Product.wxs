@@ -1,88 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
-     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
   <?ifndef ProductVersion ?>
     <?define ProductVersion = "0.1.0" ?>
   <?endif?>
+
   <?ifndef UpgradeCode ?>
     <?define UpgradeCode = "B8A2AE7B-41E3-4E64-9A5F-41E1D1D6C6F8" ?>
   <?endif?>
 
-  <Product Id="*"
-           Name="AymaraLang"
-           Language="1033"
-           Version="$(var.ProductVersion)"
-           Manufacturer="AymaraLang Project"
-           UpgradeCode="$(var.UpgradeCode)">
-    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+  <?ifndef HasLlvmBackend ?>
+    <?define HasLlvmBackend = "0" ?>
+  <?endif?>
+
+  <?ifndef DistDir ?>
+    <?error DistDir no fue definido. Pasa -d DistDir="...\dist" desde build_msi.ps1 ?>
+  <?endif?>
+
+  <Package
+      Name="AymaraLang"
+      Manufacturer="AymaraLang Project"
+      Version="$(var.ProductVersion)"
+      UpgradeCode="$(var.UpgradeCode)"
+      Language="1033"
+      InstallerVersion="500"
+      Compressed="yes"
+      Scope="perMachine">
 
     <MajorUpgrade DowngradeErrorMessage="Ya existe una versión más reciente de AymaraLang." />
     <MediaTemplate EmbedCab="yes" />
 
-    <?if exists('$(sys.SOURCEFILEDIR)..\\..\\assets\\logo.ico') ?>
-      <Icon Id="ProductIcon" SourceFile="$(sys.SOURCEFILEDIR)..\\..\\assets\\logo.ico" />
-      <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
-    <?endif?>
+    <!-- Icono: si NO existe, WiX fallará. Solución simple:
+         deja el archivo assets\logo.ico en el repo o comenta estas 2 líneas. -->
+    <Icon Id="AppIcon" SourceFile="$(sys.SOURCEFILEDIR)..\..\assets\logo.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
 
-    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <!-- UI (WiX v6): usa ui:WixUI para los dialog sets -->
+    <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLDIR" />
+    <UIRef Id="WixUI_ErrorProgressText" />
 
-    <Feature Id="CoreFeature" Title="Core" Level="1" Absent="disallow">
-      <ComponentGroupRef Id="CoreFiles" />
-    </Feature>
-
-    <Feature Id="LLVMFeature" Title="LLVM Backend" Level="2">
-      <ComponentGroupRef Id="LLVMFiles" />
-    </Feature>
-
-    <Feature Id="PathFeature" Title="Add AymaraLang to PATH" Level="1">
+    <Feature Id="CoreFeature" Title="Core" Level="1">
+      <ComponentGroupRef Id="CoreRootFiles" />
+      <ComponentGroupRef Id="CoreBinFiles" />
+      <ComponentGroupRef Id="CoreShareFiles" />
       <ComponentRef Id="PathEnv" />
     </Feature>
 
-    <UIRef Id="WixUI_FeatureTree" />
-    <UIRef Id="WixUI_ErrorProgressText" />
-  </Product>
+    <Feature Id="LLVMFeature" Title="LLVM Backend" Level="2">
+      <?if $(var.HasLlvmBackend) = 1 ?>
+        <ComponentGroupRef Id="LlvmBackendFiles" />
+      <?endif?>
+    </Feature>
 
+  </Package>
+
+  <!-- Directorios -->
   <Fragment>
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFiles64Folder">
-        <Directory Id="INSTALLDIR" Name="AymaraLang">
-          <Directory Id="BINDIR" Name="bin" />
-          <Directory Id="LLVMBACKENDDIR" Name="llvm-backend" />
-        </Directory>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLDIR" Name="AymaraLang">
+        <Directory Id="BINDIR" Name="bin" />
+        <Directory Id="SHAREDIR" Name="share" />
+        <Directory Id="LLVMBACKENDDIR" Name="llvm-backend" />
       </Directory>
-    </Directory>
+    </StandardDirectory>
   </Fragment>
 
+  <!-- Harvest de archivos (WiX v6):
+       ComponentGroup va directo en Fragment con Directory= y Source= -->
   <Fragment>
-    <DirectoryRef Id="INSTALLDIR">
-      <ComponentGroup Id="CoreFiles">
-        <Files Include="$(var.DistDir)\\**\\*">
-          <Exclude Files="$(var.DistDir)\\llvm-backend\\**\\*" />
-        </Files>
-      </ComponentGroup>
+    <ComponentGroup Id="CoreRootFiles" Directory="INSTALLDIR" Source="$(var.DistDir)">
+      <Files Include="README.md" />
+      <Files Include="LICENSE" />
+    </ComponentGroup>
 
-      <Component Id="PathEnv" Guid="*">
-        <util:Environment Id="PathEnvVar"
-                          Name="PATH"
-                          Value="[INSTALLDIR]bin"
-                          Part="last"
-                          System="yes"
-                          Action="set" />
-      </Component>
-    </DirectoryRef>
+    <ComponentGroup Id="CoreBinFiles" Directory="BINDIR" Source="$(var.DistDir)\bin">
+      <Files Include="**\*" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="CoreShareFiles" Directory="SHAREDIR" Source="$(var.DistDir)\share">
+      <Files Include="**\*" />
+    </ComponentGroup>
   </Fragment>
 
-  <?if exists('$(var.DistDir)\\llvm-backend') ?>
+  <!-- PATH (WiX v6): Environment es del schema principal (NO util:Environment) -->
   <Fragment>
-    <DirectoryRef Id="LLVMBACKENDDIR">
-      <ComponentGroup Id="LLVMFiles">
-        <Files Include="$(var.DistDir)\\llvm-backend\\**\\*" />
-      </ComponentGroup>
-    </DirectoryRef>
+    <Component Id="PathEnv" Directory="INSTALLDIR" Guid="D3D1F4E4-9E39-4E0B-A6C1-0E5D8A6A3C11">
+      <RegistryValue Root="HKLM"
+                     Key="Software\AymaraLang"
+                     Name="Installed"
+                     Type="integer"
+                     Value="1"
+                     KeyPath="yes" />
+
+      <Environment Id="AymaraLangPath"
+                   Name="PATH"
+                   Value="[BINDIR]"
+                   Part="last"
+                   System="yes"
+                   Action="set" />
+    </Component>
   </Fragment>
-  <?else?>
+
+  <!-- LLVM opcional -->
   <Fragment>
-    <ComponentGroup Id="LLVMFiles" />
+    <ComponentGroup Id="LlvmBackendFiles" Directory="LLVMBACKENDDIR" Source="$(var.DistDir)\llvm-backend">
+      <?if $(var.HasLlvmBackend) = 1 ?>
+        <Files Include="**\*" />
+      <?endif?>
+    </ComponentGroup>
   </Fragment>
-  <?endif?>
+
 </Wix>
