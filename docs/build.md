@@ -26,6 +26,18 @@ chmod +x scripts/install_deps_linux.sh
 
 > Nota: el script usa `sudo` si no eres `root`.
 
+### Instalar dependencias en Windows (script)
+
+Ejecuta el script de PowerShell desde la raíz del proyecto:
+
+```powershell
+./scripts/install_deps_windows.ps1
+```
+
+El script intenta usar `winget`, `choco` o `scoop` para instalar CMake, NASM,
+NSIS y LLVM (opcional). Si no encuentra gestor de paquetes, mostrará la lista
+de dependencias a instalar manualmente.
+
 ### Generar el paquete `.tar.gz` para GitHub
 
 Para que los usuarios descarguen el código fuente desde GitHub (por ejemplo,
