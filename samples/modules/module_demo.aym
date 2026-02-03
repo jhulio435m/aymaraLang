@@ -2,5 +2,7 @@ apu "aritmetica";
 
 jach’a base = 10;
 jach’a incremento = 5;
-willt’aña("suma: " + suma(base, incremento));
-willt’aña("resta: " + resta(base, incremento));
+willt’aña("suma:");
+willt’aña(suma(base, incremento));
+willt’aña("resta:");
+willt’aña(resta(base, incremento));

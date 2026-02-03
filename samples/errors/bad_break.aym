@@ -1,1 +1,2 @@
+// Ejemplo intencional de error: break fuera de un bucle válido.
 break;
