@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
   <?ifndef ProductVersion ?>
     <?define ProductVersion = "0.1.0" ?>
   <?endif?>
@@ -11,25 +12,22 @@
            Name="AymaraLang"
            Language="1033"
            Version="$(var.ProductVersion)"
-           Manufacturer="AymaraLang"
+           Manufacturer="AymaraLang Project"
            UpgradeCode="$(var.UpgradeCode)">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
 
     <MajorUpgrade DowngradeErrorMessage="Ya existe una versión más reciente de AymaraLang." />
     <MediaTemplate EmbedCab="yes" />
 
-    <?ifdef ProductIcon?>
-      <Icon Id="ProductIcon" SourceFile="$(var.ProductIcon)" />
+    <?if exists('$(sys.SOURCEFILEDIR)..\\..\\assets\\logo.ico') ?>
+      <Icon Id="ProductIcon" SourceFile="$(sys.SOURCEFILEDIR)..\\..\\assets\\logo.ico" />
       <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
     <?endif?>
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
     <Feature Id="CoreFeature" Title="Core" Level="1" Absent="disallow">
-      <ComponentGroupRef Id="CoreBinFiles" />
-      <ComponentGroupRef Id="CoreShareFiles" />
-      <ComponentRef Id="DocsReadme" />
-      <ComponentRef Id="DocsLicense" />
+      <ComponentGroupRef Id="CoreFiles" />
     </Feature>
 
     <Feature Id="LLVMFeature" Title="LLVM Backend" Level="2">
@@ -42,13 +40,6 @@
 
     <UIRef Id="WixUI_FeatureTree" />
     <UIRef Id="WixUI_ErrorProgressText" />
-
-    <?ifdef WixBanner?>
-      <WixVariable Id="WixUIBannerBmp" Value="$(var.WixBanner)" />
-    <?endif?>
-    <?ifdef WixDialog?>
-      <WixVariable Id="WixUIDialogBmp" Value="$(var.WixDialog)" />
-    <?endif?>
   </Product>
 
   <Fragment>
@@ -57,7 +48,6 @@
         <Directory Id="INSTALLDIR" Name="AymaraLang">
           <Directory Id="BINDIR" Name="bin" />
           <Directory Id="LLVMBACKENDDIR" Name="llvm-backend" />
-          <Directory Id="SHAREDIR" Name="share" />
         </Directory>
       </Directory>
     </Directory>
@@ -65,20 +55,34 @@
 
   <Fragment>
     <DirectoryRef Id="INSTALLDIR">
-      <Component Id="DocsReadme" Guid="0E73F4ED-5A2F-4B8E-9A4E-6E4F4827C4CB">
-        <File Id="ReadmeFile" Source="$(var.DistDir)\\README.md" KeyPath="yes" />
-      </Component>
-      <Component Id="DocsLicense" Guid="A2A60D5B-FDE2-4A8D-AE27-C4F07F6A4DC9">
-        <File Id="LicenseFile" Source="$(var.DistDir)\\LICENSE" KeyPath="yes" />
-      </Component>
-      <Component Id="PathEnv" Guid="2B7B7A64-01E9-4C0C-9C82-CCF4A433E0E3">
-        <Environment Id="PathEnvVar"
-                     Name="PATH"
-                     Value="[INSTALLDIR]bin"
-                     Part="last"
-                     System="yes"
-                     Action="set" />
+      <ComponentGroup Id="CoreFiles">
+        <Files Include="$(var.DistDir)\\**\\*">
+          <Exclude Files="$(var.DistDir)\\llvm-backend\\**\\*" />
+        </Files>
+      </ComponentGroup>
+
+      <Component Id="PathEnv" Guid="*">
+        <util:Environment Id="PathEnvVar"
+                          Name="PATH"
+                          Value="[INSTALLDIR]bin"
+                          Part="last"
+                          System="yes"
+                          Action="set" />
       </Component>
     </DirectoryRef>
   </Fragment>
+
+  <?if exists('$(var.DistDir)\\llvm-backend') ?>
+  <Fragment>
+    <DirectoryRef Id="LLVMBACKENDDIR">
+      <ComponentGroup Id="LLVMFiles">
+        <Files Include="$(var.DistDir)\\llvm-backend\\**\\*" />
+      </ComponentGroup>
+    </DirectoryRef>
+  </Fragment>
+  <?else?>
+  <Fragment>
+    <ComponentGroup Id="LLVMFiles" />
+  </Fragment>
+  <?endif?>
 </Wix>
