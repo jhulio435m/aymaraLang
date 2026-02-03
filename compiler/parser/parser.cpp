@@ -1,7 +1,22 @@
 #include "parser.h"
 #include <memory>
+#include <string>
 
 namespace aym {
+
+namespace {
+long long parseNumberLiteral(const Token &tok) {
+    const std::string &text = tok.text;
+    if (text.size() > 2 && (text[0] == '0') && (text[1] == 'b' || text[1] == 'B')) {
+        long long value = 0;
+        for (size_t i = 2; i < text.size(); ++i) {
+            value = (value << 1) + (text[i] == '1' ? 1 : 0);
+        }
+        return value;
+    }
+    return std::stoll(text, nullptr, 0);
+}
+} // namespace
 
 Parser::Parser(const std::vector<Token>& t) : tokens(t) {}
 
@@ -486,7 +501,7 @@ std::unique_ptr<Expr> Parser::parseFactor() {
     }
     if (match(TokenType::Number)) {
         Token tok = tokens[pos-1];
-        auto node = std::make_unique<NumberExpr>(std::stol(tok.text));
+        auto node = std::make_unique<NumberExpr>(parseNumberLiteral(tok));
         node->setLocation(tok.line, tok.column);
         return node;
     }

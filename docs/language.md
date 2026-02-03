@@ -19,6 +19,13 @@ qillqa saludo = "kamisaraki";
 chuymani activo = cheka;
 ```
 
+También puedes usar literales enteros en hexadecimal o binario:
+
+```aymara
+jach’a mascara = 0b1010;
+jach’a color = 0xFF;
+```
+
 ## Condicionales
 
 ```aymara

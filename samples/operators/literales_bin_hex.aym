@@ -1,0 +1,4 @@
+// Literales enteros en binario y hexadecimal
+jach’a mascara = 0b1010;
+jach’a color = 0xFF;
+willt’aña(mascara + color);

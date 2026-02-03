@@ -39,6 +39,7 @@ el lenguaje de forma incremental.
 - `operators/ops.aym`, `operators/advanced_ops.aym` – operadores básicos y avanzados.
 - `operators/logic.aym`, `operators/compare.aym` – lógica y comparaciones.
 - `operators/negativos.aym` – operadores unarios y números negativos.
+- `operators/literales_bin_hex.aym` – literales enteros en binario y hexadecimal.
 
 ## Módulos
 
