@@ -13,7 +13,23 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <cstdlib>
 #include "utils/fs.h"
+
+#ifdef _WIN32
+static bool isLLVMBackendInstalled() {
+    const char* programFiles = std::getenv("ProgramW6432");
+    if (!programFiles) {
+        programFiles = std::getenv("ProgramFiles");
+    }
+    if (!programFiles) {
+        return false;
+    }
+    fs::path backendDir = fs::path(programFiles) / "AymaraLang" / "llvm-backend";
+    fs::path markerFile = backendDir / "llvm_backend.marker";
+    return fs::exists(backendDir) && fs::exists(markerFile);
+}
+#endif
 
 int main(int argc, char** argv) {
     std::vector<std::string> inputs;
@@ -69,6 +85,15 @@ int main(int argc, char** argv) {
         aym::error("Se requiere un archivo de entrada");
         return 1;
     }
+
+#ifdef AYM_WITH_LLVM
+#ifdef _WIN32
+    if (useLLVMBackend && !isLLVMBackendInstalled()) {
+        aym::error("Error: LLVM backend no instalado. Re-ejecuta el instalador y marca “LLVM Backend”.");
+        return 1;
+    }
+#endif
+#endif
 
     if (!outputProvided) {
         fs::path inputPath = fs::path(inputs[0]);

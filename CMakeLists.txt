@@ -4,8 +4,15 @@ project(aymaraLang CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(AYM_ENABLE_LLVM "Enable LLVM backend" ON)
-set(AYM_VERSION "0.1.0")
+option(AYM_ENABLE_LLVM "Enable LLVM backend" OFF)
+
+set(AYM_VERSION_FILE "${CMAKE_SOURCE_DIR}/VERSION.txt")
+if(EXISTS "${AYM_VERSION_FILE}")
+  file(READ "${AYM_VERSION_FILE}" AYM_VERSION)
+  string(STRIP "${AYM_VERSION}" AYM_VERSION)
+else()
+  set(AYM_VERSION "0.1.0")
+endif()
 
 if(MSVC)
   add_compile_options(/W4 /permissive-)
@@ -26,6 +33,10 @@ include(GNUInstallDirs)
 install(TARGETS aymc
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+install(FILES README.md LICENSE
+  DESTINATION .
+  OPTIONAL)
+
 install(DIRECTORY runtime/
   DESTINATION ${CMAKE_INSTALL_DATADIR}/aymaraLang/runtime
   FILES_MATCHING PATTERN "*.c" PATTERN "README.md")
@@ -42,6 +53,9 @@ if(AYM_ENABLE_LLVM)
   else()
     message(WARNING "LLVM solicitado pero no encontrado; compilando sin backend LLVM.")
   endif()
+  install(DIRECTORY "${CMAKE_SOURCE_DIR}/llvm-backend/"
+    DESTINATION llvm-backend
+    OPTIONAL)
 else()
   message(STATUS "LLVM backend deshabilitado mediante AYM_ENABLE_LLVM=OFF")
 endif()
