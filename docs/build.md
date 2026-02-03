@@ -8,6 +8,36 @@ AymaraLang en las plataformas soportadas.
 - **Linux:** `g++` (>=8), `nasm`, `gcc` (para enlazar), `cmake` (>=3.15).
 - **Windows:** MinGW-w64 (`g++`), `nasm`, `cmake` (o usa `build.bat`).
 
+### Instalar dependencias en Linux (script)
+
+El repositorio incluye un script para instalar dependencias en distribuciones
+basadas en **apt**, **dnf** o **pacman**. Ejecuta desde la raíz del proyecto:
+
+```bash
+bash scripts/install_deps_linux.sh
+```
+
+Si prefieres darle permisos de ejecución:
+
+```bash
+chmod +x scripts/install_deps_linux.sh
+./scripts/install_deps_linux.sh
+```
+
+> Nota: el script usa `sudo` si no eres `root`.
+
+### Generar el paquete `.tar.gz` para GitHub
+
+Para que los usuarios descarguen el código fuente desde GitHub (por ejemplo,
+adjuntándolo a un Release), puedes generar un tarball con `git archive`:
+
+```bash
+git archive --format=tar.gz --prefix=aymaraLang/ -o aymaraLang.tar.gz HEAD
+```
+
+El archivo `aymaraLang.tar.gz` puede subirse como **asset** de un Release en
+GitHub.
+
 ## CMake (recomendado, multiplataforma)
 
 ### Linux/macOS
@@ -37,12 +67,21 @@ Binario resultante: `build/bin/aymc.exe`.
 ./build/bin/hola
 ```
 
+Por defecto, el ejecutable generado se guarda en la misma carpeta del archivo
+`.aym` de entrada. Puedes cambiarlo con `-o` si lo necesitas.
+
 ### Windows
 
 ```cmd
 build\\bin\\aymc.exe samples\\basics\\hola.aym
 bin\\hola.exe
 ```
+
+### Distribuir solo el binario del compilador
+
+Si vas a compartir únicamente el binario de `aymc`, asegúrate de incluir la
+carpeta `runtime` junto al ejecutable. El compilador busca esos archivos
+relativos a su propia ubicación para poder enlazar los programas generados.
 
 ## Alternativas legacy
 

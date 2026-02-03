@@ -3,18 +3,97 @@
 	"name": "aymlang",
 	"patterns": [
 		{
+			"include": "#comments"
+		},
+		{
 			"include": "#keywords"
+		},
+		{
+			"include": "#types"
+		},
+		{
+			"include": "#builtins"
+		},
+		{
+			"include": "#constants"
+		},
+		{
+			"include": "#numbers"
 		},
 		{
 			"include": "#strings"
 		}
 	],
 	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.double-slash.aym",
+					"begin": "//",
+					"end": "$\\n?"
+				},
+				{
+					"name": "comment.block.aym",
+					"begin": "/\\*",
+					"end": "\\*/"
+				}
+			]
+		},
 		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.aym",
-				"match": "\\b(if|while|for|return)\\b"
-			}]
+			"patterns": [
+				{
+					"name": "keyword.control.aym",
+					"match": "\\b(si|sino|mientras|haceña|para|en|tantachaña|jamusa|akhamawa|jalña|sarantaña)\\b"
+				},
+				{
+					"name": "keyword.other.aym",
+					"match": "\\b(luräwi|kutiyana|apu)\\b"
+				},
+				{
+					"name": "keyword.operator.aym",
+					"match": "\\b(uka|janiwa)\\b"
+				},
+				{
+					"name": "keyword.operator.aym",
+					"match": "\\bjan\\s+uka\\b"
+				}
+			]
+		},
+		"types": {
+			"patterns": [
+				{
+					"name": "storage.type.aym",
+					"match": "\\b(jach’a|lliphiphi|chuymani|qillqa)\\b"
+				}
+			]
+		},
+		"builtins": {
+			"patterns": [
+				{
+					"name": "support.function.aym",
+					"match": "\\b(willt’aña|write|input|length|random|sleep|array|array_get|array_set|array_free|array_length|sin|cos|tan|asin|acos|atan|sqrt|pow|exp|log|log10|floor|ceil|round|fabs|range)\\b"
+				}
+			]
+		},
+		"constants": {
+			"patterns": [
+				{
+					"name": "constant.language.aym",
+					"match": "\\b(cheka)\\b"
+				},
+				{
+					"name": "constant.language.aym",
+					"match": "\\bjan\\s+cheka\\b"
+				}
+			]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"name": "constant.numeric.integer.aym",
+					"match": "\\b\\d+\\b"
+				}
+			]
 		},
 		"strings": {
 			"name": "string.quoted.double.aym",
@@ -28,5 +107,5 @@
 			]
 		}
 	},
-	"scopeName": "main.aym"
+	"scopeName": "source.aym"
 }

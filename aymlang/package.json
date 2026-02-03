@@ -7,6 +7,9 @@
   "engines": {
     "vscode": "^1.108.1"
   },
+  "activationEvents": [
+    "onLanguage:aym"
+  ],
   "categories": [
     "Programming Languages"
   ],
@@ -19,9 +22,15 @@
     }],
     "grammars": [{
       "language": "aym",
-      "scopeName": "main.aym",
+      "scopeName": "source.aym",
       "path": "./syntaxes/aym.tmLanguage.json"
-    }]
+    }],
+    "snippets": [
+      {
+        "language": "aym",
+        "path": "./snippets/aym.json"
+      }
+    ]
   },
   "license": "LICENSE"
 }

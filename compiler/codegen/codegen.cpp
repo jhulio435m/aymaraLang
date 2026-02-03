@@ -62,7 +62,8 @@ public:
               const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
               const std::unordered_map<std::string,std::string> &globalTypesIn,
               bool windows,
-              long seedIn);
+              long seedIn,
+              const std::string &runtimeDirIn);
 private:
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt,
@@ -688,7 +689,8 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
                        const std::unordered_map<std::string,std::string> &globalTypesIn,
                        bool windows,
-                       long seedIn) {
+                       long seedIn,
+                       const std::string &runtimeDirIn) {
     this->windows = windows;
     globals = semGlobals;
     paramTypes = paramTypesIn;
@@ -779,23 +781,37 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 
     out.close();
 
-    fs::create_directories("build");
-    fs::create_directories("bin");
+    fs::path asmPath = fs::path(path);
+    fs::path outputDir = asmPath.has_parent_path() ? asmPath.parent_path() : fs::current_path();
+    if (!outputDir.empty()) {
+        fs::create_directories(outputDir);
+    }
 
-    fs::path obj = fs::path(path).replace_extension(windows ? ".obj" : ".o");
-    fs::path base = fs::path(path).stem();
-    fs::path bin = fs::path("bin") / base;
+    fs::path obj = asmPath;
+    obj.replace_extension(windows ? ".obj" : ".o");
+    fs::path base = asmPath.stem();
+    fs::path bin = outputDir / base;
     if (windows) bin.replace_extension(".exe");
-    std::string cmd1 = std::string("nasm ") + (windows ? "-f win64 " : "-felf64 ") + path + " -o " + obj.string();
+    auto quoted = [](const fs::path &p) {
+        std::string value = p.string();
+        if (value.find(' ') != std::string::npos) {
+            return std::string("\"") + value + "\"";
+        }
+        return value;
+    };
+    std::string cmd1 = std::string("nasm ") + (windows ? "-f win64 " : "-felf64 ") + quoted(asmPath) + " -o " + quoted(obj);
     if (std::system(cmd1.c_str()) != 0) {
         std::cerr << "Error ensamblando " << path << std::endl;
         return;
     }
     std::string cmd2;
+    fs::path runtimeDir = runtimeDirIn.empty() ? fs::path("runtime") : fs::path(runtimeDirIn);
+    fs::path runtimeC = runtimeDir / "runtime.c";
+    fs::path mathC = runtimeDir / "math.c";
     if (windows)
-        cmd2 = "gcc " + obj.string() + " runtime/runtime.c runtime/math.c -o " + bin.string() + " -lm";
+        cmd2 = "gcc " + quoted(obj) + " " + quoted(runtimeC) + " " + quoted(mathC) + " -o " + quoted(bin) + " -lm";
     else
-        cmd2 = "gcc -no-pie " + obj.string() + " runtime/runtime.c runtime/math.c -o " + bin.string() + " -lm -lc";
+        cmd2 = "gcc -no-pie " + quoted(obj) + " " + quoted(runtimeC) + " " + quoted(mathC) + " -o " + quoted(bin) + " -lm -lc";
     if (std::system(cmd2.c_str()) != 0) {
         std::cerr << "Error enlazando " << obj.string() << std::endl;
         return;
@@ -810,10 +826,10 @@ void CodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes,
                              const std::unordered_map<std::string,std::vector<std::string>> &paramTypes,
                              const std::unordered_map<std::string,std::string> &globalTypes,
                              bool windows,
-                             long seed) {
+                             long seed,
+                             const std::string &runtimeDir) {
     CodeGenImpl impl;
-    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes, windows, seed);
+    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes, windows, seed, runtimeDir);
 }
 
 } // namespace aym
-

@@ -1,0 +1,76 @@
+{
+  "Imprimir": {
+    "prefix": "willtana",
+    "body": "willt’aña(${1:mensaje});",
+    "description": "Imprimir con salto de línea"
+  },
+  "Leer input": {
+    "prefix": "input",
+    "body": "${1:qillqa} ${2:nombre} = input();",
+    "description": "Lectura por consola"
+  },
+  "Si / Sino": {
+    "prefix": "si",
+    "body": [
+      "si (${1:condicion}) {",
+      "    ${2:// ...}",
+      "} sino {",
+      "    ${3:// ...}",
+      "}"
+    ],
+    "description": "Condicional si/sino"
+  },
+  "Mientras": {
+    "prefix": "mientras",
+    "body": [
+      "mientras (${1:condicion}) {",
+      "    ${2:// ...}",
+      "}"
+    ],
+    "description": "Bucle mientras"
+  },
+  "Para clásico": {
+    "prefix": "para",
+    "body": [
+      "para (${1:jach’a i = 0;} ${2:i < 10;} ${3:i = i + 1;}) {",
+      "    ${4:// ...}",
+      "}"
+    ],
+    "description": "Bucle para clásico"
+  },
+  "Para con range": {
+    "prefix": "range",
+    "body": [
+      "para ${1:i} en range(${2:0}, ${3:10}) {",
+      "    ${4:// ...}",
+      "}"
+    ],
+    "description": "Bucle para con range"
+  },
+  "Función": {
+    "prefix": "lurawi",
+    "body": [
+      "luräwi ${1:nombre}(${2:args}) {",
+      "    ${3:// ...}",
+      "}"
+    ],
+    "description": "Definición de función"
+  },
+  "Retorno": {
+    "prefix": "kutiyana",
+    "body": "kutiyana ${1:valor};",
+    "description": "Retorno de función"
+  },
+  "Switch (tantachaña)": {
+    "prefix": "tantachana",
+    "body": [
+      "tantachaña (${1:valor}) {",
+      "    jamusa ${2:caso}:",
+      "        ${3:// ...}",
+      "    akhamawa:",
+      "        ${4:// ...}",
+      "}"
+    ],
+    "description": "Sentencia switch"
+  }
+}
