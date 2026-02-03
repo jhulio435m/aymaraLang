@@ -43,6 +43,6 @@ Para pasos detallados por sistema operativo, revisa la guía de compilación en
 Para construir el sitio de documentación con Sphinx:
 
 ```bash
-pip install sphinx
+pip install sphinx sphinx_rtd_theme
 sphinx-build -b html docs/source docs/build/html
 ```
