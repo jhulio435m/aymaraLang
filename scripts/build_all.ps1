@@ -6,18 +6,40 @@ param(
 $ErrorActionPreference = "Stop"
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
+$artifactsDir = Join-Path $root "artifacts"
 
-Write-Host "==> build_dist.ps1"
-if ($EnableLLVM.IsPresent) {
-    & (Join-Path $PSScriptRoot "build_dist.ps1") -EnableLLVM
-} else {
-    & (Join-Path $PSScriptRoot "build_dist.ps1")
+function Invoke-Step {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Label,
+        [Parameter(Mandatory = $true)]
+        [string]$ScriptPath,
+        [string[]]$Arguments = @()
+    )
+
+    Write-Host "==> $Label"
+    if ($Arguments.Count -gt 0) {
+        & $ScriptPath @Arguments
+    } else {
+        & $ScriptPath
+    }
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Label falló con código de salida $LASTEXITCODE."
+    }
 }
 
-Write-Host "==> build_nsis.ps1"
-& (Join-Path $PSScriptRoot "build_nsis.ps1")
+$distArgs = @()
+if ($EnableLLVM.IsPresent) {
+    $distArgs += "-EnableLLVM"
+}
 
-Write-Host "==> build_msi.ps1"
-& (Join-Path $PSScriptRoot "build_msi.ps1")
+Invoke-Step -Label "build_dist.ps1" -ScriptPath (Join-Path $PSScriptRoot "build_dist.ps1") -Arguments $distArgs
+Invoke-Step -Label "build_nsis.ps1" -ScriptPath (Join-Path $PSScriptRoot "build_nsis.ps1")
+Invoke-Step -Label "build_msi.ps1" -ScriptPath (Join-Path $PSScriptRoot "build_msi.ps1")
 
-Write-Host "Artefactos disponibles en: $(Join-Path $root "artifacts")"
+$exePath = Join-Path $artifactsDir "AymaraLang-Setup.exe"
+$msiPath = Join-Path $artifactsDir "AymaraLang-Setup.msi"
+
+Write-Host "Artefacto EXE: $exePath"
+Write-Host "Artefacto MSI: $msiPath"
