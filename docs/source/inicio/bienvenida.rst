@@ -43,7 +43,7 @@ reStructuredText (``.rst``).
 
 .. code:: bash
 
-   pip install sphinx
+   pip install sphinx sphinx_rtd_theme
    sphinx-build -b html docs/source docs/build/html
 
 Luego abre ``docs/build/html/index.html`` en tu navegador.

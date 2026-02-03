@@ -29,7 +29,7 @@ El sitio de documentación está gestionado con **Sphinx** y vive en
 
 .. code:: bash
 
-   pip install sphinx
+   pip install sphinx sphinx_rtd_theme
    sphinx-build -b html docs/source docs/build/html
 
 Estructura del repositorio
