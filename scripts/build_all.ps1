@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [switch]$EnableLLVM
+    [switch]$EnableLLVM,
+    [string]$LLVMDir
 )
 
 $ErrorActionPreference = "Stop"
@@ -32,6 +33,10 @@ function Invoke-Step {
 $distArgs = @()
 if ($EnableLLVM.IsPresent) {
     $distArgs += "-EnableLLVM"
+}
+if (-not [string]::IsNullOrWhiteSpace($LLVMDir)) {
+    $distArgs += "-LLVMDir"
+    $distArgs += $LLVMDir
 }
 
 Invoke-Step -Label "build_dist.ps1" -ScriptPath (Join-Path $PSScriptRoot "build_dist.ps1") -Arguments $distArgs
