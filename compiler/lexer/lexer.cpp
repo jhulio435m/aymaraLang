@@ -122,6 +122,42 @@ std::vector<Token> Lexer::tokenize() {
 
         if (std::isdigit(static_cast<unsigned char>(c))) {
             std::string num;
+            if (c == '0' && pos + 1 < src.size()) {
+                char next = src[pos + 1];
+                if (next == 'x' || next == 'X') {
+                    num += get();
+                    num += get();
+                    while (pos < src.size() && std::isxdigit(static_cast<unsigned char>(peek()))) {
+                        num += get();
+                    }
+                    if (num.size() <= 2) {
+                        throw std::runtime_error(
+                            "Literal hexadecimal incompleto en linea " + std::to_string(startLine) +
+                            ", columna " + std::to_string(startColumn));
+                    }
+                    tokens.push_back({TokenType::Number, num, startLine, startColumn});
+                    continue;
+                }
+                if (next == 'b' || next == 'B') {
+                    num += get();
+                    num += get();
+                    while (pos < src.size()) {
+                        char digit = peek();
+                        if (digit == '0' || digit == '1') {
+                            num += get();
+                        } else {
+                            break;
+                        }
+                    }
+                    if (num.size() <= 2) {
+                        throw std::runtime_error(
+                            "Literal binario incompleto en linea " + std::to_string(startLine) +
+                            ", columna " + std::to_string(startColumn));
+                    }
+                    tokens.push_back({TokenType::Number, num, startLine, startColumn});
+                    continue;
+                }
+            }
             while (pos < src.size() && std::isdigit(static_cast<unsigned char>(peek()))) {
                 num += get();
             }

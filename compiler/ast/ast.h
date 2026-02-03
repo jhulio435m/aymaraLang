@@ -79,11 +79,11 @@ class Stmt : public Node {
 
 class NumberExpr : public Expr {
 public:
-    explicit NumberExpr(long v) : value(v) {}
-    long getValue() const { return value; }
+    explicit NumberExpr(long long v) : value(v) {}
+    long long getValue() const { return value; }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
-    long value;
+    long long value;
 };
 
 class StringExpr : public Expr {

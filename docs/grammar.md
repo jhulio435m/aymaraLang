@@ -68,7 +68,7 @@ Las siguientes tablas resumen cada `TokenType` expuesto por el compilador y el l
 | Token | Descripción | Referencia |
 |-------|-------------|------------|
 | `Identifier` | Secuencia alfanumérica (permite UTF-8 y `_`) que no coincide con palabra reservada | [lexer.cpp#L39-L47](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L39-L47) |
-| `Number` | Literales numéricos decimales, además de los azúcares `cheka` (=1) y `jan cheka` (=0) | [lexer.cpp#L79-L129](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L129) |
+| `Number` | Literales numéricos decimales y prefijos `0x` (hexadecimal), `0b` (binario), además de los azúcares `cheka` (=1) y `jan cheka` (=0) | [lexer.cpp#L79-L129](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L129) |
 | `String` | Literales de cadena entre comillas dobles con escapes (`\n`, `\t`, `\"`, etc.) | [lexer.cpp#L132-L161](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L132-L161) |
 | `EndOfFile` | Marcador al final de la tokenización | [lexer.cpp#L236-L237](https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237) |
 
