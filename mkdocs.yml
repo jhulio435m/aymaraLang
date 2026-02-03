@@ -2,6 +2,7 @@ site_name: AymaraLang
 site_description: Documentación oficial de AymaraLang
 site_author: Comunidad AymaraLang
 repo_url: https://github.com/jhulio435m/aymaraLang
+edit_uri: edit/main/docs/
 theme:
   name: readthedocs
   language: es
@@ -34,7 +35,7 @@ nav:
         - CONOPS: systems_engineering/conops.md
         - Control de Interfaces (ICD): systems_engineering/interface_control_document.md
         - Gestión de Riesgos: systems_engineering/risk_management.md
-        - Verificación y Validación: systems_engineering/verification_validation_plan.mdon_plan.md
+        - Verificación y Validación: systems_engineering/verification_validation_plan.md
 markdown_extensions:
   - admonition
   - toc:
