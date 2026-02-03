@@ -1,0 +1,63 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Plan de Gestión de Ingeniería de Sistemas (SEMP)\\AymaraLang}
+\author{Proyecto AymaraLang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Objetivo}
+Establecer la estrategia, procesos y entregables de ingeniería de sistemas para AymaraLang.
+
+\section{Alcance}
+\begin{itemize}
+    \item Definición de requisitos (SRD).
+    \item Arquitectura y diseño.
+    \item Verificación y validación.
+    \item Gestión de configuración y riesgos.
+\end{itemize}
+
+\section{Procesos principales}
+\begin{longtable}{@{}p{4cm}p{9cm}@{}}
+\toprule
+\textbf{Proceso} & \textbf{Actividades} \\ \midrule
+Requisitos & Captura, análisis, trazabilidad \\
+Arquitectura & Definición modular y interfaces \\
+Implementación & Desarrollo iterativo en C++17 \\
+V\&V & Pruebas, inspecciones, demostraciones \\
+Gestión de cambios & Git + revisión por PR \\ \bottomrule
+\end{longtable}
+
+\section{Entregables}
+\begin{itemize}
+    \item Especificación de requisitos.
+    \item ConOps.
+    \item Documento de arquitectura.
+    \item ICD.
+    \item Plan de V\&V.
+    \item Registro de riesgos.
+\end{itemize}
+
+\section{Gestión de configuración}
+\begin{itemize}
+    \item Repositorio Git como fuente única.
+    \item Versionado semántico para releases.
+    \item Control de cambios vía PR.
+\end{itemize}
+
+\section{Métricas}
+\begin{itemize}
+    \item Porcentaje de requisitos verificados.
+    \item Cobertura de pruebas en \texttt{tests/}.
+    \item Tiempo promedio de compilación.
+\end{itemize}
+
+\end{document}

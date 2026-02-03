@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Gramática formal - AymaraLang</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Gram\u00e1tica formal";
+        var mkdocs_page_input_path = "grammar.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../img/logo_aymaralang.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../indice/">Índice rápido</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Documentación del Lenguaje</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Gramática formal</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Ingeniería de Sistemas</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/systems_engineering_management_plan/">Plan de Gestión (SEMP)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/requirements/">Requisitos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/architecture/">Arquitectura de Sistemas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/conops/">CONOPS</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/interface_control_document/">Control de Interfaces (ICD)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/risk_management/">Gestión de Riesgos</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="../systems_engineering/verification_validation_plan.mdon_plan.md">Verificación y Validación</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">AymaraLang</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Documentación</li>
+          <li class="breadcrumb-item">Documentación del Lenguaje</li>
+      <li class="breadcrumb-item active">Gramática formal</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/master/docs/grammar.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="gramatica-de-aymaralang">Gramática de AymaraLang<a class="headerlink" href="#gramatica-de-aymaralang" title="Permanent link">&para;</a></h1>
+<p>Este documento describe la gramática actual del lenguaje AymaraLang utilizando notación EBNF y relaciona cada producción con la implementación en el parser LL(1) del proyecto. También se enumeran los tokens reconocidos por el analizador léxico junto con las referencias al código fuente donde se definen.</p>
+<h2 id="tokens-lexicos">Tokens léxicos<a class="headerlink" href="#tokens-lexicos" title="Permanent link">&para;</a></h2>
+<p>Las siguientes tablas resumen cada <code>TokenType</code> expuesto por el compilador y el lexema que lo activa. Todas las reglas se encuentran implementadas en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp"><code>compiler/lexer/lexer.cpp</code></a>.</p>
+<h3 id="palabras-clave">Palabras clave<a class="headerlink" href="#palabras-clave" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Lexema(s) aceptado(s)</th>
+<th>Uso sintáctico</th>
+<th>Referencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KeywordPrint</code></td>
+<td><code>willt’aña</code></td>
+<td>Sentencia de impresión</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L49-L50">lexer.cpp#L49-L50</a></td>
+</tr>
+<tr>
+<td><code>KeywordIf</code></td>
+<td><code>si</code></td>
+<td>Condicional <code>if</code></td>
+<td><a href="https://github.com/jhulio435m/jhulio435m/blob/main/compiler/lexer/lexer.cpp#L51-L52">lexer.cpp#L51-L52</a></td>
+</tr>
+<tr>
+<td><code>KeywordElse</code></td>
+<td><code>sino</code></td>
+<td>Rama <code>else</code> / <code>else if</code></td>
+<td><a href="https://github.comjhulio435mg/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L53-L54">lexer.cpp#L53-L54</a></td>
+</tr>
+<tr>
+<td><code>KeywordWhile</code></td>
+<td><code>mientras</code></td>
+<td>Bucle <code>while</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L55-L56">lexer.cpp#L55-L56</a></td>
+</tr>
+<tr>
+<td><code>KeywordDo</code></td>
+<td><code>haceña</code></td>
+<td>Bucle <code>do … while</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L57-L58">lexer.cpp#L57-L58</a></td>
+</tr>
+<tr>
+<td><code>KeywordFor</code></td>
+<td><code>para</code></td>
+<td>Bucle <code>for</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L59-L60">lexer.cpp#L59-L60</a></td>
+</tr>
+<tr>
+<td><code>KeywordIn</code></td>
+<td><code>en</code></td>
+<td>Azúcar de <code>for … in range</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L61-L62">lexer.cpp#L61-L62</a></td>
+</tr>
+<tr>
+<td><code>KeywordBreak</code></td>
+<td><code>jalña</code></td>
+<td>Sentencia <code>break</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L63-L64">lexer.cpp#L63-L64</a></td>
+</tr>
+<tr>
+<td><code>KeywordContinue</code></td>
+<td><code>sarantaña</code></td>
+<td>Sentencia <code>continue</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L65-L66">lexer.cpp#L65-L66</a></td>
+</tr>
+<tr>
+<td><code>KeywordFunc</code></td>
+<td><code>luräwi</code></td>
+<td>Definición de funciones</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L67-L68">lexer.cpp#L67-L68</a></td>
+</tr>
+<tr>
+<td><code>KeywordReturn</code></td>
+<td><code>kutiyana</code></td>
+<td>Sentencia <code>return</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L69-L70">lexer.cpp#L69-L70</a></td>
+</tr>
+<tr>
+<td><code>KeywordSwitch</code></td>
+<td><code>tantachaña</code></td>
+<td>Sentencia <code>switch</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L71-L72">lexer.cpp#L71-L72</a></td>
+</tr>
+<tr>
+<td><code>KeywordCase</code></td>
+<td><code>jamusa</code></td>
+<td>Cláusulas <code>case</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L73-L74">lexer.cpp#L73-L74</a></td>
+</tr>
+<tr>
+<td><code>KeywordDefault</code></td>
+<td><code>akhamawa</code></td>
+<td>Cláusula <code>default</code></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L75-L76">lexer.cpp#L75-L76</a></td>
+</tr>
+<tr>
+<td><code>KeywordAnd</code></td>
+<td><code>uka</code></td>
+<td>Operador lógico AND</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L77-L78">lexer.cpp#L77-L78</a></td>
+</tr>
+<tr>
+<td><code>KeywordOr</code></td>
+<td><code>jan uka</code></td>
+<td>Operador lógico OR compuesto</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L100">lexer.cpp#L79-L100</a></td>
+</tr>
+<tr>
+<td><code>KeywordNot</code></td>
+<td><code>janiwa</code></td>
+<td>Operador lógico NOT</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L103-L104">lexer.cpp#L103-L104</a></td>
+</tr>
+<tr>
+<td><code>KeywordInt</code></td>
+<td><code>jach’a</code></td>
+<td>Declaración de enteros</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L105-L106">lexer.cpp#L105-L106</a></td>
+</tr>
+<tr>
+<td><code>KeywordFloat</code></td>
+<td><code>lliphiphi</code></td>
+<td>Declaración de flotantes</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L107-L108">lexer.cpp#L107-L108</a></td>
+</tr>
+<tr>
+<td><code>KeywordBool</code></td>
+<td><code>chuymani</code></td>
+<td>Declaración de booleanos</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L109-L110">lexer.cpp#L109-L110</a></td>
+</tr>
+<tr>
+<td><code>KeywordString</code></td>
+<td><code>qillqa</code></td>
+<td>Declaración de cadenas</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L111-L112">lexer.cpp#L111-L112</a></td>
+</tr>
+<tr>
+<td><code>KeywordImport</code></td>
+<td><code>apu</code></td>
+<td>Importación de módulos</td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L113-L114">lexer.cpp#L113-L114</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="operadores-y-delimitadores">Operadores y delimitadores<a class="headerlink" href="#operadores-y-delimitadores" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Lexema</th>
+<th>Referencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Plus</code></td>
+<td><code>+</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L165">lexer.cpp#L165</a></td>
+</tr>
+<tr>
+<td><code>Minus</code></td>
+<td><code>-</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L166">lexer.cpp#L166</a></td>
+</tr>
+<tr>
+<td><code>Star</code></td>
+<td><code>*</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L167">lexer.cpp#L167</a></td>
+</tr>
+<tr>
+<td><code>Slash</code></td>
+<td><code>/</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L168">lexer.cpp#L168</a></td>
+</tr>
+<tr>
+<td><code>Percent</code></td>
+<td><code>%</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L169">lexer.cpp#L169</a></td>
+</tr>
+<tr>
+<td><code>Caret</code></td>
+<td><code>^</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L170">lexer.cpp#L170</a></td>
+</tr>
+<tr>
+<td><code>AmpAmp</code></td>
+<td><code>&amp;&amp;</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L171-L175">lexer.cpp#L171-L175</a></td>
+</tr>
+<tr>
+<td><code>PipePipe</code></td>
+<td><code>||</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L179-L183">lexer.cpp#L179-L183</a></td>
+</tr>
+<tr>
+<td><code>Bang</code></td>
+<td><code>!</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
+</tr>
+<tr>
+<td><code>Equal</code></td>
+<td><code>=</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
+</tr>
+<tr>
+<td><code>EqualEqual</code></td>
+<td><code>==</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
+</tr>
+<tr>
+<td><code>BangEqual</code></td>
+<td><code>!=</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
+</tr>
+<tr>
+<td><code>Less</code></td>
+<td><code>&lt;</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
+</tr>
+<tr>
+<td><code>LessEqual</code></td>
+<td><code>&lt;=</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
+</tr>
+<tr>
+<td><code>Greater</code></td>
+<td><code>&gt;</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
+</tr>
+<tr>
+<td><code>GreaterEqual</code></td>
+<td><code>&gt;=</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
+</tr>
+<tr>
+<td><code>LParen</code></td>
+<td><code>(</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L223">lexer.cpp#L223</a></td>
+</tr>
+<tr>
+<td><code>RParen</code></td>
+<td><code>)</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L224">lexer.cpp#L224</a></td>
+</tr>
+<tr>
+<td><code>LBrace</code></td>
+<td><code>{</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L225">lexer.cpp#L225</a></td>
+</tr>
+<tr>
+<td><code>RBrace</code></td>
+<td><code>}</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L226">lexer.cpp#L226</a></td>
+</tr>
+<tr>
+<td><code>LBracket</code></td>
+<td><code>[</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L227">lexer.cpp#L227</a></td>
+</tr>
+<tr>
+<td><code>RBracket</code></td>
+<td><code>]</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L228">lexer.cpp#L228</a></td>
+</tr>
+<tr>
+<td><code>Colon</code></td>
+<td><code>:</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L229">lexer.cpp#L229</a></td>
+</tr>
+<tr>
+<td><code>Comma</code></td>
+<td><code>,</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L230">lexer.cpp#L230</a></td>
+</tr>
+<tr>
+<td><code>Semicolon</code></td>
+<td><code>;</code></td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L231">lexer.cpp#L231</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="identificadores-literales-y-control">Identificadores, literales y control<a class="headerlink" href="#identificadores-literales-y-control" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Descripción</th>
+<th>Referencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Identifier</code></td>
+<td>Secuencia alfanumérica (permite UTF-8 y <code>_</code>) que no coincide con palabra reservada</td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L39-L47">lexer.cpp#L39-L47</a></td>
+</tr>
+<tr>
+<td><code>Number</code></td>
+<td>Literales numéricos decimales, además de los azúcares <code>cheka</code> (=1) y <code>jan cheka</code> (=0)</td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L129">lexer.cpp#L79-L129</a></td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td>Literales de cadena entre comillas dobles con escapes (<code>\n</code>, <code>\t</code>, <code>\"</code>, etc.)</td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L132-L161">lexer.cpp#L132-L161</a></td>
+</tr>
+<tr>
+<td><code>EndOfFile</code></td>
+<td>Marcador al final de la tokenización</td>
+<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237">lexer.cpp#L236-L237</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Nota:</strong> Los tokens <code>LBracket</code> y <code>RBracket</code> aún no se emplean en producciones del parser, pero quedan reservados para futuras extensiones (p.ej. arreglos).</p>
+</blockquote>
+<h2 id="notacion-ebnf-utilizada">Notación EBNF utilizada<a class="headerlink" href="#notacion-ebnf-utilizada" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>a*</code> indica repetición de cero o más veces.</li>
+<li><code>a+</code> indica una o más repeticiones.</li>
+<li><code>[a]</code> marca un elemento opcional.</li>
+<li><code>a | b</code> representa alternativas.</li>
+<li>Los literales de palabra clave se escriben con comillas (<code>"lexema"</code>).</li>
+</ul>
+<h2 id="gramatica-sintactica">Gramática sintáctica<a class="headerlink" href="#gramatica-sintactica" title="Permanent link">&para;</a></h2>
+<h3 id="programa-y-bloques">Programa y bloques<a class="headerlink" href="#programa-y-bloques" title="Permanent link">&para;</a></h3>
+<pre><code class="language-ebnf">program        ::= statement* EOF ;
+block          ::= &quot;{&quot; statement* &quot;}&quot; ;
+</code></pre>
+<p>Estas producciones corresponden a <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L8-L14"><code>Parser::parse</code></a> y <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L41-L46"><code>Parser::parseStatements</code></a>, que reutilizan la misma rutina para cuerpos delimitados por llaves (<code>block</code>). Cuando <code>parseStatements</code> se invoca con <code>stopAtBrace = true</code> consume el <code>RBrace</code> final.</p>
+<h3 id="sentencias">Sentencias<a class="headerlink" href="#sentencias" title="Permanent link">&para;</a></h3>
+<p>Cada alternativa de <code>statement</code> proviene de <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L48-L318"><code>Parser::parseSingleStatement</code></a>. A continuación se detalla la sintaxis concreta de cada forma:</p>
+<pre><code class="language-ebnf">statement      ::= importStmt
+                 | varDecl
+                 | returnStmt
+                 | breakStmt
+                 | continueStmt
+                 | printStmt
+                 | ifStmt
+                 | whileStmt
+                 | doWhileStmt
+                 | forRangeStmt
+                 | forClassicStmt
+                 | switchStmt
+                 | functionStmt
+                 | assignmentStmt
+                 | exprStmt ;
+</code></pre>
+<h4 id="importaciones">Importaciones<a class="headerlink" href="#importaciones" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">importStmt     ::= &quot;apu&quot; (Identifier | String) &quot;;&quot; ;
+</code></pre>
+<p>Implementado en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L49-L65"><code>parseSingleStatement</code></a>.</p>
+<h4 id="declaraciones-de-variables">Declaraciones de variables<a class="headerlink" href="#declaraciones-de-variables" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">varDecl        ::= typeKeyword Identifier [&quot;=&quot; expression] &quot;;&quot; ;
+typeKeyword    ::= &quot;jach’a&quot; | &quot;lliphiphi&quot; | &quot;chuymani&quot; | &quot;qillqa&quot; ;
+</code></pre>
+<p>Corresponde a <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L67-L81"><code>parseSingleStatement</code></a>.</p>
+<h4 id="sentencias-de-retorno-y-control-de-bucle">Sentencias de retorno y control de bucle<a class="headerlink" href="#sentencias-de-retorno-y-control-de-bucle" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">returnStmt     ::= &quot;kutiyana&quot; [expression] &quot;;&quot; ;
+breakStmt      ::= &quot;jalña&quot; &quot;;&quot; ;
+continueStmt   ::= &quot;sarantaña&quot; &quot;;&quot; ;
+</code></pre>
+<p>Ver <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L83-L107"><code>parser.cpp#L83-L107</code></a>.</p>
+<h4 id="impresion">Impresión<a class="headerlink" href="#impresion" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">printStmt      ::= &quot;willt’aña&quot; &quot;(&quot; expression &quot;)&quot; &quot;;&quot; ;
+</code></pre>
+<p>Implementado en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L109-L118"><code>parser.cpp#L109-L118</code></a>.</p>
+<h4 id="condicionales">Condicionales<a class="headerlink" href="#condicionales" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">ifStmt         ::= &quot;si&quot; &quot;(&quot; expression &quot;)&quot; block [elseClause] ;
+elseClause     ::= &quot;sino&quot; (block | ifStmt) ;
+</code></pre>
+<p>Refleja <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L120-L151"><code>parser.cpp#L120-L151</code></a>, que anida <code>if</code> sucesivos para soportar <code>sino si</code>.</p>
+<h4 id="bucles-while-y-do-while">Bucles <code>while</code> y <code>do … while</code><a class="headerlink" href="#bucles-while-y-do-while" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">whileStmt      ::= &quot;mientras&quot; &quot;(&quot; expression &quot;)&quot; block ;
+doWhileStmt    ::= &quot;haceña&quot; block &quot;mientras&quot; &quot;(&quot; expression &quot;)&quot; &quot;;&quot; ;
+</code></pre>
+<p>Implementación en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L153-L184"><code>parser.cpp#L153-L184</code></a>.</p>
+<h4 id="bucles-for">Bucles <code>for</code><a class="headerlink" href="#bucles-for" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">forRangeStmt   ::= &quot;para&quot; Identifier &quot;en&quot; &quot;range&quot; &quot;(&quot; expression &quot;,&quot; expression &quot;)&quot; block ;
+forClassicStmt ::= &quot;para&quot; &quot;(&quot; statement expression &quot;;&quot; statement &quot;)&quot; block ;
+</code></pre>
+<p>Ambas variantes viven en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L186-L233"><code>parser.cpp#L186-L233</code></a>. La forma clásica reutiliza <code>statement</code> para las secciones de inicialización y post-procesamiento, lo que implica que dichas porciones incluyen su propio <code>";"</code> antes de continuar con el resto del encabezado.</p>
+<h4 id="sentencia-switch">Sentencia <code>switch</code><a class="headerlink" href="#sentencia-switch" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">switchStmt     ::= &quot;tantachaña&quot; &quot;(&quot; expression &quot;)&quot; &quot;{&quot; caseClause* [defaultClause] &quot;}&quot; ;
+caseClause     ::= &quot;jamusa&quot; expression &quot;:&quot; statement* ;
+defaultClause  ::= &quot;akhamawa&quot; &quot;:&quot; statement* ;
+</code></pre>
+<p>Implementación en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L235-L273"><code>parser.cpp#L235-L273</code></a>.</p>
+<h4 id="definiciones-de-funciones">Definiciones de funciones<a class="headerlink" href="#definiciones-de-funciones" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">functionStmt   ::= &quot;luräwi&quot; [Identifier] &quot;(&quot; parameterList? &quot;)&quot; block ;
+parameterList  ::= Identifier (&quot;,&quot; Identifier)* ;
+</code></pre>
+<p>Definido en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L276-L295"><code>parser.cpp#L276-L295</code></a>. El nombre es opcional y los parámetros se reconocen como identificadores desnudos.</p>
+<h4 id="asignaciones-y-expresiones">Asignaciones y expresiones<a class="headerlink" href="#asignaciones-y-expresiones" title="Permanent link">&para;</a></h4>
+<pre><code class="language-ebnf">assignmentStmt ::= Identifier &quot;=&quot; expression &quot;;&quot; ;
+exprStmt       ::= expression &quot;;&quot; ;
+</code></pre>
+<p>Generadas por <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L297-L318"><code>parser.cpp#L297-L318</code></a>. Cuando un identificador no está seguido de <code>=</code>, la sentencia se degrada a una expresión pura.</p>
+<h3 id="expresiones">Expresiones<a class="headerlink" href="#expresiones" title="Permanent link">&para;</a></h3>
+<p>La jerarquía de expresiones está factorada en métodos dedicados dentro de <code>Parser</code>. Todas las producciones terminan referenciando <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a> y <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</p>
+<pre><code class="language-ebnf">expression     ::= logicalExpr ;
+logicalExpr    ::= equalityExpr { logicalOp equalityExpr } ;
+logicalOp      ::= &quot;uka&quot; | &quot;&amp;&amp;&quot; | &quot;jan uka&quot; | &quot;||&quot; ;
+equalityExpr   ::= comparisonExpr { (&quot;==&quot; | &quot;!=&quot;) comparisonExpr } ;
+comparisonExpr ::= additiveExpr { (&quot;&lt;&quot; | &quot;&lt;=&quot; | &quot;&gt;&quot; | &quot;&gt;=&quot;) additiveExpr } ;
+additiveExpr   ::= multiplicativeExpr { (&quot;+&quot; | &quot;-&quot;) multiplicativeExpr } ;
+multiplicativeExpr ::= powerExpr { (&quot;*&quot; | &quot;/&quot; | &quot;%&quot;) powerExpr } ;
+powerExpr      ::= unaryExpr { &quot;^&quot; unaryExpr } ;
+unaryExpr      ::= (&quot;-&quot; | &quot;+&quot; | &quot;janiwa&quot; | &quot;!&quot;) unaryExpr
+                 | primaryExpr ;
+primaryExpr    ::= Number
+                 | String
+                 | Identifier [&quot;(&quot; argumentList? &quot;)&quot;]
+                 | &quot;(&quot; expression &quot;)&quot; ;
+argumentList   ::= expression { &quot;,&quot; expression } ;
+</code></pre>
+<ul>
+<li><code>logicalExpr</code> y sus operadores se derivan de <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L325-L345"><code>parseLogic</code></a>.</li>
+<li><code>equalityExpr</code> proviene de <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L347-L367"><code>parseEquality</code></a>.</li>
+<li><code>comparisonExpr</code> está en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L369-L401"><code>parseComparison</code></a>.</li>
+<li><code>additiveExpr</code>, <code>multiplicativeExpr</code> y <code>powerExpr</code> se corresponden con <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L403-L423"><code>parseAdd</code></a>, <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L425-L451"><code>parseTerm</code></a> y <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L453-L463"><code>parsePower</code></a> respectivamente.</li>
+<li><code>unaryExpr</code> y <code>primaryExpr</code> se implementan en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a>.</li>
+<li><code>argumentList</code> reusa <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</li>
+</ul>
+<p>Los literales <code>Number</code> incluyen tanto cifras decimales como los azúcares <code>cheka</code> y <code>jan cheka</code> definidos en el lexer. Las llamadas a funciones requieren que el calificador sea un <code>Identifier</code>; las palabras reservadas no pueden emplearse como nombres válidos.</p>
+<h3 id="tokens-finales">Tokens finales<a class="headerlink" href="#tokens-finales" title="Permanent link">&para;</a></h3>
+<p>El flujo sintáctico concluye cuando se consume el token <code>EndOfFile</code>, añadido explícitamente por el lexer en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237"><code>lexer.cpp#L236-L237</code></a> y verificado por el parser durante la iteración principal.</p>
+<hr />
+<p>Este documento debe mantenerse sincronizado con el código fuente para reflejar cualquier cambio en la gramática del lenguaje.</p>
+<hr />
+<p><strong>Anterior:</strong> <a href="../aymaraLang/">Referencia del lenguaje</a> | <strong>Siguiente:</strong> <a href="../arquitectura/">Arquitectura del compilador</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../aymaraLang/" class="btn btn-neutral float-left" title="Referencia"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../compiler/" class="btn btn-neutral float-right" title="CLI y Compilación">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jhulio435m/aymaraLang" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../aymaraLang/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../compiler/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../javascripts/scroll-top.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

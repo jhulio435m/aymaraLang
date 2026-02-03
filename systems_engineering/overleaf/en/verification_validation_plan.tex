@@ -1,0 +1,58 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Verification and Validation Plan (V\&V)\\AymaraLang}
+\author{AymaraLang Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+Define how AymaraLang and its compiler will be verified and validated to ensure compliance with requirements.
+
+\section{Scope}
+\begin{itemize}
+    \item \texttt{aymc} compiler (lexer, parser, semantic, codegen).
+    \item Experimental LLVM backend.
+    \item Minimal runtime.
+\end{itemize}
+
+\section{V\&V strategy}
+\begin{longtable}{@{}p{3cm}p{10cm}@{}}
+\toprule
+\textbf{Type} & \textbf{Description} \\ \midrule
+Inspection & Code and documentation review \\
+Test & Execution of automated test cases \\
+Analysis & Comparison against expected results \\ \bottomrule
+\end{longtable}
+
+\section{Verification matrix (summary)}
+\begin{longtable}{@{}p{3cm}p{3cm}p{7cm}@{}}
+\toprule
+\textbf{Requirement} & \textbf{Method} & \textbf{Evidence} \\ \midrule
+FR-01 & Test & Compiles multiple \texttt{.aym} files \\
+FR-05 & Test & Binary runs examples \\
+FR-07 & Test & \texttt{.ll} generation \\
+NFR-03 & Inspection & Readable error messages \\ \bottomrule
+\end{longtable}
+
+\section{Acceptance criteria}
+\begin{itemize}
+    \item All examples in \texttt{samples/} must compile and run.
+    \item \texttt{make test} must pass without errors (when the environment allows).
+\end{itemize}
+
+\section{Evidence artifacts}
+\begin{itemize}
+    \item Execution reports from \texttt{make test}.
+    \item Build logs and example output.
+\end{itemize}
+
+\end{document}

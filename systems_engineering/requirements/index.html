@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Requisitos - AymaraLang</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Requisitos";
+        var mkdocs_page_input_path = "systems_engineering\\requirements.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo_aymaralang.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Inicio</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Visión General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../build/">Compilación e Instalación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../installers/">Instaladores</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../indice/">Índice rápido</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../language/">Primeros pasos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guide/">Guía de características</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../aymaraLang/">Referencia</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../grammar/">Gramática formal</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../compiler/">CLI y Compilación</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../arquitectura/">Arquitectura General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project/">Guía del proyecto</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Ingeniería de Sistemas</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering_management_plan/">Plan de Gestión (SEMP)</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Requisitos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../architecture/">Arquitectura de Sistemas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../conops/">CONOPS</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../interface_control_document/">Control de Interfaces (ICD)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../risk_management/">Gestión de Riesgos</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="../verification_validation_plan.mdon_plan.md">Verificación y Validación</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">AymaraLang</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Documentación</li>
+          <li class="breadcrumb-item">Ingeniería de Sistemas</li>
+      <li class="breadcrumb-item active">Requisitos</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/master/docs/systems_engineering/requirements.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="especificacion-de-requisitos-y-documentacion-de-ingenieria-de-sistemas-sebokincose">Especificación de requisitos y documentación de ingeniería de sistemas (SEBOK/INCOSE)<a class="headerlink" href="#especificacion-de-requisitos-y-documentacion-de-ingenieria-de-sistemas-sebokincose" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Basado en prácticas de SEBOK e INCOSE para captura de requisitos, definición de sistema y verificación.</p>
+</blockquote>
+<h2 id="1-proposito">1. Propósito<a class="headerlink" href="#1-proposito" title="Permanent link">&para;</a></h2>
+<p>Definir los requisitos del sistema <strong>AymaraLang (aym)</strong> y su compilador <strong>aymc</strong>, así como el contexto operativo, stakeholders, interfaces, restricciones y criterios de verificación, utilizando una estructura compatible con SEBOK/INCOSE.</p>
+<h2 id="2-alcance-del-sistema">2. Alcance del sistema<a class="headerlink" href="#2-alcance-del-sistema" title="Permanent link">&para;</a></h2>
+<p><strong>Sistema bajo estudio (SoS):</strong>
+- Compilador <code>aymc</code> (C++17) y backend de generación de ejecutables.
+- Lenguaje AymaraLang (archivos fuente <code>.aym</code>).
+- Runtime mínimo para E/S y utilidades estándar.</p>
+<p><strong>Fuera de alcance:</strong>
+- IDEs o extensiones de editor.
+- Librerías estándar externas adicionales.
+- Integración con servicios en la nube.</p>
+<h2 id="3-stakeholders-y-necesidades">3. Stakeholders y necesidades<a class="headerlink" href="#3-stakeholders-y-necesidades" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Stakeholder</th>
+<th>Necesidad/objetivo</th>
+<th>Prioridad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docentes y estudiantes</td>
+<td>Lenguaje accesible y representativo del aymara</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Desarrolladores del compilador</td>
+<td>Arquitectura modular y mantenible</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Usuarios finales</td>
+<td>Ejecutables nativos rápidos</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comunidad cultural</td>
+<td>Preservación lingüística y material educativo</td>
+<td>Media</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-concepto-de-operaciones-conops">4. Concepto de operaciones (ConOps)<a class="headerlink" href="#4-concepto-de-operaciones-conops" title="Permanent link">&para;</a></h2>
+<ol>
+<li>El usuario escribe código <code>.aym</code> con sintaxis en aymara.</li>
+<li>Ejecuta <code>aymc</code> para compilar a un binario nativo (<code>.ayn</code> o <code>.exe</code>).</li>
+<li>El compilador realiza: lexer → parser → AST → análisis semántico → codegen → ensamblado/enlace.</li>
+<li>El ejecutable resultante corre en el sistema objetivo.</li>
+</ol>
+<h2 id="5-contexto-del-sistema-y-limites">5. Contexto del sistema y límites<a class="headerlink" href="#5-contexto-del-sistema-y-limites" title="Permanent link">&para;</a></h2>
+<p><strong>Entorno operativo:</strong>
+- Sistemas Linux/Windows (con soporte de toolchain para NASM/LD/GCC o MinGW).
+- Dependencias de compilación: <code>g++</code>/<code>clang++</code>, <code>nasm</code>, <code>gcc/ld</code>.</p>
+<p><strong>Interfaces externas clave:</strong>
+- CLI del compilador (<code>aymc</code>).
+- Sistema de archivos (lectura <code>.aym</code>, escritura <code>.asm</code>/<code>.ll</code> y binarios).
+- Backend LLVM (opcional, activado con <code>--llvm</code>).</p>
+<h2 id="6-arquitectura-funcional-resumen">6. Arquitectura funcional (resumen)<a class="headerlink" href="#6-arquitectura-funcional-resumen" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Función</th>
+<th>Entrada</th>
+<th>Salida</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Análisis léxico</td>
+<td>Código <code>.aym</code></td>
+<td>Tokens</td>
+</tr>
+<tr>
+<td>Análisis sintáctico</td>
+<td>Tokens</td>
+<td>AST</td>
+</tr>
+<tr>
+<td>Análisis semántico</td>
+<td>AST</td>
+<td>AST validado + símbolos</td>
+</tr>
+<tr>
+<td>Generación de código</td>
+<td>AST validado</td>
+<td><code>.asm</code>/<code>.ll</code></td>
+</tr>
+<tr>
+<td>Ensamblado/enlace</td>
+<td><code>.asm</code></td>
+<td>Binario nativo</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-requisitos-del-sistema">7. Requisitos del sistema<a class="headerlink" href="#7-requisitos-del-sistema" title="Permanent link">&para;</a></h2>
+<h3 id="71-requisitos-funcionales-fr">7.1 Requisitos funcionales (FR)<a class="headerlink" href="#71-requisitos-funcionales-fr" title="Permanent link">&para;</a></h3>
+<p><strong>FR-01</strong> El sistema debe aceptar uno o más archivos <code>.aym</code> como entrada por CLI.</p>
+<p><strong>FR-02</strong> El sistema debe tokenizar el código fuente y producir tokens conforme a palabras clave y símbolos del lenguaje.</p>
+<p><strong>FR-03</strong> El sistema debe generar un AST válido mediante análisis sintáctico LL.</p>
+<p><strong>FR-04</strong> El sistema debe validar semántica (tipado, símbolos y llamadas) antes de generar código.</p>
+<p><strong>FR-05</strong> El sistema debe generar ensamblador NASM x86_64 y enlazar un ejecutable nativo.</p>
+<p><strong>FR-06</strong> El sistema debe permitir seleccionar objetivo Linux o Windows desde la CLI.</p>
+<p><strong>FR-07</strong> El sistema debe admitir un backend LLVM experimental que genere <code>.ll</code>.</p>
+<p><strong>FR-08</strong> El sistema debe soportar módulos importados desde archivos externos.</p>
+<p><strong>FR-09</strong> El sistema debe incluir funciones integradas (E/S, matemáticas, arreglos, aleatoriedad).</p>
+<h3 id="72-requisitos-no-funcionales-nfr">7.2 Requisitos no funcionales (NFR)<a class="headerlink" href="#72-requisitos-no-funcionales-nfr" title="Permanent link">&para;</a></h3>
+<p><strong>NFR-01</strong> El compilador debe ejecutarse en Linux y Windows con toolchain estándar.</p>
+<p><strong>NFR-02</strong> El tiempo de compilación debe ser adecuado para programas educativos (&lt;= 2s para archivos pequeños en equipos de clase).</p>
+<p><strong>NFR-03</strong> El sistema debe proporcionar mensajes de error legibles para errores léxicos, sintácticos y semánticos.</p>
+<p><strong>NFR-04</strong> El código debe mantener una estructura modular (lexer/parser/ast/semantic/codegen).</p>
+<p><strong>NFR-05</strong> El proyecto debe compilarse con C++17.</p>
+<h3 id="73-requisitos-de-interfaz-ir">7.3 Requisitos de interfaz (IR)<a class="headerlink" href="#73-requisitos-de-interfaz-ir" title="Permanent link">&para;</a></h3>
+<p><strong>IR-01</strong> CLI principal: <code>aymc [opciones] archivo.aym ...</code>.</p>
+<p><strong>IR-02</strong> Opciones: <code>--debug</code>, <code>--dump-ast</code>, <code>--seed</code>, <code>--llvm</code>, <code>--windows</code>, <code>--linux</code>, <code>-o</code>.</p>
+<p><strong>IR-03</strong> Archivos de salida: <code>.asm</code> (NASM), <code>.ll</code> (LLVM), y ejecutable nativo.</p>
+<h2 id="8-restricciones-y-supuestos">8. Restricciones y supuestos<a class="headerlink" href="#8-restricciones-y-supuestos" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Se requiere toolchain (NASM y GCC/LD o MinGW) disponible en PATH.</li>
+<li>El backend LLVM es opcional y depende de compilación con soporte.</li>
+<li>El lenguaje está orientado a tipado estático y a constructs definidos en la gramática.</li>
+</ul>
+<h2 id="9-verificacion-y-validacion-vv">9. Verificación y validación (V&amp;V)<a class="headerlink" href="#9-verificacion-y-validacion-vv" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Requisito</th>
+<th>Método</th>
+<th>Evidencia esperada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-01</td>
+<td>Inspección/Prueba</td>
+<td><code>aymc archivo.aym</code> compila sin errores</td>
+</tr>
+<tr>
+<td>FR-05</td>
+<td>Prueba</td>
+<td>Se genera <code>.asm</code> y binario ejecutable</td>
+</tr>
+<tr>
+<td>FR-07</td>
+<td>Prueba</td>
+<td>Se genera archivo <code>.ll</code></td>
+</tr>
+<tr>
+<td>NFR-05</td>
+<td>Inspección</td>
+<td>Uso de <code>-std=c++17</code> en build</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-trazabilidad-resumen">10. Trazabilidad (resumen)<a class="headerlink" href="#10-trazabilidad-resumen" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Requisito</th>
+<th>Elemento de diseño</th>
+<th>Evidencia técnica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-01</td>
+<td>CLI <code>main.cpp</code></td>
+<td>Parsing de argumentos</td>
+</tr>
+<tr>
+<td>FR-02</td>
+<td><code>lexer/</code></td>
+<td>Tokenización</td>
+</tr>
+<tr>
+<td>FR-03</td>
+<td><code>parser/</code></td>
+<td>Construcción de AST</td>
+</tr>
+<tr>
+<td>FR-04</td>
+<td><code>semantic/</code></td>
+<td>Análisis de tipos</td>
+</tr>
+<tr>
+<td>FR-05</td>
+<td><code>codegen/</code></td>
+<td>Generación NASM</td>
+</tr>
+<tr>
+<td>FR-07</td>
+<td><code>codegen/llvm/</code></td>
+<td>LLVM IR</td>
+</tr>
+<tr>
+<td>FR-08</td>
+<td><code>module_resolver</code></td>
+<td>Resolución de módulos</td>
+</tr>
+<tr>
+<td>FR-09</td>
+<td><code>builtins/</code></td>
+<td>Funciones integradas</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-riesgos-tecnicos-alto-nivel">11. Riesgos técnicos (alto nivel)<a class="headerlink" href="#11-riesgos-tecnicos-alto-nivel" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Dependencia de toolchain externo para ensamblado/enlace.</li>
+<li>Backend LLVM incompleto o experimental.</li>
+<li>Compatibilidad limitada con arquitecturas distintas de x86_64.</li>
+</ul>
+<h2 id="12-glosario">12. Glosario<a class="headerlink" href="#12-glosario" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>AST:</strong> Árbol de Sintaxis Abstracta.</li>
+<li><strong>V&amp;V:</strong> Verificación y validación.</li>
+<li><strong>ConOps:</strong> Concepto de operaciones.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../systems_engineering_management_plan/" class="btn btn-neutral float-left" title="Plan de Gestión (SEMP)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../architecture/" class="btn btn-neutral float-right" title="Arquitectura de Sistemas">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jhulio435m/aymaraLang" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../systems_engineering_management_plan/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../architecture/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/scroll-top.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Plan de Verificación y Validación (V&amp;V) - AymaraLang</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Plan de Verificaci\u00f3n y Validaci\u00f3n (V\u0026amp;V)";
+        var mkdocs_page_input_path = "systems_engineering\\verification_validation_plan.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo_aymaralang.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Inicio</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Visión General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../build/">Compilación e Instalación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../installers/">Instaladores</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../indice/">Índice rápido</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../language/">Primeros pasos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guide/">Guía de características</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../aymaraLang/">Referencia</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../grammar/">Gramática formal</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../compiler/">CLI y Compilación</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../arquitectura/">Arquitectura General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project/">Guía del proyecto</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Ingeniería de Sistemas</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering_management_plan/">Plan de Gestión (SEMP)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../requirements/">Requisitos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../architecture/">Arquitectura de Sistemas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../conops/">CONOPS</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../interface_control_document/">Control de Interfaces (ICD)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../risk_management/">Gestión de Riesgos</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="../verification_validation_plan.mdon_plan.md">Verificación y Validación</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">AymaraLang</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Plan de Verificación y Validación (V&amp;V)</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/master/docs/systems_engineering/verification_validation_plan.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="plan-de-verificacion-y-validacion-vv">Plan de Verificación y Validación (V&amp;V)<a class="headerlink" href="#plan-de-verificacion-y-validacion-vv" title="Permanent link">&para;</a></h1>
+<h2 id="1-objetivo">1. Objetivo<a class="headerlink" href="#1-objetivo" title="Permanent link">&para;</a></h2>
+<p>Definir cómo se verificará y validará AymaraLang y su compilador para asegurar cumplimiento de requisitos.</p>
+<h2 id="2-alcance">2. Alcance<a class="headerlink" href="#2-alcance" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Compilador <code>aymc</code> (lexer, parser, semantic, codegen).</li>
+<li>Backend LLVM experimental.</li>
+<li>Runtime mínimo.</li>
+</ul>
+<h2 id="3-estrategia-de-vv">3. Estrategia de V&amp;V<a class="headerlink" href="#3-estrategia-de-vv" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inspección</td>
+<td>Revisión de código y documentación</td>
+</tr>
+<tr>
+<td>Prueba</td>
+<td>Ejecución de casos de prueba automatizados</td>
+</tr>
+<tr>
+<td>Análisis</td>
+<td>Comparación de resultados esperados</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-matriz-de-verificacion-resumen">4. Matriz de verificación (resumen)<a class="headerlink" href="#4-matriz-de-verificacion-resumen" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Requisito</th>
+<th>Método</th>
+<th>Evidencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-01</td>
+<td>Prueba</td>
+<td>Compila múltiples archivos <code>.aym</code></td>
+</tr>
+<tr>
+<td>FR-05</td>
+<td>Prueba</td>
+<td>Binario ejecuta ejemplos</td>
+</tr>
+<tr>
+<td>FR-07</td>
+<td>Prueba</td>
+<td>Generación de <code>.ll</code></td>
+</tr>
+<tr>
+<td>NFR-03</td>
+<td>Inspección</td>
+<td>Mensajes de error legibles</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-criterios-de-aceptacion">5. Criterios de aceptación<a class="headerlink" href="#5-criterios-de-aceptacion" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Todos los ejemplos en <code>samples/</code> deben compilar y ejecutarse.</li>
+<li><code>make test</code> debe pasar sin errores (cuando el entorno lo permita).</li>
+</ul>
+<h2 id="6-artefactos-de-evidencia">6. Artefactos de evidencia<a class="headerlink" href="#6-artefactos-de-evidencia" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Reportes de ejecución de <code>make test</code>.</li>
+<li>Logs de compilación y salida de ejemplos.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jhulio435m/aymaraLang" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/scroll-top.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

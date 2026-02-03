@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Gestión de Riesgos - AymaraLang</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Gesti\u00f3n de Riesgos";
+        var mkdocs_page_input_path = "systems_engineering\\risk_management.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo_aymaralang.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Inicio</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Visión General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../build/">Compilación e Instalación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../installers/">Instaladores</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../indice/">Índice rápido</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../language/">Primeros pasos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guide/">Guía de características</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../aymaraLang/">Referencia</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../grammar/">Gramática formal</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../compiler/">CLI y Compilación</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../arquitectura/">Arquitectura General</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project/">Guía del proyecto</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Ingeniería de Sistemas</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering_management_plan/">Plan de Gestión (SEMP)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../requirements/">Requisitos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../architecture/">Arquitectura de Sistemas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../conops/">CONOPS</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../interface_control_document/">Control de Interfaces (ICD)</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Gestión de Riesgos</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="../verification_validation_plan.mdon_plan.md">Verificación y Validación</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">AymaraLang</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Documentación</li>
+          <li class="breadcrumb-item">Ingeniería de Sistemas</li>
+      <li class="breadcrumb-item active">Gestión de Riesgos</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/master/docs/systems_engineering/risk_management.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="plan-de-gestion-de-riesgos">Plan de Gestión de Riesgos<a class="headerlink" href="#plan-de-gestion-de-riesgos" title="Permanent link">&para;</a></h1>
+<h2 id="1-objetivo">1. Objetivo<a class="headerlink" href="#1-objetivo" title="Permanent link">&para;</a></h2>
+<p>Identificar, evaluar y mitigar riesgos técnicos y de proyecto asociados al desarrollo y uso de AymaraLang.</p>
+<h2 id="2-metodologia">2. Metodología<a class="headerlink" href="#2-metodologia" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Identificación de riesgos.</li>
+<li>Evaluación de probabilidad e impacto.</li>
+<li>Planes de mitigación y contingencia.</li>
+</ul>
+<h2 id="3-registro-de-riesgos">3. Registro de riesgos<a class="headerlink" href="#3-registro-de-riesgos" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Riesgo</th>
+<th>Probabilidad</th>
+<th>Impacto</th>
+<th>Mitigación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R-01</td>
+<td>Dependencia de toolchain externo</td>
+<td>Media</td>
+<td>Alta</td>
+<td>Documentar dependencias y validar en CI</td>
+</tr>
+<tr>
+<td>R-02</td>
+<td>Backend LLVM incompleto</td>
+<td>Media</td>
+<td>Media</td>
+<td>Mantener backend NASM como principal</td>
+</tr>
+<tr>
+<td>R-03</td>
+<td>Compatibilidad limitada a x86_64</td>
+<td>Alta</td>
+<td>Media</td>
+<td>Definir roadmap multi-arquitectura</td>
+</tr>
+<tr>
+<td>R-04</td>
+<td>Curva de aprendizaje de sintaxis aymara</td>
+<td>Media</td>
+<td>Media</td>
+<td>Crear guías y ejemplos accesibles</td>
+</tr>
+<tr>
+<td>R-05</td>
+<td>Falta de recursos para pruebas en Windows</td>
+<td>Media</td>
+<td>Media</td>
+<td>Automatizar tests y usar runners multi-OS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-monitoreo">4. Monitoreo<a class="headerlink" href="#4-monitoreo" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Revisiones trimestrales del registro de riesgos.</li>
+<li>Seguimiento de issues en GitHub.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../interface_control_document/" class="btn btn-neutral float-left" title="Control de Interfaces (ICD)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jhulio435m/aymaraLang" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../interface_control_document/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/scroll-top.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

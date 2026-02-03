@@ -1,0 +1,60 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Descripción de Arquitectura del Sistema\\AymaraLang}
+\author{Proyecto AymaraLang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Visión general}
+AymaraLang está compuesto por un compilador modular (\texttt{aymc}), un runtime mínimo y herramientas de apoyo. La arquitectura sigue el flujo clásico de compiladores con módulos desacoplados.
+
+\section{Arquitectura funcional}
+\begin{longtable}{@{}p{3cm}p{4cm}p{4cm}p{4cm}@{}}
+\toprule
+\textbf{Módulo} & \textbf{Responsabilidad} & \textbf{Entradas} & \textbf{Salidas} \\ \midrule
+Lexer & Tokenización de código fuente & \texttt{.aym} & Tokens \\
+Parser & Construcción de AST & Tokens & AST \\
+Semantic & Análisis semántico y tipos & AST & AST validado + símbolos \\
+Codegen & Generación de NASM/LLVM & AST validado & \texttt{.asm}/\texttt{.ll} \\
+Linker & Ensamblado/enlace & \texttt{.asm} & Binario \\
+\bottomrule
+\end{longtable}
+
+\section{Arquitectura física (deployment)}
+\begin{itemize}
+    \item \textbf{Entorno local:} Linux/Windows.
+    \item \textbf{Dependencias:} NASM, GCC/LD o MinGW, compilador C++17.
+    \item \textbf{Artefactos:} \texttt{.asm}, \texttt{.ll}, binario nativo, logs de error.
+\end{itemize}
+
+\section{Interfaces clave}
+\begin{itemize}
+    \item \textbf{CLI:} \texttt{aymc [opciones] archivo.aym}.
+    \item \textbf{Sistema de archivos:} lectura de fuentes, escritura de artefactos.
+    \item \textbf{Runtime:} funciones básicas de E/S utilizadas por el ejecutable.
+\end{itemize}
+
+\section{Datos e información}
+\begin{itemize}
+    \item \textbf{Tokens:} tipo, texto, línea y columna.
+    \item \textbf{AST:} nodos de expresiones y sentencias.
+    \item \textbf{Símbolos:} tablas de alcance para variables y funciones.
+\end{itemize}
+
+\section{Restricciones de diseño}
+\begin{itemize}
+    \item C++17 como estándar base.
+    \item Codegen x86\_64 (NASM) como backend principal.
+    \item LLVM como backend experimental.
+\end{itemize}
+
+\end{document}

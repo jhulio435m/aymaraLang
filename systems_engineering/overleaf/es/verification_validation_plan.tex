@@ -1,0 +1,58 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Plan de Verificación y Validación (V\&V)\\AymaraLang}
+\author{Proyecto AymaraLang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Objetivo}
+Definir cómo se verificará y validará AymaraLang y su compilador para asegurar cumplimiento de requisitos.
+
+\section{Alcance}
+\begin{itemize}
+    \item Compilador \texttt{aymc} (lexer, parser, semantic, codegen).
+    \item Backend LLVM experimental.
+    \item Runtime mínimo.
+\end{itemize}
+
+\section{Estrategia de V\&V}
+\begin{longtable}{@{}p{3cm}p{10cm}@{}}
+\toprule
+\textbf{Tipo} & \textbf{Descripción} \\ \midrule
+Inspección & Revisión de código y documentación \\
+Prueba & Ejecución de casos de prueba automatizados \\
+Análisis & Comparación de resultados esperados \\ \bottomrule
+\end{longtable}
+
+\section{Matriz de verificación (resumen)}
+\begin{longtable}{@{}p{3cm}p{3cm}p{7cm}@{}}
+\toprule
+\textbf{Requisito} & \textbf{Método} & \textbf{Evidencia} \\ \midrule
+FR-01 & Prueba & Compila múltiples archivos \texttt{.aym} \\
+FR-05 & Prueba & Binario ejecuta ejemplos \\
+FR-07 & Prueba & Generación de \texttt{.ll} \\
+NFR-03 & Inspección & Mensajes de error legibles \\ \bottomrule
+\end{longtable}
+
+\section{Criterios de aceptación}
+\begin{itemize}
+    \item Todos los ejemplos en \texttt{samples/} deben compilar y ejecutarse.
+    \item \texttt{make test} debe pasar sin errores (cuando el entorno lo permita).
+\end{itemize}
+
+\section{Artefactos de evidencia}
+\begin{itemize}
+    \item Reportes de ejecución de \texttt{make test}.
+    \item Logs de compilación y salida de ejemplos.
+\end{itemize}
+
+\end{document}

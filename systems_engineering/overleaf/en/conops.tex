@@ -1,0 +1,64 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Concept of Operations (ConOps)\\AymaraLang}
+\author{AymaraLang Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Purpose}
+Describe how users interact with AymaraLang and its \texttt{aymc} compiler in real scenarios, including operational flows, roles, and constraints.
+
+\section{Operational scenarios}
+\subsection{Educational use in the classroom}
+\begin{enumerate}
+    \item The instructor distributes \texttt{.aym} examples.
+    \item Students edit code in a text editor.
+    \item They run \texttt{aymc} to compile and execute binaries.
+    \item Output is analyzed to reinforce programming concepts.
+\end{enumerate}
+
+\subsection{Community and cultural use}
+\begin{enumerate}
+    \item Creation of educational materials in Aymara.
+    \item Publication of examples and exercises.
+    \item Execution on modest machines without requiring internet access.
+\end{enumerate}
+
+\section{Actors and responsibilities}
+\begin{longtable}{@{}p{4cm}p{9cm}@{}}
+\toprule
+\textbf{Actor} & \textbf{Responsibility} \\ \midrule
+End user & Write and run \texttt{.aym} programs \\
+Instructor & Design exercises and guide learning \\
+Compiler developer & Maintain the compiler and documentation \\ \bottomrule
+\end{longtable}
+
+\section{Assumptions}
+\begin{itemize}
+    \item The environment includes a C++ compiler and assembly/linking tools.
+    \item The user has read/write access to the file system.
+\end{itemize}
+
+\section{Operational limitations}
+\begin{itemize}
+    \item The LLVM backend is optional and may be unavailable.
+    \item Native generation is limited to x86\_64.
+\end{itemize}
+
+\section{Operational success criteria}
+\begin{itemize}
+    \item Successful compilation in under 2 seconds for educational examples.
+    \item Consistent execution on Windows and Linux.
+    \item Error messages understandable for students.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,55 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\geometry{margin=2.5cm}
+
+\title{Documento de Control de Interfaces (ICD)\\AymaraLang}
+\author{Proyecto AymaraLang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Propósito}
+Definir las interfaces principales del sistema AymaraLang y sus contratos de uso.
+
+\section{Interfaces externas}
+\subsection{CLI del compilador}
+\begin{itemize}
+    \item \textbf{Comando:} \texttt{aymc [opciones] archivo.aym ...}
+    \item \textbf{Opciones principales:} \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
+\end{itemize}
+
+\subsection{Sistema de archivos}
+\begin{itemize}
+    \item \textbf{Entradas:} archivos \texttt{.aym}.
+    \item \textbf{Salidas:} \texttt{.asm}, \texttt{.ll} y binario nativo.
+\end{itemize}
+
+\subsection{Runtime}
+\begin{itemize}
+    \item \textbf{Interfaz:} llamadas a funciones integradas (\texttt{willt’aña}, \texttt{input}, matemáticas, arreglos).
+\end{itemize}
+
+\section{Interfaces internas}
+\begin{longtable}{@{}p{4cm}p{9cm}@{}}
+\toprule
+\textbf{Interfaz} & \textbf{Descripción} \\ \midrule
+Lexer $\rightarrow$ Parser & Tokens con tipo/lexema/posición \\
+Parser $\rightarrow$ Semantic & AST de nodos \texttt{Expr}/\texttt{Stmt} \\
+Semantic $\rightarrow$ Codegen & AST validado + símbolos \\
+Codegen $\rightarrow$ Linker & \texttt{.asm} o \texttt{.ll} \\ \bottomrule
+\end{longtable}
+
+\section{Reglas de interoperabilidad}
+\begin{itemize}
+    \item El parser debe consumir tokens bien formados del lexer.
+    \item El codegen solo opera sobre AST validado.
+    \item El runtime debe mantener compatibilidad con el ABI usado por codegen.
+\end{itemize}
+
+\end{document}
