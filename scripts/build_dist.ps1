@@ -2,7 +2,8 @@
 param(
     [string]$BuildDir = "build",
     [string]$Config = "Release",
-    [switch]$EnableLLVM
+    [switch]$EnableLLVM,
+    [string]$LLVMDir
 )
 
 $ErrorActionPreference = "Stop"
@@ -24,6 +25,9 @@ $cmakeArgs = @(
 
 if ($EnableLLVM.IsPresent) {
     $cmakeArgs += "-DAYM_ENABLE_LLVM=ON"
+    if (-not [string]::IsNullOrWhiteSpace($LLVMDir)) {
+        $cmakeArgs += "-DLLVM_DIR=$LLVMDir"
+    }
 } else {
     $cmakeArgs += "-DAYM_ENABLE_LLVM=OFF"
 }
