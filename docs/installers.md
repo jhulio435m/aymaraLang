@@ -21,6 +21,10 @@ Los binarios compilados quedarán en `build/bin/aymc`.
 
 ## Windows (instalador tipo asistente con NSIS)
 
+> Nota: El instalador NSIS solo empaqueta `aymc` y el runtime. No instala
+> dependencias de compilación. Para preparar el entorno de build en Windows
+> usa el script `scripts/install_deps_windows.ps1`.
+
 1. Instala CMake y el generador de NSIS (https://nsis.sourceforge.io/).
 2. Compila con CMake:
 
@@ -39,6 +43,14 @@ Los binarios compilados quedarán en `build/bin/aymc`.
 El instalador `.exe` ofrece un asistente gráfico similar al de Python/Java,
 permite instalar en `Program Files`, crea accesos en el menú Inicio y puede
 añadir `aymc` al `PATH`.
+
+### Dependencias de compilación (Windows)
+
+Ejecuta el script de instalación de dependencias antes de compilar:
+
+```powershell
+./scripts/install_deps_windows.ps1
+```
 
 ## Linux (binarios y paquetes)
 
