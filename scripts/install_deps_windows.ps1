@@ -19,6 +19,7 @@ if (Test-Command "winget") {
     "Kitware.CMake",
     "NASM.NASM",
     "NSIS.NSIS",
+    "WiXToolset.WiXToolset",
     "LLVM.LLVM"
   )
 
@@ -32,12 +33,12 @@ if (Test-Command "winget") {
   Write-Log "  After install, open 'Visual Studio Installer' and enable 'Desktop development with C++'."
 } elseif (Test-Command "choco") {
   Write-Log "Detected Chocolatey. Installing packages..."
-  choco install -y cmake nasm nsis llvm
+  choco install -y cmake nasm nsis wixtoolset llvm
   Write-Log "NOTE: Install Visual Studio Build Tools (C++ workload) if not present:"
   Write-Log "  choco install -y visualstudio2022buildtools"
 } elseif (Test-Command "scoop") {
   Write-Log "Detected Scoop. Installing packages..."
-  scoop install cmake nasm nsis llvm
+  scoop install cmake nasm nsis wixtoolset llvm
   Write-Log "NOTE: Install Visual Studio Build Tools (C++ workload) if not present."
 } else {
   Write-Log "No supported package manager found (winget/choco/scoop)."
@@ -46,6 +47,7 @@ if (Test-Command "winget") {
   Write-Log " - CMake"
   Write-Log " - NASM"
   Write-Log " - NSIS (for installer generation)"
+  Write-Log " - WiX Toolset (para MSI)"
   Write-Log " - LLVM (optional, for --llvm backend)"
   exit 1
 }
