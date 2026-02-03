@@ -20,9 +20,15 @@ if (-not (Test-Path $distPath)) {
 $heat = Get-Command "heat" -ErrorAction SilentlyContinue
 $candle = Get-Command "candle" -ErrorAction SilentlyContinue
 $light = Get-Command "light" -ErrorAction SilentlyContinue
+$wix = Get-Command "wix" -ErrorAction SilentlyContinue
+$useWixCli = $false
 
 if (-not $heat -or -not $candle -or -not $light) {
-    throw "WiX Toolset (heat/candle/light) no está en PATH."
+    if ($wix) {
+        $useWixCli = $true
+    } else {
+        throw "WiX Toolset (heat/candle/light) no está en PATH y no se encontró el comando wix."
+    }
 }
 
 if (-not (Test-Path $generatedDir)) {
@@ -48,10 +54,18 @@ if (-not (Test-Path $distBin)) {
 }
 
 Write-Host "Generando fragmentos WiX con heat..."
-& $heat.Source dir $distBin -cg CoreBinFiles -dr BINDIR -gg -ag -srd -sreg -var var.DistDir -out $coreBinWxs
+if ($useWixCli) {
+    & $wix.Path heat dir $distBin -cg CoreBinFiles -dr BINDIR -gg -ag -srd -sreg -var var.DistDir -out $coreBinWxs
+} else {
+    & $heat.Path dir $distBin -cg CoreBinFiles -dr BINDIR -gg -ag -srd -sreg -var var.DistDir -out $coreBinWxs
+}
 
 if (Test-Path $distShare) {
-    & $heat.Source dir $distShare -cg CoreShareFiles -dr SHAREDIR -gg -ag -srd -sreg -var var.DistDir -out $coreShareWxs
+    if ($useWixCli) {
+        & $wix.Path heat dir $distShare -cg CoreShareFiles -dr SHAREDIR -gg -ag -srd -sreg -var var.DistDir -out $coreShareWxs
+    } else {
+        & $heat.Path dir $distShare -cg CoreShareFiles -dr SHAREDIR -gg -ag -srd -sreg -var var.DistDir -out $coreShareWxs
+    }
 } else {
     @"
 <?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -64,7 +78,11 @@ if (Test-Path $distShare) {
 }
 
 if (Test-Path $distLLVM) {
-    & $heat.Source dir $distLLVM -cg LLVMFiles -dr LLVMBACKENDDIR -gg -ag -srd -sreg -var var.DistDir -out $llvmWxs
+    if ($useWixCli) {
+        & $wix.Path heat dir $distLLVM -cg LLVMFiles -dr LLVMBACKENDDIR -gg -ag -srd -sreg -var var.DistDir -out $llvmWxs
+    } else {
+        & $heat.Path dir $distLLVM -cg LLVMFiles -dr LLVMBACKENDDIR -gg -ag -srd -sreg -var var.DistDir -out $llvmWxs
+    }
 } else {
     @"
 <?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -100,20 +118,28 @@ if (-not (Test-Path $outputPath)) {
     New-Item -Path $outputPath -ItemType Directory | Out-Null
 }
 
-$wixObjDir = Join-Path $generatedDir "obj"
-if (-not (Test-Path $wixObjDir)) {
-    New-Item -Path $wixObjDir -ItemType Directory | Out-Null
-}
-
 $wxsFiles = @($productWxs, $coreBinWxs, $coreShareWxs, $llvmWxs)
-
-Write-Host "Compilando WXS con candle..."
-& $candle.Source -nologo -ext WixUtilExtension -out (Join-Path $wixObjDir "") @defines @wxsFiles
-
-$wixObjs = Get-ChildItem -Path $wixObjDir -Filter "*.wixobj" | ForEach-Object { $_.FullName }
 $outFile = Join-Path $outputPath "AymaraLang-Setup.msi"
+if ($useWixCli) {
+    $buildArgs = @(
+        "build",
+        "-nologo",
+        "-ext", "WixToolset.Util.wixext",
+        "-o", $outFile
+    ) + $defines + $wxsFiles
+    Write-Host "Compilando MSI con wix build..."
+    & $wix.Path @buildArgs
+} else {
+    $wixObjDir = Join-Path $generatedDir "obj"
+    if (-not (Test-Path $wixObjDir)) {
+        New-Item -Path $wixObjDir -ItemType Directory | Out-Null
+    }
+    Write-Host "Compilando WXS con candle..."
+    & $candle.Path -nologo -ext WixUtilExtension -out (Join-Path $wixObjDir "") @defines @wxsFiles
 
-Write-Host "Linkeando MSI con light..."
-& $light.Source -nologo -ext WixUtilExtension -out $outFile $wixObjs
+    $wixObjs = Get-ChildItem -Path $wixObjDir -Filter "*.wixobj" | ForEach-Object { $_.FullName }
+    Write-Host "Linkeando MSI con light..."
+    & $light.Path -nologo -ext WixUtilExtension -out $outFile $wixObjs
+}
 
 Write-Host "MSI generado en: $outFile"

@@ -8,11 +8,8 @@
 !define PRODUCT_PUBLISHER "AymaraLang"
 !define PRODUCT_WEB_SITE "https://aymaralang.local"
 
-!ifexist "..\\VERSION.txt"
-  !searchparse /file "..\\VERSION.txt" "" PRODUCT_VERSION
-!else
-  !define PRODUCT_VERSION "0.1.0"
-!endif
+!define PRODUCT_VERSION "0.1.0"
+!searchparse /file "..\\VERSION.txt" "" PRODUCT_VERSION
 
 !ifdef OUTPUT_FILE
   OutFile "${OUTPUT_FILE}"
@@ -28,27 +25,10 @@ SetRegView 64
 ShowInstDetails show
 ShowUninstDetails show
 
-!ifexist "..\\assets\\logo.ico"
-  !define MUI_ICON "..\\assets\\logo.ico"
-  !define MUI_UNICON "..\\assets\\logo.ico"
-!endif
-
-!ifexist "..\\assets\\banner.bmp"
-  !define MUI_HEADERIMAGE
-  !define MUI_HEADERIMAGE_RIGHT
-  !define MUI_HEADERIMAGE_BITMAP "..\\assets\\banner.bmp"
-!endif
-
-!ifexist "..\\assets\\dialog.bmp"
-  !define MUI_WELCOMEFINISHPAGE_BITMAP "..\\assets\\dialog.bmp"
-!endif
-
 !define MUI_ABORTWARNING
 
 !insertmacro MUI_PAGE_WELCOME
-!ifexist "..\\LICENSE"
-  !insertmacro MUI_PAGE_LICENSE "..\\LICENSE"
-!endif
+!insertmacro MUI_PAGE_LICENSE "..\\LICENSE"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
