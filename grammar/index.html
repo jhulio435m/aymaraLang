@@ -97,7 +97,7 @@
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/risk_management/">Gestión de Riesgos</a>
                 </li>
-                <li class="toctree-l2"><a class="" href="../systems_engineering/verification_validation_plan.mdon_plan.md">Verificación y Validación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/verification_validation_plan/">Verificación y Validación</a>
                 </li>
     </ul>
                   </li>
@@ -120,7 +120,7 @@
           <li class="breadcrumb-item">Documentación del Lenguaje</li>
       <li class="breadcrumb-item active">Gramática formal</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/jhulio435m/aymaraLang/edit/master/docs/grammar.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/grammar.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -131,7 +131,7 @@
                 <h1 id="gramatica-de-aymaralang">Gramática de AymaraLang<a class="headerlink" href="#gramatica-de-aymaralang" title="Permanent link">&para;</a></h1>
 <p>Este documento describe la gramática actual del lenguaje AymaraLang utilizando notación EBNF y relaciona cada producción con la implementación en el parser LL(1) del proyecto. También se enumeran los tokens reconocidos por el analizador léxico junto con las referencias al código fuente donde se definen.</p>
 <h2 id="tokens-lexicos">Tokens léxicos<a class="headerlink" href="#tokens-lexicos" title="Permanent link">&para;</a></h2>
-<p>Las siguientes tablas resumen cada <code>TokenType</code> expuesto por el compilador y el lexema que lo activa. Todas las reglas se encuentran implementadas en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp"><code>compiler/lexer/lexer.cpp</code></a>.</p>
+<p>Las siguientes tablas resumen cada <code>TokenType</code> expuesto por el compilador y el lexema que lo activa. Todas las reglas se encuentran implementadas en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp"><code>compiler/lexer/lexer.cpp</code></a>.</p>
 <h3 id="palabras-clave">Palabras clave<a class="headerlink" href="#palabras-clave" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -153,7 +153,7 @@
 <td><code>KeywordIf</code></td>
 <td><code>si</code></td>
 <td>Condicional <code>if</code></td>
-<td><a href="https://github.com/jhulio435m/jhulio435m/blob/main/compiler/lexer/lexer.cpp#L51-L52">lexer.cpp#L51-L52</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L51-L52">lexer.cpp#L51-L52</a></td>
 </tr>
 <tr>
 <td><code>KeywordElse</code></td>
@@ -290,127 +290,127 @@
 <tr>
 <td><code>Plus</code></td>
 <td><code>+</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L165">lexer.cpp#L165</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L165">lexer.cpp#L165</a></td>
 </tr>
 <tr>
 <td><code>Minus</code></td>
 <td><code>-</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L166">lexer.cpp#L166</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L166">lexer.cpp#L166</a></td>
 </tr>
 <tr>
 <td><code>Star</code></td>
 <td><code>*</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L167">lexer.cpp#L167</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L167">lexer.cpp#L167</a></td>
 </tr>
 <tr>
 <td><code>Slash</code></td>
 <td><code>/</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L168">lexer.cpp#L168</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L168">lexer.cpp#L168</a></td>
 </tr>
 <tr>
 <td><code>Percent</code></td>
 <td><code>%</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L169">lexer.cpp#L169</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L169">lexer.cpp#L169</a></td>
 </tr>
 <tr>
 <td><code>Caret</code></td>
 <td><code>^</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L170">lexer.cpp#L170</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L170">lexer.cpp#L170</a></td>
 </tr>
 <tr>
 <td><code>AmpAmp</code></td>
 <td><code>&amp;&amp;</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L171-L175">lexer.cpp#L171-L175</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L171-L175">lexer.cpp#L171-L175</a></td>
 </tr>
 <tr>
 <td><code>PipePipe</code></td>
 <td><code>||</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L179-L183">lexer.cpp#L179-L183</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L179-L183">lexer.cpp#L179-L183</a></td>
 </tr>
 <tr>
 <td><code>Bang</code></td>
 <td><code>!</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
 </tr>
 <tr>
 <td><code>Equal</code></td>
 <td><code>=</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
 </tr>
 <tr>
 <td><code>EqualEqual</code></td>
 <td><code>==</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
 </tr>
 <tr>
 <td><code>BangEqual</code></td>
 <td><code>!=</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
 </tr>
 <tr>
 <td><code>Less</code></td>
 <td><code>&lt;</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
 </tr>
 <tr>
 <td><code>LessEqual</code></td>
 <td><code>&lt;=</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
 </tr>
 <tr>
 <td><code>Greater</code></td>
 <td><code>&gt;</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
 </tr>
 <tr>
 <td><code>GreaterEqual</code></td>
 <td><code>&gt;=</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
 </tr>
 <tr>
 <td><code>LParen</code></td>
 <td><code>(</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L223">lexer.cpp#L223</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L223">lexer.cpp#L223</a></td>
 </tr>
 <tr>
 <td><code>RParen</code></td>
 <td><code>)</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L224">lexer.cpp#L224</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L224">lexer.cpp#L224</a></td>
 </tr>
 <tr>
 <td><code>LBrace</code></td>
 <td><code>{</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L225">lexer.cpp#L225</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L225">lexer.cpp#L225</a></td>
 </tr>
 <tr>
 <td><code>RBrace</code></td>
 <td><code>}</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L226">lexer.cpp#L226</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L226">lexer.cpp#L226</a></td>
 </tr>
 <tr>
 <td><code>LBracket</code></td>
 <td><code>[</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L227">lexer.cpp#L227</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L227">lexer.cpp#L227</a></td>
 </tr>
 <tr>
 <td><code>RBracket</code></td>
 <td><code>]</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L228">lexer.cpp#L228</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L228">lexer.cpp#L228</a></td>
 </tr>
 <tr>
 <td><code>Colon</code></td>
 <td><code>:</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L229">lexer.cpp#L229</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L229">lexer.cpp#L229</a></td>
 </tr>
 <tr>
 <td><code>Comma</code></td>
 <td><code>,</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L230">lexer.cpp#L230</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L230">lexer.cpp#L230</a></td>
 </tr>
 <tr>
 <td><code>Semicolon</code></td>
 <td><code>;</code></td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L231">lexer.cpp#L231</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L231">lexer.cpp#L231</a></td>
 </tr>
 </tbody>
 </table>
@@ -427,22 +427,22 @@
 <tr>
 <td><code>Identifier</code></td>
 <td>Secuencia alfanumérica (permite UTF-8 y <code>_</code>) que no coincide con palabra reservada</td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L39-L47">lexer.cpp#L39-L47</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L39-L47">lexer.cpp#L39-L47</a></td>
 </tr>
 <tr>
 <td><code>Number</code></td>
 <td>Literales numéricos decimales, además de los azúcares <code>cheka</code> (=1) y <code>jan cheka</code> (=0)</td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L129">lexer.cpp#L79-L129</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L129">lexer.cpp#L79-L129</a></td>
 </tr>
 <tr>
 <td><code>String</code></td>
 <td>Literales de cadena entre comillas dobles con escapes (<code>\n</code>, <code>\t</code>, <code>\"</code>, etc.)</td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L132-L161">lexer.cpp#L132-L161</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L132-L161">lexer.cpp#L132-L161</a></td>
 </tr>
 <tr>
 <td><code>EndOfFile</code></td>
 <td>Marcador al final de la tokenización</td>
-<td><a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237">lexer.cpp#L236-L237</a></td>
+<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237">lexer.cpp#L236-L237</a></td>
 </tr>
 </tbody>
 </table>
@@ -462,9 +462,9 @@
 <pre><code class="language-ebnf">program        ::= statement* EOF ;
 block          ::= &quot;{&quot; statement* &quot;}&quot; ;
 </code></pre>
-<p>Estas producciones corresponden a <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L8-L14"><code>Parser::parse</code></a> y <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L41-L46"><code>Parser::parseStatements</code></a>, que reutilizan la misma rutina para cuerpos delimitados por llaves (<code>block</code>). Cuando <code>parseStatements</code> se invoca con <code>stopAtBrace = true</code> consume el <code>RBrace</code> final.</p>
+<p>Estas producciones corresponden a <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L8-L14"><code>Parser::parse</code></a> y <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L41-L46"><code>Parser::parseStatements</code></a>, que reutilizan la misma rutina para cuerpos delimitados por llaves (<code>block</code>). Cuando <code>parseStatements</code> se invoca con <code>stopAtBrace = true</code> consume el <code>RBrace</code> final.</p>
 <h3 id="sentencias">Sentencias<a class="headerlink" href="#sentencias" title="Permanent link">&para;</a></h3>
-<p>Cada alternativa de <code>statement</code> proviene de <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L48-L318"><code>Parser::parseSingleStatement</code></a>. A continuación se detalla la sintaxis concreta de cada forma:</p>
+<p>Cada alternativa de <code>statement</code> proviene de <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L48-L318"><code>Parser::parseSingleStatement</code></a>. A continuación se detalla la sintaxis concreta de cada forma:</p>
 <pre><code class="language-ebnf">statement      ::= importStmt
                  | varDecl
                  | returnStmt
@@ -484,55 +484,55 @@ block          ::= &quot;{&quot; statement* &quot;}&quot; ;
 <h4 id="importaciones">Importaciones<a class="headerlink" href="#importaciones" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">importStmt     ::= &quot;apu&quot; (Identifier | String) &quot;;&quot; ;
 </code></pre>
-<p>Implementado en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L49-L65"><code>parseSingleStatement</code></a>.</p>
+<p>Implementado en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L49-L65"><code>parseSingleStatement</code></a>.</p>
 <h4 id="declaraciones-de-variables">Declaraciones de variables<a class="headerlink" href="#declaraciones-de-variables" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">varDecl        ::= typeKeyword Identifier [&quot;=&quot; expression] &quot;;&quot; ;
 typeKeyword    ::= &quot;jach’a&quot; | &quot;lliphiphi&quot; | &quot;chuymani&quot; | &quot;qillqa&quot; ;
 </code></pre>
-<p>Corresponde a <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L67-L81"><code>parseSingleStatement</code></a>.</p>
+<p>Corresponde a <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L67-L81"><code>parseSingleStatement</code></a>.</p>
 <h4 id="sentencias-de-retorno-y-control-de-bucle">Sentencias de retorno y control de bucle<a class="headerlink" href="#sentencias-de-retorno-y-control-de-bucle" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">returnStmt     ::= &quot;kutiyana&quot; [expression] &quot;;&quot; ;
 breakStmt      ::= &quot;jalña&quot; &quot;;&quot; ;
 continueStmt   ::= &quot;sarantaña&quot; &quot;;&quot; ;
 </code></pre>
-<p>Ver <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L83-L107"><code>parser.cpp#L83-L107</code></a>.</p>
+<p>Ver <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L83-L107"><code>parser.cpp#L83-L107</code></a>.</p>
 <h4 id="impresion">Impresión<a class="headerlink" href="#impresion" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">printStmt      ::= &quot;willt’aña&quot; &quot;(&quot; expression &quot;)&quot; &quot;;&quot; ;
 </code></pre>
-<p>Implementado en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L109-L118"><code>parser.cpp#L109-L118</code></a>.</p>
+<p>Implementado en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L109-L118"><code>parser.cpp#L109-L118</code></a>.</p>
 <h4 id="condicionales">Condicionales<a class="headerlink" href="#condicionales" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">ifStmt         ::= &quot;si&quot; &quot;(&quot; expression &quot;)&quot; block [elseClause] ;
 elseClause     ::= &quot;sino&quot; (block | ifStmt) ;
 </code></pre>
-<p>Refleja <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L120-L151"><code>parser.cpp#L120-L151</code></a>, que anida <code>if</code> sucesivos para soportar <code>sino si</code>.</p>
+<p>Refleja <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L120-L151"><code>parser.cpp#L120-L151</code></a>, que anida <code>if</code> sucesivos para soportar <code>sino si</code>.</p>
 <h4 id="bucles-while-y-do-while">Bucles <code>while</code> y <code>do … while</code><a class="headerlink" href="#bucles-while-y-do-while" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">whileStmt      ::= &quot;mientras&quot; &quot;(&quot; expression &quot;)&quot; block ;
 doWhileStmt    ::= &quot;haceña&quot; block &quot;mientras&quot; &quot;(&quot; expression &quot;)&quot; &quot;;&quot; ;
 </code></pre>
-<p>Implementación en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L153-L184"><code>parser.cpp#L153-L184</code></a>.</p>
+<p>Implementación en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L153-L184"><code>parser.cpp#L153-L184</code></a>.</p>
 <h4 id="bucles-for">Bucles <code>for</code><a class="headerlink" href="#bucles-for" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">forRangeStmt   ::= &quot;para&quot; Identifier &quot;en&quot; &quot;range&quot; &quot;(&quot; expression &quot;,&quot; expression &quot;)&quot; block ;
 forClassicStmt ::= &quot;para&quot; &quot;(&quot; statement expression &quot;;&quot; statement &quot;)&quot; block ;
 </code></pre>
-<p>Ambas variantes viven en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L186-L233"><code>parser.cpp#L186-L233</code></a>. La forma clásica reutiliza <code>statement</code> para las secciones de inicialización y post-procesamiento, lo que implica que dichas porciones incluyen su propio <code>";"</code> antes de continuar con el resto del encabezado.</p>
+<p>Ambas variantes viven en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L186-L233"><code>parser.cpp#L186-L233</code></a>. La forma clásica reutiliza <code>statement</code> para las secciones de inicialización y post-procesamiento, lo que implica que dichas porciones incluyen su propio <code>";"</code> antes de continuar con el resto del encabezado.</p>
 <h4 id="sentencia-switch">Sentencia <code>switch</code><a class="headerlink" href="#sentencia-switch" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">switchStmt     ::= &quot;tantachaña&quot; &quot;(&quot; expression &quot;)&quot; &quot;{&quot; caseClause* [defaultClause] &quot;}&quot; ;
 caseClause     ::= &quot;jamusa&quot; expression &quot;:&quot; statement* ;
 defaultClause  ::= &quot;akhamawa&quot; &quot;:&quot; statement* ;
 </code></pre>
-<p>Implementación en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L235-L273"><code>parser.cpp#L235-L273</code></a>.</p>
+<p>Implementación en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L235-L273"><code>parser.cpp#L235-L273</code></a>.</p>
 <h4 id="definiciones-de-funciones">Definiciones de funciones<a class="headerlink" href="#definiciones-de-funciones" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">functionStmt   ::= &quot;luräwi&quot; [Identifier] &quot;(&quot; parameterList? &quot;)&quot; block ;
 parameterList  ::= Identifier (&quot;,&quot; Identifier)* ;
 </code></pre>
-<p>Definido en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L276-L295"><code>parser.cpp#L276-L295</code></a>. El nombre es opcional y los parámetros se reconocen como identificadores desnudos.</p>
+<p>Definido en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L276-L295"><code>parser.cpp#L276-L295</code></a>. El nombre es opcional y los parámetros se reconocen como identificadores desnudos.</p>
 <h4 id="asignaciones-y-expresiones">Asignaciones y expresiones<a class="headerlink" href="#asignaciones-y-expresiones" title="Permanent link">&para;</a></h4>
 <pre><code class="language-ebnf">assignmentStmt ::= Identifier &quot;=&quot; expression &quot;;&quot; ;
 exprStmt       ::= expression &quot;;&quot; ;
 </code></pre>
-<p>Generadas por <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L297-L318"><code>parser.cpp#L297-L318</code></a>. Cuando un identificador no está seguido de <code>=</code>, la sentencia se degrada a una expresión pura.</p>
+<p>Generadas por <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L297-L318"><code>parser.cpp#L297-L318</code></a>. Cuando un identificador no está seguido de <code>=</code>, la sentencia se degrada a una expresión pura.</p>
 <h3 id="expresiones">Expresiones<a class="headerlink" href="#expresiones" title="Permanent link">&para;</a></h3>
-<p>La jerarquía de expresiones está factorada en métodos dedicados dentro de <code>Parser</code>. Todas las producciones terminan referenciando <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a> y <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</p>
+<p>La jerarquía de expresiones está factorada en métodos dedicados dentro de <code>Parser</code>. Todas las producciones terminan referenciando <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a> y <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</p>
 <pre><code class="language-ebnf">expression     ::= logicalExpr ;
 logicalExpr    ::= equalityExpr { logicalOp equalityExpr } ;
 logicalOp      ::= &quot;uka&quot; | &quot;&amp;&amp;&quot; | &quot;jan uka&quot; | &quot;||&quot; ;
@@ -550,16 +550,16 @@ primaryExpr    ::= Number
 argumentList   ::= expression { &quot;,&quot; expression } ;
 </code></pre>
 <ul>
-<li><code>logicalExpr</code> y sus operadores se derivan de <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L325-L345"><code>parseLogic</code></a>.</li>
-<li><code>equalityExpr</code> proviene de <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L347-L367"><code>parseEquality</code></a>.</li>
-<li><code>comparisonExpr</code> está en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L369-L401"><code>parseComparison</code></a>.</li>
-<li><code>additiveExpr</code>, <code>multiplicativeExpr</code> y <code>powerExpr</code> se corresponden con <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L403-L423"><code>parseAdd</code></a>, <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L425-L451"><code>parseTerm</code></a> y <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L453-L463"><code>parsePower</code></a> respectivamente.</li>
-<li><code>unaryExpr</code> y <code>primaryExpr</code> se implementan en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a>.</li>
-<li><code>argumentList</code> reusa <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</li>
+<li><code>logicalExpr</code> y sus operadores se derivan de <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L325-L345"><code>parseLogic</code></a>.</li>
+<li><code>equalityExpr</code> proviene de <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L347-L367"><code>parseEquality</code></a>.</li>
+<li><code>comparisonExpr</code> está en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L369-L401"><code>parseComparison</code></a>.</li>
+<li><code>additiveExpr</code>, <code>multiplicativeExpr</code> y <code>powerExpr</code> se corresponden con <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L403-L423"><code>parseAdd</code></a>, <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L425-L451"><code>parseTerm</code></a> y <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L453-L463"><code>parsePower</code></a> respectivamente.</li>
+<li><code>unaryExpr</code> y <code>primaryExpr</code> se implementan en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a>.</li>
+<li><code>argumentList</code> reusa <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</li>
 </ul>
 <p>Los literales <code>Number</code> incluyen tanto cifras decimales como los azúcares <code>cheka</code> y <code>jan cheka</code> definidos en el lexer. Las llamadas a funciones requieren que el calificador sea un <code>Identifier</code>; las palabras reservadas no pueden emplearse como nombres válidos.</p>
 <h3 id="tokens-finales">Tokens finales<a class="headerlink" href="#tokens-finales" title="Permanent link">&para;</a></h3>
-<p>El flujo sintáctico concluye cuando se consume el token <code>EndOfFile</code>, añadido explícitamente por el lexer en <a href="https://github.com/aymaraLang/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237"><code>lexer.cpp#L236-L237</code></a> y verificado por el parser durante la iteración principal.</p>
+<p>El flujo sintáctico concluye cuando se consume el token <code>EndOfFile</code>, añadido explícitamente por el lexer en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237"><code>lexer.cpp#L236-L237</code></a> y verificado por el parser durante la iteración principal.</p>
 <hr />
 <p>Este documento debe mantenerse sincronizado con el código fuente para reflejar cualquier cambio en la gramática del lenguaje.</p>
 <hr />
