@@ -1,0 +1,48 @@
+// Biblioteca estándar: texto y listas
+Qillqa(Suyu(""));
+Qillqa(Suyu("abc"));
+Qillqa(Ch'usa("  hola  "));
+Qillqa(Jaljta("1,2,3", ","));
+Qillqa(Jaljta("a--b--c", "--"));
+Qillqa(Jaljta("", ","));
+Qillqa(Jaljta("a", ","));
+Qillqa(Mayachta(["a","b","c"], "-"));
+Qillqa(Sikta("xd xdd xd", "xd", "ok"));
+Qillqa(Utji("kamisaraki", "sara") ? "Chiqa" : "K'ari");
+
+Qillqa(SuyuT([]));
+Qillqa(SuyuT([1,2,3]));
+
+Yatiya T'aqa xs = [1,2];
+Ch'ullu(xs, 3);
+Qillqa(xs);
+
+Yatiya T'aqa ys = ["a","b","c"];
+Qillqa(Apsu(ys));
+Qillqa(ys);
+
+Yatiya T'aqa zs = [10,20,30];
+Qillqa(ApsuUka(zs, 1));
+Qillqa(zs);
+
+Qillqa(UtjiT([1,2,3], 2) ? "Chiqa" : "K'ari");
+Qillqa(UtjiT([1,2,3], 9) ? "Chiqa" : "K'ari");
+
+Yatiya T'aqa vacia = [];
+Yant'aña {
+  Apsu(vacia);
+} Katjaña("VACIO", e) {
+  Qillqa("VACIO");
+}
+
+Yant'aña {
+  ApsuUka([1], 5);
+} Katjaña("INDICE", e) {
+  Qillqa("INDICE");
+}
+
+Yant'aña {
+  Qillqa(Jakhüwi("no"));
+} Katjaña("CONVERSION", e) {
+  Qillqa("CONVERSION");
+}
