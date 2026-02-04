@@ -1,24 +1,26 @@
+qallta
 // Ejemplos de funciones
 
 // función sin retorno
-luräwi saludar(nombre) {
-    willt’aña("Kamisaraki");
-    willt’aña(nombre);
+lurawi saludar(aru nombre) {
+    qillqa("Kamisaraki");
+    qillqa(nombre);
 }
 
 // función con retorno
-luräwi sumar(a, b) {
-    kutiyana(a + b);
+lurawi sumar(jakhüwi a, jakhüwi b) : jakhüwi {
+    kuttaya(a + b);
 }
 
 // función recursiva
-luräwi fact(n) {
-    si (n == 0) {
-        kutiyana(1);
+lurawi fact(jakhüwi n) : jakhüwi {
+    suti (n == 0) {
+        kuttaya(1);
     }
-    kutiyana(n * fact(n - 1));
+    kuttaya(n * fact(n - 1));
 }
 
 saludar("mundo");
-willt’aña(sumar(3, 4));
-willt’aña(fact(5));
+qillqa(sumar(3, 4));
+qillqa(fact(5));
+tukuya

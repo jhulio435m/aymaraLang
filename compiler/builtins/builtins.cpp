@@ -38,13 +38,13 @@ const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions() {
 std::string typeName(Type t) {
     switch (t) {
     case Type::Int:
-        return "jach’a";
+        return "jakhüwi";
     case Type::Float:
-        return "lliphiphi";
+        return "jakhüwi";
     case Type::Bool:
-        return "chuymani";
+        return "chiqa";
     case Type::String:
-        return "qillqa";
+        return "aru";
     }
     return "";
 }

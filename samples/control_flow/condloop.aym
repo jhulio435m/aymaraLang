@@ -1,11 +1,13 @@
+qallta
 // Condición seguida de un ciclo while
 
-si (1) {
-    willt’aña("cond");
+suti (1) {
+    qillqa("cond");
 }
 
-jach’a i = 0;
-mientras (i < 3) {
-    willt’aña("loop");
+yatiya jakhüwi i = 0;
+kunawsati (i < 3) {
+    qillqa("loop");
     i = i + 1;
 }
+tukuya

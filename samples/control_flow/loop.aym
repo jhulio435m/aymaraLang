@@ -1,12 +1,14 @@
-// Ejemplos de while y do-while
-jach’a x = 0;
+qallta
+// Ejemplos de while
+yatiya jakhüwi x = 0;
 
-mientras (x < 3) {
-    willt’aña(x);
+kunawsati (x < 3) {
+    qillqa(x);
     x = x + 1;
 }
 
-haceña {
-    willt’aña(x);
+kunawsati (x > 0) {
+    qillqa(x);
     x = x - 1;
-} mientras (x > 0);
+}
+tukuya

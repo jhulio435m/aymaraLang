@@ -1,9 +1,11 @@
+qallta
 // Factorial recursivo
-luräwi fact(n) {
-    si (n == 0) {
-        kutiyana(1);
+lurawi fact(jakhüwi n) : jakhüwi {
+    suti (n == 0) {
+        kuttaya(1);
     }
-    kutiyana(n * fact(n - 1));
+    kuttaya(n * fact(n - 1));
 }
 
-willt’aña(fact(5));
+qillqa(fact(5));
+tukuya

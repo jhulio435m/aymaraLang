@@ -1,34 +1,36 @@
+qallta
 // Ejemplos de uso del bucle "for" en el lenguaje aym
 
 // for clásico: bucle desde 0 hasta 4
-para (jach’a i = 0; i < 5; i = i + 1;) {
-    willt’aña(i);
+sapüru (yatiya jakhüwi i = 0; i < 5; i = i + 1;) {
+    qillqa(i);
 }
 
 // for clásico con paso específico
-para (jach’a j = 0; j < 10; j = j + 2;) {
-    willt’aña(j);
+sapüru (yatiya jakhüwi j = 0; j < 10; j = j + 2;) {
+    qillqa(j);
 }
 
 // for con range simple
-para (jach’a k = 0; k < 3; k = k + 1;) {
-    willt’aña(k);
+sapüru (yatiya jakhüwi k = 0; k < 3; k = k + 1;) {
+    qillqa(k);
 }
 
 // bucles anidados
-para (jach’a x = 1; x <= 2; x = x + 1;) {
-    para (jach’a y = 1; y <= 2; y = y + 1;) {
-        willt’aña(x * y);
+sapüru (yatiya jakhüwi x = 1; x <= 2; x = x + 1;) {
+    sapüru (yatiya jakhüwi y = 1; y <= 2; y = y + 1;) {
+        qillqa(x * y);
     }
 }
 
-// uso de continue y break
-para (jach’a n = 0; n < 10; n = n + 1;) {
-    si (n == 5) {
-        sarantaña;
+// condiciones dentro del bucle
+sapüru (yatiya jakhüwi n = 0; n < 10; n = n + 1;) {
+    suti (n == 5) {
+        qillqa("salta cinco");
     }
-    si (n == 8) {
-        jalña;
+    suti (n == 8) {
+        qillqa("llega ocho");
     }
-    willt’aña(n);
+    qillqa(n);
 }
+tukuya

@@ -1,8 +1,10 @@
-apu "aritmetica";
+qallta
+apnaq("aritmetica");
 
-jach’a base = 10;
-jach’a incremento = 5;
-willt’aña("suma:");
-willt’aña(suma(base, incremento));
-willt’aña("resta:");
-willt’aña(resta(base, incremento));
+yatiya jakhüwi base = 10;
+yatiya jakhüwi incremento = 5;
+qillqa("suma:");
+qillqa(suma(base, incremento));
+qillqa("resta:");
+qillqa(resta(base, incremento));
+tukuya

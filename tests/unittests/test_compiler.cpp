@@ -14,7 +14,7 @@ using namespace aym;
 namespace fs = std::filesystem;
 
 TEST(LexerTest, SimpleTokenize) {
-    Lexer lexer("willt’aña(1);");
+    Lexer lexer("qillqa(1);");
     auto tokens = lexer.tokenize();
     ASSERT_EQ(tokens.size(), 6);
     EXPECT_EQ(tokens[0].type, TokenType::KeywordPrint);
@@ -53,7 +53,7 @@ TEST(LexerTest, UnterminatedBlockComment) {
 }
 
 TEST(ParserTest, ParsePrintStmt) {
-    Lexer lexer("willt’aña(1);");
+    Lexer lexer("qallta qillqa(1); tukuya");
     auto tokens = lexer.tokenize();
     Parser parser(tokens);
     auto nodes = parser.parse();
@@ -61,13 +61,14 @@ TEST(ParserTest, ParsePrintStmt) {
     ASSERT_EQ(nodes.size(), 1u);
     auto *printStmt = dynamic_cast<PrintStmt*>(nodes[0].get());
     ASSERT_NE(printStmt, nullptr);
-    auto *num = dynamic_cast<NumberExpr*>(printStmt->getExpr());
+    ASSERT_EQ(printStmt->getExprs().size(), 1u);
+    auto *num = dynamic_cast<NumberExpr*>(printStmt->getExprs()[0].get());
     ASSERT_NE(num, nullptr);
     EXPECT_EQ(num->getValue(), 1);
 }
 
 TEST(ParserTest, ExpressionPrecedence) {
-    Lexer lexer("1 + 2 * 3;");
+    Lexer lexer("qallta 1 + 2 * 3; tukuya");
     auto tokens = lexer.tokenize();
     Parser parser(tokens);
     auto nodes = parser.parse();
@@ -87,26 +88,29 @@ TEST(ParserTest, ExpressionPrecedence) {
 }
 
 TEST(ParserTest, MultipleErrorsRecovery) {
-    Lexer lexer("; willt’aña(1); *; willt’aña(2);");
+    Lexer lexer("qallta ; qillqa(1); *; qillqa(2); tukuya");
     auto tokens = lexer.tokenize();
     Parser parser(tokens);
     auto nodes = parser.parse();
     EXPECT_TRUE(parser.hasError());
-    ASSERT_GE(nodes.size(), 4u);
-    auto *print1 = dynamic_cast<PrintStmt*>(nodes[1].get());
-    ASSERT_NE(print1, nullptr);
-    auto *num1 = dynamic_cast<NumberExpr*>(print1->getExpr());
-    ASSERT_NE(num1, nullptr);
-    EXPECT_EQ(num1->getValue(), 1);
-    auto *print2 = dynamic_cast<PrintStmt*>(nodes[3].get());
-    ASSERT_NE(print2, nullptr);
-    auto *num2 = dynamic_cast<NumberExpr*>(print2->getExpr());
-    ASSERT_NE(num2, nullptr);
-    EXPECT_EQ(num2->getValue(), 2);
+    int found = 0;
+    for (const auto &node : nodes) {
+        auto *printStmt = dynamic_cast<PrintStmt*>(node.get());
+        if (!printStmt || printStmt->getExprs().empty()) continue;
+        auto *num = dynamic_cast<NumberExpr*>(printStmt->getExprs()[0].get());
+        if (!num) continue;
+        if (found == 0) {
+            EXPECT_EQ(num->getValue(), 1);
+        } else if (found == 1) {
+            EXPECT_EQ(num->getValue(), 2);
+        }
+        ++found;
+    }
+    EXPECT_EQ(found, 2);
 }
 
 TEST(CodeGenTest, GeneratesAssembly) {
-    std::string src = "willt’aña(\"ok\");";
+    std::string src = "qallta qillqa(\"ok\"); tukuya";
     Lexer lexer(src);
     auto tokens = lexer.tokenize();
     Parser parser(tokens);
@@ -141,10 +145,10 @@ TEST(ModuleResolverTest, LoadsModuleFromRelativeDirectory) {
     fs::path base = fs::current_path() / "tests" / "tmp_modules";
     fs::create_directories(base / "modules");
     std::ofstream mod(base / "modules" / "util.aym");
-    mod << "luräwi util() { kutiyana(1); }\n";
+    mod << "qallta\nlurawi util() : jakhüwi { kuttaya(1); }\ntukuya\n";
     mod.close();
 
-    Lexer lexer("apu \"modules/util\";");
+    Lexer lexer("qallta apnaq(\"modules/util\"); tukuya");
     auto tokens = lexer.tokenize();
     Parser parser(tokens);
     auto nodes = parser.parse();

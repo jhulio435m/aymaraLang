@@ -4,39 +4,45 @@ Esta guía agrupa las funcionalidades más usadas de AymaraLang con ejemplos.
 
 ## Variables string
 ```aymara
-qillqa saludo = "Kamisaraki";
-willt’aña(saludo);
+qallta
+yatiya aru saludo = "Kamisaraki";
+qillqa(saludo);
+tukuya
 ```
 
 ## Operaciones aritméticas
 Soporta `%` (módulo) y `^` (potencia de enteros).
 ```aymara
-willt’aña(5 % 2);
-willt’aña(2 ^ 3);
+qallta
+qillqa(5 % 2);
+qillqa(2 ^ 3);
+tukuya
 ```
 
-## Switch-Case
+## Condicionales encadenados
 ```aymara
-valor = 2;
-tantachaña(valor) {
-    jamusa 1 {
-        willt’aña("uno");
-    }
-    jamusa 2 {
-        willt’aña("dos");
-    }
-    akhamawa {
-        willt’aña("otro");
+qallta
+yatiya jakhüwi valor = 2;
+suti (valor == 1) {
+    qillqa("uno");
+} jani {
+    suti (valor == 2) {
+        qillqa("dos");
+    } jani {
+        qillqa("otro");
     }
 }
+tukuya
 ```
 
 ## Operadores lógicos
-Se admiten `uka`, `jan uka` y `janiwa`.
+Se admiten `&&`, `||` y `!`.
 ```aymara
-si (1 uka janiwa 0) {
-    willt’aña("ok");
+qallta
+suti (1 && !0) {
+    qillqa("ok");
 }
+tukuya
 ```
 
 ## Comentarios
@@ -44,27 +50,33 @@ Usa `//` para comentarios de línea y `/* ... */` para bloques.
 
 ## Lectura con `input()`
 ```aymara
-jach’a numero = input();
-willt’aña(numero);
+qallta
+yatiya jakhüwi numero = input();
+qillqa(numero);
+tukuya
 ```
 
 ## Comparaciones
 ```aymara
-si (5 >= 3) {
-    willt’aña("mayor");
+qallta
+suti (5 >= 3) {
+    qillqa("mayor");
 }
+tukuya
 ```
 
-## Módulos (`apu`)
+## Módulos (`apnaq`)
 
 Desde ahora es posible dividir el código en varios archivos y reutilizarlo con la
- declaración `apu`.
+ declaración `apnaq`.
 
 ```aymara
-apu "modules/aritmetica";
+qallta
+apnaq("modules/aritmetica");
 
-jach’a total = suma(3, 4);
-willt’aña(total);
+yatiya jakhüwi total = suma(3, 4);
+qillqa(total);
+tukuya
 ```
 
 Coloca el archivo `modules/aritmetica.aym` junto al programa o dentro de una
@@ -75,25 +87,29 @@ carpeta `modules/`. El resolvedor busca módulos en:
 - Rutas adicionales indicadas en la variable de entorno `AYM_PATH`.
 
 Cada módulo se procesa una sola vez y puede importar a su vez otros módulos con
-`apu`.
+`apnaq`.
 
 ## Arreglos dinámicos
 
 ```aymara
-jach’a n = 5;
-jach’a arr = array(n);
+qallta
+yatiya jakhüwi n = 5;
+yatiya jakhüwi arr = array(n);
 array_set(arr, 0, 10);
-willt’aña(array_get(arr, 0));
-willt’aña(array_length(arr));
+qillqa(array_get(arr, 0));
+qillqa(array_length(arr));
 array_free(arr);
+tukuya
 ```
 
 ## Funciones matemáticas
 
 ```aymara
-lliphiphi ang = 1.57;
-willt’aña(sin(ang));
-willt’aña(sqrt(9));
+qallta
+yatiya jakhüwi ang = 1;
+qillqa(sin(ang));
+qillqa(sqrt(9));
+tukuya
 ```
 
 ---

@@ -1,4 +1,6 @@
-// Azúcar sintáctico para bucles con range
-para i en range(0, 4) {
-    willt’aña(i);
+qallta
+// Bucle sapüru clásico
+sapüru (yatiya jakhüwi i = 0; i < 4; i = i + 1;) {
+    qillqa(i);
 }
+tukuya

@@ -4,12 +4,14 @@
 
 Palabras clave principales del lenguaje:
 
-- `jach’a`, `lliphiphi`, `qillqa`, `chuymani` – tipos primitivos (int, float, string, bool)
-- `willt’aña` – salida por pantalla
+- `jakhüwi`, `aru`, `chiqa` – tipos base (numérico, cadenas, booleanos)
+- `yatiya` – declaración de variables
+- `qallta` / `tukuya` – inicio y fin del programa
+- `qillqa` – salida por pantalla
 - `input` – lectura de consola
-- `luräwi` / `kutiyana` – definición de funciones y retorno
-- `si`, `sino`, `mientras`, `haceña`, `para`, `tantachaña`
-- `apu` – importación de módulos desde otros archivos
+- `lurawi` / `kuttaya` – definición de funciones y retorno
+- `suti`, `jani`, `kunawsati`, `sapüru`
+- `apnaq` – importación de módulos desde otros archivos
 
 ---
 

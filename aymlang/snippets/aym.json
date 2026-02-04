@@ -1,76 +1,55 @@
 {
   "Imprimir": {
-    "prefix": "willtana",
-    "body": "willt’aña(${1:mensaje});",
+    "prefix": "qillqa",
+    "body": "qillqa(${1:mensaje});",
     "description": "Imprimir con salto de línea"
   },
   "Leer input": {
     "prefix": "input",
-    "body": "${1:qillqa} ${2:nombre} = input();",
+    "body": "yatiya ${1:jakhüwi} ${2:nombre} = input();",
     "description": "Lectura por consola"
   },
-  "Si / Sino": {
-    "prefix": "si",
+  "Suti / Jani": {
+    "prefix": "suti",
     "body": [
-      "si (${1:condicion}) {",
+      "suti (${1:condicion}) {",
       "    ${2:// ...}",
-      "} sino {",
+      "} jani {",
       "    ${3:// ...}",
       "}"
     ],
-    "description": "Condicional si/sino"
+    "description": "Condicional suti/jani"
   },
-  "Mientras": {
-    "prefix": "mientras",
+  "Kunawsati": {
+    "prefix": "kunawsati",
     "body": [
-      "mientras (${1:condicion}) {",
+      "kunawsati (${1:condicion}) {",
       "    ${2:// ...}",
       "}"
     ],
     "description": "Bucle mientras"
   },
-  "Para clásico": {
-    "prefix": "para",
+  "Sapüru clásico": {
+    "prefix": "sapuru",
     "body": [
-      "para (${1:jach’a i = 0;} ${2:i < 10;} ${3:i = i + 1;}) {",
+      "sapüru (yatiya ${1:jakhüwi} ${2:i} = 0; ${3:i < 10}; ${4:i = i + 1;}) {",
       "    ${4:// ...}",
       "}"
     ],
     "description": "Bucle para clásico"
   },
-  "Para con range": {
-    "prefix": "range",
-    "body": [
-      "para ${1:i} en range(${2:0}, ${3:10}) {",
-      "    ${4:// ...}",
-      "}"
-    ],
-    "description": "Bucle para con range"
-  },
   "Función": {
     "prefix": "lurawi",
     "body": [
-      "luräwi ${1:nombre}(${2:args}) {",
+      "lurawi ${1:nombre}(${2:jakhüwi param}) {",
       "    ${3:// ...}",
       "}"
     ],
     "description": "Definición de función"
   },
   "Retorno": {
-    "prefix": "kutiyana",
-    "body": "kutiyana ${1:valor};",
+    "prefix": "kuttaya",
+    "body": "kuttaya ${1:valor};",
     "description": "Retorno de función"
-  },
-  "Switch (tantachaña)": {
-    "prefix": "tantachana",
-    "body": [
-      "tantachaña (${1:valor}) {",
-      "    jamusa ${2:caso}:",
-      "        ${3:// ...}",
-      "    akhamawa:",
-      "        ${4:// ...}",
-      "}"
-    ],
-    "description": "Sentencia switch"
   }
 }

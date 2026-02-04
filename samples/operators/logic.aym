@@ -1,6 +1,8 @@
+qallta
 // Operadores logicos
-si (1 uka janiwa 0) {
-    willt’aña("ok");
-} sino {
-    willt’aña("fail");
+suti (1 && !0) {
+    qillqa("ok");
+} jani {
+    qillqa("fail");
 }
+tukuya

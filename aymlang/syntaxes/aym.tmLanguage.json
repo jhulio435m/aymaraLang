@@ -43,19 +43,11 @@
 			"patterns": [
 				{
 					"name": "keyword.control.aym",
-					"match": "\\b(si|sino|mientras|haceña|para|en|tantachaña|jamusa|akhamawa|jalña|sarantaña)\\b"
+					"match": "\\b(qallta|tukuya|yatiya|suti|jani|kunawsati|sapüru)\\b"
 				},
 				{
 					"name": "keyword.other.aym",
-					"match": "\\b(luräwi|kutiyana|apu)\\b"
-				},
-				{
-					"name": "keyword.operator.aym",
-					"match": "\\b(uka|janiwa)\\b"
-				},
-				{
-					"name": "keyword.operator.aym",
-					"match": "\\bjan\\s+uka\\b"
+					"match": "\\b(lurawi|kuttaya|apnaq)\\b"
 				}
 			]
 		},
@@ -63,7 +55,7 @@
 			"patterns": [
 				{
 					"name": "storage.type.aym",
-					"match": "\\b(jach’a|lliphiphi|chuymani|qillqa)\\b"
+					"match": "\\b(jakhüwi|aru|chiqa|listaña|mapa)\\b"
 				}
 			]
 		},
@@ -71,7 +63,7 @@
 			"patterns": [
 				{
 					"name": "support.function.aym",
-					"match": "\\b(willt’aña|write|input|length|random|sleep|array|array_get|array_set|array_free|array_length|sin|cos|tan|asin|acos|atan|sqrt|pow|exp|log|log10|floor|ceil|round|fabs|range)\\b"
+					"match": "\\b(qillqa|write|input|length|random|sleep|array|array_get|array_set|array_free|array_length|sin|cos|tan|asin|acos|atan|sqrt|pow|exp|log|log10|floor|ceil|round|fabs)\\b"
 				}
 			]
 		},
@@ -79,11 +71,7 @@
 			"patterns": [
 				{
 					"name": "constant.language.aym",
-					"match": "\\b(cheka)\\b"
-				},
-				{
-					"name": "constant.language.aym",
-					"match": "\\bjan\\s+cheka\\b"
+					"match": "\\b(utji|janiutji)\\b"
 				}
 			]
 		},
@@ -96,13 +84,28 @@
 			]
 		},
 		"strings": {
-			"name": "string.quoted.double.aym",
-			"begin": "\"",
-			"end": "\"",
 			"patterns": [
 				{
-					"name": "constant.character.escape.aym",
-					"match": "\\\\."
+					"name": "string.quoted.double.aym",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.aym",
+							"match": "\\\\."
+						}
+					]
+				},
+				{
+					"name": "string.quoted.single.aym",
+					"begin": "'",
+					"end": "'",
+					"patterns": [
+						{
+							"name": "constant.character.escape.aym",
+							"match": "\\\\."
+						}
+					]
 				}
 			]
 		}

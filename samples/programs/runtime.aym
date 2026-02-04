@@ -1,10 +1,12 @@
+qallta
 // Ejemplo combinado de condicional y bucle while
-jach’a contador = 3;
-si (1) {
-    willt’aña("inicio");
+yatiya jakhüwi contador = 3;
+suti (1) {
+    qillqa("inicio");
 }
 
-mientras (contador) {
-    willt’aña(contador);
+kunawsati (contador) {
+    qillqa(contador);
     contador = contador - 1;
 }
+tukuya

@@ -47,9 +47,14 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         SemanticAnalyzer *self;
         void visit(FunctionStmt &fn) override {
             self->functions[fn.getName()] = fn.getParams().size();
-            self->paramTypes[fn.getName()] = std::vector<std::string>(fn.getParams().size(), "jach’a");
+            std::vector<std::string> types;
+            for (const auto &p : fn.getParams()) {
+                types.push_back(p.type);
+            }
+            self->paramTypes[fn.getName()] = std::move(types);
         }
         void visit(NumberExpr&) override {}
+        void visit(BoolExpr&) override {}
         void visit(StringExpr&) override {}
         void visit(VariableExpr&) override {}
         void visit(BinaryExpr&) override {}
@@ -86,11 +91,13 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
 }
 
 void SemanticAnalyzer::visit(PrintStmt &p) {
-    p.getExpr()->accept(*this);
+    for (const auto &expr : p.getExprs()) {
+        if (expr) expr->accept(*this);
+    }
 }
 
 void SemanticAnalyzer::visit(ExprStmt &e) {
-    e.getExpr()->accept(*this);
+    if (e.getExpr()) e.getExpr()->accept(*this);
 }
 
 void SemanticAnalyzer::visit(AssignStmt &a) {
@@ -130,7 +137,7 @@ void SemanticAnalyzer::visit(IfStmt &i) {
 }
 
 void SemanticAnalyzer::visit(WhileStmt &w) {
-    w.getCondition()->accept(*this);
+    if (w.getCondition()) w.getCondition()->accept(*this);
     ++loopDepth;
     w.getBody()->accept(*this);
     --loopDepth;
@@ -146,7 +153,7 @@ void SemanticAnalyzer::visit(DoWhileStmt &dw) {
 void SemanticAnalyzer::visit(ForStmt &f) {
     pushScope();
     f.getInit()->accept(*this);
-    f.getCondition()->accept(*this);
+    if (f.getCondition()) f.getCondition()->accept(*this);
     f.getPost()->accept(*this);
     ++loopDepth;
     f.getBody()->accept(*this);
@@ -174,10 +181,10 @@ void SemanticAnalyzer::visit(FunctionStmt &fn) {
     ++functionDepth;
     auto it = paramTypes.find(fn.getName());
     size_t idx = 0;
-    for (const auto &pname : fn.getParams()) {
-        std::string t = "jach’a";
+    for (const auto &param : fn.getParams()) {
+        std::string t = "jakhüwi";
         if (it != paramTypes.end() && idx < it->second.size()) t = it->second[idx];
-        declare(pname, t);
+        declare(param.name, t);
         ++idx;
     }
     fn.getBody()->accept(*this);
@@ -205,12 +212,17 @@ void SemanticAnalyzer::visit(ReturnStmt &r) {
 }
 
 void SemanticAnalyzer::visit(NumberExpr &) {
-    currentType = "jach’a";
+    currentType = "jakhüwi";
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(BoolExpr &) {
+    currentType = "chiqa";
     lastInputCall = false;
 }
 
 void SemanticAnalyzer::visit(StringExpr &) {
-    currentType = "qillqa";
+    currentType = "aru";
     lastInputCall = false;
 }
 
@@ -234,7 +246,7 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
     }
     char op = b.getOp();
     if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
-        currentType = "jach’a";
+        currentType = "chiqa";
     else
         currentType = l;
     lastInputCall = false;
@@ -243,7 +255,7 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
 void SemanticAnalyzer::visit(UnaryExpr &u) {
     u.getExpr()->accept(*this);
     if (u.getOp() == '!') {
-        currentType = "jach’a";
+        currentType = "chiqa";
     }
     lastInputCall = false;
 }
@@ -261,11 +273,11 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         arg->accept(*this);
         std::string t = currentType;
         if (pit != paramTypes.end() && idx < pit->second.size()) {
-            if (t == "qillqa") pit->second[idx] = "qillqa";
+            if (t == "aru") pit->second[idx] = "aru";
         }
         ++idx;
     }
-    currentType = "jach’a";
+    currentType = "jakhüwi";
     lastInputCall = (c.getName() == BUILTIN_INPUT);
 }
 
