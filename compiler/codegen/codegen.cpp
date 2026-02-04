@@ -454,7 +454,16 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
     if (dynamic_cast<const StringExpr*>(expr)) return true;
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string nameLower = lowerName(c->getName());
-        if (nameLower == BUILTIN_TO_STRING || nameLower == BUILTIN_KATU) return true;
+        if (nameLower == BUILTIN_TO_STRING || nameLower == BUILTIN_KATU ||
+            nameLower == BUILTIN_CHUSA || nameLower == BUILTIN_MAYACHTA ||
+            nameLower == BUILTIN_SIKTA) {
+            return true;
+        }
+        if ((nameLower == BUILTIN_APSU || nameLower == BUILTIN_APSU_UKA) &&
+            !c->getArgs().empty() &&
+            listElementType(c->getArgs()[0].get(), locals) == "aru") {
+            return true;
+        }
         auto it = functionReturnTypes.find(c->getName());
         if (it == functionReturnTypes.end()) it = functionReturnTypes.find(nameLower);
         if (it != functionReturnTypes.end() && it->second == "aru") return true;
@@ -498,7 +507,7 @@ bool CodeGenImpl::isListExpr(const Expr *expr,
     }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
-        if (name == BUILTIN_PUSH) return true;
+        if (name == BUILTIN_PUSH || name == BUILTIN_CHULLU || name == BUILTIN_JALJTA) return true;
         auto it = functionReturnTypes.find(c->getName());
         if (it == functionReturnTypes.end()) it = functionReturnTypes.find(name);
         if (it != functionReturnTypes.end() && it->second.rfind("t'aqa", 0) == 0) return true;
@@ -549,7 +558,10 @@ std::string CodeGenImpl::listElementType(const Expr *expr,
     }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
-        if (name == BUILTIN_PUSH && !c->getArgs().empty()) {
+        if (name == BUILTIN_JALJTA) {
+            return "aru";
+        }
+        if ((name == BUILTIN_PUSH || name == BUILTIN_CHULLU) && !c->getArgs().empty()) {
             return listElementType(c->getArgs()[0].get(), locals);
         }
     }
@@ -562,6 +574,7 @@ bool CodeGenImpl::isBoolExpr(const Expr *expr,
     if (dynamic_cast<const BoolExpr*>(expr)) return true;
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string nameLower = lowerName(c->getName());
+        if (nameLower == BUILTIN_UTJI || nameLower == BUILTIN_UTJIT) return true;
         auto it = functionReturnTypes.find(c->getName());
         if (it == functionReturnTypes.end()) it = functionReturnTypes.find(nameLower);
         if (it != functionReturnTypes.end() && it->second == "chiqa") return true;
@@ -651,7 +664,9 @@ void CodeGenImpl::emitPrintList(const Expr *expr,
     out << "    mov " << reg1(this->windows) << ", rbx\n";
     out << "    call aym_array_get\n";
     if (elemType == "aru") {
-        out << "    mov " << reg2(this->windows) << ", rax\n";
+        out << "    mov r14, rax\n";
+        emitPrintDefault("list_quote");
+        out << "    mov " << reg2(this->windows) << ", r14\n";
         out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
     } else {
         out << "    mov " << reg2(this->windows) << ", rax\n";
@@ -659,6 +674,9 @@ void CodeGenImpl::emitPrintList(const Expr *expr,
     }
     out << "    xor eax,eax\n";
     out << "    call printf\n";
+    if (elemType == "aru") {
+        emitPrintDefault("list_quote");
+    }
     out << "    inc r13\n";
     out << "    cmp r13, r12\n";
     out << "    je " << end << "\n";
@@ -983,7 +1001,9 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
             out << "    mov [rel " << t->getHandlerSlot() << "], rax\n";
         }
         out << "    mov " << reg1(this->windows) << ", rax\n";
-        out << "    call aym_try_enter\n";
+        out << "    call aym_try_env\n";
+        out << "    mov " << reg1(this->windows) << ", rax\n";
+        out << "    call setjmp\n";
         out << "    cmp rax,0\n";
         out << "    jne " << catchLabel << "\n";
 
@@ -1399,23 +1419,91 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             }
             emitExpr(arg, locals);
             return;
-        } else if (nameLower == BUILTIN_LARGO) {
+        } else if (nameLower == BUILTIN_LARGO || nameLower == BUILTIN_SUYUT) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_array_length\n";
             return;
-        } else if (nameLower == BUILTIN_PUSH) {
+        } else if (nameLower == BUILTIN_PUSH || nameLower == BUILTIN_CHULLU) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov r14, rax\n";
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            out << "    mov " << regs[0] << ", r14\n";
+            out << "    call aym_array_push\n";
+            return;
+        } else if (nameLower == BUILTIN_LENGTH || nameLower == BUILTIN_SUYU) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call strlen\n";
+            return;
+        } else if (nameLower == BUILTIN_CHUSA) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_str_trim\n";
+            return;
+        } else if (nameLower == BUILTIN_JALJTA) {
             std::vector<std::string> regs = paramRegs(this->windows);
             emitExpr(c->getArgs()[1].get(), locals);
             out << "    mov " << regs[1] << ", rax\n";
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << regs[0] << ", rax\n";
-            out << "    call aym_array_push\n";
+            out << "    call aym_str_split\n";
             return;
-        } else if (nameLower == BUILTIN_LENGTH) {
+        } else if (nameLower == BUILTIN_MAYACHTA) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov r14, rax\n";
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            out << "    mov " << regs[0] << ", r14\n";
+            out << "    call aym_str_join\n";
+            return;
+        } else if (nameLower == BUILTIN_SIKTA) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[2].get(), locals);
+            out << "    mov " << regs[2] << ", rax\n";
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << regs[0] << ", rax\n";
+            out << "    call aym_str_replace\n";
+            return;
+        } else if (nameLower == BUILTIN_UTJI) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << regs[0] << ", rax\n";
+            out << "    call aym_str_contains\n";
+            return;
+        } else if (nameLower == BUILTIN_APSU) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
-            out << "    call strlen\n";
+            out << "    call aym_array_pop\n";
+            return;
+        } else if (nameLower == BUILTIN_APSU_UKA) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov r14, rax\n";
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            out << "    mov " << regs[0] << ", r14\n";
+            out << "    call aym_array_remove_at\n";
+            return;
+        } else if (nameLower == BUILTIN_UTJIT) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov r14, rax\n";
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            out << "    mov " << regs[0] << ", r14\n";
+            if (listElementType(c->getArgs()[0].get(), locals) == "aru") {
+                out << "    call aym_array_contains_str\n";
+            } else {
+                out << "    call aym_array_contains_int\n";
+            }
             return;
         } else if (nameLower == BUILTIN_RANDOM) {
             emitExpr(c->getArgs()[0].get(), locals);
@@ -1549,17 +1637,27 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern aym_array_free\n";
     out << "extern aym_array_length\n";
     out << "extern aym_array_push\n";
+    out << "extern aym_array_pop\n";
+    out << "extern aym_array_remove_at\n";
+    out << "extern aym_array_contains_int\n";
+    out << "extern aym_array_contains_str\n";
     out << "extern aym_str_concat\n";
+    out << "extern aym_str_trim\n";
+    out << "extern aym_str_split\n";
+    out << "extern aym_str_join\n";
+    out << "extern aym_str_replace\n";
+    out << "extern aym_str_contains\n";
     out << "extern aym_to_string\n";
     out << "extern aym_to_number\n";
     out << "extern aym_try_push\n";
     out << "extern aym_try_pop\n";
-    out << "extern aym_try_enter\n";
+    out << "extern aym_try_env\n";
     out << "extern aym_try_get_exception\n";
     out << "extern aym_throw\n";
     out << "extern aym_exception_new\n";
     out << "extern aym_exception_type\n";
     out << "extern aym_exception_message\n";
+    out << "extern setjmp\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
@@ -1574,6 +1672,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "list_open: db \"[\",0\n";
     out << "list_sep: db \", \",0\n";
     out << "list_close: db \"]\",0\n";
+    out << "list_quote: db 34,0\n";
     out << "bool_true: db \"utji\",0\n";
     out << "bool_false: db \"janiutji\",0\n";
 

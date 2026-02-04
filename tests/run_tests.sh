@@ -59,6 +59,35 @@ grep -q -- "Suti = Luis" tmp.out
 grep -q -- "120" tmp.out
 rm tmp.out
 
+cat > tmp.expected <<'EOF'
+0
+3
+hola
+["1", "2", "3"]
+["a", "b", "c"]
+[""]
+["a"]
+a-b-c
+ok xdd ok
+Chiqa
+0
+3
+[1, 2, 3]
+c
+["a", "b"]
+20
+[10, 30]
+Chiqa
+K'ari
+VACIO
+INDICE
+CONVERSION
+EOF
+./bin/aymc samples/ejemplos/stdlib_texto_listas.aym >/dev/null
+./samples/ejemplos/stdlib_texto_listas > tmp.out
+diff -u tmp.expected tmp.out
+rm tmp.expected tmp.out
+
 echo "[test] all samples compiled and ran successfully"
 
 ./tests/packaging_smoke.sh

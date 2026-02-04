@@ -93,7 +93,20 @@ std::vector<Token> Lexer::tokenize() {
             } else if (lower == "mapa") {
                 tokens.push_back({TokenType::KeywordTypeMap, word, startLine, startColumn});
             } else if (lower == "utji" || lower == "chiqa") {
-                tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
+                if (lower == "utji") {
+                    size_t lookahead = pos;
+                    while (lookahead < src.size() &&
+                           std::isspace(static_cast<unsigned char>(src[lookahead]))) {
+                        ++lookahead;
+                    }
+                    if (lookahead < src.size() && src[lookahead] == '(') {
+                        tokens.push_back({TokenType::Identifier, word, startLine, startColumn});
+                    } else {
+                        tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
+                    }
+                } else {
+                    tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
+                }
             } else if (lower == "janiutji" || lower == "k'ari") {
                 tokens.push_back({TokenType::KeywordFalse, word, startLine, startColumn});
             } else {

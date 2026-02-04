@@ -19,6 +19,10 @@ En `aym` los literales lógicos utilizan vocabulario aymara. La palabra `chiqa`
 **falso** (`false`). Son útiles para inicializar variables y para las
 condiciones en estructuras de control.
 
+> Nota: `utji` también existe como función `utji(texto, sub)` (contiene). Cuando
+> se usa con paréntesis se interpreta como función; como literal se mantiene el
+> valor lógico.
+
 ```aymara
 yatiya chiqa bandera = chiqa;
 jisa (bandera) {
@@ -43,12 +47,15 @@ jisa (otra) {
 - Operadores lógicos `&&`, `||`, `!`, comparaciones `== != < <= > >=`.
 - Comentarios `//` y `/* */`.
 - Lectura de consola con `katu(prompt, end)` o `input()`.
-- Longitud de cadenas con `length()`.
+- Longitud de cadenas con `length()` o `suyu()`.
 - Números aleatorios con `random(max)`.
 - Pausa de ejecución con `sleep(ms)`.
 - Arreglos dinámicos con `array(n)`, `array_get(arr, i)`, `array_set(arr, i, v)`,
   `array_free(arr)`, `array_length(arr)`.
-- Listas con literales `[]`, `largo(lista)` y `push(lista, valor)`.
+- Listas con literales `[]`, `largo(lista)`/`suyut(lista)`, `push(lista, valor)`/`ch'ullu(lista, valor)`.
+- Texto: `ch'usa(texto)` (trim), `jaljta(texto, sep)` (split), `mayachta(lista, sep)` (join),
+  `sikta(texto, busca, cambia)` (replace), `utji(texto, sub)` (contains).
+- Listas: `apsu(lista)` (pop), `apsuuka(lista, i)` (removeAt), `utjit(lista, v)` (contains).
 - Funciones matemáticas con `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`,
   `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`.
 - Operador ternario `cond ? a : b`.
@@ -103,7 +110,9 @@ taki (yatiya jakhüwi x = 0; x < 4; x++) {
 
 `qillqa`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`,
 `array_length`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`,
-`log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `katu`, `largo`, `push`,
+`log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `katu`, `largo`, `push`, `suyu`,
+`suyut`, `ch'usa`, `jaljta`, `mayachta`, `sikta`, `utji`, `ch'ullu`, `apsu`,
+`apsuuka`, `utjit`,
 `qallta`, `tukuya`, `yatiya`, `jisa`, `maysatxa`, `ukhakamaxa`, `taki`,
 `p'akhiña`, `sarantaña`, `lurawi`, `kuttaya`, `jakhüwi`, `aru`, `chiqa`,
 `t'aqa`, `listaña`, `mapa`, `k'ari`, `utji`, `janiutji`, `input`, `length`,
