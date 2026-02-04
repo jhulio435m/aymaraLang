@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión General</a>
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Tutoriales y Guías</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Lenguaje</a>
     <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../indice/">Índice rápido</a>
-                </li>
                 <li class="toctree-l2 current"><a class="reference internal current" href="#">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia</a>
+                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
+                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -117,7 +111,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Tutoriales y Guías</li>
+          <li class="breadcrumb-item">Lenguaje</li>
       <li class="breadcrumb-item active">Primeros pasos</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/language.md" class="icon icon-github"> Edit on GitHub</a>
@@ -129,62 +123,75 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="primeros-pasos-con-aymaralang">Primeros pasos con AymaraLang<a class="headerlink" href="#primeros-pasos-con-aymaralang" title="Permanent link">&para;</a></h1>
-<p>Esta sección introduce la sintaxis básica del lenguaje con ejemplos cortos.
-Si buscas detalles exhaustivos de operadores y funciones integradas, consulta la
-<a href="../aymaraLang/">Referencia del lenguaje</a>.</p>
+<p>Ejemplos mínimos para escribir tus primeros programas.</p>
 <h2 id="hola-mundo">Hola mundo<a class="headerlink" href="#hola-mundo" title="Permanent link">&para;</a></h2>
-<pre><code class="language-aymara">willt’aña(&quot;Kamisaraki!&quot;);
-</code></pre>
+<div class="highlight"><pre><span></span><code>qillqa(&quot;Kamisaraki!&quot;);
+</code></pre></div>
 <h2 id="tipos-y-variables">Tipos y variables<a class="headerlink" href="#tipos-y-variables" title="Permanent link">&para;</a></h2>
-<pre><code class="language-aymara">jach’a contador = 3;
-lliphiphi promedio = 3.14;
-qillqa saludo = &quot;kamisaraki&quot;;
-chuymani activo = cheka;
-</code></pre>
-<h2 id="condicionales">Condicionales<a class="headerlink" href="#condicionales" title="Permanent link">&para;</a></h2>
-<pre><code class="language-aymara">si (contador &gt; 0) {
-    willt’aña(saludo);
-} sino {
-    willt’aña(&quot;janiwa&quot;);
-}
-</code></pre>
-<h2 id="bucles">Bucles<a class="headerlink" href="#bucles" title="Permanent link">&para;</a></h2>
-<pre><code class="language-aymara">para i en range(0, 3) {
-    willt’aña(i);
+<div class="highlight"><pre><span></span><code>yatiya jakhüwi contador = 3;
+yatiya aru saludo = &quot;kamisaraki&quot;;
+yatiya chiqa activo = chiqa;
+</code></pre></div>
+<div class="mermaid">mindmap
+  root((AymaraLang))
+    Tipos
+      jakhüwi
+      aru
+      chiqa
+      t'aqa
+    Control
+      jisa/maysatxa
+      ukhakamaxa
+      taki
+    Funciones
+      lurawi
+      kuttaya
+    Módulos
+      apnaq</div>
+<h2 id="control-de-flujo">Control de flujo<a class="headerlink" href="#control-de-flujo" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>jisa (contador &gt; 0) {
+    qillqa(saludo);
+} maysatxa {
+    qillqa(&quot;janiwa&quot;);
 }
 
-mientras (contador &gt; 0) {
-    contador = contador - 1;
+ukhakamaxa (contador &gt; 0) {
+    contador--;
 }
-</code></pre>
+
+taki (yatiya jakhüwi i = 0; i &lt; 3; i++) {
+    qillqa(i);
+}
+</code></pre></div>
 <h2 id="funciones">Funciones<a class="headerlink" href="#funciones" title="Permanent link">&para;</a></h2>
-<pre><code class="language-aymara">luräwi inc(n) {
-    kutiyana n + 1;
+<div class="highlight"><pre><span></span><code>lurawi inc(jakhüwi n) : jakhüwi {
+    kuttaya n + 1;
 }
 
-willt’aña(inc(5));
-</code></pre>
+qillqa(inc(5));
+</code></pre></div>
+<h2 id="notas-matematicas-rapidas">Notas matemáticas rápidas<a class="headerlink" href="#notas-matematicas-rapidas" title="Permanent link">&para;</a></h2>
+<p>La longitud de una lista <span class="arithmatex">\(L\)</span> se expresa como <span class="arithmatex">\(|L|\)</span> y se obtiene con <code>largo</code> o
+<code>suyut</code>.</p>
 <h2 id="modulos">Módulos<a class="headerlink" href="#modulos" title="Permanent link">&para;</a></h2>
-<pre><code class="language-aymara">apu &quot;modules/aritmetica&quot;;
-
-willt’aña(&quot;suma: &quot; + suma(3, 4));
-</code></pre>
-<p>Los módulos se resuelven desde el directorio del archivo principal, desde una
-carpeta <code>modules/</code> y desde rutas adicionales definidas en la variable de entorno
-<code>AYM_PATH</code>.</p>
+<div class="highlight"><pre><span></span><code>apnaq(&quot;modules/aritmetica&quot;);
+qillqa(&quot;suma: &quot; + suma(3, 4));
+</code></pre></div>
 <h2 id="comentarios">Comentarios<a class="headerlink" href="#comentarios" title="Permanent link">&para;</a></h2>
-<pre><code class="language-aymara"># comentario estilo aym
-// comentario estilo C
-/* bloque de comentario */
-</code></pre>
+<div class="highlight"><pre><span></span><code>// comentario de línea
+/* comentario de bloque */
+</code></pre></div>
+<h2 id="palabras-clave-legacy">Palabras clave legacy<a class="headerlink" href="#palabras-clave-legacy" title="Permanent link">&para;</a></h2>
+<p>Se mantiene compatibilidad con las formas <code>suti</code>/<code>jani</code>, <code>kunawsati</code>, <code>sapüru</code>
+y <code>utji</code>/<code>janiutji</code>.</p>
 <hr />
-<p><strong>Anterior:</strong> <a href="../overview/">Visión general</a> | <strong>Siguiente:</strong> <a href="../guide/">Guía de características</a></p>
+<p><strong>Siguiente:</strong> <a href="../aymaraLang/">Referencia rápida</a></p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../indice/" class="btn btn-neutral float-left" title="Índice rápido"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../guide/" class="btn btn-neutral float-right" title="Guía de características">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../project/" class="btn btn-neutral float-left" title="Guía del proyecto"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../aymaraLang/" class="btn btn-neutral float-right" title="Referencia rápida">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -211,10 +218,10 @@ carpeta <code>modules/</code> y desde rutas adicionales definidas en la variable
         </span>
     
     
-      <span><a href="../indice/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../project/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../guide/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../aymaraLang/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -223,6 +230,9 @@ carpeta <code>modules/</code> y desde rutas adicionales definidas en la variable
     <script src="../js/theme_extra.js"></script>
     <script src="../js/theme.js"></script>
       <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../search/main.js"></script>
     <script>
         jQuery(function () {

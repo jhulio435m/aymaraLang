@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Visión General - AymaraLang</title>
+    <title>Visión general - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,7 +13,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Visi\u00f3n General";
+        var mkdocs_page_name = "Visi\u00f3n general";
         var mkdocs_page_input_path = "overview.md";
         var mkdocs_page_url = null;
       </script>
@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Instalación y Setup</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Panorama del proyecto</a>
     <ul class="current">
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Visión General</a>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../indice/">Índice rápido</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia</a>
+                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
+                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -117,8 +111,8 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Instalación y Setup</li>
-      <li class="breadcrumb-item active">Visión General</li>
+          <li class="breadcrumb-item">Panorama del proyecto</li>
+      <li class="breadcrumb-item active">Visión general</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/overview.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -128,78 +122,80 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="vision-general-del-lenguaje">Visión general del lenguaje<a class="headerlink" href="#vision-general-del-lenguaje" title="Permanent link">&para;</a></h1>
-<p>AymaraLang (<code>aym</code>) es un lenguaje de programación moderno basado en la lengua
-originaria aymara. Su objetivo es facilitar el aprendizaje y la creación de
-software sin sacrificar conceptos de ingeniería de compiladores.</p>
-<h2 id="identidad-del-lenguaje">Identidad del lenguaje<a class="headerlink" href="#identidad-del-lenguaje" title="Permanent link">&para;</a></h2>
+                <h1 id="vision-general">Visión general<a class="headerlink" href="#vision-general" title="Permanent link">&para;</a></h1>
+<p>AymaraLang (<code>.aym</code>) es un lenguaje de programación con sintaxis en aymara y un
+compilador (<code>aymc</code>) implementado en <strong>C++17</strong>. El compilador genera ejecutables
+nativos (con extensión <code>.exe</code> en Windows). El runtime acompaña al binario para
+resolver funciones estándar.</p>
+<h2 id="identidad-y-alcance-actual">Identidad y alcance actual<a class="headerlink" href="#identidad-y-alcance-actual" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Elemento</th>
-<th>Valor</th>
+<th>Detalle</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Nombre del lenguaje</strong></td>
-<td><code>aym</code></td>
-</tr>
-<tr>
-<td><strong>Compilador</strong></td>
+<td>Compilador</td>
 <td><code>aymc</code></td>
 </tr>
 <tr>
-<td><strong>Extensión fuente</strong></td>
-<td><code>.aym</code></td>
+<td>Lenguaje</td>
+<td>AymaraLang (<code>.aym</code>)</td>
 </tr>
 <tr>
-<td><strong>Ejecutable final</strong></td>
-<td><code>.ayn</code></td>
+<td>Salida</td>
+<td>Binario nativo (sin extensión en Unix, <code>.exe</code> en Windows)</td>
 </tr>
 <tr>
-<td><strong>Inspiración</strong></td>
-<td>Sintaxis con bloques indentados y palabras clave en aymara; backend en C++</td>
+<td>Paradigma</td>
+<td>Imperativo con soporte de funciones y clases</td>
 </tr>
 <tr>
-<td><strong>Paradigmas</strong></td>
-<td>Imperativo, orientado a objetos</td>
-</tr>
-<tr>
-<td><strong>Tipado</strong></td>
+<td>Tipado</td>
 <td>Estático, fuerte</td>
+</tr>
+<tr>
+<td>Backend principal</td>
+<td>NASM + enlazado por GCC/LD (o MinGW)</td>
+</tr>
+<tr>
+<td>Backend opcional</td>
+<td>LLVM (si se compila con soporte)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="principios-de-diseno">Principios de diseño<a class="headerlink" href="#principios-de-diseno" title="Permanent link">&para;</a></h2>
+<h2 id="principios-del-proyecto">Principios del proyecto<a class="headerlink" href="#principios-del-proyecto" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Cercanía cultural:</strong> palabras clave en aymara y ejemplos contextualizados.</li>
-<li><strong>Enseñanza progresiva:</strong> sintaxis clara, cercana a lenguajes modernos.</li>
-<li><strong>Compilación nativa:</strong> salida a ejecutables sin dependencias externas.</li>
-<li><strong>Portabilidad:</strong> soporte para Linux, Windows y macOS.</li>
+<li><strong>Compilación nativa:</strong> no requiere VM para ejecutar los binarios generados.</li>
+<li><strong>Modularidad:</strong> el compilador separa lexer, parser, semántica y codegen.</li>
+<li><strong>Documentación de investigación:</strong> incluye ingeniería de sistemas y LaTeX.</li>
 </ul>
-<h2 id="sintaxis-del-lenguaje">Sintaxis del lenguaje<a class="headerlink" href="#sintaxis-del-lenguaje" title="Permanent link">&para;</a></h2>
+<h2 id="sintaxis-base">Sintaxis base<a class="headerlink" href="#sintaxis-base" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Los bloques de código se definen mediante <code>:</code> y niveles de sangría.</li>
-<li>Todas las palabras clave y estructuras de control utilizan vocabulario aymara.</li>
-<li><code>jaqichawi</code> actúa como punto de entrada del programa.</li>
-<li>Los comentarios se introducen con <code>#</code> (y también se admite <code>//</code>).</li>
+<li>Bloques con <code>{}</code> y fin de sentencia con <code>;</code>.</li>
+<li>Palabras clave en aymara (<code>jisa</code>, <code>taki</code>, <code>lurawi</code>, etc.).</li>
+<li>Comentarios <code>//</code> y <code>/* */</code>.</li>
 </ul>
-<h2 id="objetivos-del-proyecto">Objetivos del proyecto<a class="headerlink" href="#objetivos-del-proyecto" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Crear un lenguaje expresivo utilizando aymara como idioma principal.</li>
-<li>Implementar un compilador autónomo y multiplataforma sin dependencias externas.</li>
-<li>Promover la enseñanza de programación en comunidades originarias.</li>
-<li>Servir como base cultural y técnica para proyectos educativos y lingüísticos.</li>
-</ul>
+<h2 id="contexto-del-sistema">Contexto del sistema<a class="headerlink" href="#contexto-del-sistema" title="Permanent link">&para;</a></h2>
+<div class="mermaid">flowchart LR
+    A[Usuario] --&gt;|Escribe código .aym| B[Editor o CLI]
+    B --&gt; C[Compilador aymc]
+    C --&gt; D[Ejecutable nativo]
+    D --&gt; E[Runtime del lenguaje]</div>
+<p>La salida nativa evita una máquina virtual, y el costo dominante se concentra en
+las fases de análisis. En términos simplificados, si <span class="arithmatex">\(n\)</span> es el número de
+tokens, el parseo LL se mantiene en <span class="arithmatex">\(O(n)\)</span>.</p>
 <hr />
-<p><strong>Anterior:</strong> <a href="../">Inicio</a> | <strong>Siguiente:</strong> <a href="../language/">Primeros pasos</a></p>
+<p><strong>Siguiente:</strong> <a href="../language/">Primeros pasos</a></p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href=".." class="btn btn-neutral float-left" title="Inicio"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../build/" class="btn btn-neutral float-right" title="Compilación e Instalación">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../build/" class="btn btn-neutral float-right" title="Compilación e instalación">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -238,6 +234,9 @@ software sin sacrificar conceptos de ingeniería de compiladores.</p>
     <script src="../js/theme_extra.js"></script>
     <script src="../js/theme.js"></script>
       <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../search/main.js"></script>
     <script>
         jQuery(function () {

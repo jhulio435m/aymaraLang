@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión General</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Panorama del proyecto</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../indice/">Índice rápido</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia</a>
+                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Arquitectura y Proyecto</a>
-    <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Guía del proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -117,7 +111,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Arquitectura y Proyecto</li>
+          <li class="breadcrumb-item">Panorama del proyecto</li>
       <li class="breadcrumb-item active">Guía del proyecto</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/project.md" class="icon icon-github"> Edit on GitHub</a>
@@ -132,103 +126,46 @@
 <h2 id="tecnologias-y-herramientas">Tecnologías y herramientas<a class="headerlink" href="#tecnologias-y-herramientas" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Lenguaje:</strong> C++17</li>
-<li><strong>Arquitectura objetivo:</strong> x86_64 Linux/Windows</li>
 <li><strong>Assembler:</strong> NASM</li>
-<li><strong>Linker:</strong> GNU LD / GCC (MinGW)</li>
-<li><strong>Sistema de construcción:</strong> Make (Linux) / <code>build.bat</code> (Windows)</li>
-<li><strong>IDE recomendados:</strong> CLion, VSCode, Vim</li>
-<li><strong>Control de versiones:</strong> Git + GitHub</li>
-<li><strong>Tests:</strong> <code>make test</code></li>
+<li><strong>Enlace:</strong> GCC/LD (Linux) o MinGW (Windows)</li>
+<li><strong>Build:</strong> CMake (principal), <code>make</code>/<code>build.bat</code> (legacy)</li>
+<li><strong>Extensión de VS Code:</strong> <code>aymlang/</code></li>
+<li><strong>Tests:</strong> carpeta <code>tests/</code></li>
 </ul>
 <h2 id="extension-para-visual-studio-code">Extensión para Visual Studio Code<a class="headerlink" href="#extension-para-visual-studio-code" title="Permanent link">&para;</a></h2>
-<p>La extensión básica para resaltado de sintaxis vive en <code>vscode-extension/</code>.
-Para empaquetar un <code>.vsix</code>, sigue las instrucciones en
-<a href="https://github.com/jhulio435m/aymaraLang/blob/main/vscode-extension/README.md"><code>vscode-extension/README.md</code></a>.</p>
-<h2 id="documentacion">Documentación<a class="headerlink" href="#documentacion" title="Permanent link">&para;</a></h2>
-<p>El sitio de documentación está gestionado con <strong>MkDocs</strong> y vive en <code>docs/</code>.
-Para levantarlo en local:</p>
-<pre><code class="language-bash">pip install mkdocs
-mkdocs serve
-</code></pre>
-<h2 id="estructura-del-repositorio">Estructura del repositorio<a class="headerlink" href="#estructura-del-repositorio" title="Permanent link">&para;</a></h2>
-<pre><code>/aym/
-├── compiler/        # Código fuente de 'aymc'
-│   ├── lexer/       # Analizador léxico
-│   ├── parser/      # Analizador sintáctico
-│   ├── ast/         # Representación del AST
-│   ├── codegen/     # Generador de código
-│   └── utils/       # Utilidades comunes
-├── runtime/         # Biblioteca estándar mínima
-├── samples/         # Ejemplos en .aym (basics/, control_flow/, functions/, data/)
-├── tests/           # Tests automatizados
-├── docs/            # Documentación técnica (MkDocs)
-├── build/           # Archivos generados
-├── Makefile
-└── README.md
-</code></pre>
-<h2 id="cronograma-de-desarrollo">Cronograma de desarrollo<a class="headerlink" href="#cronograma-de-desarrollo" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Semana</th>
-<th>Hito</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>Diseño completo del lenguaje y gramática</td>
-</tr>
-<tr>
-<td>2-3</td>
-<td>Implementación de Lexer y Parser</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Construcción del AST y sistema de tipos</td>
-</tr>
-<tr>
-<td>5-6</td>
-<td>Generación de código + ensamblado inicial</td>
-</tr>
-<tr>
-<td>7-8</td>
-<td>Soporte para clases, ciclos y condiciones</td>
-</tr>
-<tr>
-<td>9-10</td>
-<td>Manejador de errores y mejoras de CLI</td>
-</tr>
-<tr>
-<td>11</td>
-<td>Librería estándar mínima (<code>runtime/</code>)</td>
-</tr>
-<tr>
-<td>12</td>
-<td>Documentación, empaquetado y publicación</td>
-</tr>
-</tbody>
-</table>
-<h2 id="licencia">Licencia<a class="headerlink" href="#licencia" title="Permanent link">&para;</a></h2>
-<p>Este proyecto se distribuye bajo la <strong>licencia MIT</strong>.</p>
-<h2 id="contribuciones">Contribuciones<a class="headerlink" href="#contribuciones" title="Permanent link">&para;</a></h2>
-<p>Este proyecto es abierto a toda colaboración. Nos interesa especialmente:</p>
+<p>La extensión vive en <code>aymlang/</code> y ofrece resaltado y snippets. Para empaquetar
+un <code>.vsix</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>aymlang
+npm<span class="w"> </span>install
+npx<span class="w"> </span>@vscode/vsce<span class="w"> </span>package
+</code></pre></div>
+<p>Luego instala el <code>.vsix</code> desde VS Code (<strong>Extensions → Install from VSIX</strong>).</p>
+<h2 id="documentacion-y-materiales-de-investigacion">Documentación y materiales de investigación<a class="headerlink" href="#documentacion-y-materiales-de-investigacion" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Hablantes nativos de aymara</li>
-<li>Desarrolladores C++ con experiencia en compiladores</li>
-<li>Educadores y promotores de software libre</li>
+<li>Sitio MkDocs en <code>docs/</code>.</li>
+<li>Ingeniería de sistemas en <code>docs/systems_engineering/</code>.</li>
+<li>Fuentes LaTeX/Overleaf en <code>docs/systems_engineering/overleaf/</code>.</li>
 </ul>
-<blockquote>
-<p>✨ ¡Únete al desarrollo y forma parte del cambio tecnológico-cultural!</p>
-</blockquote>
-<hr />
-<p><strong>Anterior:</strong> <a href="../installers/">Instaladores</a></p>
+<h2 id="estructura-del-repositorio-resumen">Estructura del repositorio (resumen)<a class="headerlink" href="#estructura-del-repositorio-resumen" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>compiler/   # compilador C++
+runtime/    # runtime estándar
+aymlang/    # extensión VS Code
+scripts/    # automatizaciones de build/packaging
+samples/    # ejemplos .aym
+tests/      # pruebas automatizadas
+</code></pre></div>
+<div class="mermaid">flowchart LR
+    Compiler[compiler/] --&gt; Runtime[runtime/]
+    Compiler --&gt; Scripts[scripts/]
+    Compiler --&gt; Samples[samples/]
+    Compiler --&gt; Tests[tests/]
+    Compiler --&gt; VSCode[aymlang/]</div>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../arquitectura/" class="btn btn-neutral float-left" title="Arquitectura General"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../systems_engineering/systems_engineering_management_plan/" class="btn btn-neutral float-right" title="Plan de Gestión (SEMP)">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../arquitectura/" class="btn btn-neutral float-left" title="Arquitectura del compilador"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../language/" class="btn btn-neutral float-right" title="Primeros pasos">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -258,7 +195,7 @@ mkdocs serve
       <span><a href="../arquitectura/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../systems_engineering/systems_engineering_management_plan/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../language/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -267,6 +204,9 @@ mkdocs serve
     <script src="../js/theme_extra.js"></script>
     <script src="../js/theme.js"></script>
       <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../search/main.js"></script>
     <script>
         jQuery(function () {

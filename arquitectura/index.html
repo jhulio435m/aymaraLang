@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Arquitectura General - AymaraLang</title>
+    <title>Arquitectura del compilador - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,7 +13,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Arquitectura General";
+        var mkdocs_page_name = "Arquitectura del compilador";
         var mkdocs_page_input_path = "arquitectura.md";
         var mkdocs_page_url = null;
       </script>
@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión General</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Panorama del proyecto</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../indice/">Índice rápido</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia</a>
+                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Arquitectura y Proyecto</a>
-    <ul class="current">
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -117,8 +111,8 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Arquitectura y Proyecto</li>
-      <li class="breadcrumb-item active">Arquitectura General</li>
+          <li class="breadcrumb-item">Panorama del proyecto</li>
+      <li class="breadcrumb-item active">Arquitectura del compilador</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/arquitectura.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -129,88 +123,56 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="arquitectura-del-compilador-aymc">Arquitectura del compilador <code>aymc</code><a class="headerlink" href="#arquitectura-del-compilador-aymc" title="Permanent link">&para;</a></h1>
-<p>Este documento describe los módulos principales del compilador de AymaraLang y la forma en que se comunican entre sí. También se explican las estructuras de datos usadas internamente y se presentan ejemplos de la compilación paso a paso de un programa sencillo.</p>
-<h2 id="modulos">Módulos<a class="headerlink" href="#modulos" title="Permanent link">&para;</a></h2>
-<h3 id="lexer">Lexer<a class="headerlink" href="#lexer" title="Permanent link">&para;</a></h3>
+<p>Este documento resume los módulos principales y su flujo de compilación.</p>
+<h2 id="vista-general">Vista general<a class="headerlink" href="#vista-general" title="Permanent link">&para;</a></h2>
+<div class="mermaid">flowchart LR
+classDef front fill:#dbeafe,stroke:#1e40af,color:#000;
+classDef middle fill:#dcfce7,stroke:#166534,color:#000;
+classDef back fill:#fee2e2,stroke:#7f1d1d,color:#000;
+
+A[Fuente .aym] --&gt; B[Lexer]
+B --&gt; C[Parser]
+C --&gt; D[AST]
+D --&gt; E[Analisis semantico]
+E --&gt; F[Codegen NASM]
+F --&gt; G[Ensamblador + Linker]
+G --&gt; H[Ejecutable nativo]
+E --&gt; I[Codegen LLVM opcional]
+I --&gt; J[IR LLVM .ll]
+
+class A,B,C,D front
+class E middle
+class F,G,H,I,J back</div>
+<h2 id="modulos-principales">Módulos principales<a class="headerlink" href="#modulos-principales" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Ubicación:</strong> <code>compiler/lexer</code></li>
-<li>Convierte el código fuente en una secuencia de <em>tokens</em>.</li>
-<li>Cada token posee tipo, texto, línea y columna (<code>struct Token</code>).</li>
-<li>Reconoce palabras clave en aymara (<code>si</code>, <code>sino</code>, <code>mientras</code>, etc.), operadores y literales.</li>
+<li><strong>Lexer (<code>compiler/lexer</code>)</strong>: tokeniza el código fuente.</li>
+<li><strong>Parser (<code>compiler/parser</code>)</strong>: construye el AST y valida la sintaxis.</li>
+<li><strong>AST (<code>compiler/ast</code>)</strong>: nodos de expresiones y sentencias.</li>
+<li><strong>Semántica (<code>compiler/semantic</code>)</strong>: tipos, símbolos, clases y excepciones.</li>
+<li><strong>Codegen (<code>compiler/codegen</code>)</strong>: genera NASM o LLVM IR.</li>
+<li><strong>Runtime (<code>runtime/</code>)</strong>: funciones base usadas por los binarios.</li>
+<li><strong>Module resolver (<code>utils/module_resolver</code>)</strong>: carga <code>apnaq</code> y gestiona rutas.</li>
 </ul>
-<h3 id="parser">Parser<a class="headerlink" href="#parser" title="Permanent link">&para;</a></h3>
+<div class="mermaid">flowchart TB
+    Lexer --&gt; Parser
+    Parser --&gt; AST
+    AST --&gt; Semantica[Semántica]
+    Semantica --&gt; Codegen
+    Codegen --&gt; Runtime
+    Semantica --&gt; Resolver[Module Resolver]</div>
+<h2 id="artefactos-clave">Artefactos clave<a class="headerlink" href="#artefactos-clave" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Ubicación:</strong> <code>compiler/parser</code></li>
-<li>Recibe la lista de tokens y produce un Árbol de Sintaxis Abstracta (AST).</li>
-<li>Implementa un análisis LL que construye nodos de tipo <code>Expr</code> y <code>Stmt</code>.</li>
+<li><code>*.asm</code> y <code>*.o</code>/<code>*.obj</code> para el backend NASM.</li>
+<li><code>*.ll</code> para el backend LLVM (si está habilitado).</li>
+<li>Binario final nativo.</li>
 </ul>
-<h3 id="ast">AST<a class="headerlink" href="#ast" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Ubicación:</strong> <code>compiler/ast</code></li>
-<li>Conjunto de clases que representan expresiones y sentencias.</li>
-<li>Los nodos derivan de <code>Node</code> y se visitan mediante el patrón <em>visitor</em> (<code>ASTVisitor</code>).</li>
-<li>Ejemplos de nodos: <code>NumberExpr</code>, <code>BinaryExpr</code>, <code>IfStmt</code>, <code>FunctionStmt</code>.</li>
-</ul>
-<h3 id="analisis-semantico">Análisis semántico<a class="headerlink" href="#analisis-semantico" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Ubicación:</strong> <code>compiler/semantic</code></li>
-<li>Comprueba tipos, ámbito de variables y llamadas a funciones.</li>
-<li>Mantiene una pila de tablas de símbolos (<code>scopes</code>) y genera la lista de variables globales y tipos para la etapa de código.</li>
-</ul>
-<h3 id="generador-de-codigo">Generador de código<a class="headerlink" href="#generador-de-codigo" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Ubicación:</strong> <code>compiler/codegen</code></li>
-<li>Toma el AST validado y lo transforma en ensamblador NASM para <code>x86_64</code>.</li>
-<li>Invoca a <code>nasm</code> y <code>ld</code> (vía <code>gcc</code>) para producir el ejecutable <code>.ayn</code>.</li>
-</ul>
-<h3 id="runtime">Runtime<a class="headerlink" href="#runtime" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Ubicación:</strong> <code>runtime</code></li>
-<li>Biblioteca mínima con funciones de E/S usadas por los programas generados.</li>
-</ul>
-<h2 id="flujo-de-compilacion">Flujo de compilación<a class="headerlink" href="#flujo-de-compilacion" title="Permanent link">&para;</a></h2>
-<pre><code class="language-text">Fuente (.aym) ──► Lexer ──► Parser ──► AST ──► Análisis semántico ──► CodeGen ──► NASM/ld ──► Ejecutable (.ayn)
-</code></pre>
-<p>Cada etapa toma la salida de la anterior y agrega información o transforma la representación del programa hasta generar código máquina.</p>
-<h2 id="estructuras-de-datos">Estructuras de datos<a class="headerlink" href="#estructuras-de-datos" title="Permanent link">&para;</a></h2>
-<h3 id="tokens">Tokens<a class="headerlink" href="#tokens" title="Permanent link">&para;</a></h3>
-<p>Definidos en <code>lexer.h</code>:</p>
-<pre><code class="language-cpp">enum class TokenType { Identifier, String, Number, Plus, Minus, ... };
-struct Token {
-    TokenType type;
-    std::string text;
-    size_t line;
-    size_t column;
-};
-</code></pre>
-<h3 id="nodos-del-ast">Nodos del AST<a class="headerlink" href="#nodos-del-ast" title="Permanent link">&para;</a></h3>
-<p>Definidos en <code>ast.h</code>. Los más usados son:
-- <code>Expr</code> / <code>Stmt</code>: clases base.
-- <code>BinaryExpr</code>, <code>UnaryExpr</code>, <code>CallExpr</code> para expresiones.
-- <code>PrintStmt</code>, <code>IfStmt</code>, <code>ForStmt</code>, <code>FunctionStmt</code> para sentencias.</p>
-<h3 id="simbolos">Símbolos<a class="headerlink" href="#simbolos" title="Permanent link">&para;</a></h3>
-<p>El analizador semántico maneja un vector de mapas <code>scopes</code> donde cada mapa asocia nombres a tipos. Esto permite verificar declarciones y usos de variables y funciones.</p>
-<h2 id="ejemplo-paso-a-paso">Ejemplo paso a paso<a class="headerlink" href="#ejemplo-paso-a-paso" title="Permanent link">&para;</a></h2>
-<p>Tomemos <code>samples/basics/hola.aym</code>:</p>
-<pre><code class="language-aymara">willt’aña(&quot;Kamisaraki!&quot;);
-</code></pre>
-<ol>
-<li><strong>Lexer</strong> genera tokens: <code>KeywordPrint</code>, <code>LParen</code>, <code>String("Kamisaraki!")</code>, <code>RParen</code>, <code>Semicolon</code>.</li>
-<li><strong>Parser</strong> construye un <code>PrintStmt</code> con un <code>StringExpr</code>.</li>
-<li><strong>Análisis semántico</strong> valida que la llamada es correcta.</li>
-<li><strong>CodeGen</strong> produce un archivo NASM que imprime la cadena y genera el ejecutable con <code>nasm</code> y <code>ld</code>.</li>
-<li>Al ejecutar el binario se obtiene:</li>
-</ol>
-<pre><code>Kamisaraki!
-</code></pre>
-<p>Este mismo flujo aplica a programas más grandes, incluyendo funciones, bucles y estructuras de control.</p>
 <hr />
-<p><strong>Anterior:</strong> <a href="../grammar/">Gramática formal</a> | <strong>Siguiente:</strong> <a href="../compiler/">CLI y flujo de compilación</a></p>
+<p><strong>Siguiente:</strong> <a href="../project/">Guía del proyecto</a></p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../compiler/" class="btn btn-neutral float-left" title="CLI y Compilación"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../compiler/" class="btn btn-neutral float-left" title="CLI del compilador"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../project/" class="btn btn-neutral float-right" title="Guía del proyecto">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -250,6 +212,9 @@ struct Token {
     <script src="../js/theme_extra.js"></script>
     <script src="../js/theme.js"></script>
       <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../search/main.js"></script>
     <script>
         jQuery(function () {

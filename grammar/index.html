@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión General</a>
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../indice/">Índice rápido</a>
-                </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Lenguaje</a>
+    <ul class="current">
                 <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Documentación del Lenguaje</a>
-    <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia</a>
+                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2 current"><a class="reference internal current" href="#">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
+                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -117,7 +111,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Documentación del Lenguaje</li>
+          <li class="breadcrumb-item">Lenguaje</li>
       <li class="breadcrumb-item active">Gramática formal</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/grammar.md" class="icon icon-github"> Edit on GitHub</a>
@@ -128,10 +122,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="gramatica-de-aymaralang">Gramática de AymaraLang<a class="headerlink" href="#gramatica-de-aymaralang" title="Permanent link">&para;</a></h1>
-<p>Este documento describe la gramática actual del lenguaje AymaraLang utilizando notación EBNF y relaciona cada producción con la implementación en el parser LL(1) del proyecto. También se enumeran los tokens reconocidos por el analizador léxico junto con las referencias al código fuente donde se definen.</p>
+                <h1 id="gramatica-de-aymaralang-aruqillqa">Gramática de AymaraLang (AruQillqa)<a class="headerlink" href="#gramatica-de-aymaralang-aruqillqa" title="Permanent link">&para;</a></h1>
+<p>Este documento describe la gramática actual del lenguaje AymaraLang utilizando
+notación EBNF y resume los tokens reconocidos por el compilador. Las reglas de
+tokenización están implementadas en <code>compiler/lexer/lexer.cpp</code>.</p>
 <h2 id="tokens-lexicos">Tokens léxicos<a class="headerlink" href="#tokens-lexicos" title="Permanent link">&para;</a></h2>
-<p>Las siguientes tablas resumen cada <code>TokenType</code> expuesto por el compilador y el lexema que lo activa. Todas las reglas se encuentran implementadas en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp"><code>compiler/lexer/lexer.cpp</code></a>.</p>
+<div class="mermaid">flowchart LR
+    A[Texto .aym] --&gt; B[Lexer]
+    B --&gt; C[Tokens]
+    C --&gt; D[Parser]
+    D --&gt; E[AST]</div>
 <h3 id="palabras-clave">Palabras clave<a class="headerlink" href="#palabras-clave" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -139,437 +139,290 @@
 <th>Token</th>
 <th>Lexema(s) aceptado(s)</th>
 <th>Uso sintáctico</th>
-<th>Referencia</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>KeywordStart</code></td>
+<td><code>qallta</code></td>
+<td>Inicio del programa</td>
+</tr>
+<tr>
+<td><code>KeywordEnd</code></td>
+<td><code>tukuya</code></td>
+<td>Fin del programa</td>
+</tr>
+<tr>
+<td><code>KeywordDeclare</code></td>
+<td><code>yatiya</code></td>
+<td>Declaración de variables</td>
+</tr>
+<tr>
 <td><code>KeywordPrint</code></td>
-<td><code>willt’aña</code></td>
+<td><code>qillqa</code></td>
 <td>Sentencia de impresión</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L49-L50">lexer.cpp#L49-L50</a></td>
 </tr>
 <tr>
 <td><code>KeywordIf</code></td>
-<td><code>si</code></td>
-<td>Condicional <code>if</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L51-L52">lexer.cpp#L51-L52</a></td>
+<td><code>suti</code>, <code>jisa</code></td>
+<td>Condicional</td>
 </tr>
 <tr>
 <td><code>KeywordElse</code></td>
-<td><code>sino</code></td>
-<td>Rama <code>else</code> / <code>else if</code></td>
-<td><a href="https://github.comjhulio435mg/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L53-L54">lexer.cpp#L53-L54</a></td>
+<td><code>jani</code>, <code>maysatxa</code></td>
+<td>Rama alternativa</td>
 </tr>
 <tr>
 <td><code>KeywordWhile</code></td>
-<td><code>mientras</code></td>
+<td><code>kunawsati</code>, <code>ukhakamaxa</code></td>
 <td>Bucle <code>while</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L55-L56">lexer.cpp#L55-L56</a></td>
-</tr>
-<tr>
-<td><code>KeywordDo</code></td>
-<td><code>haceña</code></td>
-<td>Bucle <code>do … while</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L57-L58">lexer.cpp#L57-L58</a></td>
 </tr>
 <tr>
 <td><code>KeywordFor</code></td>
-<td><code>para</code></td>
+<td><code>sapüru</code>, <code>taki</code></td>
 <td>Bucle <code>for</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L59-L60">lexer.cpp#L59-L60</a></td>
-</tr>
-<tr>
-<td><code>KeywordIn</code></td>
-<td><code>en</code></td>
-<td>Azúcar de <code>for … in range</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L61-L62">lexer.cpp#L61-L62</a></td>
 </tr>
 <tr>
 <td><code>KeywordBreak</code></td>
-<td><code>jalña</code></td>
-<td>Sentencia <code>break</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L63-L64">lexer.cpp#L63-L64</a></td>
+<td><code>p'akhiña</code></td>
+<td>Salir de un bucle</td>
 </tr>
 <tr>
 <td><code>KeywordContinue</code></td>
 <td><code>sarantaña</code></td>
-<td>Sentencia <code>continue</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L65-L66">lexer.cpp#L65-L66</a></td>
+<td>Continuar bucle</td>
 </tr>
 <tr>
 <td><code>KeywordFunc</code></td>
-<td><code>luräwi</code></td>
+<td><code>lurawi</code></td>
 <td>Definición de funciones</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L67-L68">lexer.cpp#L67-L68</a></td>
 </tr>
 <tr>
 <td><code>KeywordReturn</code></td>
-<td><code>kutiyana</code></td>
-<td>Sentencia <code>return</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L69-L70">lexer.cpp#L69-L70</a></td>
-</tr>
-<tr>
-<td><code>KeywordSwitch</code></td>
-<td><code>tantachaña</code></td>
-<td>Sentencia <code>switch</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L71-L72">lexer.cpp#L71-L72</a></td>
-</tr>
-<tr>
-<td><code>KeywordCase</code></td>
-<td><code>jamusa</code></td>
-<td>Cláusulas <code>case</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L73-L74">lexer.cpp#L73-L74</a></td>
-</tr>
-<tr>
-<td><code>KeywordDefault</code></td>
-<td><code>akhamawa</code></td>
-<td>Cláusula <code>default</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L75-L76">lexer.cpp#L75-L76</a></td>
-</tr>
-<tr>
-<td><code>KeywordAnd</code></td>
-<td><code>uka</code></td>
-<td>Operador lógico AND</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L77-L78">lexer.cpp#L77-L78</a></td>
-</tr>
-<tr>
-<td><code>KeywordOr</code></td>
-<td><code>jan uka</code></td>
-<td>Operador lógico OR compuesto</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L100">lexer.cpp#L79-L100</a></td>
-</tr>
-<tr>
-<td><code>KeywordNot</code></td>
-<td><code>janiwa</code></td>
-<td>Operador lógico NOT</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L103-L104">lexer.cpp#L103-L104</a></td>
-</tr>
-<tr>
-<td><code>KeywordInt</code></td>
-<td><code>jach’a</code></td>
-<td>Declaración de enteros</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L105-L106">lexer.cpp#L105-L106</a></td>
-</tr>
-<tr>
-<td><code>KeywordFloat</code></td>
-<td><code>lliphiphi</code></td>
-<td>Declaración de flotantes</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L107-L108">lexer.cpp#L107-L108</a></td>
-</tr>
-<tr>
-<td><code>KeywordBool</code></td>
-<td><code>chuymani</code></td>
-<td>Declaración de booleanos</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L109-L110">lexer.cpp#L109-L110</a></td>
-</tr>
-<tr>
-<td><code>KeywordString</code></td>
-<td><code>qillqa</code></td>
-<td>Declaración de cadenas</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L111-L112">lexer.cpp#L111-L112</a></td>
+<td><code>kuttaya</code></td>
+<td>Retorno</td>
 </tr>
 <tr>
 <td><code>KeywordImport</code></td>
-<td><code>apu</code></td>
-<td>Importación de módulos</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L113-L114">lexer.cpp#L113-L114</a></td>
+<td><code>apnaq</code></td>
+<td>Importación</td>
+</tr>
+<tr>
+<td><code>KeywordTry</code></td>
+<td><code>yant'aña</code></td>
+<td>Bloque <code>try</code></td>
+</tr>
+<tr>
+<td><code>KeywordCatch</code></td>
+<td><code>katjaña</code></td>
+<td>Bloque <code>catch</code></td>
+</tr>
+<tr>
+<td><code>KeywordFinally</code></td>
+<td><code>tukuyawi</code></td>
+<td>Bloque <code>finally</code></td>
+</tr>
+<tr>
+<td><code>KeywordThrow</code></td>
+<td><code>pantja</code></td>
+<td>Lanzar excepción</td>
+</tr>
+<tr>
+<td><code>KeywordClass</code></td>
+<td><code>kasta</code></td>
+<td>Definición de clases</td>
+</tr>
+<tr>
+<td><code>KeywordNew</code></td>
+<td><code>machaqa</code></td>
+<td>Crear instancia</td>
+</tr>
+<tr>
+<td><code>KeywordThis</code></td>
+<td><code>aka</code></td>
+<td>Referencia al objeto actual</td>
+</tr>
+<tr>
+<td><code>KeywordExtends</code></td>
+<td><code>jila</code></td>
+<td>Herencia</td>
+</tr>
+<tr>
+<td><code>KeywordOverride</code></td>
+<td><code>jikxata</code></td>
+<td>Sobrescribir método</td>
+</tr>
+<tr>
+<td><code>KeywordPrivate</code></td>
+<td><code>sapa</code></td>
+<td>Modificador privado</td>
+</tr>
+<tr>
+<td><code>KeywordPublic</code></td>
+<td><code>taqi</code></td>
+<td>Modificador público</td>
+</tr>
+<tr>
+<td><code>KeywordStatic</code></td>
+<td><code>sapakasta</code></td>
+<td>Modificador estático</td>
+</tr>
+<tr>
+<td><code>KeywordGetter</code></td>
+<td><code>uñt'aya</code></td>
+<td>Nombre reservado para getter</td>
+</tr>
+<tr>
+<td><code>KeywordSetter</code></td>
+<td><code>chura</code></td>
+<td>Nombre reservado para setter</td>
+</tr>
+<tr>
+<td><code>KeywordSuper</code></td>
+<td><code>jilaaka</code></td>
+<td>Referencia al padre</td>
+</tr>
+<tr>
+<td><code>KeywordTypeNumber</code></td>
+<td><code>jakhüwi</code></td>
+<td>Tipo numérico</td>
+</tr>
+<tr>
+<td><code>KeywordTypeString</code></td>
+<td><code>aru</code></td>
+<td>Tipo cadena</td>
+</tr>
+<tr>
+<td><code>KeywordTypeBool</code></td>
+<td><code>chiqa</code></td>
+<td>Tipo booleano</td>
+</tr>
+<tr>
+<td><code>KeywordTypeList</code></td>
+<td><code>listaña</code>, <code>t'aqa</code></td>
+<td>Tipo lista</td>
+</tr>
+<tr>
+<td><code>KeywordTypeMap</code></td>
+<td><code>mapa</code></td>
+<td>Tipo mapa (Español)</td>
+</tr>
+<tr>
+<td><code>KeywordTrue</code></td>
+<td><code>utji</code>, <code>chiqa</code></td>
+<td>Literal verdadero</td>
+</tr>
+<tr>
+<td><code>KeywordFalse</code></td>
+<td><code>janiutji</code>, <code>k'ari</code></td>
+<td>Literal falso</td>
 </tr>
 </tbody>
 </table>
 <h3 id="operadores-y-delimitadores">Operadores y delimitadores<a class="headerlink" href="#operadores-y-delimitadores" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Token</th>
-<th>Lexema</th>
-<th>Referencia</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Plus</code></td>
-<td><code>+</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L165">lexer.cpp#L165</a></td>
-</tr>
-<tr>
-<td><code>Minus</code></td>
-<td><code>-</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L166">lexer.cpp#L166</a></td>
-</tr>
-<tr>
-<td><code>Star</code></td>
-<td><code>*</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L167">lexer.cpp#L167</a></td>
-</tr>
-<tr>
-<td><code>Slash</code></td>
-<td><code>/</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L168">lexer.cpp#L168</a></td>
-</tr>
-<tr>
-<td><code>Percent</code></td>
-<td><code>%</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L169">lexer.cpp#L169</a></td>
-</tr>
-<tr>
-<td><code>Caret</code></td>
-<td><code>^</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L170">lexer.cpp#L170</a></td>
-</tr>
-<tr>
-<td><code>AmpAmp</code></td>
-<td><code>&amp;&amp;</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L171-L175">lexer.cpp#L171-L175</a></td>
-</tr>
-<tr>
-<td><code>PipePipe</code></td>
-<td><code>||</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L179-L183">lexer.cpp#L179-L183</a></td>
-</tr>
-<tr>
-<td><code>Bang</code></td>
-<td><code>!</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
-</tr>
-<tr>
-<td><code>Equal</code></td>
-<td><code>=</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
-</tr>
-<tr>
-<td><code>EqualEqual</code></td>
-<td><code>==</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L196-L203">lexer.cpp#L196-L203</a></td>
-</tr>
-<tr>
-<td><code>BangEqual</code></td>
-<td><code>!=</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L187-L194">lexer.cpp#L187-L194</a></td>
-</tr>
-<tr>
-<td><code>Less</code></td>
-<td><code>&lt;</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
-</tr>
-<tr>
-<td><code>LessEqual</code></td>
-<td><code>&lt;=</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L205-L212">lexer.cpp#L205-L212</a></td>
-</tr>
-<tr>
-<td><code>Greater</code></td>
-<td><code>&gt;</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
-</tr>
-<tr>
-<td><code>GreaterEqual</code></td>
-<td><code>&gt;=</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L214-L221">lexer.cpp#L214-L221</a></td>
-</tr>
-<tr>
-<td><code>LParen</code></td>
-<td><code>(</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L223">lexer.cpp#L223</a></td>
-</tr>
-<tr>
-<td><code>RParen</code></td>
-<td><code>)</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L224">lexer.cpp#L224</a></td>
-</tr>
-<tr>
-<td><code>LBrace</code></td>
-<td><code>{</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L225">lexer.cpp#L225</a></td>
-</tr>
-<tr>
-<td><code>RBrace</code></td>
-<td><code>}</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L226">lexer.cpp#L226</a></td>
-</tr>
-<tr>
-<td><code>LBracket</code></td>
-<td><code>[</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L227">lexer.cpp#L227</a></td>
-</tr>
-<tr>
-<td><code>RBracket</code></td>
-<td><code>]</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L228">lexer.cpp#L228</a></td>
-</tr>
-<tr>
-<td><code>Colon</code></td>
-<td><code>:</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L229">lexer.cpp#L229</a></td>
-</tr>
-<tr>
-<td><code>Comma</code></td>
-<td><code>,</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L230">lexer.cpp#L230</a></td>
-</tr>
-<tr>
-<td><code>Semicolon</code></td>
-<td><code>;</code></td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L231">lexer.cpp#L231</a></td>
-</tr>
-</tbody>
-</table>
-<h3 id="identificadores-literales-y-control">Identificadores, literales y control<a class="headerlink" href="#identificadores-literales-y-control" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Token</th>
-<th>Descripción</th>
-<th>Referencia</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Identifier</code></td>
-<td>Secuencia alfanumérica (permite UTF-8 y <code>_</code>) que no coincide con palabra reservada</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L39-L47">lexer.cpp#L39-L47</a></td>
-</tr>
-<tr>
-<td><code>Number</code></td>
-<td>Literales numéricos decimales, además de los azúcares <code>cheka</code> (=1) y <code>jan cheka</code> (=0)</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L79-L129">lexer.cpp#L79-L129</a></td>
-</tr>
-<tr>
-<td><code>String</code></td>
-<td>Literales de cadena entre comillas dobles con escapes (<code>\n</code>, <code>\t</code>, <code>\"</code>, etc.)</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L132-L161">lexer.cpp#L132-L161</a></td>
-</tr>
-<tr>
-<td><code>EndOfFile</code></td>
-<td>Marcador al final de la tokenización</td>
-<td><a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237">lexer.cpp#L236-L237</a></td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>Nota:</strong> Los tokens <code>LBracket</code> y <code>RBracket</code> aún no se emplean en producciones del parser, pero quedan reservados para futuras extensiones (p.ej. arreglos).</p>
-</blockquote>
+<p>Los símbolos se mantienen sin cambios:</p>
+<ul>
+<li>Agrupación: <code>()</code>, <code>{}</code>, <code>[]</code></li>
+<li>Fin de sentencia: <code>;</code></li>
+<li>Separador: <code>,</code></li>
+<li>Asignación: <code>=</code></li>
+<li>Dos puntos: <code>:</code></li>
+<li>Operadores: <code>+ - * / % ^</code></li>
+<li>Comparación: <code>== != &lt; &lt;= &gt; &gt;=</code></li>
+<li>Lógicos: <code>&amp;&amp; || !</code></li>
+<li>Comentarios: <code>//</code> y <code>/* */</code></li>
+</ul>
+<h3 id="literales">Literales<a class="headerlink" href="#literales" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>Number</code>: números enteros decimales con soporte <code>0x</code> y <code>0b</code>.</li>
+<li><code>String</code>: cadenas entre comillas dobles o simples con escapes (<code>\n</code>, <code>\t</code>, <code>\"</code>, <code>\'</code>, etc.).</li>
+</ul>
 <h2 id="notacion-ebnf-utilizada">Notación EBNF utilizada<a class="headerlink" href="#notacion-ebnf-utilizada" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>a*</code> indica repetición de cero o más veces.</li>
 <li><code>a+</code> indica una o más repeticiones.</li>
 <li><code>[a]</code> marca un elemento opcional.</li>
 <li><code>a | b</code> representa alternativas.</li>
-<li>Los literales de palabra clave se escriben con comillas (<code>"lexema"</code>).</li>
 </ul>
 <h2 id="gramatica-sintactica">Gramática sintáctica<a class="headerlink" href="#gramatica-sintactica" title="Permanent link">&para;</a></h2>
-<h3 id="programa-y-bloques">Programa y bloques<a class="headerlink" href="#programa-y-bloques" title="Permanent link">&para;</a></h3>
-<pre><code class="language-ebnf">program        ::= statement* EOF ;
-block          ::= &quot;{&quot; statement* &quot;}&quot; ;
-</code></pre>
-<p>Estas producciones corresponden a <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L8-L14"><code>Parser::parse</code></a> y <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L41-L46"><code>Parser::parseStatements</code></a>, que reutilizan la misma rutina para cuerpos delimitados por llaves (<code>block</code>). Cuando <code>parseStatements</code> se invoca con <code>stopAtBrace = true</code> consume el <code>RBrace</code> final.</p>
-<h3 id="sentencias">Sentencias<a class="headerlink" href="#sentencias" title="Permanent link">&para;</a></h3>
-<p>Cada alternativa de <code>statement</code> proviene de <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L48-L318"><code>Parser::parseSingleStatement</code></a>. A continuación se detalla la sintaxis concreta de cada forma:</p>
-<pre><code class="language-ebnf">statement      ::= importStmt
-                 | varDecl
-                 | returnStmt
-                 | breakStmt
-                 | continueStmt
-                 | printStmt
-                 | ifStmt
-                 | whileStmt
-                 | doWhileStmt
-                 | forRangeStmt
-                 | forClassicStmt
-                 | switchStmt
-                 | functionStmt
-                 | assignmentStmt
-                 | exprStmt ;
-</code></pre>
-<h4 id="importaciones">Importaciones<a class="headerlink" href="#importaciones" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">importStmt     ::= &quot;apu&quot; (Identifier | String) &quot;;&quot; ;
-</code></pre>
-<p>Implementado en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L49-L65"><code>parseSingleStatement</code></a>.</p>
-<h4 id="declaraciones-de-variables">Declaraciones de variables<a class="headerlink" href="#declaraciones-de-variables" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">varDecl        ::= typeKeyword Identifier [&quot;=&quot; expression] &quot;;&quot; ;
-typeKeyword    ::= &quot;jach’a&quot; | &quot;lliphiphi&quot; | &quot;chuymani&quot; | &quot;qillqa&quot; ;
-</code></pre>
-<p>Corresponde a <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L67-L81"><code>parseSingleStatement</code></a>.</p>
-<h4 id="sentencias-de-retorno-y-control-de-bucle">Sentencias de retorno y control de bucle<a class="headerlink" href="#sentencias-de-retorno-y-control-de-bucle" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">returnStmt     ::= &quot;kutiyana&quot; [expression] &quot;;&quot; ;
-breakStmt      ::= &quot;jalña&quot; &quot;;&quot; ;
-continueStmt   ::= &quot;sarantaña&quot; &quot;;&quot; ;
-</code></pre>
-<p>Ver <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L83-L107"><code>parser.cpp#L83-L107</code></a>.</p>
-<h4 id="impresion">Impresión<a class="headerlink" href="#impresion" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">printStmt      ::= &quot;willt’aña&quot; &quot;(&quot; expression &quot;)&quot; &quot;;&quot; ;
-</code></pre>
-<p>Implementado en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L109-L118"><code>parser.cpp#L109-L118</code></a>.</p>
-<h4 id="condicionales">Condicionales<a class="headerlink" href="#condicionales" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">ifStmt         ::= &quot;si&quot; &quot;(&quot; expression &quot;)&quot; block [elseClause] ;
-elseClause     ::= &quot;sino&quot; (block | ifStmt) ;
-</code></pre>
-<p>Refleja <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L120-L151"><code>parser.cpp#L120-L151</code></a>, que anida <code>if</code> sucesivos para soportar <code>sino si</code>.</p>
-<h4 id="bucles-while-y-do-while">Bucles <code>while</code> y <code>do … while</code><a class="headerlink" href="#bucles-while-y-do-while" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">whileStmt      ::= &quot;mientras&quot; &quot;(&quot; expression &quot;)&quot; block ;
-doWhileStmt    ::= &quot;haceña&quot; block &quot;mientras&quot; &quot;(&quot; expression &quot;)&quot; &quot;;&quot; ;
-</code></pre>
-<p>Implementación en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L153-L184"><code>parser.cpp#L153-L184</code></a>.</p>
-<h4 id="bucles-for">Bucles <code>for</code><a class="headerlink" href="#bucles-for" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">forRangeStmt   ::= &quot;para&quot; Identifier &quot;en&quot; &quot;range&quot; &quot;(&quot; expression &quot;,&quot; expression &quot;)&quot; block ;
-forClassicStmt ::= &quot;para&quot; &quot;(&quot; statement expression &quot;;&quot; statement &quot;)&quot; block ;
-</code></pre>
-<p>Ambas variantes viven en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L186-L233"><code>parser.cpp#L186-L233</code></a>. La forma clásica reutiliza <code>statement</code> para las secciones de inicialización y post-procesamiento, lo que implica que dichas porciones incluyen su propio <code>";"</code> antes de continuar con el resto del encabezado.</p>
-<h4 id="sentencia-switch">Sentencia <code>switch</code><a class="headerlink" href="#sentencia-switch" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">switchStmt     ::= &quot;tantachaña&quot; &quot;(&quot; expression &quot;)&quot; &quot;{&quot; caseClause* [defaultClause] &quot;}&quot; ;
-caseClause     ::= &quot;jamusa&quot; expression &quot;:&quot; statement* ;
-defaultClause  ::= &quot;akhamawa&quot; &quot;:&quot; statement* ;
-</code></pre>
-<p>Implementación en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L235-L273"><code>parser.cpp#L235-L273</code></a>.</p>
-<h4 id="definiciones-de-funciones">Definiciones de funciones<a class="headerlink" href="#definiciones-de-funciones" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">functionStmt   ::= &quot;luräwi&quot; [Identifier] &quot;(&quot; parameterList? &quot;)&quot; block ;
-parameterList  ::= Identifier (&quot;,&quot; Identifier)* ;
-</code></pre>
-<p>Definido en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L276-L295"><code>parser.cpp#L276-L295</code></a>. El nombre es opcional y los parámetros se reconocen como identificadores desnudos.</p>
-<h4 id="asignaciones-y-expresiones">Asignaciones y expresiones<a class="headerlink" href="#asignaciones-y-expresiones" title="Permanent link">&para;</a></h4>
-<pre><code class="language-ebnf">assignmentStmt ::= Identifier &quot;=&quot; expression &quot;;&quot; ;
-exprStmt       ::= expression &quot;;&quot; ;
-</code></pre>
-<p>Generadas por <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L297-L318"><code>parser.cpp#L297-L318</code></a>. Cuando un identificador no está seguido de <code>=</code>, la sentencia se degrada a una expresión pura.</p>
-<h3 id="expresiones">Expresiones<a class="headerlink" href="#expresiones" title="Permanent link">&para;</a></h3>
-<p>La jerarquía de expresiones está factorada en métodos dedicados dentro de <code>Parser</code>. Todas las producciones terminan referenciando <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a> y <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</p>
-<pre><code class="language-ebnf">expression     ::= logicalExpr ;
-logicalExpr    ::= equalityExpr { logicalOp equalityExpr } ;
-logicalOp      ::= &quot;uka&quot; | &quot;&amp;&amp;&quot; | &quot;jan uka&quot; | &quot;||&quot; ;
-equalityExpr   ::= comparisonExpr { (&quot;==&quot; | &quot;!=&quot;) comparisonExpr } ;
-comparisonExpr ::= additiveExpr { (&quot;&lt;&quot; | &quot;&lt;=&quot; | &quot;&gt;&quot; | &quot;&gt;=&quot;) additiveExpr } ;
-additiveExpr   ::= multiplicativeExpr { (&quot;+&quot; | &quot;-&quot;) multiplicativeExpr } ;
-multiplicativeExpr ::= powerExpr { (&quot;*&quot; | &quot;/&quot; | &quot;%&quot;) powerExpr } ;
-powerExpr      ::= unaryExpr { &quot;^&quot; unaryExpr } ;
-unaryExpr      ::= (&quot;-&quot; | &quot;+&quot; | &quot;janiwa&quot; | &quot;!&quot;) unaryExpr
-                 | primaryExpr ;
-primaryExpr    ::= Number
-                 | String
-                 | Identifier [&quot;(&quot; argumentList? &quot;)&quot;]
-                 | &quot;(&quot; expression &quot;)&quot; ;
-argumentList   ::= expression { &quot;,&quot; expression } ;
-</code></pre>
-<ul>
-<li><code>logicalExpr</code> y sus operadores se derivan de <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L325-L345"><code>parseLogic</code></a>.</li>
-<li><code>equalityExpr</code> proviene de <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L347-L367"><code>parseEquality</code></a>.</li>
-<li><code>comparisonExpr</code> está en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L369-L401"><code>parseComparison</code></a>.</li>
-<li><code>additiveExpr</code>, <code>multiplicativeExpr</code> y <code>powerExpr</code> se corresponden con <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L403-L423"><code>parseAdd</code></a>, <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L425-L451"><code>parseTerm</code></a> y <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L453-L463"><code>parsePower</code></a> respectivamente.</li>
-<li><code>unaryExpr</code> y <code>primaryExpr</code> se implementan en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L465-L520"><code>parseFactor</code></a>.</li>
-<li><code>argumentList</code> reusa <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/parser/parser.cpp#L522-L529"><code>parseArguments</code></a>.</li>
-</ul>
-<p>Los literales <code>Number</code> incluyen tanto cifras decimales como los azúcares <code>cheka</code> y <code>jan cheka</code> definidos en el lexer. Las llamadas a funciones requieren que el calificador sea un <code>Identifier</code>; las palabras reservadas no pueden emplearse como nombres válidos.</p>
-<h3 id="tokens-finales">Tokens finales<a class="headerlink" href="#tokens-finales" title="Permanent link">&para;</a></h3>
-<p>El flujo sintáctico concluye cuando se consume el token <code>EndOfFile</code>, añadido explícitamente por el lexer en <a href="https://github.com/jhulio435m/aymaraLang/blob/main/compiler/lexer/lexer.cpp#L236-L237"><code>lexer.cpp#L236-L237</code></a> y verificado por el parser durante la iteración principal.</p>
-<hr />
-<p>Este documento debe mantenerse sincronizado con el código fuente para reflejar cualquier cambio en la gramática del lenguaje.</p>
+<div class="highlight"><pre><span></span><code><span class="k">programa      </span><span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;qallta&quot;</span> <span class="p">]</span> <span class="p">{</span> <span class="k">sentencia </span><span class="p">}</span> <span class="p">[</span> <span class="s2">&quot;tukuya&quot;</span> <span class="p">]</span> <span class="p">;</span>
+
+<span class="k">sentencia     </span><span class="o">=</span> <span class="k">decl </span><span class="p">|</span> <span class="k">asigna </span><span class="p">|</span> <span class="k">if </span><span class="p">|</span> <span class="k">while </span><span class="p">|</span> <span class="k">for </span><span class="p">|</span> <span class="k">func_def </span><span class="p">|</span> <span class="k">class_def</span>
+              <span class="p">|</span> <span class="k">retorno </span><span class="p">|</span> <span class="k">salida </span><span class="p">|</span> <span class="k">continuar </span><span class="p">|</span> <span class="k">imprimir </span><span class="p">|</span> <span class="k">importar</span>
+              <span class="p">|</span> <span class="k">try </span><span class="p">|</span> <span class="k">throw </span><span class="p">|</span> <span class="k">bloque </span><span class="p">|</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+
+<span class="k">bloque        </span><span class="o">=</span> <span class="s2">&quot;{&quot;</span> <span class="p">{</span> <span class="k">sentencia </span><span class="p">}</span> <span class="s2">&quot;}&quot;</span> <span class="p">;</span>
+
+<span class="k">decl          </span><span class="o">=</span> <span class="s2">&quot;yatiya&quot;</span> <span class="k">tipo id </span><span class="p">[</span> <span class="s2">&quot;=&quot;</span> <span class="k">expr </span><span class="p">]</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+
+<span class="k">tipo          </span><span class="o">=</span> <span class="s2">&quot;jakhüwi&quot;</span> <span class="p">|</span> <span class="s2">&quot;aru&quot;</span> <span class="p">|</span> <span class="s2">&quot;chiqa&quot;</span> <span class="p">|</span> <span class="s2">&quot;listaña&quot;</span> <span class="p">|</span> <span class="s2">&quot;t&#39;aqa&quot;</span> <span class="p">|</span> <span class="s2">&quot;mapa&quot;</span> <span class="p">|</span> <span class="k">id </span><span class="p">;</span>
+
+<span class="k">asigna        </span><span class="o">=</span> <span class="k">id </span><span class="s2">&quot;=&quot;</span> <span class="k">expr </span><span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+
+<span class="k">if            </span><span class="o">=</span> <span class="p">(</span><span class="s2">&quot;suti&quot;</span> <span class="p">|</span> <span class="s2">&quot;jisa&quot;</span><span class="p">)</span> <span class="s2">&quot;(&quot;</span> <span class="k">cond </span><span class="s2">&quot;)&quot;</span> <span class="k">bloque </span><span class="p">[</span> <span class="p">(</span><span class="s2">&quot;jani&quot;</span> <span class="p">|</span> <span class="s2">&quot;maysatxa&quot;</span><span class="p">)</span> <span class="k">bloque </span><span class="p">]</span> <span class="p">;</span>
+
+<span class="k">while         </span><span class="o">=</span> <span class="p">(</span><span class="s2">&quot;kunawsati&quot;</span> <span class="p">|</span> <span class="s2">&quot;ukhakamaxa&quot;</span><span class="p">)</span> <span class="s2">&quot;(&quot;</span> <span class="k">cond </span><span class="s2">&quot;)&quot;</span> <span class="k">bloque </span><span class="p">;</span>
+
+<span class="k">for           </span><span class="o">=</span> <span class="p">(</span><span class="s2">&quot;sapüru&quot;</span> <span class="p">|</span> <span class="s2">&quot;taki&quot;</span><span class="p">)</span> <span class="s2">&quot;(&quot;</span> <span class="p">[</span><span class="k">decl</span><span class="p">|</span><span class="k">asigna</span><span class="p">]</span> <span class="s2">&quot;;&quot;</span> <span class="p">[</span><span class="k">cond</span><span class="p">]</span> <span class="s2">&quot;;&quot;</span> <span class="p">[</span><span class="k">asigna_np</span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="k">bloque </span><span class="p">;</span>
+<span class="k">asigna_np     </span><span class="o">=</span> <span class="k">id </span><span class="s2">&quot;=&quot;</span> <span class="k">expr </span><span class="p">;</span>
+
+<span class="k">func_def      </span><span class="o">=</span> <span class="s2">&quot;lurawi&quot;</span> <span class="k">id </span><span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">params </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="p">[</span> <span class="s2">&quot;:&quot;</span> <span class="k">tipo </span><span class="p">]</span> <span class="k">bloque </span><span class="p">;</span>
+<span class="k">params        </span><span class="o">=</span> <span class="k">param </span><span class="p">{</span> <span class="s2">&quot;,&quot;</span> <span class="k">param </span><span class="p">}</span> <span class="p">;</span>
+<span class="k">param         </span><span class="o">=</span> <span class="k">tipo id </span><span class="p">;</span>
+
+<span class="k">class_def     </span><span class="o">=</span> <span class="s2">&quot;kasta&quot;</span> <span class="k">id </span><span class="p">[</span> <span class="s2">&quot;jila&quot;</span> <span class="k">id </span><span class="p">]</span> <span class="s2">&quot;{&quot;</span> <span class="p">{</span> <span class="k">class_member </span><span class="p">}</span> <span class="s2">&quot;}&quot;</span> <span class="p">;</span>
+<span class="k">class_member  </span><span class="o">=</span> <span class="p">{</span> <span class="k">modificador </span><span class="p">}</span> <span class="p">(</span> <span class="k">decl </span><span class="p">|</span> <span class="k">metodo </span><span class="p">|</span> <span class="k">ctor </span><span class="p">)</span> <span class="p">;</span>
+<span class="k">modificador   </span><span class="o">=</span> <span class="s2">&quot;sapa&quot;</span> <span class="p">|</span> <span class="s2">&quot;taqi&quot;</span> <span class="p">|</span> <span class="s2">&quot;sapakasta&quot;</span> <span class="p">|</span> <span class="s2">&quot;jikxata&quot;</span> <span class="p">;</span>
+<span class="k">metodo        </span><span class="o">=</span> <span class="s2">&quot;lurawi&quot;</span> <span class="k">id </span><span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">params </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="p">[</span> <span class="s2">&quot;:&quot;</span> <span class="k">tipo </span><span class="p">]</span> <span class="k">bloque </span><span class="p">;</span>
+<span class="k">ctor          </span><span class="o">=</span> <span class="s2">&quot;qallta&quot;</span> <span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">params </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="k">bloque </span><span class="p">;</span>
+
+<span class="k">retorno       </span><span class="o">=</span> <span class="s2">&quot;kuttaya&quot;</span> <span class="p">[</span> <span class="k">expr </span><span class="p">]</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+<span class="k">salida        </span><span class="o">=</span> <span class="s2">&quot;p&#39;akhiña&quot;</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+<span class="k">continuar     </span><span class="o">=</span> <span class="s2">&quot;sarantaña&quot;</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+<span class="k">throw         </span><span class="o">=</span> <span class="s2">&quot;pantja&quot;</span> <span class="s2">&quot;(&quot;</span> <span class="p">(</span><span class="k">str </span><span class="p">|</span> <span class="k">id</span><span class="p">)</span> <span class="p">[</span> <span class="s2">&quot;,&quot;</span> <span class="k">str </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+<span class="k">try           </span><span class="o">=</span> <span class="s2">&quot;yant&#39;aña&quot;</span> <span class="k">bloque </span><span class="p">{</span> <span class="k">catch </span><span class="p">}</span> <span class="p">[</span> <span class="k">finally </span><span class="p">]</span> <span class="p">;</span>
+<span class="k">catch         </span><span class="o">=</span> <span class="s2">&quot;katjaña&quot;</span> <span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">str </span><span class="s2">&quot;,&quot;</span> <span class="p">]</span> <span class="k">id </span><span class="s2">&quot;)&quot;</span> <span class="k">bloque </span><span class="p">;</span>
+<span class="k">finally       </span><span class="o">=</span> <span class="s2">&quot;tukuyawi&quot;</span> <span class="k">bloque </span><span class="p">;</span>
+
+<span class="k">imprimir      </span><span class="o">=</span> <span class="s2">&quot;qillqa&quot;</span> <span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">args </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+<span class="k">importar      </span><span class="o">=</span> <span class="s2">&quot;apnaq&quot;</span> <span class="s2">&quot;(&quot;</span> <span class="k">str </span><span class="s2">&quot;)&quot;</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
+
+<span class="k">args          </span><span class="o">=</span> <span class="k">expr </span><span class="p">{</span> <span class="s2">&quot;,&quot;</span> <span class="k">expr </span><span class="p">}</span> <span class="p">;</span>
+
+<span class="k">cond          </span><span class="o">=</span> <span class="k">expr </span><span class="p">;</span>
+
+<span class="k">expr          </span><span class="o">=</span> <span class="k">or </span><span class="p">;</span>
+
+<span class="k">or            </span><span class="o">=</span> <span class="k">and </span><span class="p">{</span> <span class="s2">&quot;||&quot;</span> <span class="k">and </span><span class="p">}</span> <span class="p">;</span>
+<span class="k">and           </span><span class="o">=</span> <span class="k">igualdad </span><span class="p">{</span> <span class="s2">&quot;&amp;&amp;&quot;</span> <span class="k">igualdad </span><span class="p">}</span> <span class="p">;</span>
+
+<span class="k">igualdad      </span><span class="o">=</span> <span class="k">rel </span><span class="p">{</span> <span class="p">(</span><span class="s2">&quot;==&quot;</span> <span class="p">|</span> <span class="s2">&quot;!=&quot;</span><span class="p">)</span> <span class="k">rel </span><span class="p">}</span> <span class="p">;</span>
+<span class="k">rel           </span><span class="o">=</span> <span class="k">suma </span><span class="p">{</span> <span class="p">(</span><span class="s2">&quot;&lt;&quot;</span> <span class="p">|</span> <span class="s2">&quot;&lt;=&quot;</span> <span class="p">|</span> <span class="s2">&quot;&gt;&quot;</span> <span class="p">|</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">)</span> <span class="k">suma </span><span class="p">}</span> <span class="p">;</span>
+<span class="k">suma          </span><span class="o">=</span> <span class="k">multi </span><span class="p">{</span> <span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="p">|</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="k">multi </span><span class="p">}</span> <span class="p">;</span>
+<span class="k">multi         </span><span class="o">=</span> <span class="k">unario </span><span class="p">{</span> <span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="p">|</span> <span class="s2">&quot;/&quot;</span> <span class="p">|</span> <span class="s2">&quot;%&quot;</span><span class="p">)</span> <span class="k">unario </span><span class="p">}</span> <span class="p">;</span>
+
+<span class="k">unario        </span><span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;!&quot;</span> <span class="p">|</span> <span class="s2">&quot;-&quot;</span> <span class="p">]</span> <span class="k">primario </span><span class="p">;</span>
+
+<span class="k">primario      </span><span class="o">=</span> <span class="k">num </span><span class="p">|</span> <span class="k">str </span><span class="p">|</span> <span class="p">(</span><span class="s2">&quot;utji&quot;</span> <span class="p">|</span> <span class="s2">&quot;chiqa&quot;</span><span class="p">)</span> <span class="p">|</span> <span class="p">(</span><span class="s2">&quot;janiutji&quot;</span> <span class="p">|</span> <span class="s2">&quot;k&#39;ari&quot;</span><span class="p">)</span>
+              <span class="p">|</span> <span class="s2">&quot;machaqa&quot;</span> <span class="k">id </span><span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">args </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="p">|</span> <span class="s2">&quot;aka&quot;</span> <span class="p">|</span> <span class="s2">&quot;jilaaka&quot;</span>
+              <span class="p">|</span> <span class="k">id </span><span class="p">|</span> <span class="k">llamada </span><span class="p">|</span> <span class="s2">&quot;(&quot;</span> <span class="k">expr </span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> <span class="k">lista </span><span class="p">;</span>
+
+<span class="k">llamada       </span><span class="o">=</span> <span class="k">id </span><span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">args </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="p">;</span>
+
+<span class="k">lista         </span><span class="o">=</span> <span class="s2">&quot;[&quot;</span> <span class="p">[</span> <span class="k">args </span><span class="p">]</span> <span class="s2">&quot;]&quot;</span> <span class="p">;</span>
+
+<span class="k">id            </span><span class="o">=</span> <span class="k">letra </span><span class="p">{</span> <span class="k">letra </span><span class="p">|</span> <span class="k">num </span><span class="p">|</span> <span class="s2">&quot;_&quot;</span> <span class="p">}</span> <span class="p">;</span>
+<span class="k">num           </span><span class="o">=</span> <span class="k">digito </span><span class="p">{</span> <span class="k">digito </span><span class="p">}</span> <span class="p">;</span>
+<span class="k">str           </span><span class="o">=</span> <span class="s1">&#39;\&quot;&#39;</span> <span class="p">{</span> <span class="k">caracter </span><span class="p">}</span> <span class="s1">&#39;\&quot;&#39;</span> <span class="p">|</span> <span class="err">\</span><span class="s2">&quot;&#39;\&quot;</span> <span class="p">{</span> <span class="k">caracter </span><span class="p">}</span> <span class="err">\</span><span class="s2">&quot;&#39;\&quot;</span> <span class="p">;</span>
+</code></pre></div>
 <hr />
 <p><strong>Anterior:</strong> <a href="../aymaraLang/">Referencia del lenguaje</a> | <strong>Siguiente:</strong> <a href="../arquitectura/">Arquitectura del compilador</a></p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../aymaraLang/" class="btn btn-neutral float-left" title="Referencia"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../compiler/" class="btn btn-neutral float-right" title="CLI y Compilación">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../exceptions/" class="btn btn-neutral float-left" title="Manejo de errores"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../investigacion/" class="btn btn-neutral float-right" title="Fundamentos">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -596,10 +449,10 @@ argumentList   ::= expression { &quot;,&quot; expression } ;
         </span>
     
     
-      <span><a href="../aymaraLang/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../exceptions/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../compiler/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../investigacion/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -608,6 +461,9 @@ argumentList   ::= expression { &quot;,&quot; expression } ;
     <script src="../js/theme_extra.js"></script>
     <script src="../js/theme.js"></script>
       <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../search/main.js"></script>
     <script>
         jQuery(function () {

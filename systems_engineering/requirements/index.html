@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Visión General</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../arquitectura/">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project/">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
+                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../indice/">Índice rápido</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../language/">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../guide/">Guía de características</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../aymaraLang/">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../aymaraLang/">Referencia</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../exceptions/">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../../grammar/">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../arquitectura/">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../project/">Guía del proyecto</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -227,6 +221,13 @@
 </tr>
 </tbody>
 </table>
+<div class="mermaid">flowchart LR
+    FR01[FR-01 CLI] --&gt; Main[main.cpp]
+    FR02[FR-02 Lexer] --&gt; Lexer[compiler/lexer]
+    FR03[FR-03 Parser] --&gt; Parser[compiler/parser]
+    FR04[FR-04 Semántica] --&gt; Semantic[compiler/semantic]
+    FR05[FR-05 Codegen] --&gt; Codegen[compiler/codegen]
+    FR07[FR-07 LLVM] --&gt; LLVM[compiler/codegen/llvm]</div>
 <h2 id="7-requisitos-del-sistema">7. Requisitos del sistema<a class="headerlink" href="#7-requisitos-del-sistema" title="Permanent link">&para;</a></h2>
 <h3 id="71-requisitos-funcionales-fr">7.1 Requisitos funcionales (FR)<a class="headerlink" href="#71-requisitos-funcionales-fr" title="Permanent link">&para;</a></h3>
 <p><strong>FR-01</strong> El sistema debe aceptar uno o más archivos <code>.aym</code> como entrada por CLI.</p>
@@ -394,6 +395,9 @@
     <script src="../../js/theme_extra.js"></script>
     <script src="../../js/theme.js"></script>
       <script src="../../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../../search/main.js"></script>
     <script>
         jQuery(function () {

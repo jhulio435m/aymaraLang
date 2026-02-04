@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Referencia - AymaraLang</title>
+    <title>Referencia rápida - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,7 +13,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Referencia";
+        var mkdocs_page_name = "Referencia r\u00e1pida";
         var mkdocs_page_input_path = "aymaraLang.md";
         var mkdocs_page_url = null;
       </script>
@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión General</a>
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Tutoriales y Guías</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../indice/">Índice rápido</a>
-                </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Lenguaje</a>
+    <ul class="current">
                 <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Documentación del Lenguaje</a>
-    <ul class="current">
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Referencia</a>
+                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
+                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -117,8 +111,8 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Documentación del Lenguaje</li>
-      <li class="breadcrumb-item active">Referencia</li>
+          <li class="breadcrumb-item">Lenguaje</li>
+      <li class="breadcrumb-item active">Referencia rápida</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/aymaraLang.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -128,205 +122,72 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="referencia-del-lenguaje">Referencia del lenguaje<a class="headerlink" href="#referencia-del-lenguaje" title="Permanent link">&para;</a></h1>
-<p>Esta referencia describe la sintaxis completa, operadores, palabras clave y
-funciones integradas de AymaraLang. Está pensada para consulta rápida durante el
-desarrollo.</p>
-<h2 id="tipos-soportados">Tipos soportados<a class="headerlink" href="#tipos-soportados" title="Permanent link">&para;</a></h2>
+                <h1 id="referencia-rapida-del-lenguaje">Referencia rápida del lenguaje<a class="headerlink" href="#referencia-rapida-del-lenguaje" title="Permanent link">&para;</a></h1>
+<p>Esta página resume lo esencial del lenguaje para consulta rápida. Para la
+gramática formal revisa <a href="../grammar/">Gramática</a>.</p>
+<h2 id="tipos">Tipos<a class="headerlink" href="#tipos" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>jach’a</code> → enteros</li>
-<li><code>lliphiphi</code> → flotantes</li>
-<li><code>chuymani</code> → booleanos</li>
-<li><code>qillqa</code> → cadenas</li>
+<li><code>jakhüwi</code> (numérico)</li>
+<li><code>aru</code> (texto)</li>
+<li><code>chiqa</code> (booleano)</li>
+<li><code>t'aqa</code> / <code>listaña</code> (listas)</li>
+<li><code>mapa</code> (mapas)</li>
 </ul>
-<h3 id="valores-booleanos">Valores booleanos<a class="headerlink" href="#valores-booleanos" title="Permanent link">&para;</a></h3>
-<p>En <code>aym</code> los literales lógicos utilizan vocabulario aymara. La palabra <code>cheka</code>
-representa <strong>verdadero</strong> (<code>true</code>) y la expresión <code>jan cheka</code> equivale a <strong>falso</strong>
-(<code>false</code>). Son útiles para inicializar variables y para las condiciones en
-estructuras de control.</p>
-<pre><code class="language-aymara">chuymani bandera = cheka;
-si (bandera) {
-    willt’aña(&quot;activado&quot;);
-}
-
-chuymani otra = jan cheka;
-si (otra) {
-    willt’aña(&quot;esto no se imprime&quot;);
-} sino {
-    willt’aña(&quot;desactivado&quot;);
-}
-</code></pre>
-<h2 id="sintaxis-soportada">Sintaxis soportada<a class="headerlink" href="#sintaxis-soportada" title="Permanent link">&para;</a></h2>
+<h2 id="literales">Literales<a class="headerlink" href="#literales" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Variables y asignación.</li>
-<li>Impresión con <code>willt’aña(expr)</code> y <code>write(str)</code>.</li>
-<li>Control de flujo: <code>si</code>/<code>sino</code>, <code>mientras</code>, <code>haceña...mientras</code>, <code>para</code>, <code>tantachaña</code>.</li>
-<li>Funciones con <code>luräwi nombre(params) { ... }</code>.</li>
-<li>Expresiones aritméticas <code>+ - * / % ^</code> y operadores unarios <code>-expr</code>, <code>+expr</code>, <code>!expr</code>.</li>
-<li>Operadores lógicos <code>uka</code>, <code>jan uka</code>, <code>janiwa</code>, comparaciones <code>== != &lt; &lt;= &gt; &gt;=</code>.</li>
-<li>Comentarios <code>//</code> y <code>/* */</code>.</li>
-<li>Lectura de consola con <code>input()</code>.</li>
-<li>Longitud de cadenas con <code>length()</code>.</li>
-<li>Números aleatorios con <code>random(max)</code>.</li>
-<li>Pausa de ejecución con <code>sleep(ms)</code>.</li>
-<li>Arreglos dinámicos con <code>array(n)</code>, <code>array_get(arr, i)</code>, <code>array_set(arr, i, v)</code>,
-  <code>array_free(arr)</code>, <code>array_length(arr)</code>.</li>
-<li>Funciones matemáticas con <code>sin</code>, <code>cos</code>, <code>tan</code>, <code>asin</code>, <code>acos</code>, <code>atan</code>, <code>sqrt</code>,
-  <code>pow</code>, <code>exp</code>, <code>log</code>, <code>log10</code>, <code>floor</code>, <code>ceil</code>, <code>round</code>, <code>fabs</code>.</li>
+<li>Booleanos: <code>chiqa</code> / <code>k'ari</code> (legacy: <code>utji</code> / <code>janiutji</code>).</li>
+<li>Números: decimales, <code>0x</code> (hex) y <code>0b</code> (binario).</li>
+<li>Cadenas: comillas simples o dobles con escapes.</li>
 </ul>
-<h2 id="ejemplos-de-sintaxis">Ejemplos de sintaxis<a class="headerlink" href="#ejemplos-de-sintaxis" title="Permanent link">&para;</a></h2>
-<h3 id="entrada-y-salida">Entrada y salida<a class="headerlink" href="#entrada-y-salida" title="Permanent link">&para;</a></h3>
-<pre><code class="language-aymara">qillqa nombre = input();
-willt’aña(nombre);
-</code></pre>
-<h3 id="arreglos-dinamicos">Arreglos dinámicos<a class="headerlink" href="#arreglos-dinamicos" title="Permanent link">&para;</a></h3>
-<pre><code class="language-aymara">jach’a size = 3;
-jach’a arr = array(size);
-array_set(arr, 0, 10);
-array_set(arr, 1, 20);
-array_set(arr, 2, 30);
-willt’aña(array_get(arr, 1));
-array_free(arr);
-</code></pre>
-<h3 id="funciones-y-recursividad">Funciones y recursividad<a class="headerlink" href="#funciones-y-recursividad" title="Permanent link">&para;</a></h3>
-<pre><code class="language-aymara">luräwi fact(n) {
-    si (n == 0) {
-        kutiyana(1);
-    }
-    kutiyana(n * fact(n - 1));
-}
-
-willt’aña(fact(5));
-</code></pre>
-<h3 id="bucle-con-range">Bucle con <code>range</code><a class="headerlink" href="#bucle-con-range" title="Permanent link">&para;</a></h3>
-<p>La forma <code>para x en range(inicio, fin)</code> simplifica la iteración sobre rangos
-numéricos.</p>
-<pre><code class="language-aymara">para x en range(0, 4) {
-    willt’aña(x);
-}
-</code></pre>
-<p>Este fragmento puede encontrarse en <code>samples/control_flow/range_for.aym</code>.</p>
-<h2 id="errores-comunes">Errores comunes<a class="headerlink" href="#errores-comunes" title="Permanent link">&para;</a></h2>
+<h2 id="estructuras-principales">Estructuras principales<a class="headerlink" href="#estructuras-principales" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Variable no declarada.</li>
-<li>Tipos incompatibles en asignaciones o expresiones.</li>
-<li>Uso de <code>break</code> o <code>continue</code> fuera de bucles.</li>
-<li><code>return</code> fuera de una función.</li>
+<li>Condicionales: <code>jisa</code> / <code>maysatxa</code></li>
+<li>Bucles: <code>ukhakamaxa</code>, <code>taki</code></li>
+<li>Funciones: <code>lurawi</code> / <code>kuttaya</code></li>
+<li>Clases: <code>kasta</code>, <code>machaqa</code>, <code>aka</code>, <code>jila</code>, <code>jikxata</code>, <code>sapa</code>, <code>taqi</code>, <code>sapakasta</code>, <code>uñt'aya</code>, <code>chura</code>, <code>jilaaka</code></li>
+<li>Excepciones: <code>yant'aña</code>, <code>katjaña</code>, <code>tukuyawi</code>, <code>pantja</code></li>
+<li>Módulos: <code>apnaq</code></li>
 </ul>
-<h2 id="palabras-clave">Palabras clave<a class="headerlink" href="#palabras-clave" title="Permanent link">&para;</a></h2>
-<p><code>willt’aña</code>, <code>write</code>, <code>sleep</code>, <code>array</code>, <code>array_get</code>, <code>array_set</code>, <code>array_free</code>,
-<code>array_length</code>, <code>sin</code>, <code>cos</code>, <code>tan</code>, <code>asin</code>, <code>acos</code>, <code>atan</code>, <code>sqrt</code>, <code>pow</code>, <code>exp</code>,
-<code>log</code>, <code>log10</code>, <code>floor</code>, <code>ceil</code>, <code>round</code>, <code>fabs</code>, <code>si</code>, <code>sino</code>, <code>mientras</code>,
-<code>haceña</code>, <code>para</code>, <code>en</code>, <code>jalña</code>, <code>sarantaña</code>, <code>luräwi</code>, <code>kutiyana</code>, <code>tantachaña</code>,
-<code>jamusa</code>, <code>akhamawa</code>, <code>uka</code>, <code>jan uka</code>, <code>janiwa</code>, <code>jach’a</code>, <code>lliphiphi</code>,
-<code>chuymani</code>, <code>qillqa</code>, <code>input</code>, <code>length</code>, <code>random</code>.</p>
-<h2 id="glosario-de-palabras-clave">Glosario de palabras clave<a class="headerlink" href="#glosario-de-palabras-clave" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Aimara / Español</th>
-<th>Significado</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>willt’aña</code></td>
-<td>imprimir</td>
-</tr>
-<tr>
-<td><code>write</code></td>
-<td>imprimir sin salto</td>
-</tr>
-<tr>
-<td><code>si</code></td>
-<td>if</td>
-</tr>
-<tr>
-<td><code>sino</code></td>
-<td>else</td>
-</tr>
-<tr>
-<td><code>mientras</code></td>
-<td>while</td>
-</tr>
-<tr>
-<td><code>haceña</code></td>
-<td>do</td>
-</tr>
-<tr>
-<td><code>para</code></td>
-<td>for</td>
-</tr>
-<tr>
-<td><code>en</code></td>
-<td>in</td>
-</tr>
-<tr>
-<td><code>tantachaña</code></td>
-<td>switch</td>
-</tr>
-<tr>
-<td><code>jamusa</code></td>
-<td>case</td>
-</tr>
-<tr>
-<td><code>akhamawa</code></td>
-<td>default</td>
-</tr>
-<tr>
-<td><code>jalña</code></td>
-<td>break</td>
-</tr>
-<tr>
-<td><code>sarantaña</code></td>
-<td>continue</td>
-</tr>
-<tr>
-<td><code>luräwi</code></td>
-<td>func</td>
-</tr>
-<tr>
-<td><code>kutiyana</code></td>
-<td>return</td>
-</tr>
-<tr>
-<td><code>jach’a</code></td>
-<td>int</td>
-</tr>
-<tr>
-<td><code>lliphiphi</code></td>
-<td>float</td>
-</tr>
-<tr>
-<td><code>chuymani</code></td>
-<td>bool</td>
-</tr>
-<tr>
-<td><code>qillqa</code></td>
-<td>string</td>
-</tr>
-<tr>
-<td><code>uka</code></td>
-<td>and</td>
-</tr>
-<tr>
-<td><code>jan uka</code></td>
-<td>or</td>
-</tr>
-<tr>
-<td><code>janiwa</code></td>
-<td>not</td>
-</tr>
-</tbody>
-</table>
+<h2 id="biblioteca-estandar-built-ins">Biblioteca estándar (built-ins)<a class="headerlink" href="#biblioteca-estandar-built-ins" title="Permanent link">&para;</a></h2>
+<h3 id="entradasalida-y-utilidades">Entrada/Salida y utilidades<a class="headerlink" href="#entradasalida-y-utilidades" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>qillqa</code>, <code>write</code>, <code>input</code>, <code>katu</code>, <code>sleep</code>, <code>random</code></li>
+</ul>
+<h3 id="conversion-y-longitud">Conversión y longitud<a class="headerlink" href="#conversion-y-longitud" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>aru</code>, <code>jakhüwi</code>, <code>length</code>, <code>largo</code>, <code>suyu</code>, <code>suyut</code>, <code>suyum</code></li>
+</ul>
+<h3 id="arreglos-dinamicos">Arreglos (dinámicos)<a class="headerlink" href="#arreglos-dinamicos" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>array</code>, <code>array_get</code>, <code>array_set</code>, <code>array_free</code>, <code>array_length</code></li>
+</ul>
+<h3 id="texto">Texto<a class="headerlink" href="#texto" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ch'usa</code>, <code>jaljta</code>, <code>mayachta</code>, <code>sikta</code>, <code>utji</code>, <code>utjisuti</code>, <code>sutinaka</code>, <code>apsusuti</code></li>
+</ul>
+<h3 id="listas">Listas<a class="headerlink" href="#listas" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>push</code>, <code>ch'ullu</code>, <code>apsu</code>, <code>apsuuka</code>, <code>utjit</code>, <code>chaninaka</code>, <code>chanim</code></li>
+</ul>
+<h3 id="matematica">Matemática<a class="headerlink" href="#matematica" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sin</code>, <code>cos</code>, <code>tan</code>, <code>asin</code>, <code>acos</code>, <code>atan</code>, <code>sqrt</code>, <code>pow</code>, <code>exp</code>, <code>log</code>,
+  <code>log10</code>, <code>floor</code>, <code>ceil</code>, <code>round</code>, <code>fabs</code></li>
+</ul>
+<div class="mermaid">flowchart LR
+    Builtins[Funciones integradas] --&gt; IO[Entrada/Salida]
+    Builtins --&gt; Texto
+    Builtins --&gt; Listas
+    Builtins --&gt; Matematica
+    Builtins --&gt; Arrays</div>
 <hr />
-<p><strong>Anterior:</strong> <a href="../guide/">Guía de características</a> | <strong>Siguiente:</strong> <a href="../grammar/">Gramática formal</a></p>
+<p><strong>Siguiente:</strong> <a href="../exceptions/">Manejo de errores</a></p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../guide/" class="btn btn-neutral float-left" title="Guía de características"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../grammar/" class="btn btn-neutral float-right" title="Gramática formal">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../language/" class="btn btn-neutral float-left" title="Primeros pasos"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../exceptions/" class="btn btn-neutral float-right" title="Manejo de errores">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -353,10 +214,10 @@ numéricos.</p>
         </span>
     
     
-      <span><a href="../guide/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../language/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../grammar/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../exceptions/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -365,6 +226,9 @@ numéricos.</p>
     <script src="../js/theme_extra.js"></script>
     <script src="../js/theme.js"></script>
       <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../search/main.js"></script>
     <script>
         jQuery(function () {

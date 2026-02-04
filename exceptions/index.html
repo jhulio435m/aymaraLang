@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Índice rápido - AymaraLang</title>
+    <title>Manejo de errores - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,8 +13,8 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "\u00cdndice r\u00e1pido";
-        var mkdocs_page_input_path = "indice.md";
+        var mkdocs_page_name = "Manejo de errores";
+        var mkdocs_page_input_path = "exceptions.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -45,41 +45,35 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Instalación y Setup</a>
+                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión General</a>
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e Instalación</a>
+                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../installers/">Instaladores</a>
+                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Tutoriales y Guías</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Lenguaje</a>
     <ul class="current">
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Índice rápido</a>
-                </li>
                 <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../guide/">Guía de características</a>
+                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
                 </li>
-    </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" >Documentación del Lenguaje</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia</a>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Manejo de errores</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI y Compilación</a>
-                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Arquitectura y Proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura General</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
+                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -117,10 +111,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Tutoriales y Guías</li>
-      <li class="breadcrumb-item active">Índice rápido</li>
+          <li class="breadcrumb-item">Lenguaje</li>
+      <li class="breadcrumb-item active">Manejo de errores</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/indice.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/exceptions.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -128,50 +122,42 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="documentacion-de-aymaralang">Documentación de AymaraLang<a class="headerlink" href="#documentacion-de-aymaralang" title="Permanent link">&para;</a></h1>
-<p>Este índice agrupa la documentación principal del proyecto. Cada documento está pensado para ser breve y directo, así puedes leer solo lo que necesitas.</p>
-<h2 id="indice">Índice<a class="headerlink" href="#indice" title="Permanent link">&para;</a></h2>
-<h3 id="guias-introductorias">Guías introductorias<a class="headerlink" href="#guias-introductorias" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="../overview/">Visión general</a></li>
-</ul>
-<h3 id="lenguaje">Lenguaje<a class="headerlink" href="#lenguaje" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="../language/">Primeros pasos</a></li>
-<li><a href="../guide/">Guía de características</a></li>
-<li><a href="../aymaraLang/">Referencia del lenguaje</a></li>
-<li><a href="../grammar/">Gramática formal</a></li>
-</ul>
-<h3 id="compilador">Compilador<a class="headerlink" href="#compilador" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="../arquitectura/">Arquitectura del compilador</a></li>
-<li><a href="../compiler/">CLI y flujo de compilación</a></li>
-</ul>
-<h3 id="construccion-e-instalacion">Construcción e instalación<a class="headerlink" href="#construccion-e-instalacion" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="../build/">Compilación e instalación</a></li>
-<li><a href="../installers/">Instaladores</a></li>
-</ul>
-<h3 id="proyecto">Proyecto<a class="headerlink" href="#proyecto" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="../project/">Guía del proyecto</a></li>
-</ul>
-<h3 id="sistemas-de-ingenieria">Sistemas de ingeniería<a class="headerlink" href="#sistemas-de-ingenieria" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="../systems_engineering/architecture/">Arquitectura</a></li>
-<li><a href="../systems_engineering/conops/">CONOPS</a></li>
-<li><a href="../systems_engineering/interface_control_document/">Documento de control de interfaces</a></li>
-<li><a href="../systems_engineering/requirements/">Requisitos</a></li>
-<li><a href="../systems_engineering/risk_management/">Gestión de riesgos</a></li>
-<li><a href="../systems_engineering/systems_engineering_management_plan/">Plan de gestión</a></li>
-<li><a href="../systems_engineering/verification_validation_plan/">Verificación y validación</a></li>
-</ul>
+                <h1 id="manejo-de-errores">Manejo de errores<a class="headerlink" href="#manejo-de-errores" title="Permanent link">&para;</a></h1>
+<p>AymaraLang soporta <code>try/catch/finally</code> con palabras clave en aymara.</p>
+<h2 id="sintaxis-base">Sintaxis base<a class="headerlink" href="#sintaxis-base" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>yant&#39;aña {
+    // código que puede fallar
+} katjaña(e) {
+    // manejo de error
+} tukuyawi {
+    // se ejecuta siempre
+}
+</code></pre></div>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; Try
+    Try --&gt; Catch: pantja
+    Try --&gt; Finally: fin normal
+    Catch --&gt; Finally
+    Finally --&gt; [*]</div>
+<h2 id="lanzar-excepciones">Lanzar excepciones<a class="headerlink" href="#lanzar-excepciones" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>pantja(&quot;TIPO&quot;, &quot;mensaje&quot;);
+</code></pre></div>
+<h2 id="ejemplo-minimo">Ejemplo mínimo<a class="headerlink" href="#ejemplo-minimo" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>yant&#39;aña {
+    pantja(&quot;CONVERSION&quot;, &quot;dato inválido&quot;);
+} katjaña(&quot;CONVERSION&quot;, e) {
+    qillqa(e.suti);
+    qillqa(e.aru);
+}
+</code></pre></div>
+<hr />
+<p><strong>Siguiente:</strong> <a href="../grammar/">Gramática formal</a></p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../installers/" class="btn btn-neutral float-left" title="Instaladores"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../language/" class="btn btn-neutral float-right" title="Primeros pasos">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../aymaraLang/" class="btn btn-neutral float-left" title="Referencia rápida"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../grammar/" class="btn btn-neutral float-right" title="Gramática formal">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -198,10 +184,10 @@
         </span>
     
     
-      <span><a href="../installers/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../aymaraLang/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../language/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../grammar/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -210,6 +196,9 @@
     <script src="../js/theme_extra.js"></script>
     <script src="../js/theme.js"></script>
       <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       <script src="../search/main.js"></script>
     <script>
         jQuery(function () {
