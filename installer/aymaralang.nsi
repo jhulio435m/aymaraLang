@@ -87,7 +87,7 @@ Section "Install LLVM Backend" SEC_LLVM
   SetRegView 64
   SetOutPath "$INSTDIR\llvm-backend"
 
-  ; No fallar si la carpeta no existe o está vacía
+  ; No fallar si la carpeta no existe o está vacía (p.ej. llvm-backend agregado en dist)
   File /nonfatal /r "..\dist\llvm-backend\*.*"
 SectionEnd
 
@@ -122,6 +122,11 @@ SectionEnd
 ; Functions
 ; ----------------------------
 
+Function .onInit
+  Call EnsureNasm
+  Call EnsureGcc
+FunctionEnd
+
 Function EnsureVCRedist
   SetRegView 64
 
@@ -155,6 +160,31 @@ Function InstallVCRedist
 
   MessageBox MB_ICONSTOP "No se encontró VC_redist.x64.exe en installer."
   Abort
+FunctionEnd
+
+Function EnsureNasm
+  Call RequireToolInPath "nasm.exe" "nasm (MSYS2)"
+FunctionEnd
+
+Function EnsureGcc
+  Call RequireToolInPath "gcc.exe" "gcc (MSYS2)"
+FunctionEnd
+
+Function RequireToolInPath
+  Exch $1 ; etiqueta visible
+  Exch
+  Exch $0 ; ejecutable
+  Push $2
+
+  ExecWait '"$SYSDIR\where.exe" $0' $2
+  ${If} $2 != 0
+    MessageBox MB_ICONSTOP "$1 no está en PATH. Instala MSYS2 (con nasm y gcc) y agrega su binario a PATH antes de continuar."
+    Abort
+  ${EndIf}
+
+  Pop $2
+  Pop $0
+  Pop $1
 FunctionEnd
 
 ; ---------- PATH helpers (no StrFunc) ----------
@@ -441,4 +471,3 @@ FunctionEnd
 Function un.RefreshEnv
   SendMessage ${HWND_BROADCAST} ${WM_SETTINGCHANGE} 0 "STR:Environment" /TIMEOUT=5000
 FunctionEnd
-

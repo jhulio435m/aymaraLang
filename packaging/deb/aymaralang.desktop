@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=AymaraLang Compiler
+Exec=/opt/aymaralang/bin/aymc
+Icon=aymaralang
+Terminal=true
+Categories=Development;
