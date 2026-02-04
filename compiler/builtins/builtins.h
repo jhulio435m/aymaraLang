@@ -50,6 +50,17 @@ constexpr const char BUILTIN_TO_NUMBER[] = "jakhüwi";
 constexpr const char BUILTIN_KATU[] = "katu";
 constexpr const char BUILTIN_LARGO[] = "largo";
 constexpr const char BUILTIN_PUSH[] = "push";
+constexpr const char BUILTIN_SUYU[] = "suyu";
+constexpr const char BUILTIN_CHUSA[] = "ch'usa";
+constexpr const char BUILTIN_JALJTA[] = "jaljta";
+constexpr const char BUILTIN_MAYACHTA[] = "mayachta";
+constexpr const char BUILTIN_SIKTA[] = "sikta";
+constexpr const char BUILTIN_UTJI[] = "utji";
+constexpr const char BUILTIN_SUYUT[] = "suyut";
+constexpr const char BUILTIN_CHULLU[] = "ch'ullu";
+constexpr const char BUILTIN_APSU[] = "apsu";
+constexpr const char BUILTIN_APSU_UKA[] = "apsuuka";
+constexpr const char BUILTIN_UTJIT[] = "utjit";
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions();
 std::string typeName(Type t);

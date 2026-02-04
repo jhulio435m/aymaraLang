@@ -86,6 +86,101 @@ qillqa(numeros);
 qillqa(largo(numeros));
 ```
 
+## Biblioteca estándar (texto y listas)
+
+Las funciones estándar son **puras y previsibles**. Cuando algo falla lanzan
+errores con `Pantja("TIPU", "mensaje")`. Tipos recomendados: `CONVERSION`,
+`INDICE`, `VACIO`, `ARG`, `CLAVE`.
+
+### Texto (Aru)
+
+```aymara
+Qillqa(Suyu(""));
+Qillqa(Suyu("abc"));
+Qillqa(Ch'usa("  hola  "));
+Qillqa(Jaljta("1,2,3", ","));
+Qillqa(Jaljta("a--b--c", "--"));
+Qillqa(Jaljta("", ","));
+Qillqa(Jaljta("a", ","));
+Qillqa(Mayachta(["a","b","c"], "-"));
+Qillqa(Sikta("xd xdd xd", "xd", "ok"));
+Qillqa(Utji("kamisaraki", "sara") ? "Chiqa" : "K'ari");
+```
+
+Salida esperada:
+
+```
+0
+3
+hola
+["1", "2", "3"]
+["a", "b", "c"]
+[""]
+["a"]
+a-b-c
+ok xdd ok
+Chiqa
+```
+
+### Listas (T'aqa)
+
+```aymara
+Qillqa(SuyuT([]));
+Qillqa(SuyuT([1,2,3]));
+
+Yatiya T'aqa xs = [1,2];
+Ch'ullu(xs, 3);
+Qillqa(xs);
+
+Yatiya T'aqa ys = ["a","b","c"];
+Qillqa(Apsu(ys));
+Qillqa(ys);
+
+Yatiya T'aqa zs = [10,20,30];
+Qillqa(ApsuUka(zs, 1));
+Qillqa(zs);
+
+Qillqa(UtjiT([1,2,3], 2) ? "Chiqa" : "K'ari");
+Qillqa(UtjiT([1,2,3], 9) ? "Chiqa" : "K'ari");
+```
+
+### Combinaciones y errores
+
+```aymara
+Yatiya Aru linea = Katu("jakhunaka (1,2,3): ", tuku="");
+Yatiya T'aqa ps = Jaljta(Ch'usa(linea), ",");
+Yatiya Jakhüwi s = 0;
+
+Taki(Yatiya Jakhüwi i = 0; i < SuyuT(ps); i++) {
+  Yant'aña {
+    s = s + Jakhüwi(Ch'usa(ps[i]));
+  } Katjaña("CONVERSION", e) {
+    Pantja("CONVERSION", "no valido: " + ps[i]);
+  }
+}
+
+Qillqa(s);
+```
+
+```aymara
+Yatiya Aru t = Mayachta(["xd","xdd"], "");
+Qillqa(t);
+Qillqa(Sikta(t, "xd", "ok"));
+Qillqa(Utji(t, "xdd") ? "Chiqa" : "K'ari");
+```
+
+```aymara
+Yatiya T'aqa vacia = [];
+
+Yant'aña {
+  Qillqa(Apsu(vacia));
+} Katjaña("VACIO", e) {
+  Qillqa("lista vacia");
+} Tukuyawi {
+  Qillqa("fin");
+}
+```
+
 ## Funciones matemáticas
 
 ```aymara

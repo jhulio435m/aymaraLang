@@ -364,15 +364,20 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         }
         ++idx;
     }
-    if (nameLower == BUILTIN_TO_STRING) {
+    if (nameLower == BUILTIN_TO_STRING || nameLower == BUILTIN_CHUSA ||
+        nameLower == BUILTIN_MAYACHTA || nameLower == BUILTIN_SIKTA) {
         currentType = "aru";
     } else if (nameLower == BUILTIN_TO_NUMBER) {
         currentType = "jakhüwi";
     } else if (nameLower == "katu") {
         currentType = "aru";
-    } else if (nameLower == "largo") {
+    } else if (nameLower == "largo" || nameLower == BUILTIN_SUYU || nameLower == BUILTIN_SUYUT) {
         currentType = "jakhüwi";
-    } else if (nameLower == "push") {
+    } else if (nameLower == BUILTIN_UTJI || nameLower == BUILTIN_UTJIT) {
+        currentType = "chiqa";
+    } else if (nameLower == BUILTIN_JALJTA) {
+        currentType = "t'aqa:aru";
+    } else if (nameLower == "push" || nameLower == BUILTIN_CHULLU) {
         if (!c.getArgs().empty()) {
             c.getArgs()[0]->accept(*this);
             std::string baseType = currentType;
@@ -393,6 +398,19 @@ void SemanticAnalyzer::visit(CallExpr &c) {
             }
         } else {
             currentType = "t'aqa:jakhüwi";
+        }
+    } else if (nameLower == BUILTIN_APSU || nameLower == BUILTIN_APSU_UKA) {
+        if (!c.getArgs().empty()) {
+            c.getArgs()[0]->accept(*this);
+            std::string baseType = currentType;
+            if (baseType.rfind("t'aqa:", 0) == 0) {
+                currentType = baseType.substr(6);
+            } else {
+                std::cerr << "Error: se esperaba una lista para " << c.getName() << std::endl;
+                currentType = "";
+            }
+        } else {
+            currentType = "";
         }
     } else {
         currentType = "jakhüwi";
