@@ -107,6 +107,90 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         return node;
     }
 
+    if (match(TokenType::KeywordThrow)) {
+        Token tok = tokens[pos-1];
+        std::unique_ptr<Expr> typeExpr;
+        std::unique_ptr<Expr> messageExpr;
+        if (!match(TokenType::LParen)) {
+            parseError("se esperaba '(' despues de 'pantja'");
+        } else {
+            if (peek().type != TokenType::RParen) {
+                auto first = parseExpression();
+                if (match(TokenType::Comma)) {
+                    typeExpr = std::move(first);
+                    messageExpr = parseExpression();
+                } else {
+                    messageExpr = std::move(first);
+                }
+            } else {
+                parseError("se esperaba mensaje en 'pantja'");
+            }
+            match(TokenType::RParen);
+        }
+        if (!match(TokenType::Semicolon)) {
+            parseError("se esperaba ';' despues de 'pantja'");
+        }
+        auto node = std::make_unique<ThrowStmt>(std::move(typeExpr), std::move(messageExpr));
+        node->setLocation(tok.line, tok.column);
+        return node;
+    }
+
+    if (match(TokenType::KeywordTry)) {
+        Token tok = tokens[pos-1];
+        if (!match(TokenType::LBrace)) {
+            parseError("se esperaba '{' despues de 'yant'aña'");
+        }
+        Token tryTok = tokens[pos-1];
+        auto tryBlock = std::make_unique<BlockStmt>();
+        tryBlock->setLocation(tryTok.line, tryTok.column);
+        parseStatements(tryBlock->statements, true);
+        std::vector<TryStmt::CatchClause> catches;
+        while (match(TokenType::KeywordCatch)) {
+            if (!match(TokenType::LParen)) {
+                parseError("se esperaba '(' despues de 'katjaña'");
+            }
+            std::string typeName;
+            if (peek().type == TokenType::String) {
+                typeName = get().text;
+                if (!match(TokenType::Comma)) {
+                    parseError("se esperaba ',' despues del tipo en 'katjaña'");
+                }
+            }
+            std::string varName;
+            if (peek().type == TokenType::Identifier) {
+                varName = get().text;
+            } else {
+                parseError("se esperaba identificador en 'katjaña'");
+            }
+            match(TokenType::RParen);
+            if (!match(TokenType::LBrace)) {
+                parseError("se esperaba '{' despues de 'katjaña'");
+            }
+            Token catchTok = tokens[pos-1];
+            auto catchBlock = std::make_unique<BlockStmt>();
+            catchBlock->setLocation(catchTok.line, catchTok.column);
+            parseStatements(catchBlock->statements, true);
+            TryStmt::CatchClause clause{typeName, varName, std::move(catchBlock)};
+            catches.push_back(std::move(clause));
+        }
+        std::unique_ptr<BlockStmt> finallyBlock;
+        if (match(TokenType::KeywordFinally)) {
+            if (!match(TokenType::LBrace)) {
+                parseError("se esperaba '{' despues de 'tukuyawi'");
+            }
+            Token finTok = tokens[pos-1];
+            finallyBlock = std::make_unique<BlockStmt>();
+            finallyBlock->setLocation(finTok.line, finTok.column);
+            parseStatements(finallyBlock->statements, true);
+        }
+        if (catches.empty() && !finallyBlock) {
+            parseError("se esperaba 'katjaña' o 'tukuyawi' despues de 'yant'aña'");
+        }
+        auto node = std::make_unique<TryStmt>(std::move(tryBlock), std::move(catches), std::move(finallyBlock));
+        node->setLocation(tok.line, tok.column);
+        return node;
+    }
+
     if (match(TokenType::KeywordDeclare)) {
         Token declTok = tokens[pos-1];
         std::string type;
@@ -705,8 +789,18 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         if (match(TokenType::LParen)) {
             auto args = parseArguments();
             match(TokenType::RParen);
-            auto node = std::make_unique<CallExpr>(name, std::move(args));
+            std::unique_ptr<Expr> node = std::make_unique<CallExpr>(name, std::move(args));
             node->setLocation(idTok.line, idTok.column);
+            while (match(TokenType::Dot)) {
+                Token dotTok = tokens[pos-1];
+                if (peek().type != TokenType::Identifier) {
+                    parseError("se esperaba nombre de miembro despues de '.'");
+                    break;
+                }
+                std::string member = get().text;
+                node = std::make_unique<MemberExpr>(std::move(node), member);
+                node->setLocation(dotTok.line, dotTok.column);
+            }
             return node;
         }
         if (match(TokenType::LBracket)) {
@@ -716,11 +810,21 @@ std::unique_ptr<Expr> Parser::parseFactor() {
             }
             auto base = std::make_unique<VariableExpr>(name);
             base->setLocation(idTok.line, idTok.column);
-            auto node = std::make_unique<IndexExpr>(std::move(base), std::move(index));
+            std::unique_ptr<Expr> node = std::make_unique<IndexExpr>(std::move(base), std::move(index));
             node->setLocation(idTok.line, idTok.column);
+            while (match(TokenType::Dot)) {
+                Token dotTok = tokens[pos-1];
+                if (peek().type != TokenType::Identifier) {
+                    parseError("se esperaba nombre de miembro despues de '.'");
+                    break;
+                }
+                std::string member = get().text;
+                node = std::make_unique<MemberExpr>(std::move(node), member);
+                node->setLocation(dotTok.line, dotTok.column);
+            }
             return node;
         }
-        auto node = std::make_unique<VariableExpr>(name);
+        std::unique_ptr<Expr> node = std::make_unique<VariableExpr>(name);
         node->setLocation(idTok.line, idTok.column);
         if (match(TokenType::PlusPlus) || match(TokenType::MinusMinus)) {
             Token opTok = tokens[pos-1];
@@ -728,6 +832,16 @@ std::unique_ptr<Expr> Parser::parseFactor() {
             auto incNode = std::make_unique<IncDecExpr>(name, increment, false);
             incNode->setLocation(opTok.line, opTok.column);
             return incNode;
+        }
+        while (match(TokenType::Dot)) {
+            Token dotTok = tokens[pos-1];
+            if (peek().type != TokenType::Identifier) {
+                parseError("se esperaba nombre de miembro despues de '.'");
+                break;
+            }
+            std::string member = get().text;
+            node = std::make_unique<MemberExpr>(std::move(node), member);
+            node->setLocation(dotTok.line, dotTok.column);
         }
         return node;
     }

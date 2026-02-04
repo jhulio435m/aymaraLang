@@ -68,6 +68,7 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         void visit(CallExpr&) override {}
         void visit(ListExpr&) override {}
         void visit(IndexExpr&) override {}
+        void visit(MemberExpr&) override {}
         void visit(PrintStmt&) override {}
         void visit(ExprStmt&) override {}
         void visit(AssignStmt&) override {}
@@ -83,6 +84,8 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         void visit(DoWhileStmt&) override {}
         void visit(SwitchStmt&) override {}
         void visit(ImportStmt&) override {}
+        void visit(ThrowStmt&) override {}
+        void visit(TryStmt&) override {}
     } collector;
     collector.self = this;
     for (const auto &n : nodes) n->accept(collector);
@@ -426,6 +429,33 @@ void SemanticAnalyzer::visit(IndexExpr &i) {
         currentType = "";
     }
     lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(MemberExpr &m) {
+    m.getBase()->accept(*this);
+    if (currentType != "excepcion") {
+        std::cerr << "Error: acceso de miembro invalido" << std::endl;
+    }
+    currentType = "aru";
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(ThrowStmt &t) {
+    if (t.getType()) t.getType()->accept(*this);
+    if (t.getMessage()) t.getMessage()->accept(*this);
+    currentType = "";
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(TryStmt &t) {
+    t.getTryBlock()->accept(*this);
+    for (const auto &c : t.getCatches()) {
+        pushScope();
+        declare(c.varName, "excepcion");
+        c.block->accept(*this);
+        popScope();
+    }
+    if (t.getFinallyBlock()) t.getFinallyBlock()->accept(*this);
 }
 
 } // namespace aym

@@ -52,6 +52,7 @@ jisa (otra) {
 - Funciones matemáticas con `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`,
   `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`.
 - Operador ternario `cond ? a : b`.
+- Manejo de errores con `yant'aña`/`katjaña`/`tukuyawi` y `pantja`.
 
 ## Ejemplos de sintaxis
 
@@ -106,7 +107,7 @@ taki (yatiya jakhüwi x = 0; x < 4; x++) {
 `qallta`, `tukuya`, `yatiya`, `jisa`, `maysatxa`, `ukhakamaxa`, `taki`,
 `p'akhiña`, `sarantaña`, `lurawi`, `kuttaya`, `jakhüwi`, `aru`, `chiqa`,
 `t'aqa`, `listaña`, `mapa`, `k'ari`, `utji`, `janiutji`, `input`, `length`,
-`random`.
+`random`, `yant'aña`, `katjaña`, `tukuyawi`, `pantja`.
 
 ## Glosario de palabras clave
 
@@ -125,6 +126,10 @@ taki (yatiya jakhüwi x = 0; x < 4; x++) {
 | `sarantaña`      | continue |
 | `lurawi`         | func |
 | `kuttaya`        | return |
+| `yant'aña`       | try |
+| `katjaña`        | catch |
+| `tukuyawi`       | finally |
+| `pantja`         | throw |
 | `jakhüwi`        | numérico |
 | `aru`            | string |
 | `chiqa`          | bool / true |

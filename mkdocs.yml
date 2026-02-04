@@ -23,6 +23,7 @@ nav:
         - Guía de características: guide.md
     - Documentación del Lenguaje:
         - Referencia: aymaraLang.md
+        - Manejo de errores: exceptions.md
         - Gramática formal: grammar.md
         - CLI y Compilación: compiler.md
     - Arquitectura y Proyecto:

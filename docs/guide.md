@@ -94,6 +94,12 @@ qillqa(sin(ang));
 qillqa(sqrt(9));
 ```
 
+## Manejo de errores
+
+El lenguaje permite usar `Yant'aña`/`Katjaña`/`Tukuyawi` y `Pantja` para
+controlar errores. Revisa la guía completa con ejemplos y salidas en
+[Manejo de errores](exceptions.md).
+
 ## Nota sobre palabras clave legacy
 
 El compilador sigue aceptando `suti`/`jani`, `kunawsati`, `sapüru` y
