@@ -3,7 +3,11 @@
 /bin/
 *.o
 *.ayn
+*.exe
+*.msi
+*wixpdb
 /site
+/artifacts
 
 # Ignore system files
 .DS_Store
