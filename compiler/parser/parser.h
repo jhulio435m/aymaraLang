@@ -14,6 +14,7 @@ class Parser {
 public:
     explicit Parser(const std::vector<Token>& tokens);
     std::vector<std::unique_ptr<Node>> parse();
+    std::unique_ptr<Expr> parseExpressionOnly();
     bool hasError() const { return hadError; }
 private:
     std::vector<Token> tokens;
@@ -38,6 +39,15 @@ private:
     std::unique_ptr<Expr> parsePower();
     std::unique_ptr<Expr> parseFactor();
     std::vector<std::unique_ptr<Expr>> parseArguments();
+    std::unique_ptr<Expr> parseInterpolatedString(const Token &tok);
+    std::unique_ptr<Expr> parseListLiteral(const Token &tok);
+    std::unique_ptr<Expr> parseMapLiteral(const Token &tok);
+    std::unique_ptr<Expr> parseFormatExpression(const Token &tok,
+                                                const std::string &format,
+                                                std::vector<std::unique_ptr<Expr>> args,
+                                                bool percentStyle);
+    std::unique_ptr<Expr> ensureString(std::unique_ptr<Expr> expr);
+    std::unique_ptr<Expr> chainConcat(std::vector<std::unique_ptr<Expr>> parts);
 };
 
 } // namespace aym

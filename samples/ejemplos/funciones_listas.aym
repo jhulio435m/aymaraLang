@@ -1,0 +1,89 @@
+qallta
+// A) Funciones
+Lurawi saludo(): Aru {
+  Kuttaya "kamisaraki";
+}
+
+Qillqa(saludo());
+
+Lurawi suma(Jakhüwi a, Jakhüwi b): Jakhüwi {
+  Kuttaya a + b;
+}
+
+Qillqa(suma(2, 3));
+
+Lurawi muestra(Aru s) {
+  Qillqa(s);
+  Kuttaya;
+}
+
+muestra("hola");
+
+Lurawi fact(Jakhüwi n): Jakhüwi {
+  Jisa(n <= 1) { Kuttaya 1; }
+  Kuttaya n * fact(n - 1);
+}
+
+Qillqa(fact(5));
+
+Lurawi signo(Jakhüwi n): Aru {
+  Jisa(n < 0) { Kuttaya "negativu"; }
+  Jisa(n == 0) { Kuttaya "ch'usa"; }
+  Kuttaya "positivu";
+}
+
+Qillqa(signo(-2));
+Qillqa(signo(0));
+Qillqa(signo(8));
+
+// B) Entrada (Katu)
+Yatiya Aru s = Katu("Suti?: ", tuku="");
+Qillqa("Suti =", s);
+
+Yatiya Jakhüwi a = Jakhüwi(Katu("a = ", tuku=""));
+Yatiya Jakhüwi b = Jakhüwi(Katu("b = ", tuku=""));
+Qillqa(a + b);
+
+Yatiya Aru nombre = "";
+Ukhakamaxa(nombre == "") {
+  nombre = Katu("Suti (jani ch'usäñati): ", tuku="");
+}
+
+Qillqa("Suti =", nombre);
+
+// C) Listas (T'aqa)
+Yatiya T'aqa xs = [1, 2, 3];
+Qillqa(xs);
+
+Yatiya T'aqa ys = ["xd", "xdd"];
+Qillqa(ys[0]);
+Qillqa(ys[1]);
+
+Yatiya T'aqa zs = [10, 20, 30];
+zs[1] = 99;
+Qillqa(zs);
+
+Push(zs, 123);
+Qillqa(zs);
+
+Taki(Yatiya Jakhüwi i = 0; i < Largo(xs); i++) {
+  Qillqa(xs[i]);
+}
+
+Lurawi sumaTaqa(T'aqa xs): Jakhüwi {
+  Yatiya Jakhüwi s = 0;
+  Taki(Yatiya Jakhüwi i = 0; i < Largo(xs); i++) {
+    s = s + xs[i];
+  }
+  Kuttaya s;
+}
+
+Qillqa(sumaTaqa([1, 2, 3, 4]));
+
+Yatiya T'aqa pares = [1, 2, 3, 4, 5];
+Taki(Yatiya Jakhüwi i = 0; i < Largo(pares); i++) {
+  Jisa(pares[i] % 2 != 0) { Sarantaña; }
+  Qillqa(pares[i]);
+}
+
+tukuya

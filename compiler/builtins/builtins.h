@@ -45,6 +45,11 @@ constexpr const char BUILTIN_FLOOR[] = "floor";
 constexpr const char BUILTIN_CEIL[] = "ceil";
 constexpr const char BUILTIN_ROUND[] = "round";
 constexpr const char BUILTIN_FABS[] = "fabs";
+constexpr const char BUILTIN_TO_STRING[] = "aru";
+constexpr const char BUILTIN_TO_NUMBER[] = "jakhüwi";
+constexpr const char BUILTIN_KATU[] = "katu";
+constexpr const char BUILTIN_LARGO[] = "largo";
+constexpr const char BUILTIN_PUSH[] = "push";
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions();
 std::string typeName(Type t);

@@ -42,56 +42,83 @@ void aym_sleep(int ms) {
 #endif
 }
 
+typedef struct {
+    long len;
+    long cap;
+    intptr_t *data;
+} AymArray;
+
 intptr_t aym_array_new(long size) {
-    if (size <= 0) return 0;
-    // allocate extra slot to store array length
-    long *arr = calloc((size_t)size + 1, sizeof(long));
+    if (size < 0) return 0;
+    AymArray *arr = calloc(1, sizeof(AymArray));
     if (!arr) {
         fprintf(stderr, "aym_array_new: allocation failed\n");
         return 0;
     }
-    arr[0] = size;            // store length at the first position
-    return (intptr_t)(arr + 1); // return pointer to data region
+    arr->len = size;
+    arr->cap = size;
+    if (size > 0) {
+        arr->data = calloc((size_t)size, sizeof(intptr_t));
+        if (!arr->data) {
+            fprintf(stderr, "aym_array_new: allocation failed\n");
+            free(arr);
+            return 0;
+        }
+    }
+    return (intptr_t)arr;
 }
 
 long aym_array_get(intptr_t arr, long idx) {
     if (!arr) return 0;
-    long *a = (long*)arr;
-    long len = *(a - 1);
+    AymArray *a = (AymArray*)arr;
     if (idx < 0) {
         fprintf(stderr, "aym_array_get: negative index %ld\n", idx);
         return 0; // default value on error
     }
-    if (idx >= len) return 0;
-    return a[idx];
+    if (idx >= a->len) return 0;
+    return (long)a->data[idx];
 }
 
 long aym_array_set(intptr_t arr, long idx, long val) {
     if (!arr) return 0;
-    long *a = (long*)arr;
-    long len = *(a - 1);
+    AymArray *a = (AymArray*)arr;
     if (idx < 0) {
         fprintf(stderr, "aym_array_set: negative index %ld\n", idx);
         return 0; // indicate error
     }
-    if (idx >= len) return 0;
-    a[idx] = val;
+    if (idx >= a->len) return 0;
+    a->data[idx] = (intptr_t)val;
     return val;
 }
 
 void aym_array_free(intptr_t arr) {
     if (!arr) return;
-    long *a = (long*)arr;
-    long *base = a - 1;
-    base[0] = 0; // clear length bookkeeping
-    free(base);
+    AymArray *a = (AymArray*)arr;
+    free(a->data);
+    free(a);
 }
 
 long aym_array_length(intptr_t arr) {
     if (!arr) return 0;
-    long *a = (long*)arr;
-    long len = *(a - 1);
-    return len;
+    AymArray *a = (AymArray*)arr;
+    return a->len;
+}
+
+intptr_t aym_array_push(intptr_t arr, long val) {
+    if (!arr) return 0;
+    AymArray *a = (AymArray*)arr;
+    if (a->len >= a->cap) {
+        long newCap = a->cap > 0 ? a->cap * 2 : 1;
+        intptr_t *next = realloc(a->data, sizeof(intptr_t) * (size_t)newCap);
+        if (!next) {
+            fprintf(stderr, "aym_array_push: allocation failed\n");
+            return arr;
+        }
+        a->data = next;
+        a->cap = newCap;
+    }
+    a->data[a->len++] = (intptr_t)val;
+    return arr;
 }
 
 char *aym_str_concat(const char *left, const char *right) {
@@ -106,4 +133,21 @@ char *aym_str_concat(const char *left, const char *right) {
     memcpy(out + left_len, right, right_len);
     out[total - 1] = '\0';
     return out;
+}
+
+char *aym_to_string(long value) {
+    char buffer[64];
+    int written = snprintf(buffer, sizeof(buffer), "%ld", value);
+    if (written < 0) return NULL;
+    size_t len = (size_t)written;
+    char *out = (char *)malloc(len + 1);
+    if (!out) return NULL;
+    memcpy(out, buffer, len);
+    out[len] = '\0';
+    return out;
+}
+
+long aym_to_number(const char *text) {
+    if (!text) return 0;
+    return strtol(text, NULL, 10);
 }

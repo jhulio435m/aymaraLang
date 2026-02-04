@@ -70,17 +70,17 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordBreak, word, startLine, startColumn});
             } else if (lower == "sarantaña") {
                 tokens.push_back({TokenType::KeywordContinue, word, startLine, startColumn});
-            } else if (word == "lurawi") {
+            } else if (lower == "lurawi") {
                 tokens.push_back({TokenType::KeywordFunc, word, startLine, startColumn});
-            } else if (word == "kuttaya") {
+            } else if (lower == "kuttaya") {
                 tokens.push_back({TokenType::KeywordReturn, word, startLine, startColumn});
-            } else if (word == "apnaq") {
+            } else if (lower == "apnaq") {
                 tokens.push_back({TokenType::KeywordImport, word, startLine, startColumn});
             } else if (lower == "jakhüwi") {
                 tokens.push_back({TokenType::KeywordTypeNumber, word, startLine, startColumn});
             } else if (lower == "aru") {
                 tokens.push_back({TokenType::KeywordTypeString, word, startLine, startColumn});
-            } else if (lower == "listaña") {
+            } else if (lower == "listaña" || lower == "t'aqa") {
                 tokens.push_back({TokenType::KeywordTypeList, word, startLine, startColumn});
             } else if (lower == "mapa") {
                 tokens.push_back({TokenType::KeywordTypeMap, word, startLine, startColumn});
@@ -136,6 +136,42 @@ std::vector<Token> Lexer::tokenize() {
                 num += get();
             }
             tokens.push_back({TokenType::Number, num, startLine, startColumn});
+            continue;
+        }
+
+        if (c == '$' && pos + 1 < src.size() && src[pos + 1] == '"') {
+            get(); // consume $
+            char quote = get();
+            std::string str;
+            bool terminated = false;
+            while (pos < src.size()) {
+                char ch = get();
+                if (ch == quote) { terminated = true; break; }
+                if (ch == '\\') {
+                    if (pos >= src.size()) break;
+                    char esc = get();
+                    switch (esc) {
+                        case 'n': str += '\n'; break;
+                        case 't': str += '\t'; break;
+                        case 'r': str += '\r'; break;
+                        case '\\': str += '\\'; break;
+                        case '"': str += '"'; break;
+                        case '\'': str += '\''; break;
+                        case '{': str += '{'; break;
+                        case '}': str += '}'; break;
+                        case '0': str += '\0'; break;
+                        default: str += esc; break;
+                    }
+                } else {
+                    str += ch;
+                }
+            }
+            if (!terminated) {
+                throw std::runtime_error(
+                    "Unterminated interpolated string starting at line " + std::to_string(startLine) +
+                    ", column " + std::to_string(startColumn));
+            }
+            tokens.push_back({TokenType::InterpolatedString, str, startLine, startColumn});
             continue;
         }
 
@@ -257,6 +293,7 @@ std::vector<Token> Lexer::tokenize() {
             case ':': tokens.push_back({TokenType::Colon, ":", startLine, startColumn}); get(); break;
             case ',': tokens.push_back({TokenType::Comma, ",", startLine, startColumn}); get(); break;
             case ';': tokens.push_back({TokenType::Semicolon, ";", startLine, startColumn}); get(); break;
+            case '.': tokens.push_back({TokenType::Dot, ".", startLine, startColumn}); get(); break;
             default: get(); break;
         }
     }
