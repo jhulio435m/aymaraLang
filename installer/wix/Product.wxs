@@ -14,6 +14,10 @@
     <?define HasLlvmBackend = "0" ?>
   <?endif?>
 
+  <?ifndef LlvmDir ?>
+    <?define LlvmDir = "" ?>
+  <?endif?>
+
   <?ifndef DistDir ?>
     <?error DistDir no fue definido. Pasa -d DistDir="...\dist" desde build_msi.ps1 ?>
   <?endif?>
@@ -125,7 +129,7 @@
 
   <!-- LLVM opcional -->
   <Fragment>
-    <ComponentGroup Id="LlvmBackendFiles" Directory="LLVMBACKENDDIR" Source="$(var.DistDir)\llvm-backend">
+    <ComponentGroup Id="LlvmBackendFiles" Directory="LLVMBACKENDDIR" Source="$(var.LlvmDir)">
       <?if $(var.HasLlvmBackend) = 1 ?>
         <Files Include="**\*" />
       <?endif?>

@@ -10,6 +10,7 @@ $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $distPath = Join-Path $root $DistDir
 $outputPath = Join-Path $root $OutputDir
 $productWxs = Join-Path $root "installer\wix\Product.wxs"
+$llvmSource = Join-Path $root "llvm-backend"
 $outFile = Join-Path $outputPath "AymaraLang-Setup.msi"
 
 if (-not (Test-Path $productWxs)) {
@@ -61,9 +62,8 @@ foreach ($ext in $requiredExts) {
 }
 
 # --- Detectar si hay backend LLVM en dist ---
-$llvmDir = Join-Path $distPath "llvm-backend"
-$hasLlvm = (Test-Path $llvmDir) -and `
-           ((Get-ChildItem $llvmDir -Recurse -File -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0)
+$hasLlvm = (Test-Path $llvmSource) -and `
+           ((Get-ChildItem $llvmSource -Recurse -File -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0)
 $hasLlvmValue = if ($hasLlvm) { "1" } else { "0" }
 
 Write-Host "Usando WiX: $($wixCmd.Source)"
@@ -74,6 +74,7 @@ Write-Host "Compilando MSI... Version=$version HasLlvmBackend=$hasLlvmValue"
     -ext WixToolset.Util.wixext `
     -ext WixToolset.UI.wixext `
     -d DistDir="$distPath" `
+    -d LlvmDir="$llvmSource" `
     -d ProductVersion="$version" `
     -d HasLlvmBackend="$hasLlvmValue" `
     -o "$outFile" `
