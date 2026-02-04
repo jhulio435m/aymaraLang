@@ -456,6 +456,7 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
 
 bool CodeGenImpl::isListExpr(const Expr *expr,
                              const std::unordered_map<std::string,int> *locals) const {
+    (void)locals;
     if (!expr) return false;
     if (dynamic_cast<const ListExpr*>(expr)) return true;
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
@@ -480,6 +481,7 @@ bool CodeGenImpl::isListExpr(const Expr *expr,
 
 bool CodeGenImpl::isMapExpr(const Expr *expr,
                             const std::unordered_map<std::string,int> *locals) const {
+    (void)locals;
     if (!expr) return false;
     if (dynamic_cast<const MapExpr*>(expr)) return true;
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
@@ -1864,10 +1866,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
                        const std::unordered_map<std::string,std::string> &functionReturnTypesIn,
                        const std::unordered_map<std::string,std::string> &globalTypesIn,
-                       bool windows,
+                       bool windowsTarget,
                        long seedIn,
                        const std::string &runtimeDirIn) {
-    this->windows = windows;
+    this->windows = windowsTarget;
     globals = semGlobals;
     paramTypes = paramTypesIn;
     functionReturnTypes = functionReturnTypesIn;

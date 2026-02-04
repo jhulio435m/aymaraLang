@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -55,6 +56,22 @@ std::string executableDir() {
         result = fs::current_path();
     }
     return result.string();
+}
+
+std::string getEnvVar(const std::string &name) {
+#ifdef _WIN32
+    char *buffer = nullptr;
+    size_t length = 0;
+    if (_dupenv_s(&buffer, &length, name.c_str()) != 0 || !buffer) {
+        return "";
+    }
+    std::string value(buffer);
+    free(buffer);
+    return value;
+#else
+    const char *value = std::getenv(name.c_str());
+    return value ? std::string(value) : "";
+#endif
 }
 
 } // namespace aym

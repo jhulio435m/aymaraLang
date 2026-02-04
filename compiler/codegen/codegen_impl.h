@@ -60,7 +60,7 @@ public:
               const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
               const std::unordered_map<std::string,std::string> &functionReturnTypesIn,
               const std::unordered_map<std::string,std::string> &globalTypesIn,
-              bool windows,
+              bool windowsTarget,
               long seedIn,
               const std::string &runtimeDirIn);
 private:
