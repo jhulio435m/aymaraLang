@@ -16,6 +16,10 @@ class UnaryExpr;
 class TernaryExpr;
 class IncDecExpr;
 class CallExpr;
+class MemberCallExpr;
+class NewExpr;
+class FunctionRefExpr;
+class SuperExpr;
 class ListExpr;
 class MapExpr;
 class IndexExpr;
@@ -32,6 +36,7 @@ class ContinueStmt;
 class ReturnStmt;
 class VarDeclStmt;
 class FunctionStmt;
+class ClassStmt;
 class WhileStmt;
 class DoWhileStmt;
 class SwitchStmt;
@@ -51,6 +56,10 @@ public:
     virtual void visit(TernaryExpr &) = 0;
     virtual void visit(IncDecExpr &) = 0;
     virtual void visit(CallExpr &) = 0;
+    virtual void visit(MemberCallExpr &) = 0;
+    virtual void visit(NewExpr &) = 0;
+    virtual void visit(FunctionRefExpr &) = 0;
+    virtual void visit(SuperExpr &) = 0;
     virtual void visit(ListExpr &) = 0;
     virtual void visit(MapExpr &) = 0;
     virtual void visit(IndexExpr &) = 0;
@@ -67,6 +76,7 @@ public:
     virtual void visit(ReturnStmt &) = 0;
     virtual void visit(VarDeclStmt &) = 0;
     virtual void visit(FunctionStmt &) = 0;
+    virtual void visit(ClassStmt &) = 0;
     virtual void visit(WhileStmt &) = 0;
     virtual void visit(DoWhileStmt &) = 0;
     virtual void visit(SwitchStmt &) = 0;
@@ -95,6 +105,11 @@ class Expr : public Node {
 };
 
 class Stmt : public Node {
+};
+
+struct Param {
+    std::string type;
+    std::string name;
 };
 
 class NumberExpr : public Expr {
@@ -204,6 +219,58 @@ private:
     std::vector<std::unique_ptr<Expr>> arguments;
 };
 
+class MemberCallExpr : public Expr {
+public:
+    MemberCallExpr(std::unique_ptr<Expr> baseExpr,
+                   std::string memberName,
+                   std::vector<std::unique_ptr<Expr>> args)
+        : base(std::move(baseExpr)),
+          member(std::move(memberName)),
+          arguments(std::move(args)) {}
+    Expr *getBase() const { return base.get(); }
+    const std::string &getMember() const { return member; }
+    const std::vector<std::unique_ptr<Expr>> &getArgs() const { return arguments; }
+    void setStaticCallee(const std::string &name) { staticCallee = name; }
+    const std::string &getStaticCallee() const { return staticCallee; }
+    void setResolvedType(const std::string &type) { resolvedType = type; }
+    const std::string &getResolvedType() const { return resolvedType; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::unique_ptr<Expr> base;
+    std::string member;
+    std::vector<std::unique_ptr<Expr>> arguments;
+    std::string staticCallee;
+    std::string resolvedType;
+};
+
+class NewExpr : public Expr {
+public:
+    NewExpr(std::string className,
+            std::vector<std::unique_ptr<Expr>> args)
+        : name(std::move(className)), arguments(std::move(args)) {}
+    const std::string &getName() const { return name; }
+    const std::vector<std::unique_ptr<Expr>> &getArgs() const { return arguments; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::string name;
+    std::vector<std::unique_ptr<Expr>> arguments;
+};
+
+class FunctionRefExpr : public Expr {
+public:
+    explicit FunctionRefExpr(std::string name) : funcName(std::move(name)) {}
+    const std::string &getName() const { return funcName; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::string funcName;
+};
+
+class SuperExpr : public Expr {
+public:
+    SuperExpr() = default;
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+};
+
 class ListExpr : public Expr {
 public:
     explicit ListExpr(std::vector<std::unique_ptr<Expr>> values)
@@ -232,6 +299,8 @@ public:
         : base(std::move(baseExpr)), index(std::move(indexExpr)) {}
     Expr *getBase() const { return base.get(); }
     Expr *getIndex() const { return index.get(); }
+    std::unique_ptr<Expr> takeBase() { return std::move(base); }
+    std::unique_ptr<Expr> takeIndex() { return std::move(index); }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::unique_ptr<Expr> base;
@@ -244,10 +313,20 @@ public:
         : base(std::move(baseExpr)), member(std::move(memberName)) {}
     Expr *getBase() const { return base.get(); }
     const std::string &getMember() const { return member; }
+    std::unique_ptr<Expr> takeBase() { return std::move(base); }
+    void setExceptionAccess(bool value) { exceptionAccess = value; }
+    bool isExceptionAccess() const { return exceptionAccess; }
+    void setStaticField(const std::string &name) { staticField = name; }
+    const std::string &getStaticField() const { return staticField; }
+    void setResolvedType(const std::string &type) { resolvedType = type; }
+    const std::string &getResolvedType() const { return resolvedType; }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::unique_ptr<Expr> base;
     std::string member;
+    bool exceptionAccess = false;
+    std::string staticField;
+    std::string resolvedType;
 };
 
 class PrintStmt : public Stmt {
@@ -379,11 +458,6 @@ private:
 
 class FunctionStmt : public Stmt {
 public:
-    struct Param {
-        std::string type;
-        std::string name;
-    };
-
     FunctionStmt(std::string n,
                  std::vector<Param> p,
                  std::string r,
@@ -399,6 +473,55 @@ private:
     std::vector<Param> params;
     std::string returnType;
     std::unique_ptr<BlockStmt> body;
+};
+
+class ClassStmt : public Stmt {
+public:
+    struct FieldDecl {
+        std::string type;
+        std::string name;
+        bool isStatic = false;
+        bool isPrivate = false;
+        std::unique_ptr<Expr> init;
+    };
+
+    struct MethodDecl {
+        std::string name;
+        std::vector<Param> params;
+        std::string returnType;
+        std::unique_ptr<BlockStmt> body;
+        bool isStatic = false;
+        bool isOverride = false;
+        bool isPrivate = false;
+    };
+
+    struct CtorDecl {
+        std::vector<Param> params;
+        std::unique_ptr<BlockStmt> body;
+    };
+
+    ClassStmt(std::string name,
+              std::string baseName,
+              std::vector<FieldDecl> fields,
+              std::vector<MethodDecl> methods,
+              std::vector<CtorDecl> ctors)
+        : name(std::move(name)),
+          base(std::move(baseName)),
+          fields(std::move(fields)),
+          methods(std::move(methods)),
+          ctors(std::move(ctors)) {}
+    const std::string &getName() const { return name; }
+    const std::string &getBase() const { return base; }
+    const std::vector<FieldDecl> &getFields() const { return fields; }
+    const std::vector<MethodDecl> &getMethods() const { return methods; }
+    const std::vector<CtorDecl> &getConstructors() const { return ctors; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::string name;
+    std::string base;
+    std::vector<FieldDecl> fields;
+    std::vector<MethodDecl> methods;
+    std::vector<CtorDecl> ctors;
 };
 
 class WhileStmt : public Stmt {

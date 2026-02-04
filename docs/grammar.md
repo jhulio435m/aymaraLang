@@ -27,6 +27,17 @@ tokenización están implementadas en `compiler/lexer/lexer.cpp`.
 | `KeywordCatch` | `katjaña` | Bloque `catch` |
 | `KeywordFinally` | `tukuyawi` | Bloque `finally` |
 | `KeywordThrow` | `pantja` | Lanzar excepción |
+| `KeywordClass` | `kasta` | Definición de clases |
+| `KeywordNew` | `machaqa` | Crear instancia |
+| `KeywordThis` | `aka` | Referencia al objeto actual |
+| `KeywordExtends` | `jila` | Herencia |
+| `KeywordOverride` | `jikxata` | Sobrescribir método |
+| `KeywordPrivate` | `sapa` | Modificador privado |
+| `KeywordPublic` | `taqi` | Modificador público |
+| `KeywordStatic` | `sapakasta` | Modificador estático |
+| `KeywordGetter` | `uñt'aya` | Nombre reservado para getter |
+| `KeywordSetter` | `chura` | Nombre reservado para setter |
+| `KeywordSuper` | `jilaaka` | Referencia al padre |
 | `KeywordTypeNumber` | `jakhüwi` | Tipo numérico |
 | `KeywordTypeString` | `aru` | Tipo cadena |
 | `KeywordTypeBool` | `chiqa` | Tipo booleano |
@@ -66,7 +77,7 @@ Los símbolos se mantienen sin cambios:
 ```ebnf
 programa      = [ "qallta" ] { sentencia } [ "tukuya" ] ;
 
-sentencia     = decl | asigna | if | while | for | func_def
+sentencia     = decl | asigna | if | while | for | func_def | class_def
               | retorno | salida | continuar | imprimir | importar
               | try | throw | bloque | ";" ;
 
@@ -74,7 +85,7 @@ bloque        = "{" { sentencia } "}" ;
 
 decl          = "yatiya" tipo id [ "=" expr ] ";" ;
 
-tipo          = "jakhüwi" | "aru" | "chiqa" | "listaña" | "t'aqa" | "mapa" ;
+tipo          = "jakhüwi" | "aru" | "chiqa" | "listaña" | "t'aqa" | "mapa" | id ;
 
 asigna        = id "=" expr ";" ;
 
@@ -88,6 +99,12 @@ asigna_np     = id "=" expr ;
 func_def      = "lurawi" id "(" [ params ] ")" [ ":" tipo ] bloque ;
 params        = param { "," param } ;
 param         = tipo id ;
+
+class_def     = "kasta" id [ "jila" id ] "{" { class_member } "}" ;
+class_member  = { modificador } ( decl | metodo | ctor ) ;
+modificador   = "sapa" | "taqi" | "sapakasta" | "jikxata" ;
+metodo        = "lurawi" id "(" [ params ] ")" [ ":" tipo ] bloque ;
+ctor          = "qallta" "(" [ params ] ")" bloque ;
 
 retorno       = "kuttaya" [ expr ] ";" ;
 salida        = "p'akhiña" ";" ;
@@ -117,6 +134,7 @@ multi         = unario { ("*" | "/" | "%") unario } ;
 unario        = [ "!" | "-" ] primario ;
 
 primario      = num | str | ("utji" | "chiqa") | ("janiutji" | "k'ari")
+              | "machaqa" id "(" [ args ] ")" | "aka" | "jilaaka"
               | id | llamada | "(" expr ")" | lista ;
 
 llamada       = id "(" [ args ] ")" ;

@@ -1,134 +1,13 @@
-#include "codegen.h"
-#include "../ast/ast.h"
+#include "codegen_impl.h"
 #include "../builtins/builtins.h"
-#include <fstream>
+#include "../utils/fs.h"
+#include "../utils/class_names.h"
+#include <algorithm>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
-#include <cstdlib>
-#include <cstddef>
-#include "../utils/fs.h"
-#include <unordered_map>
-#include <unordered_set>
-#include <algorithm>
 
 namespace aym {
-
-namespace {
-size_t labelCounter = 0;
-std::string genLabel(const std::string &base) {
-    return base + std::to_string(labelCounter++);
-}
-
-std::string lowerName(const std::string &value) {
-    std::string out = value;
-    std::transform(out.begin(), out.end(), out.begin(),
-                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
-    return out;
-}
-
-std::string toAsmBytes(const std::string &value) {
-    std::ostringstream oss;
-    for (size_t i = 0; i < value.size(); ++i) {
-        if (i > 0) oss << ", ";
-        oss << static_cast<unsigned int>(static_cast<unsigned char>(value[i]));
-    }
-    if (!value.empty()) oss << ", ";
-    oss << "0";
-    return oss.str();
-}
-
-std::vector<std::string> paramRegs(bool windows) {
-    if (windows)
-        return {"rcx","rdx","r8","r9"};
-    return {"rdi","rsi","rdx","rcx","r8","r9"};
-}
-
-std::string reg1(bool windows) { return windows ? "rcx" : "rdi"; }
-std::string reg2(bool windows) { return windows ? "rdx" : "rsi"; }
-}
-
-class CodeGenImpl {
-public:
-    std::ofstream out;
-    std::unordered_set<std::string> globals;
-    std::vector<std::string> strings;
-    bool windows = false;
-    size_t findString(const std::string &val) const {
-        for (size_t i = 0; i < strings.size(); ++i) {
-            if (strings[i] == val) return i;
-        }
-        return strings.size();
-    }
-
-    struct FunctionInfo {
-        const FunctionStmt *node;
-        std::vector<std::string> locals;
-        std::unordered_map<std::string,bool> stringLocals;
-        std::unordered_map<std::string,std::string> localTypes;
-    };
-
-    std::vector<FunctionInfo> functions;
-    std::vector<const Stmt*> mainStmts;
-    std::unordered_map<std::string, std::vector<std::string>> paramTypes;
-    std::unordered_map<std::string,bool> currentParamStrings;
-    std::unordered_map<std::string,bool> currentLocalStrings;
-    std::unordered_map<std::string,std::string> currentParamTypes;
-    std::unordered_map<std::string,std::string> currentLocalTypes;
-    std::unordered_map<std::string,std::string> globalTypes;
-    std::unordered_map<std::string,std::string> functionReturnTypes;
-    std::vector<std::string> breakLabels;
-    std::vector<std::string> continueLabels;
-    std::vector<std::string> finallyStack;
-    std::vector<size_t> loopFinallyDepth;
-    std::vector<size_t> throwFinallyLimitStack;
-    size_t tryTempCounter = 0;
-    long seed = -1;
-
-    void emit(const std::vector<std::unique_ptr<Node>> &nodes,
-              const std::string &path,
-              const std::unordered_set<std::string> &semGlobals,
-              const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
-              const std::unordered_map<std::string,std::string> &functionReturnTypesIn,
-              const std::unordered_map<std::string,std::string> &globalTypesIn,
-              bool windows,
-              long seedIn,
-              const std::string &runtimeDirIn);
-private:
-    void collectStrings(const Expr *expr);
-    void collectLocals(const Stmt *stmt,
-                       std::vector<std::string> &locs,
-                       std::unordered_map<std::string,bool> &strs,
-                       std::unordered_map<std::string,std::string> &types);
-    void collectGlobal(const Stmt *stmt);
-    void assignTrySlots(Stmt *stmt);
-    bool isStringExpr(const Expr *expr,
-                      const std::unordered_map<std::string,int> *locals) const;
-    bool isBoolExpr(const Expr *expr,
-                    const std::unordered_map<std::string,int> *locals) const;
-    bool isListExpr(const Expr *expr,
-                    const std::unordered_map<std::string,int> *locals) const;
-    bool isMapExpr(const Expr *expr,
-                   const std::unordered_map<std::string,int> *locals) const;
-    std::string listElementType(const Expr *expr,
-                                const std::unordered_map<std::string,int> *locals) const;
-    std::string mapValueType(const Expr *expr,
-                             const std::unordered_map<std::string,int> *locals) const;
-    void emitPrintValue(const Expr *expr,
-                        const std::unordered_map<std::string,int> *locals);
-    void emitPrintList(const Expr *expr,
-                       const std::unordered_map<std::string,int> *locals);
-    void emitPrintMap(const Expr *expr,
-                      const std::unordered_map<std::string,int> *locals);
-    void emitPrintDefault(const std::string &label);
-
-    void emitStmt(const Stmt *stmt,
-                  const std::unordered_map<std::string,int> *locals,
-                  const std::string &endLabel);
-    void emitExpr(const Expr *expr,
-                  const std::unordered_map<std::string,int> *locals);
-    void emitFunction(const FunctionInfo &info);
-    void emitInput(bool asString);
-};
 
 void CodeGenImpl::collectStrings(const Expr *expr) {
     if (!expr) return;
@@ -174,8 +53,37 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
         for (const auto &a : c->getArgs()) collectStrings(a.get());
         return;
     }
+    if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
+        for (const auto &a : m->getArgs()) collectStrings(a.get());
+        collectStrings(m->getBase());
+        if (std::find(strings.begin(), strings.end(), m->getMember()) == strings.end()) {
+            strings.push_back(m->getMember());
+        }
+        if (dynamic_cast<const SuperExpr*>(m->getBase())) {
+            std::string superKey = classSuperKey(m->getMember());
+            if (std::find(strings.begin(), strings.end(), superKey) == strings.end()) {
+                strings.push_back(superKey);
+            }
+        }
+        return;
+    }
+    if (auto *n = dynamic_cast<const NewExpr*>(expr)) {
+        for (const auto &a : n->getArgs()) collectStrings(a.get());
+        return;
+    }
+    if (auto *f = dynamic_cast<const FunctionRefExpr*>(expr)) {
+        (void)f;
+        return;
+    }
+    if (auto *s = dynamic_cast<const SuperExpr*>(expr)) {
+        (void)s;
+        return;
+    }
     if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
         collectStrings(m->getBase());
+        if (std::find(strings.begin(), strings.end(), m->getMember()) == strings.end()) {
+            strings.push_back(m->getMember());
+        }
         return;
     }
 }
@@ -517,8 +425,16 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
         }
         return listElementType(i->getBase(), locals) == "aru";
     }
-    if (dynamic_cast<const MemberExpr*>(expr)) {
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        if (!m->getResolvedType().empty()) {
+            return m->getResolvedType() == "aru";
+        }
         return true;
+    }
+    if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
+        if (!m->getResolvedType().empty()) {
+            return m->getResolvedType() == "aru";
+        }
     }
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
         if (currentParamStrings.count(v->getName()) && currentParamStrings.at(v->getName())) return true;
@@ -569,12 +485,22 @@ bool CodeGenImpl::isMapExpr(const Expr *expr,
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
         auto it = globalTypes.find(v->getName());
         if (it != globalTypes.end() && it->second.rfind("mapa", 0) == 0) return true;
+        if (it != globalTypes.end() && it->second.rfind("kasta:", 0) == 0) return true;
         if (currentParamTypes.count(v->getName()) &&
             currentParamTypes.at(v->getName()).rfind("mapa", 0) == 0)
+            return true;
+        if (currentParamTypes.count(v->getName()) &&
+            currentParamTypes.at(v->getName()).rfind("kasta:", 0) == 0)
             return true;
         if (currentLocalTypes.count(v->getName()) &&
             currentLocalTypes.at(v->getName()).rfind("mapa", 0) == 0)
             return true;
+        if (currentLocalTypes.count(v->getName()) &&
+            currentLocalTypes.at(v->getName()).rfind("kasta:", 0) == 0)
+            return true;
+    }
+    if (dynamic_cast<const NewExpr*>(expr)) {
+        return true;
     }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
@@ -923,10 +849,10 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     currentParamTypes.clear();
     currentLocalStrings = info.stringLocals;
     currentLocalTypes = info.localTypes;
-    auto pit = paramTypes.find(info.node->getName());
+    auto pit = paramTypes.find(info.name);
     if (pit != paramTypes.end()) {
         size_t idx = 0;
-        for (const auto &p : info.node->getParams()) {
+        for (const auto &p : info.params) {
             if (idx < pit->second.size()) {
                 currentParamTypes[p.name] = pit->second[idx];
                 if (pit->second[idx] == "aru") currentParamStrings[p.name] = true;
@@ -937,7 +863,7 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
 
     std::string endLabel = genLabel("endfunc");
 
-    out << info.node->getName() << ":\n";
+    out << info.name << ":\n";
     out << "    push rbp\n";
     out << "    mov rbp, rsp\n";
     // rbx is callee-saved on both SysV and Win64 ABIs
@@ -947,14 +873,14 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     // store parameters
     std::vector<std::string> regs = paramRegs(this->windows);
     size_t idx = 0;
-    for (const auto &p : info.node->getParams()) {
+    for (const auto &p : info.params) {
         if (idx < regs.size()) {
             out << "    mov [rbp-" << offsets[p.name] << "], " << regs[idx] << "\n";
         }
         ++idx;
     }
 
-    emitStmt(info.node->getBody(), &offsets, endLabel);
+    emitStmt(info.body, &offsets, endLabel);
 
     out << endLabel << ":\n";
     if (stackSize) out << "    add rsp, " << stackSize << "\n";
@@ -1007,6 +933,17 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
     }
     if (auto *a = dynamic_cast<const IndexAssignStmt *>(stmt)) {
         std::vector<std::string> regs = paramRegs(this->windows);
+        if (auto *baseVar = dynamic_cast<const VariableExpr*>(a->getBase())) {
+            auto classIt = classes.find(baseVar->getName());
+            if (classIt != classes.end()) {
+                if (auto *indexLit = dynamic_cast<const StringExpr*>(a->getIndex())) {
+                    emitExpr(a->getValue(), locals);
+                    std::string staticName = classStaticFieldName(baseVar->getName(), indexLit->getValue());
+                    out << "    mov [rel " << staticName << "], rax\n";
+                    return;
+                }
+            }
+        }
         emitExpr(a->getValue(), locals);
         out << "    mov r14, rax\n";
         emitExpr(a->getIndex(), locals);
@@ -1413,14 +1350,24 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         return;
     }
     if (auto *m = dynamic_cast<const MemberExpr *>(expr)) {
+        if (!m->getStaticField().empty()) {
+            out << "    mov rax, [rel " << m->getStaticField() << "]\n";
+            return;
+        }
         emitExpr(m->getBase(), locals);
         out << "    mov " << reg1(this->windows) << ", rax\n";
-        if (m->getMember() == "suti") {
-            out << "    call aym_exception_type\n";
-        } else if (m->getMember() == "aru") {
-            out << "    call aym_exception_message\n";
+        if (m->isExceptionAccess()) {
+            if (m->getMember() == "suti") {
+                out << "    call aym_exception_type\n";
+            } else if (m->getMember() == "aru") {
+                out << "    call aym_exception_message\n";
+            } else {
+                out << "    mov rax, 0\n";
+            }
         } else {
-            out << "    mov rax, 0\n";
+            size_t keyIdx = findString(m->getMember());
+            out << "    lea " << reg2(this->windows) << ", [rel str" << keyIdx << "]\n";
+            out << "    call aym_map_get\n";
         }
         return;
     }
@@ -1594,6 +1541,25 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         emitExpr(t->getElse(), locals);
         out << endLbl << ":\n";
         return;
+    }
+    if (auto *n = dynamic_cast<const NewExpr *>(expr)) {
+        if (emitNewExpr(n, locals)) {
+            return;
+        }
+    }
+    if (auto *m = dynamic_cast<const MemberCallExpr *>(expr)) {
+        if (emitMemberCallExpr(m, locals)) {
+            return;
+        }
+    }
+    if (auto *f = dynamic_cast<const FunctionRefExpr *>(expr)) {
+        out << "    lea rax, [rel " << f->getName() << "]\n";
+        return;
+    }
+    if (auto *s = dynamic_cast<const SuperExpr *>(expr)) {
+        if (emitSuperExpr(s, locals)) {
+            return;
+        }
     }
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
         std::string nameLower = lowerName(c->getName());
@@ -1910,7 +1876,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
 
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
-            FunctionInfo info; info.node = fn;
+            FunctionInfo info;
+            info.name = fn->getName();
+            info.params = fn->getParams();
+            info.body = fn->getBody();
             assignTrySlots(fn->getBody());
             for (const auto &param : fn->getParams()) {
                 info.locals.push_back(param.name);
@@ -1920,12 +1889,16 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
             }
             collectLocals(fn->getBody(), info.locals, info.stringLocals, info.localTypes);
             functions.push_back(std::move(info));
+        } else if (auto *cls = dynamic_cast<ClassStmt*>(n.get())) {
+            registerClass(cls);
         } else {
             assignTrySlots(static_cast<Stmt*>(n.get()));
             mainStmts.push_back(static_cast<const Stmt*>(n.get()));
             collectGlobal(static_cast<const Stmt*>(n.get()));
         }
     }
+
+    collectClassStrings();
 
     std::ofstream fout(path);
     out.swap(fout);
