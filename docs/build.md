@@ -46,11 +46,20 @@ Para empaquetar el compilador y todos los recursos en `dist/`:
 ./scripts/build_dist.ps1 -Config Release
 ```
 
+Si necesitas compilar con LLVM, habilítalo y especifica la ruta donde está
+`LLVMConfig.cmake`:
+
+```powershell
+./scripts/build_dist.ps1 -Config Release -EnableLLVM -LLVMDir "C:\\Program Files\\LLVM\\lib\\cmake\\llvm"
+```
+
 El ejecutable resultante queda en `dist\bin\aymc.exe`.
 
 ### Generar instaladores de Windows (MSI y EXE)
 
-Una vez que `dist/` está listo, genera los instaladores:
+Una vez que `dist/` está listo, genera los instaladores **por separado**. No
+hay un script `build_all.ps1`; ejecuta el que corresponda al instalador que
+necesitas:
 
 ```powershell
 ./scripts/build_msi.ps1
@@ -60,7 +69,8 @@ Una vez que `dist/` está listo, genera los instaladores:
 El MSI se guarda en `artifacts/AymaraLang-Setup.msi` y el EXE en
 `artifacts/AymaraLang-Setup.exe`.
 
-> Nota: ambos instaladores usan `assets/logo.ico` como icono.
+> Nota: ambos instaladores usan `assets/logo.ico` como icono. El build de NSIS
+> puede tardar varios minutos dependiendo del antivirus y del tamaño de `dist/`.
 
 ### Generar paquete `.deb` (Linux)
 
@@ -111,6 +121,10 @@ cmake --build build -j
 ```
 
 Binario resultante: `build/bin/aymc.exe`.
+
+> Nota: si usas el generador de Visual Studio, el binario queda en
+> `build\bin\Release\aymc.exe` (o en la carpeta que corresponda a la
+> configuración seleccionada).
 
 ## Uso del compilador
 
