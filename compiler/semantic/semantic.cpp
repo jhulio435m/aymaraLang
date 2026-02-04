@@ -67,6 +67,7 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         void visit(IncDecExpr&) override {}
         void visit(CallExpr&) override {}
         void visit(ListExpr&) override {}
+        void visit(MapExpr&) override {}
         void visit(IndexExpr&) override {}
         void visit(MemberExpr&) override {}
         void visit(PrintStmt&) override {}
@@ -137,6 +138,14 @@ void SemanticAnalyzer::visit(IndexAssignStmt &a) {
             std::cerr << "Error: tipo incompatible en asignacion de lista" << std::endl;
         }
         currentType = elementType;
+    } else if (baseType.rfind("mapa:", 0) == 0) {
+        std::string elementType = baseType.substr(5);
+        if (!elementType.empty() && valueType != elementType) {
+            std::cerr << "Error: tipo incompatible en asignacion de mapa" << std::endl;
+        }
+        currentType = elementType;
+    } else if (baseType == "mapa") {
+        currentType = valueType;
     } else {
         std::cerr << "Error: se esperaba una lista para asignacion por indice" << std::endl;
     }
@@ -155,6 +164,13 @@ void SemanticAnalyzer::visit(VarDeclStmt &v) {
             declaredType = t;
         } else if (t.empty()) {
             declaredType = "t'aqa:jakhüwi";
+        }
+    }
+    if (declaredType == "mapa") {
+        if (t.rfind("mapa:", 0) == 0) {
+            declaredType = t;
+        } else if (t.empty()) {
+            declaredType = "mapa:jakhüwi";
         }
     }
     declare(v.getName(), declaredType);
@@ -348,6 +364,10 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         if (c.getArgs().size() < 1 || c.getArgs().size() > 2) {
             std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c.getName() << "'" << std::endl;
         }
+    } else if (nameLower == BUILTIN_CHANI_M) {
+        if (c.getArgs().size() < 2 || c.getArgs().size() > 3) {
+            std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c.getName() << "'" << std::endl;
+        }
     } else if (c.getArgs().size() != it->second) {
         std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c.getName() << "'" << std::endl;
     }
@@ -373,10 +393,41 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         currentType = "aru";
     } else if (nameLower == "largo" || nameLower == BUILTIN_SUYU || nameLower == BUILTIN_SUYUT) {
         currentType = "jakhüwi";
-    } else if (nameLower == BUILTIN_UTJI || nameLower == BUILTIN_UTJIT) {
+    } else if (nameLower == BUILTIN_SUYU_M) {
+        currentType = "jakhüwi";
+    } else if (nameLower == BUILTIN_UTJI || nameLower == BUILTIN_UTJIT || nameLower == BUILTIN_UTJI_SUTI) {
         currentType = "chiqa";
     } else if (nameLower == BUILTIN_JALJTA) {
         currentType = "t'aqa:aru";
+    } else if (nameLower == BUILTIN_SUTINAKA) {
+        currentType = "t'aqa:aru";
+    } else if (nameLower == BUILTIN_CHANINAKA) {
+        if (!c.getArgs().empty()) {
+            c.getArgs()[0]->accept(*this);
+            std::string baseType = currentType;
+            if (baseType.rfind("mapa:", 0) == 0) {
+                currentType = "t'aqa:" + baseType.substr(5);
+            } else {
+                currentType = "t'aqa:jakhüwi";
+            }
+        } else {
+            currentType = "t'aqa:jakhüwi";
+        }
+    } else if (nameLower == BUILTIN_CHANI_M) {
+        if (c.getArgs().size() == 3) {
+            c.getArgs()[2]->accept(*this);
+            currentType = currentType;
+        } else if (!c.getArgs().empty()) {
+            c.getArgs()[0]->accept(*this);
+            std::string baseType = currentType;
+            if (baseType.rfind("mapa:", 0) == 0) {
+                currentType = baseType.substr(5);
+            } else {
+                currentType = "jakhüwi";
+            }
+        } else {
+            currentType = "jakhüwi";
+        }
     } else if (nameLower == "push" || nameLower == BUILTIN_CHULLU) {
         if (!c.getArgs().empty()) {
             c.getArgs()[0]->accept(*this);
@@ -436,12 +487,46 @@ void SemanticAnalyzer::visit(ListExpr &l) {
     lastInputCall = false;
 }
 
+void SemanticAnalyzer::visit(MapExpr &m) {
+    std::string valueType;
+    bool sawValue = false;
+    for (const auto &item : m.getItems()) {
+        item.first->accept(*this);
+        std::string keyType = currentType;
+        if (keyType != "aru") {
+            std::cerr << "Error: clave de mapa debe ser texto" << std::endl;
+        }
+        item.second->accept(*this);
+        std::string t = currentType;
+        if (!sawValue) {
+            valueType = t;
+            sawValue = true;
+        } else if (!valueType.empty() && t != valueType) {
+            valueType.clear();
+        }
+    }
+    if (!sawValue) {
+        currentType = "mapa:jakhüwi";
+    } else if (!valueType.empty()) {
+        currentType = "mapa:" + valueType;
+    } else {
+        currentType = "mapa";
+    }
+    lastInputCall = false;
+}
+
 void SemanticAnalyzer::visit(IndexExpr &i) {
     i.getBase()->accept(*this);
     std::string baseType = currentType;
     i.getIndex()->accept(*this);
     if (baseType.rfind("t'aqa:", 0) == 0) {
         currentType = baseType.substr(6);
+    } else if (baseType.rfind("mapa", 0) == 0) {
+        if (baseType.rfind("mapa:", 0) == 0) {
+            currentType = baseType.substr(5);
+        } else {
+            currentType = "jakhüwi";
+        }
     } else {
         std::cerr << "Error: se esperaba una lista para indexacion" << std::endl;
         currentType = "";

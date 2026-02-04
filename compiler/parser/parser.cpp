@@ -793,7 +793,9 @@ std::unique_ptr<Expr> Parser::parseFactor() {
             node->setLocation(idTok.line, idTok.column);
             while (match(TokenType::Dot)) {
                 Token dotTok = tokens[pos-1];
-                if (peek().type != TokenType::Identifier) {
+                if (peek().type != TokenType::Identifier &&
+                    peek().type != TokenType::KeywordIf &&
+                    peek().type != TokenType::KeywordTypeString) {
                     parseError("se esperaba nombre de miembro despues de '.'");
                     break;
                 }
@@ -814,7 +816,9 @@ std::unique_ptr<Expr> Parser::parseFactor() {
             node->setLocation(idTok.line, idTok.column);
             while (match(TokenType::Dot)) {
                 Token dotTok = tokens[pos-1];
-                if (peek().type != TokenType::Identifier) {
+                if (peek().type != TokenType::Identifier &&
+                    peek().type != TokenType::KeywordIf &&
+                    peek().type != TokenType::KeywordTypeString) {
                     parseError("se esperaba nombre de miembro despues de '.'");
                     break;
                 }
@@ -835,7 +839,9 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         }
         while (match(TokenType::Dot)) {
             Token dotTok = tokens[pos-1];
-            if (peek().type != TokenType::Identifier) {
+            if (peek().type != TokenType::Identifier &&
+                peek().type != TokenType::KeywordIf &&
+                peek().type != TokenType::KeywordTypeString) {
                 parseError("se esperaba nombre de miembro despues de '.'");
                 break;
             }
@@ -963,19 +969,8 @@ std::unique_ptr<Expr> Parser::parseMapLiteral(const Token &tok) {
     if (!match(TokenType::RBrace)) {
         parseError("se esperaba '}' en mapa");
     }
-    std::vector<std::unique_ptr<Expr>> parts;
-    parts.push_back(std::make_unique<StringExpr>("{"));
-    for (size_t i = 0; i < items.size(); ++i) {
-        if (i > 0) {
-            parts.push_back(std::make_unique<StringExpr>(", "));
-        }
-        parts.push_back(ensureString(std::move(items[i].first)));
-        parts.push_back(std::make_unique<StringExpr>(": "));
-        parts.push_back(ensureString(std::move(items[i].second)));
-    }
-    parts.push_back(std::make_unique<StringExpr>("}"));
-    auto node = chainConcat(std::move(parts));
-    if (node) node->setLocation(tok.line, tok.column);
+    auto node = std::make_unique<MapExpr>(std::move(items));
+    node->setLocation(tok.line, tok.column);
     return node;
 }
 

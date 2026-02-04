@@ -17,6 +17,7 @@ class TernaryExpr;
 class IncDecExpr;
 class CallExpr;
 class ListExpr;
+class MapExpr;
 class IndexExpr;
 class MemberExpr;
 class PrintStmt;
@@ -51,6 +52,7 @@ public:
     virtual void visit(IncDecExpr &) = 0;
     virtual void visit(CallExpr &) = 0;
     virtual void visit(ListExpr &) = 0;
+    virtual void visit(MapExpr &) = 0;
     virtual void visit(IndexExpr &) = 0;
     virtual void visit(MemberExpr &) = 0;
     virtual void visit(PrintStmt &) = 0;
@@ -210,6 +212,18 @@ public:
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::vector<std::unique_ptr<Expr>> elements;
+};
+
+class MapExpr : public Expr {
+public:
+    explicit MapExpr(std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<Expr>>> entries)
+        : items(std::move(entries)) {}
+    const std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<Expr>>> &getItems() const {
+        return items;
+    }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<Expr>>> items;
 };
 
 class IndexExpr : public Expr {
