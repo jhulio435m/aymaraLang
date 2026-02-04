@@ -7,6 +7,7 @@ namespace aym {
 
 std::string readFile(const std::string &path);
 std::string executableDir();
+std::string getEnvVar(const std::string &name);
 
 } // namespace aym
 

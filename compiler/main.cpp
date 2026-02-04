@@ -13,16 +13,15 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include <cstdlib>
 #include "utils/fs.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(AYM_WITH_LLVM)
 static bool isLLVMBackendInstalled() {
-    const char* programFiles = std::getenv("ProgramW6432");
-    if (!programFiles) {
-        programFiles = std::getenv("ProgramFiles");
+    std::string programFiles = aym::getEnvVar("ProgramW6432");
+    if (programFiles.empty()) {
+        programFiles = aym::getEnvVar("ProgramFiles");
     }
-    if (!programFiles) {
+    if (programFiles.empty()) {
         return false;
     }
     fs::path backendDir = fs::path(programFiles) / "AymaraLang" / "llvm-backend";

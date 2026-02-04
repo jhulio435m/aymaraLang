@@ -5,7 +5,6 @@
 #include "../ast/ast.h"
 #include <algorithm>
 #include <cctype>
-#include <cstdlib>
 #include <sstream>
 #include <stdexcept>
 
@@ -31,8 +30,8 @@ std::string pathKey(const fs::path &path) {
 ModuleResolver::ModuleResolver() {
     addIfUnique(fs::current_path());
     addIfUnique(fs::current_path() / "modules");
-    if (const char *env = std::getenv("AYM_PATH")) {
-        std::string raw(env);
+    std::string raw = getEnvVar("AYM_PATH");
+    if (!raw.empty()) {
         size_t start = 0;
         while (start <= raw.size()) {
             size_t pos = raw.find(PATH_SEP, start);
