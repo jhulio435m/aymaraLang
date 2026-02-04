@@ -162,9 +162,15 @@ int main(int argc, char** argv) {
     (void)useLLVMBackend; // suprimir advertencias cuando LLVM está deshabilitado
 #endif
 
-    fs::path runtimeDir = fs::path(aym::executableDir()) / "runtime";
+    fs::path exeDir = fs::path(aym::executableDir());
+    fs::path runtimeDir = exeDir / "runtime";
     if (!fs::exists(runtimeDir)) {
-        runtimeDir = fs::path("runtime");
+        fs::path sharedRuntime = exeDir / ".." / "share" / "aymaraLang" / "runtime";
+        if (fs::exists(sharedRuntime)) {
+            runtimeDir = sharedRuntime;
+        } else {
+            runtimeDir = fs::path("runtime");
+        }
     }
 
     aym::CodeGenerator cg;

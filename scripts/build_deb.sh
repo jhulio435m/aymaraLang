@@ -31,6 +31,17 @@ if [ ! -f "${ICON_FILE}" ]; then
   echo "No se encontró ${ICON_FILE}. Verifica el icono en assets/." >&2
   exit 1
 fi
+RUNTIME_SRC_DIR="${ROOT_DIR}/runtime"
+RUNTIME_DIST_DIR="${DIST_DIR}/share/aymaraLang/runtime"
+if [ ! -d "${RUNTIME_DIST_DIR}" ]; then
+  if [ ! -d "${RUNTIME_SRC_DIR}" ]; then
+    echo "No se encontró ${RUNTIME_SRC_DIR}. Verifica los archivos runtime." >&2
+    exit 1
+  fi
+  echo "No se encontró runtime en dist. Copiando ${RUNTIME_SRC_DIR} a ${RUNTIME_DIST_DIR}..."
+  mkdir -p "${RUNTIME_DIST_DIR}"
+  cp -R "${RUNTIME_SRC_DIR}/." "${RUNTIME_DIST_DIR}/"
+fi
 
 VERSION_FILE="${ROOT_DIR}/VERSION.txt"
 VERSION="0.1.0"
