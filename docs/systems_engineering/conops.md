@@ -10,6 +10,17 @@ Describir cómo los usuarios interactúan con AymaraLang y su compilador `aymc` 
 3. Ejecutan `aymc` para compilar y correr los binarios.
 4. Se analiza salida para reforzar conceptos de programación.
 
+```mermaid
+sequenceDiagram
+    participant D as Docente
+    participant E as Estudiante
+    participant C as aymc
+    D->>E: entrega ejercicios .aym
+    E->>C: compila programa
+    C-->>E: binario ejecutable
+    E-->>D: resultados/retroalimentación
+```
+
 ### 2.2 Uso comunitario y cultural
 1. Creación de materiales educativos en aymara.
 2. Publicación de ejemplos y ejercicios.

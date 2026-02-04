@@ -1,166 +1,61 @@
-# Referencia del lenguaje
+# Referencia rápida del lenguaje
 
-Esta referencia describe la sintaxis completa, operadores, palabras clave y
-funciones integradas de AymaraLang. Está pensada para consulta rápida durante el
-desarrollo.
+Esta página resume lo esencial del lenguaje para consulta rápida. Para la
+gramática formal revisa [Gramática](grammar.md).
 
-## Tipos soportados
+## Tipos
 
-- `jakhüwi` → números enteros
-- `aru` → cadenas
-- `chiqa` → booleanos
-- `t'aqa` / `listaña` → listas (soporte inicial)
-- `mapa` → mapas (experimental)
+- `jakhüwi` (numérico)
+- `aru` (texto)
+- `chiqa` (booleano)
+- `t'aqa` / `listaña` (listas)
+- `mapa` (mapas)
 
-### Valores booleanos
+## Literales
 
-En `aym` los literales lógicos utilizan vocabulario aymara. La palabra `chiqa`
-(`utji`) representa **verdadero** (`true`) y `k'ari` (`janiutji`) equivale a
-**falso** (`false`). Son útiles para inicializar variables y para las
-condiciones en estructuras de control.
+- Booleanos: `chiqa` / `k'ari` (legacy: `utji` / `janiutji`).
+- Números: decimales, `0x` (hex) y `0b` (binario).
+- Cadenas: comillas simples o dobles con escapes.
 
-> Nota: `utji` también existe como función `utji(texto, sub)` (contiene). Cuando
-> se usa con paréntesis se interpreta como función; como literal se mantiene el
-> valor lógico.
+## Estructuras principales
 
-```aymara
-yatiya chiqa bandera = chiqa;
-jisa (bandera) {
-    qillqa("activado");
-}
+- Condicionales: `jisa` / `maysatxa`
+- Bucles: `ukhakamaxa`, `taki`
+- Funciones: `lurawi` / `kuttaya`
+- Clases: `kasta`, `machaqa`, `aka`, `jila`, `jikxata`, `sapa`, `taqi`, `sapakasta`, `uñt'aya`, `chura`, `jilaaka`
+- Excepciones: `yant'aña`, `katjaña`, `tukuyawi`, `pantja`
+- Módulos: `apnaq`
 
-yatiya chiqa otra = k'ari;
-jisa (otra) {
-    qillqa("esto no se imprime");
-} maysatxa {
-    qillqa("desactivado");
-}
+## Biblioteca estándar (built-ins)
+
+### Entrada/Salida y utilidades
+- `qillqa`, `write`, `input`, `katu`, `sleep`, `random`
+
+### Conversión y longitud
+- `aru`, `jakhüwi`, `length`, `largo`, `suyu`, `suyut`, `suyum`
+
+### Arreglos (dinámicos)
+- `array`, `array_get`, `array_set`, `array_free`, `array_length`
+
+### Texto
+- `ch'usa`, `jaljta`, `mayachta`, `sikta`, `utji`, `utjisuti`, `sutinaka`, `apsusuti`
+
+### Listas
+- `push`, `ch'ullu`, `apsu`, `apsuuka`, `utjit`, `chaninaka`, `chanim`
+
+### Matemática
+- `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`, `log`,
+  `log10`, `floor`, `ceil`, `round`, `fabs`
+
+```mermaid
+flowchart LR
+    Builtins[Funciones integradas] --> IO[Entrada/Salida]
+    Builtins --> Texto
+    Builtins --> Listas
+    Builtins --> Matematica
+    Builtins --> Arrays
 ```
-
-## Sintaxis soportada
-
-- Variables y asignación.
-- Impresión con `qillqa(expr)` y `write(str)`.
-- Control de flujo: `jisa`/`maysatxa`, `ukhakamaxa`, `taki`.
-- Funciones con `lurawi nombre(tipo param) { ... }`.
-- Expresiones aritméticas `+ - * / % ^` y operadores unarios `-expr`, `+expr`, `!expr`.
-- Operadores lógicos `&&`, `||`, `!`, comparaciones `== != < <= > >=`.
-- Comentarios `//` y `/* */`.
-- Lectura de consola con `katu(prompt, end)` o `input()`.
-- Longitud de cadenas con `length()` o `suyu()`.
-- Números aleatorios con `random(max)`.
-- Pausa de ejecución con `sleep(ms)`.
-- Arreglos dinámicos con `array(n)`, `array_get(arr, i)`, `array_set(arr, i, v)`,
-  `array_free(arr)`, `array_length(arr)`.
-- Listas con literales `[]`, `largo(lista)`/`suyut(lista)`, `push(lista, valor)`/`ch'ullu(lista, valor)`.
-- Texto: `ch'usa(texto)` (trim), `jaljta(texto, sep)` (split), `mayachta(lista, sep)` (join),
-  `sikta(texto, busca, cambia)` (replace), `utji(texto, sub)` (contains).
-- Listas: `apsu(lista)` (pop), `apsuuka(lista, i)` (removeAt), `utjit(lista, v)` (contains).
-- Funciones matemáticas con `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`,
-  `pow`, `exp`, `log`, `log10`, `floor`, `ceil`, `round`, `fabs`.
-- Operador ternario `cond ? a : b`.
-- Manejo de errores con `yant'aña`/`katjaña`/`tukuyawi` y `pantja`.
-
-## Ejemplos de sintaxis
-
-### Entrada y salida
-```aymara
-yatiya aru nombre = katu("Suti?: ", tuku="");
-qillqa(nombre);
-```
-
-### Arreglos dinámicos
-```aymara
-yatiya jakhüwi size = 3;
-yatiya jakhüwi arr = array(size);
-array_set(arr, 0, 10);
-array_set(arr, 1, 20);
-array_set(arr, 2, 30);
-qillqa(array_get(arr, 1));
-array_free(arr);
-```
-
-### Funciones y recursividad
-```aymara
-lurawi fact(jakhüwi n) : jakhüwi {
-    jisa (n == 0) {
-        kuttaya 1;
-    }
-    kuttaya n * fact(n - 1);
-}
-
-qillqa(fact(5));
-```
-
-### Bucle `taki`
-
-```aymara
-taki (yatiya jakhüwi x = 0; x < 4; x++) {
-    qillqa(x);
-}
-```
-
-## Errores comunes
-
-- Variable no declarada.
-- Tipos incompatibles en asignaciones o expresiones.
-- `return` fuera de una función.
-
-## Palabras clave
-
-`qillqa`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`,
-`array_length`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`,
-`log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `katu`, `largo`, `push`, `suyu`,
-`suyut`, `ch'usa`, `jaljta`, `mayachta`, `sikta`, `utji`, `ch'ullu`, `apsu`,
-`apsuuka`, `utjit`,
-`qallta`, `tukuya`, `yatiya`, `jisa`, `maysatxa`, `ukhakamaxa`, `taki`,
-`p'akhiña`, `sarantaña`, `lurawi`, `kuttaya`, `jakhüwi`, `aru`, `chiqa`,
-`t'aqa`, `listaña`, `mapa`, `k'ari`, `utji`, `janiutji`, `input`, `length`,
-`random`, `yant'aña`, `katjaña`, `tukuyawi`, `pantja`,
-`kasta`, `machaqa`, `aka`, `jila`, `jikxata`, `sapa`, `taqi`, `sapakasta`,
-`uñt'aya`, `chura`, `jilaaka`.
-
-## Glosario de palabras clave
-
-| Aimara / Español | Significado |
-|------------------|------------|
-| `qillqa`         | imprimir |
-| `write`          | imprimir sin salto |
-| `qallta`         | inicio de programa |
-| `tukuya`         | fin de programa |
-| `yatiya`         | declarar |
-| `jisa`           | if |
-| `maysatxa`       | else |
-| `ukhakamaxa`     | while |
-| `taki`           | for |
-| `p'akhiña`       | break |
-| `sarantaña`      | continue |
-| `lurawi`         | func |
-| `kuttaya`        | return |
-| `yant'aña`       | try |
-| `katjaña`        | catch |
-| `tukuyawi`       | finally |
-| `pantja`         | throw |
-| `kasta`          | class |
-| `machaqa`        | new |
-| `aka`            | this |
-| `jila`           | extends |
-| `jikxata`        | override |
-| `sapa`           | private |
-| `taqi`           | public |
-| `sapakasta`      | static |
-| `uñt'aya`        | getter (nombre reservado) |
-| `chura`          | setter (nombre reservado) |
-| `jilaaka`        | super |
-| `jakhüwi`        | numérico |
-| `aru`            | string |
-| `chiqa`          | bool / true |
-| `t'aqa`          | lista |
-| `mapa`           | mapa |
-| `utji`           | true (legacy) |
-| `k'ari`          | false |
-| `janiutji`       | false (legacy) |
 
 ---
 
-**Anterior:** [Guía de características](guide.md) | **Siguiente:** [Gramática formal](grammar.md)
+**Siguiente:** [Manejo de errores](exceptions.md)

@@ -11,39 +11,49 @@ theme:
   collapse_navigation: true
   sticky_navigation: true
 nav:
-  - Documentación: 
-    - Inicio: index.md
-    - Instalación y Setup:
-        - Visión General: overview.md
-        - Compilación e Instalación: build.md
-        - Instaladores: installers.md
-    - Tutoriales y Guías:
-        - Índice rápido: indice.md
-        - Primeros pasos: language.md
-        - Guía de características: guide.md
-    - Documentación del Lenguaje:
-        - Referencia: aymaraLang.md
-        - Manejo de errores: exceptions.md
-        - Gramática formal: grammar.md
-        - CLI y Compilación: compiler.md
-    - Arquitectura y Proyecto:
-        - Arquitectura General: arquitectura.md
-        - Guía del proyecto: project.md
-    - Ingeniería de Sistemas:
-        - Plan de Gestión (SEMP): systems_engineering/systems_engineering_management_plan.md
-        - Requisitos: systems_engineering/requirements.md
-        - Arquitectura de Sistemas: systems_engineering/architecture.md
-        - CONOPS: systems_engineering/conops.md
-        - Control de Interfaces (ICD): systems_engineering/interface_control_document.md
-        - Gestión de Riesgos: systems_engineering/risk_management.md
-        - Verificación y Validación: systems_engineering/verification_validation_plan.md
+  - Inicio: index.md
+  - Panorama del proyecto:
+      - Visión general: overview.md
+      - Compilación e instalación: build.md
+      - CLI del compilador: compiler.md
+      - Arquitectura del compilador: arquitectura.md
+      - Guía del proyecto: project.md
+  - Lenguaje:
+      - Primeros pasos: language.md
+      - Referencia rápida: aymaraLang.md
+      - Manejo de errores: exceptions.md
+      - Gramática formal: grammar.md
+  - Investigación y teoría:
+      - Fundamentos: investigacion.md
+  - Ingeniería de Sistemas:
+      - Plan de Gestión (SEMP): systems_engineering/systems_engineering_management_plan.md
+      - Requisitos: systems_engineering/requirements.md
+      - Arquitectura de Sistemas: systems_engineering/architecture.md
+      - CONOPS: systems_engineering/conops.md
+      - Control de Interfaces (ICD): systems_engineering/interface_control_document.md
+      - Gestión de Riesgos: systems_engineering/risk_management.md
+      - Verificación y Validación: systems_engineering/verification_validation_plan.md
 markdown_extensions:
   - admonition
+  - attr_list
   - toc:
       permalink: true
   - tables
   - fenced_code
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
   - javascripts/scroll-top.js
+  - javascripts/mermaid-init.js
+  - https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

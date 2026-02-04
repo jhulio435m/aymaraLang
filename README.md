@@ -1,6 +1,6 @@
 # AymaraLang (`aym`) 🇵🇪
 
-**AymaraLang** es un lenguaje de programación moderno basado en la lengua originaria aymara. Su compilador, `aymc`, ha sido desarrollado desde cero en **C++17**, y permite generar ejecutables nativos `.ayn`. El proyecto busca promover la inclusión tecnológica, la educación y la preservación lingüística.
+**AymaraLang** es un lenguaje de programación moderno basado en la lengua originaria aymara. Su compilador, `aymc`, ha sido desarrollado desde cero en **C++17**, y permite generar ejecutables nativos. El proyecto busca promover la inclusión tecnológica, la educación y la preservación lingüística.
 
 Palabras clave principales del lenguaje:
 
@@ -17,15 +17,15 @@ Palabras clave principales del lenguaje:
 
 ## 📚 Documentación
 
-Empieza aquí y navega por la documentación en módulos más pequeños:
-
-- [Inicio de la documentación](docs/index.md)
-- [Visión general del lenguaje](docs/overview.md)
-- [Características y ejemplos](docs/language.md)
-- [Arquitectura del compilador](docs/compiler.md)
-- [Compilación, instalación y uso](docs/build.md)
-- [Guía del proyecto](docs/project.md)
+- [Inicio](docs/index.md)
+- [Visión general](docs/overview.md)
+- [Compilación e instalación](docs/build.md)
+- [CLI del compilador](docs/compiler.md)
+- [Arquitectura del compilador](docs/arquitectura.md)
+- [Primeros pasos](docs/language.md)
+- [Referencia rápida](docs/aymaraLang.md)
 - [Gramática formal](docs/grammar.md)
+- [Investigación y teoría](docs/investigacion.md)
 
 ---
 
@@ -34,8 +34,10 @@ Empieza aquí y navega por la documentación en módulos más pequeños:
 Compila y ejecuta un ejemplo sencillo:
 
 ```bash
-$ ./bin/aymc samples/aymara_flow.aym
-$ ./samples/aymara_flow
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+./build/bin/aymc samples/aymara_flow.aym
+./samples/aymara_flow
 ```
 
 Para pasos detallados por sistema operativo, revisa la guía de compilación en

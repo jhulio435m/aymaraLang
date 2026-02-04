@@ -1,46 +1,51 @@
-# CLI y flujo de compilación
+# CLI del compilador
 
-Esta sección describe cómo usar el compilador `aymc`, sus banderas principales y
-el flujo de trabajo típico al compilar programas `.aym`.
+`aymc` compila archivos `.aym` a ejecutables nativos. Por defecto genera el
+binario junto al archivo de entrada.
 
 ## Uso básico
 
 ```bash
-./bin/aymc archivo.aym
+aymc archivo.aym
 ```
 
-El compilador genera un ejecutable en `bin/` con el mismo nombre del archivo de
-entrada. También produce archivos intermedios en `build/`. El flujo es
-exclusivamente de compilación: no hay ejecución interactiva dentro del
-compilador.
+Si se entregan varios archivos, se concatenan en una sola unidad de compilación.
+
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant C as aymc
+    participant FS as Sistema de archivos
+    U->>C: aymc archivo.aym
+    C->>FS: leer fuente
+    C->>C: lexer/parser/semántica
+    C->>FS: escribir asm/obj/binario
+    C-->>U: ejecutable listo
+```
 
 ## Opciones principales
 
-- `--llvm` genera un archivo LLVM IR (`.ll`) con un resumen del AST.
-- `--windows` fuerza la salida a un ejecutable de Windows (`.exe`).
-- `--linux` fuerza la salida a un ejecutable de Linux.
-- `--seed <valor>` fija la semilla del generador aleatorio.
-
-## Flujo de compilación
-
-1. **Lexer**: tokeniza el código fuente.
-2. **Parser**: construye el AST y valida la estructura.
-3. **Análisis semántico**: verifica tipos, símbolos y alcance.
-4. **Codegen**: produce NASM o LLVM IR.
-5. **Ensamblado y enlace**: genera el ejecutable final.
+- `-o <ruta>`: nombre/salida del ejecutable.
+- `--debug`: imprime tokens en consola.
+- `--dump-ast`: imprime el total de nodos del AST.
+- `--windows` / `--linux`: fuerza plataforma de salida.
+- `--seed <valor>`: fija la semilla del generador pseudoaleatorio.
+- `--llvm`: genera `output.ll` (requiere compilar con soporte LLVM).
 
 ## Archivos generados
 
-- `build/<nombre>.asm`: salida NASM (se elimina automáticamente en Windows).
-- `build/<nombre>.o`: objeto ensamblado (en Windows se usa `.obj` y se elimina automáticamente).
-- `bin/<nombre>` o `bin/<nombre>.exe`: ejecutable final.
+- `output.asm`: código NASM (temporal, según plataforma).
+- `output.o` / `output.obj`: objeto intermedio.
+- `output` / `output.exe`: ejecutable final.
 
-## Consejos de depuración
+## Resolución de módulos
 
-- Usa `--llvm` para inspeccionar el resumen del AST.
-- Si aparece un error de símbolos, revisa declaraciones y ámbito.
-- Para reproducir resultados aleatorios, fija `--seed`.
+La sentencia `apnaq("ruta")` busca módulos en:
+
+1. El directorio del archivo principal.
+2. Una carpeta `modules/` dentro de ese directorio.
+3. Rutas adicionales definidas en la variable de entorno `AYM_PATH`.
 
 ---
 
-**Anterior:** [Arquitectura del compilador](arquitectura.md) | **Siguiente:** [Compilación y uso](build.md)
+**Siguiente:** [Arquitectura del compilador](arquitectura.md)

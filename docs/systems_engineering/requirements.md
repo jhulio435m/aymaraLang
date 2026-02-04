@@ -49,6 +49,16 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 | Generación de código | AST validado | `.asm`/`.ll` |
 | Ensamblado/enlace | `.asm` | Binario nativo |
 
+```mermaid
+flowchart LR
+    FR01[FR-01 CLI] --> Main[main.cpp]
+    FR02[FR-02 Lexer] --> Lexer[compiler/lexer]
+    FR03[FR-03 Parser] --> Parser[compiler/parser]
+    FR04[FR-04 Semántica] --> Semantic[compiler/semantic]
+    FR05[FR-05 Codegen] --> Codegen[compiler/codegen]
+    FR07[FR-07 LLVM] --> LLVM[compiler/codegen/llvm]
+```
+
 ## 7. Requisitos del sistema
 
 ### 7.1 Requisitos funcionales (FR)

@@ -1,8 +1,6 @@
 # Primeros pasos con AymaraLang
 
-Esta sección introduce la sintaxis básica del lenguaje con ejemplos cortos.
-Si buscas detalles exhaustivos de operadores y funciones integradas, consulta la
-[Referencia del lenguaje](aymaraLang.md).
+Ejemplos mínimos para escribir tus primeros programas.
 
 ## Hola mundo
 
@@ -14,19 +12,30 @@ qillqa("Kamisaraki!");
 
 ```aymara
 yatiya jakhüwi contador = 3;
-yatiya jakhüwi promedio = 3;
 yatiya aru saludo = "kamisaraki";
 yatiya chiqa activo = chiqa;
 ```
 
-También puedes usar literales enteros en hexadecimal o binario:
-
-```aymara
-yatiya jakhüwi mascara = 0b1010;
-yatiya jakhüwi color = 0xFF;
+```mermaid
+mindmap
+  root((AymaraLang))
+    Tipos
+      jakhüwi
+      aru
+      chiqa
+      t'aqa
+    Control
+      jisa/maysatxa
+      ukhakamaxa
+      taki
+    Funciones
+      lurawi
+      kuttaya
+    Módulos
+      apnaq
 ```
 
-## Condicionales
+## Control de flujo
 
 ```aymara
 jisa (contador > 0) {
@@ -34,17 +43,13 @@ jisa (contador > 0) {
 } maysatxa {
     qillqa("janiwa");
 }
-```
-
-## Bucles
-
-```aymara
-taki (yatiya jakhüwi i = 0; i < 3; i++) {
-    qillqa(i);
-}
 
 ukhakamaxa (contador > 0) {
     contador--;
+}
+
+taki (yatiya jakhüwi i = 0; i < 3; i++) {
+    qillqa(i);
 }
 ```
 
@@ -58,36 +63,30 @@ lurawi inc(jakhüwi n) : jakhüwi {
 qillqa(inc(5));
 ```
 
-## Manejo de errores
+## Notas matemáticas rápidas
 
-Para manejar errores puedes usar `Yant'aña`/`Katjaña`/`Tukuyawi` y `Pantja`.
-Consulta la sección dedicada en [Manejo de errores](exceptions.md).
+La longitud de una lista $L$ se expresa como $|L|$ y se obtiene con `largo` o
+`suyut`.
 
 ## Módulos
 
 ```aymara
 apnaq("modules/aritmetica");
-
 qillqa("suma: " + suma(3, 4));
 ```
-
-Los módulos se resuelven desde el directorio del archivo principal, desde una
-carpeta `modules/` y desde rutas adicionales definidas en la variable de entorno
-`AYM_PATH`.
 
 ## Comentarios
 
 ```aymara
-// comentario estilo C
-/* bloque de comentario */
+// comentario de línea
+/* comentario de bloque */
 ```
 
-## Nota sobre palabras clave legacy
+## Palabras clave legacy
 
-El compilador mantiene compatibilidad con las formas `suti`/`jani`,
-`kunawsati`, `sapüru` y `utji`/`janiutji`. La sintaxis recomendada en esta guía
-usa `jisa`/`maysatxa`, `ukhakamaxa`, `taki` y `chiqa`/`k'ari`.
+Se mantiene compatibilidad con las formas `suti`/`jani`, `kunawsati`, `sapüru`
+y `utji`/`janiutji`.
 
 ---
 
-**Anterior:** [Visión general](overview.md) | **Siguiente:** [Guía de características](guide.md)
+**Siguiente:** [Referencia rápida](aymaraLang.md)

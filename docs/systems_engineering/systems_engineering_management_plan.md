@@ -18,6 +18,17 @@ Establecer la estrategia, procesos y entregables de ingeniería de sistemas para
 | V&V | Pruebas, inspecciones, demostraciones |
 | Gestión de cambios | Git + revisión por PR |
 
+```mermaid
+gantt
+    title Plan de trabajo (alto nivel)
+    dateFormat  YYYY-MM-DD
+    section Ingeniería
+    Requisitos         :done, reqs, 2024-01-01, 30d
+    Arquitectura       :done, arch, 2024-02-01, 30d
+    Implementación     :active, impl, 2024-03-01, 60d
+    Verificación y V&V :vv, 2024-05-01, 30d
+```
+
 ## 4. Entregables
 - Especificación de requisitos.
 - ConOps.

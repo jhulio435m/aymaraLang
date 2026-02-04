@@ -6,6 +6,14 @@ tokenización están implementadas en `compiler/lexer/lexer.cpp`.
 
 ## Tokens léxicos
 
+```mermaid
+flowchart LR
+    A[Texto .aym] --> B[Lexer]
+    B --> C[Tokens]
+    C --> D[Parser]
+    D --> E[AST]
+```
+
 ### Palabras clave
 
 | Token | Lexema(s) aceptado(s) | Uso sintáctico |
