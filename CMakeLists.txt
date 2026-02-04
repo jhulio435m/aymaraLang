@@ -47,9 +47,13 @@ if(AYM_ENABLE_LLVM)
     message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
     set(AYM_LLVM_COMPONENTS core support)
     llvm_map_components_to_libnames(AYM_LLVM_LIBS ${AYM_LLVM_COMPONENTS})
-    target_include_directories(aymc PRIVATE ${LLVM_INCLUDE_DIRS})
+    target_include_directories(aymc SYSTEM PRIVATE ${LLVM_INCLUDE_DIRS})
     target_compile_definitions(aymc PRIVATE ${LLVM_DEFINITIONS} AYM_WITH_LLVM)
     target_link_libraries(aymc PRIVATE ${AYM_LLVM_LIBS})
+    target_compile_options(aymc PRIVATE
+      $<$<CXX_COMPILER_ID:MSVC>:/external:W0>
+      $<$<CXX_COMPILER_ID:MSVC>:/external:anglebrackets>
+    )
   else()
     message(WARNING "LLVM solicitado pero no encontrado; compilando sin backend LLVM.")
   endif()
