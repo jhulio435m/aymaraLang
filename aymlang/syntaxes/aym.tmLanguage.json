@@ -43,11 +43,11 @@
 			"patterns": [
 				{
 					"name": "keyword.control.aym",
-					"match": "(?i)\\b(qallta|tukuya|yatiya|suti|jisa|jani|maysatxa|kunawsati|ukhakamaxa|sapüru|taki|p'akhiña|sarantaña|yant'aña|katjaña|tukuyawi|pantja|kuttaya|lurawi|apnaq)\\b"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(qallta|tukuya|yatiya|suti|jisa|jani|maysatxa|kunawsati|ukhakamaxa|sapüru|taki|p'akhiña|sarantaña|yant'aña|katjaña|tukuyawi|pantja|kuttaya|lurawi|apnaq)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				},
 				{
 					"name": "keyword.other.aym",
-					"match": "(?i)\\b(kasta|machaqa|aka|jila|jikxata|sapa|taqi|sapakasta|uñt'aya|chura|jilaaka)\\b"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(kasta|machaqa|aka|jila|jikxata|sapa|taqi|sapakasta|uñt'aya|chura|jilaaka)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				}
 			]
 		},
@@ -55,7 +55,7 @@
 			"patterns": [
 				{
 					"name": "storage.type.aym",
-					"match": "(?i)\\b(jakhüwi|aru|listaña|t'aqa|mapa)\\b"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(jakhüwi|aru|listaña|t'aqa|mapa)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				}
 			]
 		},
@@ -63,7 +63,7 @@
 			"patterns": [
 				{
 					"name": "support.function.aym",
-					"match": "(?i)\\b(qillqa|write|input|katu|length|random|sleep|array|array_get|array_set|array_free|array_length|largo|push|sin|cos|tan|asin|acos|atan|sqrt|pow|exp|log|log10|floor|ceil|round|fabs)\\b"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(qillqa|write|input|katu|length|random|sleep|array|array_get|array_set|array_free|array_length|largo|push|sin|cos|tan|asin|acos|atan|sqrt|pow|exp|log|log10|floor|ceil|round|fabs)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				}
 			]
 		},
@@ -71,7 +71,7 @@
 			"patterns": [
 				{
 					"name": "constant.language.aym",
-					"match": "(?i)\\b(utji|janiutji|chiqa|k'ari)\\b"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(utji|janiutji|chiqa|k'ari)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				}
 			]
 		},
@@ -109,7 +109,7 @@
 				},
 				{
 					"name": "string.quoted.single.aym",
-					"begin": "'",
+					"begin": "(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF])'",
 					"end": "'",
 					"patterns": [
 						{
