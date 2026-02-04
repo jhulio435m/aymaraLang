@@ -44,9 +44,12 @@ private:
     void visit(TernaryExpr &) override;
     void visit(IncDecExpr &) override;
     void visit(CallExpr &) override;
+    void visit(ListExpr &) override;
+    void visit(IndexExpr &) override;
     void visit(PrintStmt &) override;
     void visit(ExprStmt &) override;
     void visit(AssignStmt &) override;
+    void visit(IndexAssignStmt &) override;
     void visit(BlockStmt &) override;
     void visit(IfStmt &) override;
     void visit(ForStmt &) override;

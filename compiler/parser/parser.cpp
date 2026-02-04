@@ -42,6 +42,14 @@ std::vector<std::unique_ptr<Node>> Parser::parse() {
     return nodes;
 }
 
+std::unique_ptr<Expr> Parser::parseExpressionOnly() {
+    auto expr = parseExpression();
+    if (peek().type != TokenType::EndOfFile) {
+        parseError("token inesperado en expresion");
+    }
+    return expr;
+}
+
 const Token &Parser::peek() const { return tokens[pos]; }
 const Token &Parser::get() { return tokens[pos++]; }
 
@@ -369,6 +377,22 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
     if (peek().type == TokenType::Identifier) {
         std::string name = get().text;
         Token nameTok = tokens[pos-1];
+        if (match(TokenType::LBracket)) {
+            auto index = parseExpression();
+            if (!match(TokenType::RBracket)) {
+                parseError("se esperaba ']' en acceso de lista");
+            }
+            if (!match(TokenType::Equal)) {
+                parseError("se esperaba '=' en asignacion de lista");
+            }
+            auto value = parseExpression();
+            match(TokenType::Semicolon);
+            auto base = std::make_unique<VariableExpr>(name);
+            base->setLocation(nameTok.line, nameTok.column);
+            auto node = std::make_unique<IndexAssignStmt>(std::move(base), std::move(index), std::move(value));
+            node->setLocation(nameTok.line, nameTok.column);
+            return node;
+        }
         if (match(TokenType::Equal)) {
             auto value = parseExpression();
             match(TokenType::Semicolon);
@@ -527,10 +551,26 @@ std::unique_ptr<Expr> Parser::parseTerm() {
             lhs = std::move(node);
         } else if (match(TokenType::Percent)) {
             Token op = tokens[pos-1];
-            auto rhs = parsePower();
-            auto node = std::make_unique<BinaryExpr>('%', std::move(lhs), std::move(rhs));
-            node->setLocation(op.line, op.column);
-            lhs = std::move(node);
+            if (auto *fmt = dynamic_cast<StringExpr*>(lhs.get())) {
+                std::vector<std::unique_ptr<Expr>> args;
+                if (match(TokenType::LParen)) {
+                    if (peek().type != TokenType::RParen) {
+                        args.push_back(parseExpression());
+                        while (match(TokenType::Comma)) {
+                            args.push_back(parseExpression());
+                        }
+                    }
+                    match(TokenType::RParen);
+                } else {
+                    args.push_back(parsePower());
+                }
+                lhs = parseFormatExpression(op, fmt->getValue(), std::move(args), true);
+            } else {
+                auto rhs = parsePower();
+                auto node = std::make_unique<BinaryExpr>('%', std::move(lhs), std::move(rhs));
+                node->setLocation(op.line, op.column);
+                lhs = std::move(node);
+            }
         } else {
             break;
         }
@@ -602,10 +642,59 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         node->setLocation(tok.line, tok.column);
         return node;
     }
+    if (match(TokenType::InterpolatedString)) {
+        Token tok = tokens[pos-1];
+        auto node = parseInterpolatedString(tok);
+        if (node) node->setLocation(tok.line, tok.column);
+        return node;
+    }
     if (match(TokenType::String)) {
         Token tok = tokens[pos-1];
         auto node = std::make_unique<StringExpr>(tok.text);
         node->setLocation(tok.line, tok.column);
+        if (match(TokenType::Dot)) {
+            if (peek().type != TokenType::Identifier) {
+                parseError("se esperaba nombre de metodo despues de '.'");
+                return node;
+            }
+            std::string method = get().text;
+            if (method != "fmt") {
+                parseError("metodo desconocido en texto");
+                return node;
+            }
+            match(TokenType::LParen);
+            std::vector<std::unique_ptr<Expr>> args;
+            if (peek().type != TokenType::RParen) {
+                args.push_back(parseExpression());
+                while (match(TokenType::Comma)) {
+                    args.push_back(parseExpression());
+                }
+            }
+            match(TokenType::RParen);
+            return parseFormatExpression(tok, tok.text, std::move(args), false);
+        }
+        return node;
+    }
+    if (match(TokenType::LBracket)) {
+        Token tok = tokens[pos-1];
+        return parseListLiteral(tok);
+    }
+    if (match(TokenType::LBrace)) {
+        Token tok = tokens[pos-1];
+        return parseMapLiteral(tok);
+    }
+    if (match(TokenType::KeywordTypeString) || match(TokenType::KeywordTypeNumber)) {
+        Token idTok = tokens[pos-1];
+        std::string name = idTok.text;
+        if (match(TokenType::LParen)) {
+            auto args = parseArguments();
+            match(TokenType::RParen);
+            auto node = std::make_unique<CallExpr>(name, std::move(args));
+            node->setLocation(idTok.line, idTok.column);
+            return node;
+        }
+        auto node = std::make_unique<VariableExpr>(name);
+        node->setLocation(idTok.line, idTok.column);
         return node;
     }
     if (match(TokenType::Identifier)) {
@@ -615,6 +704,17 @@ std::unique_ptr<Expr> Parser::parseFactor() {
             auto args = parseArguments();
             match(TokenType::RParen);
             auto node = std::make_unique<CallExpr>(name, std::move(args));
+            node->setLocation(idTok.line, idTok.column);
+            return node;
+        }
+        if (match(TokenType::LBracket)) {
+            auto index = parseExpression();
+            if (!match(TokenType::RBracket)) {
+                parseError("se esperaba ']' en acceso de lista");
+            }
+            auto base = std::make_unique<VariableExpr>(name);
+            base->setLocation(idTok.line, idTok.column);
+            auto node = std::make_unique<IndexExpr>(std::move(base), std::move(index));
             node->setLocation(idTok.line, idTok.column);
             return node;
         }
@@ -630,9 +730,23 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         return node;
     }
     if (match(TokenType::LParen)) {
-        auto expr = parseExpression();
+        std::vector<std::unique_ptr<Expr>> exprs;
+        if (peek().type != TokenType::RParen) {
+            exprs.push_back(parseExpression());
+            while (match(TokenType::Comma)) {
+                exprs.push_back(parseExpression());
+            }
+        }
         match(TokenType::RParen);
-        return expr;
+        if (exprs.empty()) {
+            parseError("expresion vacia");
+            return nullptr;
+        }
+        if (exprs.size() == 1) {
+            return std::move(exprs[0]);
+        }
+        parseError("se esperaba una sola expresion");
+        return nullptr;
     }
     parseError("token inesperado");
     return nullptr;
@@ -641,11 +755,198 @@ std::unique_ptr<Expr> Parser::parseFactor() {
 std::vector<std::unique_ptr<Expr>> Parser::parseArguments() {
     std::vector<std::unique_ptr<Expr>> args;
     if (peek().type == TokenType::RParen) return args;
-    args.push_back(parseExpression());
-    while (match(TokenType::Comma)) {
+    if (peek().type == TokenType::Identifier && pos + 1 < tokens.size() &&
+        tokens[pos + 1].type == TokenType::Equal) {
+        get();
+        match(TokenType::Equal);
+        args.push_back(parseExpression());
+    } else {
         args.push_back(parseExpression());
     }
+    while (match(TokenType::Comma)) {
+        if (peek().type == TokenType::Identifier && pos + 1 < tokens.size() &&
+            tokens[pos + 1].type == TokenType::Equal) {
+            get();
+            match(TokenType::Equal);
+            args.push_back(parseExpression());
+        } else {
+            args.push_back(parseExpression());
+        }
+    }
     return args;
+}
+
+std::unique_ptr<Expr> Parser::parseInterpolatedString(const Token &tok) {
+    std::vector<std::unique_ptr<Expr>> parts;
+    std::string literal;
+    const std::string &text = tok.text;
+    size_t i = 0;
+    while (i < text.size()) {
+        char ch = text[i];
+        if (ch == '{') {
+            size_t end = text.find('}', i + 1);
+            if (end == std::string::npos) {
+                parseError("interpolacion sin cierre '}'");
+                return std::make_unique<StringExpr>(text);
+            }
+            if (!literal.empty()) {
+                parts.push_back(std::make_unique<StringExpr>(literal));
+                literal.clear();
+            }
+            std::string exprText = text.substr(i + 1, end - i - 1);
+            Lexer lexer(exprText);
+            auto exprTokens = lexer.tokenize();
+            Parser exprParser(exprTokens);
+            auto expr = exprParser.parseExpressionOnly();
+            if (exprParser.hasError()) {
+                parseError("error en interpolacion");
+                return std::make_unique<StringExpr>(text);
+            }
+            parts.push_back(ensureString(std::move(expr)));
+            i = end + 1;
+            continue;
+        }
+        literal += ch;
+        ++i;
+    }
+    if (!literal.empty()) {
+        parts.push_back(std::make_unique<StringExpr>(literal));
+    }
+    return chainConcat(std::move(parts));
+}
+
+std::unique_ptr<Expr> Parser::parseListLiteral(const Token &tok) {
+    std::vector<std::unique_ptr<Expr>> elements;
+    if (peek().type != TokenType::RBracket) {
+        elements.push_back(parseExpression());
+        while (match(TokenType::Comma)) {
+            elements.push_back(parseExpression());
+        }
+    }
+    if (!match(TokenType::RBracket)) {
+        parseError("se esperaba ']' en lista");
+    }
+    auto node = std::make_unique<ListExpr>(std::move(elements));
+    node->setLocation(tok.line, tok.column);
+    return node;
+}
+
+std::unique_ptr<Expr> Parser::parseMapLiteral(const Token &tok) {
+    std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<Expr>>> items;
+    if (peek().type != TokenType::RBrace) {
+        while (true) {
+            auto key = parseExpression();
+            if (!match(TokenType::Colon)) {
+                parseError("se esperaba ':' en mapa");
+            }
+            auto value = parseExpression();
+            items.emplace_back(std::move(key), std::move(value));
+            if (!match(TokenType::Comma)) break;
+        }
+    }
+    if (!match(TokenType::RBrace)) {
+        parseError("se esperaba '}' en mapa");
+    }
+    std::vector<std::unique_ptr<Expr>> parts;
+    parts.push_back(std::make_unique<StringExpr>("{"));
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (i > 0) {
+            parts.push_back(std::make_unique<StringExpr>(", "));
+        }
+        parts.push_back(ensureString(std::move(items[i].first)));
+        parts.push_back(std::make_unique<StringExpr>(": "));
+        parts.push_back(ensureString(std::move(items[i].second)));
+    }
+    parts.push_back(std::make_unique<StringExpr>("}"));
+    auto node = chainConcat(std::move(parts));
+    if (node) node->setLocation(tok.line, tok.column);
+    return node;
+}
+
+std::unique_ptr<Expr> Parser::parseFormatExpression(const Token &tok,
+                                                    const std::string &format,
+                                                    std::vector<std::unique_ptr<Expr>> args,
+                                                    bool percentStyle) {
+    std::vector<std::unique_ptr<Expr>> parts;
+    size_t idx = 0;
+    if (percentStyle) {
+        std::string literal;
+        for (size_t i = 0; i < format.size(); ++i) {
+            if (format[i] == '%' && i + 1 < format.size()) {
+                char spec = format[i + 1];
+                if (spec == '%') {
+                    literal += '%';
+                    ++i;
+                    continue;
+                }
+                if (spec == 's' || spec == 'd') {
+                    if (!literal.empty()) {
+                        parts.push_back(std::make_unique<StringExpr>(literal));
+                        literal.clear();
+                    }
+                    if (idx >= args.size()) {
+                        parseError("faltan argumentos en formato");
+                        break;
+                    }
+                    parts.push_back(ensureString(std::move(args[idx++])));
+                    ++i;
+                    continue;
+                }
+            }
+            literal += format[i];
+        }
+        if (!literal.empty()) {
+            parts.push_back(std::make_unique<StringExpr>(literal));
+        }
+    } else {
+        std::string literal;
+        for (size_t i = 0; i < format.size(); ++i) {
+            if (format[i] == '{') {
+                if (i + 1 < format.size() && format[i + 1] == '}') {
+                    if (!literal.empty()) {
+                        parts.push_back(std::make_unique<StringExpr>(literal));
+                        literal.clear();
+                    }
+                    if (idx >= args.size()) {
+                        parseError("faltan argumentos en formato");
+                        break;
+                    }
+                    parts.push_back(ensureString(std::move(args[idx++])));
+                    ++i;
+                    continue;
+                }
+            }
+            literal += format[i];
+        }
+        if (!literal.empty()) {
+            parts.push_back(std::make_unique<StringExpr>(literal));
+        }
+    }
+    if (idx < args.size()) {
+        parseError("sobran argumentos en formato");
+    }
+    auto node = chainConcat(std::move(parts));
+    if (node) node->setLocation(tok.line, tok.column);
+    return node;
+}
+
+std::unique_ptr<Expr> Parser::ensureString(std::unique_ptr<Expr> expr) {
+    if (!expr) return expr;
+    if (dynamic_cast<StringExpr*>(expr.get())) return expr;
+    std::vector<std::unique_ptr<Expr>> args;
+    args.push_back(std::move(expr));
+    return std::make_unique<CallExpr>("aru", std::move(args));
+}
+
+std::unique_ptr<Expr> Parser::chainConcat(std::vector<std::unique_ptr<Expr>> parts) {
+    if (parts.empty()) {
+        return std::make_unique<StringExpr>("");
+    }
+    std::unique_ptr<Expr> current = std::move(parts[0]);
+    for (size_t i = 1; i < parts.size(); ++i) {
+        current = std::make_unique<BinaryExpr>('+', std::move(current), std::move(parts[i]));
+    }
+    return current;
 }
 
 } // namespace aym

@@ -17,6 +17,13 @@ std::string genLabel(const std::string &base) {
     return base + std::to_string(labelCounter++);
 }
 
+std::string lowerName(const std::string &value) {
+    std::string out = value;
+    std::transform(out.begin(), out.end(), out.begin(),
+                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    return out;
+}
+
 std::vector<std::string> paramRegs(bool windows) {
     if (windows)
         return {"rcx","rdx","r8","r9"};
@@ -78,8 +85,14 @@ private:
                       const std::unordered_map<std::string,int> *locals) const;
     bool isBoolExpr(const Expr *expr,
                     const std::unordered_map<std::string,int> *locals) const;
+    bool isListExpr(const Expr *expr,
+                    const std::unordered_map<std::string,int> *locals) const;
+    std::string listElementType(const Expr *expr,
+                                const std::unordered_map<std::string,int> *locals) const;
     void emitPrintValue(const Expr *expr,
                         const std::unordered_map<std::string,int> *locals);
+    void emitPrintList(const Expr *expr,
+                       const std::unordered_map<std::string,int> *locals);
     void emitPrintDefault(const std::string &label);
 
     void emitStmt(const Stmt *stmt,
@@ -113,6 +126,17 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
         collectStrings(t->getElse());
         return;
     }
+    if (auto *l = dynamic_cast<const ListExpr*>(expr)) {
+        for (const auto &elem : l->getElements()) {
+            collectStrings(elem.get());
+        }
+        return;
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        collectStrings(i->getBase());
+        collectStrings(i->getIndex());
+        return;
+    }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         for (const auto &a : c->getArgs()) collectStrings(a.get());
         return;
@@ -126,7 +150,22 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
     if (auto *v = dynamic_cast<const VarDeclStmt*>(stmt)) {
         locs.push_back(v->getName());
         if (v->getType() == "aru") strs[v->getName()] = true;
-        types[v->getName()] = v->getType();
+        std::string declaredType = v->getType();
+        if (declaredType == "t'aqa") {
+            if (auto *list = dynamic_cast<const ListExpr*>(v->getInit())) {
+                bool allStrings = !list->getElements().empty();
+                for (const auto &elem : list->getElements()) {
+                    if (!dynamic_cast<const StringExpr*>(elem.get())) {
+                        allStrings = false;
+                        break;
+                    }
+                }
+                declaredType = allStrings ? "t'aqa:aru" : "t'aqa:jakhüwi";
+            } else {
+                declaredType = "t'aqa:jakhüwi";
+            }
+        }
+        types[v->getName()] = declaredType;
         collectStrings(v->getInit());
         return;
     }
@@ -139,6 +178,12 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
         return;
     }
     if (auto *a = dynamic_cast<const AssignStmt*>(stmt)) {
+        collectStrings(a->getValue());
+        return;
+    }
+    if (auto *a = dynamic_cast<const IndexAssignStmt*>(stmt)) {
+        collectStrings(a->getBase());
+        collectStrings(a->getIndex());
         collectStrings(a->getValue());
         return;
     }
@@ -196,6 +241,12 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
     }
     if (auto *a = dynamic_cast<const AssignStmt*>(stmt)) {
         globals.insert(a->getName());
+        collectStrings(a->getValue());
+        return;
+    }
+    if (auto *a = dynamic_cast<const IndexAssignStmt*>(stmt)) {
+        collectStrings(a->getBase());
+        collectStrings(a->getIndex());
         collectStrings(a->getValue());
         return;
     }
@@ -257,6 +308,12 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
                                const std::unordered_map<std::string,int> *locals) const {
     if (!expr) return false;
     if (dynamic_cast<const StringExpr*>(expr)) return true;
+    if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
+        if (lowerName(c->getName()) == BUILTIN_TO_STRING) return true;
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        return listElementType(i->getBase(), locals) == "aru";
+    }
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
         if (currentParamStrings.count(v->getName())) return true;
         if (locals && currentLocalStrings.count(v->getName())) return true;
@@ -273,6 +330,76 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
         return isStringExpr(t->getThen(), locals) && isStringExpr(t->getElse(), locals);
     }
     return false;
+}
+
+bool CodeGenImpl::isListExpr(const Expr *expr,
+                             const std::unordered_map<std::string,int> *locals) const {
+    if (!expr) return false;
+    if (dynamic_cast<const ListExpr*>(expr)) return true;
+    if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
+        auto it = globalTypes.find(v->getName());
+        if (it != globalTypes.end() && it->second.rfind("t'aqa", 0) == 0) return true;
+        if (currentParamTypes.count(v->getName()) && currentParamTypes.at(v->getName()).rfind("t'aqa", 0) == 0)
+            return true;
+        if (locals && currentLocalTypes.count(v->getName()) &&
+            currentLocalTypes.at(v->getName()).rfind("t'aqa", 0) == 0)
+            return true;
+    }
+    if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
+        std::string name = lowerName(c->getName());
+        if (name == BUILTIN_PUSH) return true;
+    }
+    return false;
+}
+
+std::string CodeGenImpl::listElementType(const Expr *expr,
+                                         const std::unordered_map<std::string,int> *locals) const {
+    if (!expr) return "";
+    if (auto *list = dynamic_cast<const ListExpr*>(expr)) {
+        bool seenString = false;
+        bool seenNumber = false;
+        for (const auto &elem : list->getElements()) {
+            if (isStringExpr(elem.get(), locals)) {
+                seenString = true;
+            } else {
+                seenNumber = true;
+            }
+        }
+        if (seenString && !seenNumber) return "aru";
+        return "jakhüwi";
+    }
+    if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
+        auto checkType = [&](const std::unordered_map<std::string,std::string> &types) -> std::string {
+            auto it = types.find(v->getName());
+            if (it != types.end()) {
+                if (it->second.rfind("t'aqa:", 0) == 0) {
+                    return it->second.substr(6);
+                }
+                if (it->second == "t'aqa") {
+                    return "jakhüwi";
+                }
+            }
+            return "";
+        };
+        std::string t;
+        if (!currentParamTypes.empty()) {
+            t = checkType(currentParamTypes);
+            if (!t.empty()) return t;
+        }
+        if (locals && !currentLocalTypes.empty()) {
+            t = checkType(currentLocalTypes);
+            if (!t.empty()) return t;
+        }
+        t = checkType(globalTypes);
+        if (!t.empty()) return t;
+    }
+    if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
+        std::string name = lowerName(c->getName());
+        if (name == BUILTIN_PUSH && !c->getArgs().empty()) {
+            return listElementType(c->getArgs()[0].get(), locals);
+        }
+    }
+    return "";
 }
 
 bool CodeGenImpl::isBoolExpr(const Expr *expr,
@@ -316,6 +443,10 @@ void CodeGenImpl::emitPrintDefault(const std::string &label) {
 void CodeGenImpl::emitPrintValue(const Expr *expr,
                                  const std::unordered_map<std::string,int> *locals) {
     if (!expr) return;
+    if (isListExpr(expr, locals)) {
+        emitPrintList(expr, locals);
+        return;
+    }
     if (isBoolExpr(expr, locals)) {
         std::string falseLbl = genLabel("bool_false");
         std::string endLbl = genLabel("bool_end");
@@ -339,6 +470,42 @@ void CodeGenImpl::emitPrintValue(const Expr *expr,
     }
     out << "    xor eax,eax\n";
     out << "    call printf\n";
+}
+
+void CodeGenImpl::emitPrintList(const Expr *expr,
+                                const std::unordered_map<std::string,int> *locals) {
+    std::string loop = genLabel("list_loop");
+    std::string end = genLabel("list_end");
+    std::string elemType = listElementType(expr, locals);
+    emitExpr(expr, locals);
+    out << "    mov rbx, rax\n";
+    emitPrintDefault("list_open");
+    out << "    mov " << reg1(this->windows) << ", rbx\n";
+    out << "    call aym_array_length\n";
+    out << "    mov r12, rax\n";
+    out << "    xor r13, r13\n";
+    out << loop << ":\n";
+    out << "    cmp r13, r12\n";
+    out << "    je " << end << "\n";
+    out << "    mov " << reg2(this->windows) << ", r13\n";
+    out << "    mov " << reg1(this->windows) << ", rbx\n";
+    out << "    call aym_array_get\n";
+    if (elemType == "aru") {
+        out << "    mov " << reg2(this->windows) << ", rax\n";
+        out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
+    } else {
+        out << "    mov " << reg2(this->windows) << ", rax\n";
+        out << "    lea " << reg1(this->windows) << ", [rel fmt_int_raw]\n";
+    }
+    out << "    xor eax,eax\n";
+    out << "    call printf\n";
+    out << "    inc r13\n";
+    out << "    cmp r13, r12\n";
+    out << "    je " << end << "\n";
+    emitPrintDefault("list_sep");
+    out << "    jmp " << loop << "\n";
+    out << end << ":\n";
+    emitPrintDefault("list_close");
 }
 
 void CodeGenImpl::emitFunction(const FunctionInfo &info) {
@@ -436,6 +603,17 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         } else {
             out << "    mov [rel " << a->getName() << "], rax\n";
         }
+        return;
+    }
+    if (auto *a = dynamic_cast<const IndexAssignStmt *>(stmt)) {
+        std::vector<std::string> regs = paramRegs(this->windows);
+        emitExpr(a->getValue(), locals);
+        out << "    mov " << regs[2] << ", rax\n";
+        emitExpr(a->getIndex(), locals);
+        out << "    mov " << regs[1] << ", rax\n";
+        emitExpr(a->getBase(), locals);
+        out << "    mov " << regs[0] << ", rax\n";
+        out << "    call aym_array_set\n";
         return;
     }
     if (auto *v = dynamic_cast<const VarDeclStmt *>(stmt)) {
@@ -602,6 +780,31 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         out << "    lea rax, [rel str" << idx << "]\n";
         return;
     }
+    if (auto *l = dynamic_cast<const ListExpr *>(expr)) {
+        out << "    mov " << reg1(this->windows) << ", " << l->getElements().size() << "\n";
+        out << "    call aym_array_new\n";
+        out << "    mov rbx, rax\n";
+        size_t idx = 0;
+        for (const auto &elem : l->getElements()) {
+            emitExpr(elem.get(), locals);
+            std::vector<std::string> regs = paramRegs(this->windows);
+            out << "    mov " << regs[2] << ", rax\n";
+            out << "    mov " << regs[1] << ", " << idx << "\n";
+            out << "    mov " << regs[0] << ", rbx\n";
+            out << "    call aym_array_set\n";
+            ++idx;
+        }
+        out << "    mov rax, rbx\n";
+        return;
+    }
+    if (auto *i = dynamic_cast<const IndexExpr *>(expr)) {
+        emitExpr(i->getIndex(), locals);
+        out << "    mov " << reg2(this->windows) << ", rax\n";
+        emitExpr(i->getBase(), locals);
+        out << "    mov " << reg1(this->windows) << ", rax\n";
+        out << "    call aym_array_get\n";
+        return;
+    }
     if (auto *v = dynamic_cast<const VariableExpr *>(expr)) {
         if (locals && locals->count(v->getName())) {
             out << "    mov rax, [rbp-" << locals->at(v->getName()) << "]\n";
@@ -756,7 +959,8 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         return;
     }
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
-        if (c->getName() == BUILTIN_PRINT && !c->getArgs().empty()) {
+        std::string nameLower = lowerName(c->getName());
+        if (nameLower == BUILTIN_PRINT && !c->getArgs().empty()) {
             if (auto *s = dynamic_cast<StringExpr *>(c->getArgs()[0].get())) {
                 size_t idx = findString(s->getValue());
                 out << "    lea " << reg1(this->windows) << ", [rel fmt_str]\n";
@@ -771,41 +975,110 @@ void CodeGenImpl::emitExpr(const Expr *expr,
                 out << "    call printf\n";
             }
             return;
-        } else if (c->getName() == BUILTIN_INPUT) {
+        } else if (nameLower == BUILTIN_INPUT) {
             out << "    lea " << reg1(this->windows) << ", [rel fmt_read_int]\n";
             out << "    lea " << reg2(this->windows) << ", [rel input_val]\n";
             out << "    xor eax,eax\n";
             out << "    call scanf\n";
             out << "    mov rax, [rel input_val]\n";
             return;
-        } else if (c->getName() == BUILTIN_LENGTH) {
+        } else if (nameLower == BUILTIN_KATU) {
+            if (!c->getArgs().empty()) {
+                emitExpr(c->getArgs()[0].get(), locals);
+                out << "    mov " << reg2(this->windows) << ", rax\n";
+                out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
+                out << "    xor eax,eax\n";
+                out << "    call printf\n";
+            }
+            if (c->getArgs().size() > 1) {
+                emitExpr(c->getArgs()[1].get(), locals);
+                out << "    mov " << reg2(this->windows) << ", rax\n";
+                out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
+                out << "    xor eax,eax\n";
+                out << "    call printf\n";
+            }
+            out << "    lea " << reg1(this->windows) << ", [rel fmt_read_str]\n";
+            out << "    lea " << reg2(this->windows) << ", [rel input_buf]\n";
+            out << "    xor eax,eax\n";
+            out << "    call scanf\n";
+            out << "    lea rax, [rel input_buf]\n";
+            return;
+        } else if (nameLower == BUILTIN_TO_STRING) {
+            if (c->getArgs().empty()) return;
+            const Expr *arg = c->getArgs()[0].get();
+            if (isStringExpr(arg, locals)) {
+                emitExpr(arg, locals);
+                return;
+            }
+            if (isBoolExpr(arg, locals)) {
+                std::string falseLbl = genLabel("bool_false");
+                std::string endLbl = genLabel("bool_end");
+                emitExpr(arg, locals);
+                out << "    cmp rax,0\n";
+                out << "    je " << falseLbl << "\n";
+                out << "    lea rax, [rel bool_true]\n";
+                out << "    jmp " << endLbl << "\n";
+                out << falseLbl << ":\n";
+                out << "    lea rax, [rel bool_false]\n";
+                out << endLbl << ":\n";
+                return;
+            }
+            emitExpr(arg, locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_to_string\n";
+            return;
+        } else if (nameLower == BUILTIN_TO_NUMBER) {
+            if (c->getArgs().empty()) return;
+            const Expr *arg = c->getArgs()[0].get();
+            if (isStringExpr(arg, locals)) {
+                emitExpr(arg, locals);
+                out << "    mov " << reg1(this->windows) << ", rax\n";
+                out << "    call aym_to_number\n";
+                return;
+            }
+            emitExpr(arg, locals);
+            return;
+        } else if (nameLower == BUILTIN_LARGO) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_array_length\n";
+            return;
+        } else if (nameLower == BUILTIN_PUSH) {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(c->getArgs()[1].get(), locals);
+            out << "    mov " << regs[1] << ", rax\n";
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << regs[0] << ", rax\n";
+            out << "    call aym_array_push\n";
+            return;
+        } else if (nameLower == BUILTIN_LENGTH) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call strlen\n";
             return;
-        } else if (c->getName() == BUILTIN_RANDOM) {
+        } else if (nameLower == BUILTIN_RANDOM) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_random\n";
             return;
-        } else if (c->getName() == BUILTIN_SLEEP) {
+        } else if (nameLower == BUILTIN_SLEEP) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_sleep\n";
             return;
-        } else if (c->getName() == BUILTIN_ARRAY_NEW) {
+        } else if (nameLower == BUILTIN_ARRAY_NEW) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_array_new\n";
             return;
-        } else if (c->getName() == BUILTIN_ARRAY_GET) {
+        } else if (nameLower == BUILTIN_ARRAY_GET) {
             emitExpr(c->getArgs()[1].get(), locals);
             out << "    mov " << reg2(this->windows) << ", rax\n";
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_array_get\n";
             return;
-        } else if (c->getName() == BUILTIN_ARRAY_SET) {
+        } else if (nameLower == BUILTIN_ARRAY_SET) {
             std::vector<std::string> regs = paramRegs(this->windows);
             emitExpr(c->getArgs()[2].get(), locals);
             out << "    mov " << regs[2] << ", rax\n";
@@ -815,17 +1088,17 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             out << "    mov " << regs[0] << ", rax\n";
             out << "    call aym_array_set\n";
             return;
-        } else if (c->getName() == BUILTIN_ARRAY_FREE) {
+        } else if (nameLower == BUILTIN_ARRAY_FREE) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_array_free\n";
             return;
-        } else if (c->getName() == BUILTIN_ARRAY_LENGTH) {
+        } else if (nameLower == BUILTIN_ARRAY_LENGTH) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
             out << "    call aym_array_length\n";
             return;
-        } else if (c->getName() == BUILTIN_WRITE) {
+        } else if (nameLower == BUILTIN_WRITE) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg2(this->windows) << ", rax\n";
             out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
@@ -909,7 +1182,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern aym_array_set\n";
     out << "extern aym_array_free\n";
     out << "extern aym_array_length\n";
+    out << "extern aym_array_push\n";
     out << "extern aym_str_concat\n";
+    out << "extern aym_to_string\n";
+    out << "extern aym_to_number\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
@@ -921,6 +1197,9 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "input_buf: times 256 db 0\n";
     out << "print_sep: db \" \",0\n";
     out << "print_term: db 10,0\n";
+    out << "list_open: db \"[\",0\n";
+    out << "list_sep: db \", \",0\n";
+    out << "list_close: db \"]\",0\n";
     out << "bool_true: db \"utji\",0\n";
     out << "bool_false: db \"janiutji\",0\n";
 

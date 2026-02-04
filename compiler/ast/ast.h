@@ -16,9 +16,12 @@ class UnaryExpr;
 class TernaryExpr;
 class IncDecExpr;
 class CallExpr;
+class ListExpr;
+class IndexExpr;
 class PrintStmt;
 class ExprStmt;
 class AssignStmt;
+class IndexAssignStmt;
 class BlockStmt;
 class IfStmt;
 class ForStmt;
@@ -44,9 +47,12 @@ public:
     virtual void visit(TernaryExpr &) = 0;
     virtual void visit(IncDecExpr &) = 0;
     virtual void visit(CallExpr &) = 0;
+    virtual void visit(ListExpr &) = 0;
+    virtual void visit(IndexExpr &) = 0;
     virtual void visit(PrintStmt &) = 0;
     virtual void visit(ExprStmt &) = 0;
     virtual void visit(AssignStmt &) = 0;
+    virtual void visit(IndexAssignStmt &) = 0;
     virtual void visit(BlockStmt &) = 0;
     virtual void visit(IfStmt &) = 0;
     virtual void visit(ForStmt &) = 0;
@@ -190,6 +196,28 @@ private:
     std::vector<std::unique_ptr<Expr>> arguments;
 };
 
+class ListExpr : public Expr {
+public:
+    explicit ListExpr(std::vector<std::unique_ptr<Expr>> values)
+        : elements(std::move(values)) {}
+    const std::vector<std::unique_ptr<Expr>> &getElements() const { return elements; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::vector<std::unique_ptr<Expr>> elements;
+};
+
+class IndexExpr : public Expr {
+public:
+    IndexExpr(std::unique_ptr<Expr> baseExpr, std::unique_ptr<Expr> indexExpr)
+        : base(std::move(baseExpr)), index(std::move(indexExpr)) {}
+    Expr *getBase() const { return base.get(); }
+    Expr *getIndex() const { return index.get(); }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::unique_ptr<Expr> base;
+    std::unique_ptr<Expr> index;
+};
+
 class PrintStmt : public Stmt {
 public:
     PrintStmt(std::vector<std::unique_ptr<Expr>> exprs,
@@ -227,6 +255,24 @@ public:
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::string name;
+    std::unique_ptr<Expr> value;
+};
+
+class IndexAssignStmt : public Stmt {
+public:
+    IndexAssignStmt(std::unique_ptr<Expr> baseExpr,
+                    std::unique_ptr<Expr> indexExpr,
+                    std::unique_ptr<Expr> valueExpr)
+        : base(std::move(baseExpr)),
+          index(std::move(indexExpr)),
+          value(std::move(valueExpr)) {}
+    Expr *getBase() const { return base.get(); }
+    Expr *getIndex() const { return index.get(); }
+    Expr *getValue() const { return value.get(); }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::unique_ptr<Expr> base;
+    std::unique_ptr<Expr> index;
     std::unique_ptr<Expr> value;
 };
 

@@ -1,0 +1,98 @@
+qallta
+// 1) Juk’amp sapaki (literal)
+qillqa(0);
+qillqa(7);
+qillqa(210);
+qillqa("kamisaraki");
+qillqa('kamisaraki');
+qillqa("123");
+
+// 2) Jakhüwi lurawi (aritmética)
+qillqa(1 + 2);
+qillqa(10 - 3);
+qillqa(6 * 7);
+qillqa(20 / 4);
+qillqa(10 % 3);
+
+qillqa((2 + 3) * 4);
+qillqa(100 / (5 + 5));
+
+// 3) Suti (variable) ukat expresion
+yatiya jakhüwi n = 5;
+qillqa(n);
+
+yatiya jakhüwi a = 2;
+yatiya jakhüwi b = 3;
+yatiya jakhüwi c = 4;
+qillqa(a + b);
+qillqa(a * b + 10);
+
+// 4) Aru (texto) ukat concatenación
+qillqa("xd" + "xdd");
+qillqa("xd" + " " + "xdd");
+
+yatiya aru x = "xd";
+yatiya aru y = "xdd";
+qillqa(x + y);
+qillqa(x + " " + y);
+
+// 5) Walja argumentos (múltiples items)
+qillqa("n =", 5);
+qillqa("a =", 2, "b =", 3, "a+b =", 2 + 3);
+qillqa("xd", "xdd", "xdy");
+
+// 6) sep (t'aqa) ukat end (tuku)
+qillqa("xd", "xdd", t'aqa="");
+qillqa("xd", "xdd", t'aqa="-");
+qillqa("a", "b", "c", t'aqa=", ");
+
+qillqa("jani tukuyaña", tuku="");
+qillqa("1", tuku=""); qillqa("2");
+
+// 7) Newline ukat escapes
+qillqa("maya\npaya\nkimsa");
+qillqa("t'aqa\tjanch'i");
+qillqa("qillqa \"aru\"");
+qillqa('qillqa \'aru\'');
+qillqa("\\ ruta \\");
+
+// 8) Boolean (chiqa/jani) ukat comparaciones
+qillqa(1 < 2);
+qillqa(2 == 2);
+qillqa(3 != 4);
+
+qillqa((1 < 2) && (2 < 3));
+qillqa((1 < 2) || (2 > 3));
+qillqa(!(1 == 1));
+
+// 9) Listaña [] ukat mapa {}
+qillqa([1, 2, 3]);
+qillqa(["xd", "xdd"]);
+qillqa([1 + 2, 3 + 4]);
+
+qillqa({"suti": "Ana", "jakhüwi": 20});
+
+// 10) Lurawi (función) resultadopa qillqaña
+lurawi suma(jakhüwi a, jakhüwi b): jakhüwi {
+  kuttaya a + b;
+}
+
+qillqa(suma(2, 3));
+qillqa("suma =", suma(10, 20));
+
+// 11) Casting / conversión
+qillqa(aru(123));
+qillqa("n = " + aru(123));
+
+qillqa(jakhüwi("45") + 5);
+
+// 12) Formato / interpolación
+qillqa("%s %d" % ("n =", 5));
+
+qillqa("n = {}".fmt(5));
+qillqa("{} + {} = {}".fmt(2, 3, 2 + 3));
+
+qillqa($"n = {5}");
+qillqa($"{2} + {3} = {2 + 3}");
+
+tukuya

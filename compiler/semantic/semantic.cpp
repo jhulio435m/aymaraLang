@@ -1,6 +1,7 @@
 #include "semantic.h"
 #include "../builtins/builtins.h"
 #include <iostream>
+#include <algorithm>
 
 namespace aym {
 
@@ -62,9 +63,12 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         void visit(TernaryExpr&) override {}
         void visit(IncDecExpr&) override {}
         void visit(CallExpr&) override {}
+        void visit(ListExpr&) override {}
+        void visit(IndexExpr&) override {}
         void visit(PrintStmt&) override {}
         void visit(ExprStmt&) override {}
         void visit(AssignStmt&) override {}
+        void visit(IndexAssignStmt&) override {}
         void visit(BlockStmt&) override {}
         void visit(IfStmt&) override {}
         void visit(ForStmt&) override {}
@@ -115,6 +119,23 @@ void SemanticAnalyzer::visit(AssignStmt &a) {
     }
 }
 
+void SemanticAnalyzer::visit(IndexAssignStmt &a) {
+    a.getBase()->accept(*this);
+    std::string baseType = currentType;
+    a.getIndex()->accept(*this);
+    a.getValue()->accept(*this);
+    std::string valueType = currentType;
+    if (baseType.rfind("t'aqa:", 0) == 0) {
+        std::string elementType = baseType.substr(6);
+        if (!elementType.empty() && valueType != elementType) {
+            std::cerr << "Error: tipo incompatible en asignacion de lista" << std::endl;
+        }
+        currentType = elementType;
+    } else {
+        std::cerr << "Error: se esperaba una lista para asignacion por indice" << std::endl;
+    }
+}
+
 void SemanticAnalyzer::visit(VarDeclStmt &v) {
     std::string t = "";
     if (v.getInit()) {
@@ -122,8 +143,16 @@ void SemanticAnalyzer::visit(VarDeclStmt &v) {
         t = currentType;
         if (lastInputCall) t = v.getType();
     }
-    declare(v.getName(), v.getType());
-    if (!t.empty() && t != v.getType()) {
+    std::string declaredType = v.getType();
+    if (declaredType == "t'aqa") {
+        if (t.rfind("t'aqa:", 0) == 0) {
+            declaredType = t;
+        } else if (t.empty()) {
+            declaredType = "t'aqa:jakhüwi";
+        }
+    }
+    declare(v.getName(), declaredType);
+    if (!t.empty() && t != declaredType && t != v.getType()) {
         std::cerr << "Error: tipo incompatible en declaracion de '" << v.getName() << "'" << std::endl;
     }
 }
@@ -299,14 +328,27 @@ void SemanticAnalyzer::visit(IncDecExpr &e) {
 }
 
 void SemanticAnalyzer::visit(CallExpr &c) {
+    std::string nameLower = c.getName();
+    std::transform(nameLower.begin(), nameLower.end(), nameLower.begin(),
+                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
     auto it = functions.find(c.getName());
     if (it == functions.end()) {
+        it = functions.find(nameLower);
+    }
+    if (it == functions.end()) {
         std::cerr << "Error: funcion '" << c.getName() << "' no declarada" << std::endl;
+    } else if (nameLower == "katu") {
+        if (c.getArgs().size() < 1 || c.getArgs().size() > 2) {
+            std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c.getName() << "'" << std::endl;
+        }
     } else if (c.getArgs().size() != it->second) {
         std::cerr << "Error: numero incorrecto de argumentos en llamada a '" << c.getName() << "'" << std::endl;
     }
     size_t idx = 0;
     auto pit = paramTypes.find(c.getName());
+    if (pit == paramTypes.end()) {
+        pit = paramTypes.find(nameLower);
+    }
     for (const auto &arg : c.getArgs()) {
         arg->accept(*this);
         std::string t = currentType;
@@ -315,8 +357,71 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         }
         ++idx;
     }
-    currentType = "jakhüwi";
-    lastInputCall = (c.getName() == BUILTIN_INPUT);
+    if (nameLower == BUILTIN_TO_STRING) {
+        currentType = "aru";
+    } else if (nameLower == BUILTIN_TO_NUMBER) {
+        currentType = "jakhüwi";
+    } else if (nameLower == "katu") {
+        currentType = "aru";
+    } else if (nameLower == "largo") {
+        currentType = "jakhüwi";
+    } else if (nameLower == "push") {
+        if (!c.getArgs().empty()) {
+            c.getArgs()[0]->accept(*this);
+            std::string baseType = currentType;
+            if (c.getArgs().size() > 1) {
+                c.getArgs()[1]->accept(*this);
+                std::string valueType = currentType;
+                if (baseType.rfind("t'aqa:", 0) == 0) {
+                    std::string elementType = baseType.substr(6);
+                    if (!elementType.empty() && valueType != elementType) {
+                        std::cerr << "Error: tipo incompatible en push" << std::endl;
+                    }
+                    currentType = baseType;
+                } else {
+                    std::cerr << "Error: se esperaba una lista para push" << std::endl;
+                }
+            } else {
+                currentType = baseType;
+            }
+        } else {
+            currentType = "t'aqa:jakhüwi";
+        }
+    } else {
+        currentType = "jakhüwi";
+    }
+    lastInputCall = (nameLower == BUILTIN_INPUT);
+}
+
+void SemanticAnalyzer::visit(ListExpr &l) {
+    std::string elementType;
+    for (const auto &elem : l.getElements()) {
+        elem->accept(*this);
+        std::string t = currentType;
+        if (elementType.empty()) {
+            elementType = t;
+        } else if (elementType != t) {
+            std::cerr << "Error: tipos incompatibles en lista" << std::endl;
+        }
+    }
+    if (elementType.empty()) {
+        elementType = "jakhüwi";
+    }
+    currentType = "t'aqa:" + elementType;
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(IndexExpr &i) {
+    i.getBase()->accept(*this);
+    std::string baseType = currentType;
+    i.getIndex()->accept(*this);
+    if (baseType.rfind("t'aqa:", 0) == 0) {
+        currentType = baseType.substr(6);
+    } else {
+        std::cerr << "Error: se esperaba una lista para indexacion" << std::endl;
+        currentType = "";
+    }
+    lastInputCall = false;
 }
 
 } // namespace aym

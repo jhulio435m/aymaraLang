@@ -28,7 +28,12 @@ static const std::unordered_map<std::string, BuiltinInfo> builtins = {
     {BUILTIN_FLOOR, {1, {Type::Float}}},
     {BUILTIN_CEIL, {1, {Type::Float}}},
     {BUILTIN_ROUND, {1, {Type::Float}}},
-    {BUILTIN_FABS, {1, {Type::Float}}}
+    {BUILTIN_FABS, {1, {Type::Float}}},
+    {BUILTIN_TO_STRING, {1, {}}},
+    {BUILTIN_TO_NUMBER, {1, {}}},
+    {BUILTIN_KATU, {2, {Type::String, Type::String}}},
+    {BUILTIN_LARGO, {1, {Type::Int}}},
+    {BUILTIN_PUSH, {2, {Type::Int, Type::Int}}}
 };
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions() {

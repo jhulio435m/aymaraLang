@@ -9,6 +9,7 @@ namespace aym {
 enum class TokenType {
     Identifier,
     String,
+    InterpolatedString,
     Number,
     Plus,
     Minus,
@@ -38,6 +39,7 @@ enum class TokenType {
     Colon,
     Comma,
     Semicolon,
+    Dot,
     KeywordStart,
     KeywordEnd,
     KeywordDeclare,
