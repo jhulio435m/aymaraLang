@@ -87,8 +87,9 @@ Section "Install LLVM Backend" SEC_LLVM
   SetRegView 64
   SetOutPath "$INSTDIR\llvm-backend"
 
-  ; No fallar si la carpeta no existe o está vacía (p.ej. llvm-backend agregado en dist)
-  File /nonfatal /r "..\dist\llvm-backend\*.*"
+  ; No fallar si la carpeta no existe o está vacía (p.ej. llvm-backend agregado en repo)
+  IfFileExists "..\llvm-backend\*.*" 0 +2
+    File /r "..\llvm-backend\*.*"
 SectionEnd
 
 Section "AymaraLang Command Prompt Shortcut" SEC_SHORTCUT
@@ -163,11 +164,15 @@ Function InstallVCRedist
 FunctionEnd
 
 Function EnsureNasm
-  Call RequireToolInPath "nasm.exe" "nasm (MSYS2)"
+  Push "nasm.exe"
+  Push "nasm (MSYS2)"
+  Call RequireToolInPath
 FunctionEnd
 
 Function EnsureGcc
-  Call RequireToolInPath "gcc.exe" "gcc (MSYS2)"
+  Push "gcc.exe"
+  Push "gcc (MSYS2)"
+  Call RequireToolInPath
 FunctionEnd
 
 Function RequireToolInPath
