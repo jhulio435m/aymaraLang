@@ -1,4 +1,3 @@
-qallta
 // 1) Juk’amp sapaki (literal)
 qillqa(0);
 qillqa(7);
@@ -65,12 +64,9 @@ qillqa((1 < 2) && (2 < 3));
 qillqa((1 < 2) || (2 > 3));
 qillqa(!(1 == 1));
 
-// 9) Listaña [] ukat mapa {}
+// 9) Listaña []
 qillqa([1, 2, 3]);
 qillqa(["xd", "xdd"]);
-qillqa([1 + 2, 3 + 4]);
-
-qillqa({"suti": "Ana", "jakhüwi": 20});
 
 // 10) Lurawi (función) resultadopa qillqaña
 lurawi suma(jakhüwi a, jakhüwi b): jakhüwi {
@@ -85,14 +81,3 @@ qillqa(aru(123));
 qillqa("n = " + aru(123));
 
 qillqa(jakhüwi("45") + 5);
-
-// 12) Formato / interpolación
-qillqa("%s %d" % ("n =", 5));
-
-qillqa("n = {}".fmt(5));
-qillqa("{} + {} = {}".fmt(2, 3, 2 + 3));
-
-qillqa($"n = {5}");
-qillqa($"{2} + {3} = {2 + 3}");
-
-tukuya

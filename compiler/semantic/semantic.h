@@ -15,11 +15,13 @@ public:
     const std::unordered_set<std::string> &getGlobals() const { return globals; }
     const std::unordered_map<std::string, std::vector<std::string>> &getParamTypes() const { return paramTypes; }
     const std::unordered_map<std::string, std::string> &getGlobalTypes() const { return globalTypes; }
+    const std::unordered_map<std::string, std::string> &getFunctionReturnTypes() const { return functionReturnTypes; }
 
 private:
     std::vector<std::unordered_map<std::string, std::string>> scopes;
     std::unordered_map<std::string, size_t> functions;
     std::unordered_map<std::string, std::vector<std::string>> paramTypes;
+    std::unordered_map<std::string, std::string> functionReturnTypes;
     std::unordered_set<std::string> globals;
     std::unordered_map<std::string, std::string> globalTypes;
     int loopDepth = 0;

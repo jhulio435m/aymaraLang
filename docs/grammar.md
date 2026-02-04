@@ -14,20 +14,22 @@ tokenización están implementadas en `compiler/lexer/lexer.cpp`.
 | `KeywordEnd` | `tukuya` | Fin del programa |
 | `KeywordDeclare` | `yatiya` | Declaración de variables |
 | `KeywordPrint` | `qillqa` | Sentencia de impresión |
-| `KeywordIf` | `suti` | Condicional |
-| `KeywordElse` | `jani` | Rama alternativa |
-| `KeywordWhile` | `kunawsati` | Bucle `while` |
-| `KeywordFor` | `sapüru` | Bucle `for` |
+| `KeywordIf` | `suti`, `jisa` | Condicional |
+| `KeywordElse` | `jani`, `maysatxa` | Rama alternativa |
+| `KeywordWhile` | `kunawsati`, `ukhakamaxa` | Bucle `while` |
+| `KeywordFor` | `sapüru`, `taki` | Bucle `for` |
+| `KeywordBreak` | `p'akhiña` | Salir de un bucle |
+| `KeywordContinue` | `sarantaña` | Continuar bucle |
 | `KeywordFunc` | `lurawi` | Definición de funciones |
 | `KeywordReturn` | `kuttaya` | Retorno |
 | `KeywordImport` | `apnaq` | Importación |
 | `KeywordTypeNumber` | `jakhüwi` | Tipo numérico |
 | `KeywordTypeString` | `aru` | Tipo cadena |
 | `KeywordTypeBool` | `chiqa` | Tipo booleano |
-| `KeywordTypeList` | `listaña` | Tipo lista |
+| `KeywordTypeList` | `listaña`, `t'aqa` | Tipo lista |
 | `KeywordTypeMap` | `mapa` | Tipo mapa (Español) |
-| `KeywordTrue` | `utji` | Literal verdadero |
-| `KeywordFalse` | `janiutji` | Literal falso |
+| `KeywordTrue` | `utji`, `chiqa` | Literal verdadero |
+| `KeywordFalse` | `janiutji`, `k'ari` | Literal falso |
 
 ### Operadores y delimitadores
 
@@ -58,24 +60,24 @@ Los símbolos se mantienen sin cambios:
 ## Gramática sintáctica
 
 ```ebnf
-programa      = "qallta" { sentencia } "tukuya" ;
+programa      = [ "qallta" ] { sentencia } [ "tukuya" ] ;
 
 sentencia     = decl | asigna | if | while | for | func_def
-              | retorno | imprimir | importar | bloque | ";" ;
+              | retorno | salida | continuar | imprimir | importar | bloque | ";" ;
 
 bloque        = "{" { sentencia } "}" ;
 
 decl          = "yatiya" tipo id [ "=" expr ] ";" ;
 
-tipo          = "jakhüwi" | "aru" | "chiqa" | "listaña" | "mapa" ;
+tipo          = "jakhüwi" | "aru" | "chiqa" | "listaña" | "t'aqa" | "mapa" ;
 
 asigna        = id "=" expr ";" ;
 
-if            = "suti" "(" cond ")" bloque [ "jani" bloque ] ;
+if            = ("suti" | "jisa") "(" cond ")" bloque [ ("jani" | "maysatxa") bloque ] ;
 
-while         = "kunawsati" "(" cond ")" bloque ;
+while         = ("kunawsati" | "ukhakamaxa") "(" cond ")" bloque ;
 
-for           = "sapüru" "(" [decl|asigna] ";" [cond] ";" [asigna_np] ")" bloque ;
+for           = ("sapüru" | "taki") "(" [decl|asigna] ";" [cond] ";" [asigna_np] ")" bloque ;
 asigna_np     = id "=" expr ;
 
 func_def      = "lurawi" id "(" [ params ] ")" [ ":" tipo ] bloque ;
@@ -83,6 +85,8 @@ params        = param { "," param } ;
 param         = tipo id ;
 
 retorno       = "kuttaya" [ expr ] ";" ;
+salida        = "p'akhiña" ";" ;
+continuar     = "sarantaña" ";" ;
 
 imprimir      = "qillqa" "(" [ args ] ")" ";" ;
 importar      = "apnaq" "(" str ")" ";" ;
@@ -103,7 +107,7 @@ multi         = unario { ("*" | "/" | "%") unario } ;
 
 unario        = [ "!" | "-" ] primario ;
 
-primario      = num | str | "utji" | "janiutji"
+primario      = num | str | ("utji" | "chiqa") | ("janiutji" | "k'ari")
               | id | llamada | "(" expr ")" | lista ;
 
 llamada       = id "(" [ args ] ")" ;

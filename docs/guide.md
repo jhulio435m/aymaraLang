@@ -4,65 +4,55 @@ Esta guía agrupa las funcionalidades más usadas de AymaraLang con ejemplos.
 
 ## Variables string
 ```aymara
-qallta
 yatiya aru saludo = "Kamisaraki";
 qillqa(saludo);
-tukuya
 ```
 
 ## Operaciones aritméticas
 Soporta `%` (módulo) y `^` (potencia de enteros).
 ```aymara
-qallta
 qillqa(5 % 2);
 qillqa(2 ^ 3);
-tukuya
 ```
 
 ## Condicionales encadenados
 ```aymara
-qallta
 yatiya jakhüwi valor = 2;
-suti (valor == 1) {
+jisa (valor == 1) {
     qillqa("uno");
-} jani {
-    suti (valor == 2) {
+} maysatxa {
+    jisa (valor == 2) {
         qillqa("dos");
-    } jani {
+    } maysatxa {
         qillqa("otro");
     }
 }
-tukuya
 ```
 
 ## Operadores lógicos
 Se admiten `&&`, `||` y `!`.
 ```aymara
-qallta
-suti (1 && !0) {
+jisa (1 && !0) {
     qillqa("ok");
 }
-tukuya
 ```
 
 ## Comentarios
 Usa `//` para comentarios de línea y `/* ... */` para bloques.
 
-## Lectura con `input()`
+## Lectura con `katu()`
 ```aymara
-qallta
-yatiya jakhüwi numero = input();
+yatiya aru nombre = katu("Suti?: ", tuku="");
+qillqa("Suti =", nombre);
+yatiya jakhüwi numero = jakhüwi(katu("Numero?: ", tuku=""));
 qillqa(numero);
-tukuya
 ```
 
 ## Comparaciones
 ```aymara
-qallta
-suti (5 >= 3) {
+jisa (5 >= 3) {
     qillqa("mayor");
 }
-tukuya
 ```
 
 ## Módulos (`apnaq`)
@@ -71,12 +61,10 @@ Desde ahora es posible dividir el código en varios archivos y reutilizarlo con 
  declaración `apnaq`.
 
 ```aymara
-qallta
 apnaq("modules/aritmetica");
 
 yatiya jakhüwi total = suma(3, 4);
 qillqa(total);
-tukuya
 ```
 
 Coloca el archivo `modules/aritmetica.aym` junto al programa o dentro de una
@@ -89,28 +77,28 @@ carpeta `modules/`. El resolvedor busca módulos en:
 Cada módulo se procesa una sola vez y puede importar a su vez otros módulos con
 `apnaq`.
 
-## Arreglos dinámicos
+## Listas (`t'aqa`)
 
 ```aymara
-qallta
-yatiya jakhüwi n = 5;
-yatiya jakhüwi arr = array(n);
-array_set(arr, 0, 10);
-qillqa(array_get(arr, 0));
-qillqa(array_length(arr));
-array_free(arr);
-tukuya
+yatiya t'aqa numeros = [1, 2, 3];
+push(numeros, 4);
+qillqa(numeros);
+qillqa(largo(numeros));
 ```
 
 ## Funciones matemáticas
 
 ```aymara
-qallta
 yatiya jakhüwi ang = 1;
 qillqa(sin(ang));
 qillqa(sqrt(9));
-tukuya
 ```
+
+## Nota sobre palabras clave legacy
+
+El compilador sigue aceptando `suti`/`jani`, `kunawsati`, `sapüru` y
+`utji`/`janiutji`. Los ejemplos de esta guía usan la sintaxis actual con
+`jisa`/`maysatxa`, `ukhakamaxa`, `taki` y `chiqa`/`k'ari`.
 
 ---
 

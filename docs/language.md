@@ -7,9 +7,7 @@ Si buscas detalles exhaustivos de operadores y funciones integradas, consulta la
 ## Hola mundo
 
 ```aymara
-qallta
 qillqa("Kamisaraki!");
-tukuya
 ```
 
 ## Tipos y variables
@@ -18,7 +16,7 @@ tukuya
 yatiya jakhüwi contador = 3;
 yatiya jakhüwi promedio = 3;
 yatiya aru saludo = "kamisaraki";
-yatiya chiqa activo = utji;
+yatiya chiqa activo = chiqa;
 ```
 
 También puedes usar literales enteros en hexadecimal o binario:
@@ -31,27 +29,23 @@ yatiya jakhüwi color = 0xFF;
 ## Condicionales
 
 ```aymara
-qallta
-suti (contador > 0) {
+jisa (contador > 0) {
     qillqa(saludo);
-} jani {
+} maysatxa {
     qillqa("janiwa");
 }
-tukuya
 ```
 
 ## Bucles
 
 ```aymara
-qallta
-sapüru (yatiya jakhüwi i = 0; i < 3; i = i + 1;) {
+taki (yatiya jakhüwi i = 0; i < 3; i++) {
     qillqa(i);
 }
 
-kunawsati (contador > 0) {
-    contador = contador - 1;
+ukhakamaxa (contador > 0) {
+    contador--;
 }
-tukuya
 ```
 
 ## Funciones
@@ -82,6 +76,12 @@ carpeta `modules/` y desde rutas adicionales definidas en la variable de entorno
 // comentario estilo C
 /* bloque de comentario */
 ```
+
+## Nota sobre palabras clave legacy
+
+El compilador mantiene compatibilidad con las formas `suti`/`jani`,
+`kunawsati`, `sapüru` y `utji`/`janiutji`. La sintaxis recomendada en esta guía
+usa `jisa`/`maysatxa`, `ukhakamaxa`, `taki` y `chiqa`/`k'ari`.
 
 ---
 

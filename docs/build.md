@@ -104,8 +104,8 @@ Binario resultante: `build/bin/aymc.exe`.
 ### Linux/macOS
 
 ```bash
-./build/bin/aymc samples/basics/hola.aym
-./build/bin/hola
+./build/bin/aymc samples/aymara_flow.aym
+./samples/aymara_flow
 ```
 
 Por defecto, el ejecutable generado se guarda en la misma carpeta del archivo
@@ -114,8 +114,8 @@ Por defecto, el ejecutable generado se guarda en la misma carpeta del archivo
 ### Windows
 
 ```cmd
-build\\bin\\aymc.exe samples\\basics\\hola.aym
-bin\\hola.exe
+build\\bin\\aymc.exe samples\\aymara_flow.aym
+samples\\aymara_flow.exe
 ```
 
 ### Distribuir solo el binario del compilador

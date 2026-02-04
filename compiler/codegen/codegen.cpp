@@ -3,6 +3,7 @@
 #include "../builtins/builtins.h"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include "../utils/fs.h"
 #include <unordered_map>
@@ -22,6 +23,17 @@ std::string lowerName(const std::string &value) {
     std::transform(out.begin(), out.end(), out.begin(),
                    [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
     return out;
+}
+
+std::string toAsmBytes(const std::string &value) {
+    std::ostringstream oss;
+    for (size_t i = 0; i < value.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << static_cast<unsigned int>(static_cast<unsigned char>(value[i]));
+    }
+    if (!value.empty()) oss << ", ";
+    oss << "0";
+    return oss.str();
 }
 
 std::vector<std::string> paramRegs(bool windows) {
@@ -62,6 +74,7 @@ public:
     std::unordered_map<std::string,std::string> currentParamTypes;
     std::unordered_map<std::string,std::string> currentLocalTypes;
     std::unordered_map<std::string,std::string> globalTypes;
+    std::unordered_map<std::string,std::string> functionReturnTypes;
     std::vector<std::string> breakLabels;
     std::vector<std::string> continueLabels;
     long seed = -1;
@@ -70,6 +83,7 @@ public:
               const std::string &path,
               const std::unordered_set<std::string> &semGlobals,
               const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
+              const std::unordered_map<std::string,std::string> &functionReturnTypesIn,
               const std::unordered_map<std::string,std::string> &globalTypesIn,
               bool windows,
               long seedIn,
@@ -309,14 +323,18 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
     if (!expr) return false;
     if (dynamic_cast<const StringExpr*>(expr)) return true;
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
-        if (lowerName(c->getName()) == BUILTIN_TO_STRING) return true;
+        std::string nameLower = lowerName(c->getName());
+        if (nameLower == BUILTIN_TO_STRING || nameLower == BUILTIN_KATU) return true;
+        auto it = functionReturnTypes.find(c->getName());
+        if (it == functionReturnTypes.end()) it = functionReturnTypes.find(nameLower);
+        if (it != functionReturnTypes.end() && it->second == "aru") return true;
     }
     if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
         return listElementType(i->getBase(), locals) == "aru";
     }
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
-        if (currentParamStrings.count(v->getName())) return true;
-        if (locals && currentLocalStrings.count(v->getName())) return true;
+        if (currentParamStrings.count(v->getName()) && currentParamStrings.at(v->getName())) return true;
+        if (locals && currentLocalStrings.count(v->getName()) && currentLocalStrings.at(v->getName())) return true;
         if (globalTypes.count(v->getName()) && globalTypes.at(v->getName()) == "aru") return true;
         return false;
     }
@@ -348,6 +366,9 @@ bool CodeGenImpl::isListExpr(const Expr *expr,
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
         if (name == BUILTIN_PUSH) return true;
+        auto it = functionReturnTypes.find(c->getName());
+        if (it == functionReturnTypes.end()) it = functionReturnTypes.find(name);
+        if (it != functionReturnTypes.end() && it->second.rfind("t'aqa", 0) == 0) return true;
     }
     return false;
 }
@@ -406,6 +427,12 @@ bool CodeGenImpl::isBoolExpr(const Expr *expr,
                              const std::unordered_map<std::string,int> *locals) const {
     if (!expr) return false;
     if (dynamic_cast<const BoolExpr*>(expr)) return true;
+    if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
+        std::string nameLower = lowerName(c->getName());
+        auto it = functionReturnTypes.find(c->getName());
+        if (it == functionReturnTypes.end()) it = functionReturnTypes.find(nameLower);
+        if (it != functionReturnTypes.end() && it->second == "chiqa") return true;
+    }
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
         if (currentParamTypes.count(v->getName()) && currentParamTypes.at(v->getName()) == "chiqa")
             return true;
@@ -876,12 +903,16 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         }
         emitExpr(b->getLeft(), locals);
         out << "    push rax\n";
+        out << "    sub rsp, 8\n";
         emitExpr(b->getRight(), locals);
+        out << "    add rsp, 8\n";
         out << "    mov rbx, rax\n";
         out << "    pop rax\n";
+        bool leftIsString = isStringExpr(b->getLeft(), locals);
+        bool rightIsString = isStringExpr(b->getRight(), locals);
         switch (b->getOp()) {
             case '+':
-                if (isStringExpr(b->getLeft(), locals) && isStringExpr(b->getRight(), locals)) {
+                if (leftIsString && rightIsString) {
                     out << "    mov " << reg1(this->windows) << ", rax\n";
                     out << "    mov " << reg2(this->windows) << ", rbx\n";
                     out << "    call aym_str_concat\n";
@@ -921,10 +952,24 @@ void CodeGenImpl::emitExpr(const Expr *expr,
                 out << "    cmp rax, rbx\n    setge al\n    movzx rax,al\n";
                 break;
             case 's':
-                out << "    cmp rax, rbx\n    sete al\n    movzx rax,al\n";
+                if (leftIsString && rightIsString) {
+                    out << "    mov " << reg1(this->windows) << ", rax\n";
+                    out << "    mov " << reg2(this->windows) << ", rbx\n";
+                    out << "    call strcmp\n";
+                    out << "    cmp rax,0\n    sete al\n    movzx rax,al\n";
+                } else {
+                    out << "    cmp rax, rbx\n    sete al\n    movzx rax,al\n";
+                }
                 break;
             case 'd':
-                out << "    cmp rax, rbx\n    setne al\n    movzx rax,al\n";
+                if (leftIsString && rightIsString) {
+                    out << "    mov " << reg1(this->windows) << ", rax\n";
+                    out << "    mov " << reg2(this->windows) << ", rbx\n";
+                    out << "    call strcmp\n";
+                    out << "    cmp rax,0\n    setne al\n    movzx rax,al\n";
+                } else {
+                    out << "    cmp rax, rbx\n    setne al\n    movzx rax,al\n";
+                }
                 break;
         }
         return;
@@ -1141,6 +1186,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
                        const std::string &path,
                        const std::unordered_set<std::string> &semGlobals,
                        const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
+                       const std::unordered_map<std::string,std::string> &functionReturnTypesIn,
                        const std::unordered_map<std::string,std::string> &globalTypesIn,
                        bool windows,
                        long seedIn,
@@ -1148,6 +1194,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     this->windows = windows;
     globals = semGlobals;
     paramTypes = paramTypesIn;
+    functionReturnTypes = functionReturnTypesIn;
     globalTypes = globalTypesIn;
     seed = seedIn;
 
@@ -1174,6 +1221,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern printf\n";
     out << "extern scanf\n";
     out << "extern strlen\n";
+    out << "extern strcmp\n";
     out << "extern aym_random\n";
     out << "extern aym_srand\n";
     out << "extern aym_sleep\n";
@@ -1203,8 +1251,8 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "bool_true: db \"utji\",0\n";
     out << "bool_false: db \"janiutji\",0\n";
 
-    for (size_t i=0;i<strings.size();++i) {
-        out << "str" << i << ": db \"" << strings[i] << "\",0\n";
+    for (size_t i = 0; i < strings.size(); ++i) {
+        out << "str" << i << ": db " << toAsmBytes(strings[i]) << "\n";
     }
     for (const auto &g : globals) {
         out << g << ": dq 0\n";
@@ -1296,12 +1344,13 @@ void CodeGenerator::generate(const std::vector<std::unique_ptr<Node>> &nodes,
                              const std::string &outputPath,
                              const std::unordered_set<std::string> &globals,
                              const std::unordered_map<std::string,std::vector<std::string>> &paramTypes,
+                             const std::unordered_map<std::string,std::string> &functionReturnTypes,
                              const std::unordered_map<std::string,std::string> &globalTypes,
                              bool windows,
                              long seed,
                              const std::string &runtimeDir) {
     CodeGenImpl impl;
-    impl.emit(nodes, outputPath, globals, paramTypes, globalTypes, windows, seed, runtimeDir);
+    impl.emit(nodes, outputPath, globals, paramTypes, functionReturnTypes, globalTypes, windows, seed, runtimeDir);
 }
 
 } // namespace aym

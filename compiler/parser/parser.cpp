@@ -30,11 +30,13 @@ Parser::Parser(const std::vector<Token>& t) : tokens(t) {}
 
 std::vector<std::unique_ptr<Node>> Parser::parse() {
     std::vector<std::unique_ptr<Stmt>> stmts;
-    if (!match(TokenType::KeywordStart)) {
-        parseError("se esperaba 'qallta' al inicio del programa");
-    }
+    bool hasStart = match(TokenType::KeywordStart);
     parseStatements(stmts);
-    if (!match(TokenType::KeywordEnd)) {
+    if (match(TokenType::KeywordEnd)) {
+        if (peek().type != TokenType::EndOfFile) {
+            parseError("token inesperado despues de 'tukuya'");
+        }
+    } else if (hasStart) {
         parseError("se esperaba 'tukuya' al final del programa");
     }
     std::vector<std::unique_ptr<Node>> nodes;
@@ -165,8 +167,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         match(TokenType::LParen);
         if (peek().type != TokenType::RParen) {
             while (true) {
-                if (peek().type == TokenType::Identifier && pos + 1 < tokens.size() &&
-                    tokens[pos + 1].type == TokenType::Equal) {
+                if ((peek().type == TokenType::Identifier || peek().type == TokenType::KeywordTypeList) &&
+                    pos + 1 < tokens.size() && tokens[pos + 1].type == TokenType::Equal) {
                     std::string name = get().text;
                     match(TokenType::Equal);
                     auto value = parseExpression();

@@ -6,18 +6,18 @@ para escribir AymaraLang más rápido.
 
 ### Características
 
-- Resaltado de palabras clave (`qallta`, `suti`, `lurawi`, `kuttaya`, etc.).
-- Tipos (`jakhüwi`, `aru`, `chiqa`, `listaña`, `mapa`).
-- Funciones integradas (`qillqa`, `input`, `array_*`, `sin`, `cos`, ...).
+- Resaltado de palabras clave (`qallta`, `jisa`, `maysatxa`, `lurawi`, `kuttaya`, etc.).
+- Tipos (`jakhüwi`, `aru`, `chiqa`, `t'aqa`, `mapa`).
+- Funciones integradas (`qillqa`, `katu`, `input`, `array_*`, `push`, `largo`, `sin`, `cos`, ...).
 - Soporte de comentarios `//` y `/* */`.
-- Snippets para `suti/jani`, `sapüru`, `kunawsati`, `lurawi`.
+- Snippets para `jisa/maysatxa`, `taki`, `ukhakamaxa`, `lurawi`.
 
 ### Uso
 
 1. Abre un archivo con extensión `.aym`.
 2. VS Code activará automáticamente la extensión.
 3. Escribe código y utiliza los snippets con los prefijos:
-   - `suti`, `kunawsati`, `sapüru`, `lurawi`, `kuttaya`.
+   - `jisa`, `ukhakamaxa`, `taki`, `lurawi`, `kuttaya`, `katu`.
 
 ### Desarrollo local
 

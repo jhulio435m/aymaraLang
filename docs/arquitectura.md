@@ -8,7 +8,7 @@ Este documento describe los módulos principales del compilador de AymaraLang y 
 - **Ubicación:** `compiler/lexer`
 - Convierte el código fuente en una secuencia de *tokens*.
 - Cada token posee tipo, texto, línea y columna (`struct Token`).
-- Reconoce palabras clave en aymara (`qallta`, `tukuya`, `suti`, `kunawsati`, etc.), operadores y literales.
+- Reconoce palabras clave en aymara (`qallta`, `tukuya`, `jisa`, `ukhakamaxa`, etc.), operadores y literales.
 
 ### Parser
 - **Ubicación:** `compiler/parser`
@@ -68,11 +68,9 @@ El analizador semántico maneja un vector de mapas `scopes` donde cada mapa asoc
 
 ## Ejemplo paso a paso
 
-Tomemos `samples/basics/hola.aym`:
+Tomemos `samples/ejemplos/basicos.aym`:
 ```aymara
-qallta
 qillqa("Kamisaraki!");
-tukuya
 ```
 1. **Lexer** genera tokens: `KeywordPrint`, `LParen`, `String("Kamisaraki!")`, `RParen`, `Semicolon`.
 2. **Parser** construye un `PrintStmt` con un `StringExpr`.
