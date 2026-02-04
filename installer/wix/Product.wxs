@@ -35,35 +35,84 @@
     <MajorUpgrade DowngradeErrorMessage="Ya existe una versión más reciente de AymaraLang." />
     <MediaTemplate EmbedCab="yes" />
 
-    <!-- Icono: si NO existe, WiX fallará. Solución simple:
-         deja el archivo assets\logo.ico en el repo o comenta estas 2 líneas. -->
     <Icon Id="AppIcon" SourceFile="$(sys.SOURCEFILEDIR)..\..\assets\logo.ico" />
     <Property Id="ARPPRODUCTICON" Value="AppIcon" />
 
-    <!-- UI (WiX v6): usa ui:WixUI para los dialog sets -->
     <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLDIR" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
-    <CustomAction Id="CheckNasm"
-                  Directory="SystemFolder"
-                  ExeCommand="where.exe nasm.exe"
-                  Execute="immediate"
-                  Return="check" />
-    <CustomAction Id="CheckGcc"
-                  Directory="SystemFolder"
-                  ExeCommand="where.exe gcc.exe"
-                  Execute="immediate"
-                  Return="check" />
+    <!-- PREREQS: AppSearch + Launch (WiX v4) -->
 
-    <InstallUISequence>
-      <Custom Action="CheckNasm" Before="CostFinalize" Condition="NOT Installed" />
-      <Custom Action="CheckGcc" Before="CostFinalize" Condition="NOT Installed" />
-    </InstallUISequence>
+    <!-- NASM: App Paths (Registro). Para valor default: sin atributo Name -->
+    <Property Id="NASM_APP_PATH">
+      <RegistrySearch Id="NasmAppPaths64"
+                      Root="HKLM"
+                      Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\nasm.exe"
+                      Type="raw" />
+    </Property>
 
-    <InstallExecuteSequence>
-      <Custom Action="CheckNasm" Before="InstallInitialize" Condition="NOT Installed" />
-      <Custom Action="CheckGcc" Before="InstallInitialize" Condition="NOT Installed" />
-    </InstallExecuteSequence>
+    <Property Id="NASM_APP_PATH_WOW">
+      <RegistrySearch Id="NasmAppPathsWow"
+                      Root="HKLM"
+                      Key="SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\nasm.exe"
+                      Type="raw" />
+    </Property>
+
+    <!-- NASM: rutas típicas -->
+    <Property Id="NASM_IN_PROGFILES64">
+      <DirectorySearch Id="NasmPf64Dir" Path="[ProgramFiles64Folder]NASM">
+        <FileSearch Id="NasmPf64Exe" Name="nasm.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <Property Id="NASM_IN_PROGFILES32">
+      <DirectorySearch Id="NasmPf32Dir" Path="[ProgramFilesFolder]NASM">
+        <FileSearch Id="NasmPf32Exe" Name="nasm.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <!-- GCC: App Paths (Registro). Para valor default: sin atributo Name -->
+    <Property Id="GCC_APP_PATH">
+      <RegistrySearch Id="GccAppPaths64"
+                      Root="HKLM"
+                      Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gcc.exe"
+                      Type="raw" />
+    </Property>
+
+    <Property Id="GCC_APP_PATH_WOW">
+      <RegistrySearch Id="GccAppPathsWow"
+                      Root="HKLM"
+                      Key="SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\gcc.exe"
+                      Type="raw" />
+    </Property>
+
+    <!-- GCC: rutas típicas (MSYS2 / MinGW) -->
+    <Property Id="GCC_IN_MSYS2_MINGW64">
+      <DirectorySearch Id="GccMsys2Mingw64Dir" Path="C:\msys64\mingw64\bin">
+        <FileSearch Id="GccMsys2Mingw64Exe" Name="gcc.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <Property Id="GCC_IN_MSYS2_USR">
+      <DirectorySearch Id="GccMsys2UsrDir" Path="C:\msys64\usr\bin">
+        <FileSearch Id="GccMsys2UsrExe" Name="gcc.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <Property Id="GCC_IN_MINGW">
+      <DirectorySearch Id="GccMingwDir" Path="C:\MinGW\bin">
+        <FileSearch Id="GccMingwExe" Name="gcc.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <!-- Launch conditions (WiX v4): usar Launch -->
+    <Launch
+      Condition="NASM_APP_PATH OR NASM_APP_PATH_WOW OR NASM_IN_PROGFILES64 OR NASM_IN_PROGFILES32"
+      Message="No se encontró NASM (nasm.exe). Instálalo y vuelve a ejecutar el instalador." />
+
+    <Launch
+      Condition="GCC_APP_PATH OR GCC_APP_PATH_WOW OR GCC_IN_MSYS2_MINGW64 OR GCC_IN_MSYS2_USR OR GCC_IN_MINGW"
+      Message="No se encontró GCC (gcc.exe). Instálalo (por ejemplo MSYS2/MinGW) y vuelve a ejecutar el instalador." />
 
     <Feature Id="CoreFeature" Title="Core" Level="1">
       <ComponentGroupRef Id="CoreRootFiles" />
@@ -80,7 +129,10 @@
 
   </Package>
 
-  <!-- Directorios -->
+  <Fragment>
+    <WixVariable Id="WixUIInstallDir" Value="INSTALLDIR" />
+  </Fragment>
+
   <Fragment>
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLDIR" Name="AymaraLang">
@@ -91,8 +143,6 @@
     </StandardDirectory>
   </Fragment>
 
-  <!-- Harvest de archivos (WiX v6):
-       ComponentGroup va directo en Fragment con Directory= y Source= -->
   <Fragment>
     <ComponentGroup Id="CoreRootFiles" Directory="INSTALLDIR" Source="$(var.DistDir)">
       <Files Include="README.md" />
@@ -108,7 +158,6 @@
     </ComponentGroup>
   </Fragment>
 
-  <!-- PATH (WiX v6): Environment es del schema principal (NO util:Environment) -->
   <Fragment>
     <Component Id="PathEnv" Directory="INSTALLDIR" Guid="D3D1F4E4-9E39-4E0B-A6C1-0E5D8A6A3C11">
       <RegistryValue Root="HKLM"
@@ -127,7 +176,6 @@
     </Component>
   </Fragment>
 
-  <!-- LLVM opcional -->
   <Fragment>
     <ComponentGroup Id="LlvmBackendFiles" Directory="LLVMBACKENDDIR" Source="$(var.LlvmDir)">
       <?if $(var.HasLlvmBackend) = 1 ?>
