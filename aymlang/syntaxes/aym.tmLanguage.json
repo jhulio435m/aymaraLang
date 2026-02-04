@@ -43,11 +43,11 @@
 			"patterns": [
 				{
 					"name": "keyword.control.aym",
-					"match": "(?i)\\b(qallta|tukuya|yatiya|suti|jani|kunawsati|sapüru|jisa|maysatxa|ukhakamaxa|taki|p'akhiña|sarantaña|yant'aña|katjaña|tukuyawi|pantja)\\b"
+					"match": "(?i)\\b(qallta|tukuya|yatiya|suti|jisa|jani|maysatxa|kunawsati|ukhakamaxa|sapüru|taki|p'akhiña|sarantaña|yant'aña|katjaña|tukuyawi|pantja|kuttaya|lurawi|apnaq)\\b"
 				},
 				{
 					"name": "keyword.other.aym",
-					"match": "(?i)\\b(lurawi|kuttaya|apnaq)\\b"
+					"match": "(?i)\\b(kasta|machaqa|aka|jila|jikxata|sapa|taqi|sapakasta|uñt'aya|chura|jilaaka)\\b"
 				}
 			]
 		},
@@ -55,7 +55,7 @@
 			"patterns": [
 				{
 					"name": "storage.type.aym",
-					"match": "(?i)\\b(jakhüwi|aru|chiqa|listaña|t'aqa|mapa)\\b"
+					"match": "(?i)\\b(jakhüwi|aru|listaña|t'aqa|mapa)\\b"
 				}
 			]
 		},
@@ -79,12 +79,23 @@
 			"patterns": [
 				{
 					"name": "constant.numeric.integer.aym",
-					"match": "\\b\\d+\\b"
+					"match": "\\b(0x[0-9a-fA-F]+|0b[01]+|\\d+)\\b"
 				}
 			]
 		},
 		"strings": {
 			"patterns": [
+				{
+					"name": "string.quoted.double.interpolated.aym",
+					"begin": "\\$\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.aym",
+							"match": "\\\\."
+						}
+					]
+				},
 				{
 					"name": "string.quoted.double.aym",
 					"begin": "\"",
