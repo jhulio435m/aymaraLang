@@ -56,13 +56,13 @@
                   Return="check" />
 
     <InstallUISequence>
-      <Custom Action="CheckNasm" Before="CostFinalize">NOT Installed</Custom>
-      <Custom Action="CheckGcc" Before="CostFinalize">NOT Installed</Custom>
+      <Custom Action="CheckNasm" Before="CostFinalize" Condition="NOT Installed" />
+      <Custom Action="CheckGcc" Before="CostFinalize" Condition="NOT Installed" />
     </InstallUISequence>
 
     <InstallExecuteSequence>
-      <Custom Action="CheckNasm" Before="InstallInitialize">NOT Installed</Custom>
-      <Custom Action="CheckGcc" Before="InstallInitialize">NOT Installed</Custom>
+      <Custom Action="CheckNasm" Before="InstallInitialize" Condition="NOT Installed" />
+      <Custom Action="CheckGcc" Before="InstallInitialize" Condition="NOT Installed" />
     </InstallExecuteSequence>
 
     <Feature Id="CoreFeature" Title="Core" Level="1">
