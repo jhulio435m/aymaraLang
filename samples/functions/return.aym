@@ -1,8 +1,0 @@
-qallta
-// Uso de 'return'
-lurawi inc(jakhüwi n) : jakhüwi {
-    kuttaya n + 1;
-}
-
-qillqa(inc(4));
-tukuya

@@ -1,6 +1,0 @@
-qallta
-// Demostración de operadores unarios y números negativos
-yatiya jakhüwi n = -10;
-yatiya jakhüwi m = +3;
-qillqa(n + m);
-tukuya

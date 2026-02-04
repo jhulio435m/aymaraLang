@@ -1,7 +1,0 @@
-qallta
-// Lectura desde consola
-yatiya aru nombre = input();
-qillqa(nombre);
-yatiya jakhüwi edad = input();
-qillqa(edad);
-tukuya

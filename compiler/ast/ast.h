@@ -13,6 +13,8 @@ class StringExpr;
 class VariableExpr;
 class BinaryExpr;
 class UnaryExpr;
+class TernaryExpr;
+class IncDecExpr;
 class CallExpr;
 class PrintStmt;
 class ExprStmt;
@@ -39,6 +41,8 @@ public:
     virtual void visit(VariableExpr &) = 0;
     virtual void visit(BinaryExpr &) = 0;
     virtual void visit(UnaryExpr &) = 0;
+    virtual void visit(TernaryExpr &) = 0;
+    virtual void visit(IncDecExpr &) = 0;
     virtual void visit(CallExpr &) = 0;
     virtual void visit(PrintStmt &) = 0;
     virtual void visit(ExprStmt &) = 0;
@@ -141,6 +145,38 @@ private:
     std::unique_ptr<Expr> expr;
 };
 
+class TernaryExpr : public Expr {
+public:
+    TernaryExpr(std::unique_ptr<Expr> cond,
+                std::unique_ptr<Expr> thenExpr,
+                std::unique_ptr<Expr> elseExpr)
+        : condition(std::move(cond)),
+          thenBranch(std::move(thenExpr)),
+          elseBranch(std::move(elseExpr)) {}
+    Expr *getCondition() const { return condition.get(); }
+    Expr *getThen() const { return thenBranch.get(); }
+    Expr *getElse() const { return elseBranch.get(); }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::unique_ptr<Expr> condition;
+    std::unique_ptr<Expr> thenBranch;
+    std::unique_ptr<Expr> elseBranch;
+};
+
+class IncDecExpr : public Expr {
+public:
+    IncDecExpr(std::string n, bool increment, bool prefix)
+        : name(std::move(n)), isIncrement(increment), isPrefix(prefix) {}
+    const std::string &getName() const { return name; }
+    bool increment() const { return isIncrement; }
+    bool prefix() const { return isPrefix; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::string name;
+    bool isIncrement;
+    bool isPrefix;
+};
+
 class CallExpr : public Expr {
 public:
     CallExpr(std::string callee,
@@ -156,12 +192,20 @@ private:
 
 class PrintStmt : public Stmt {
 public:
-    explicit PrintStmt(std::vector<std::unique_ptr<Expr>> exprs)
-        : expressions(std::move(exprs)) {}
+    PrintStmt(std::vector<std::unique_ptr<Expr>> exprs,
+              std::unique_ptr<Expr> sep = nullptr,
+              std::unique_ptr<Expr> term = nullptr)
+        : expressions(std::move(exprs)),
+          separator(std::move(sep)),
+          terminator(std::move(term)) {}
     const std::vector<std::unique_ptr<Expr>> &getExprs() const { return expressions; }
+    Expr *getSeparator() const { return separator.get(); }
+    Expr *getTerminator() const { return terminator.get(); }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::vector<std::unique_ptr<Expr>> expressions;
+    std::unique_ptr<Expr> separator;
+    std::unique_ptr<Expr> terminator;
 };
 
 class ExprStmt : public Stmt {

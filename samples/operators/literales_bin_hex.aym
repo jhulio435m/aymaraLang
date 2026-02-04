@@ -1,6 +1,0 @@
-qallta
-// Literales enteros en binario y hexadecimal
-yatiya jakhüwi mascara = 0b1010;
-yatiya jakhüwi color = 0xFF;
-qillqa(mascara + color);
-tukuya

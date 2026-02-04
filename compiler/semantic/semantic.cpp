@@ -59,6 +59,8 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         void visit(VariableExpr&) override {}
         void visit(BinaryExpr&) override {}
         void visit(UnaryExpr&) override {}
+        void visit(TernaryExpr&) override {}
+        void visit(IncDecExpr&) override {}
         void visit(CallExpr&) override {}
         void visit(PrintStmt&) override {}
         void visit(ExprStmt&) override {}
@@ -94,6 +96,8 @@ void SemanticAnalyzer::visit(PrintStmt &p) {
     for (const auto &expr : p.getExprs()) {
         if (expr) expr->accept(*this);
     }
+    if (p.getSeparator()) p.getSeparator()->accept(*this);
+    if (p.getTerminator()) p.getTerminator()->accept(*this);
 }
 
 void SemanticAnalyzer::visit(ExprStmt &e) {
@@ -245,6 +249,9 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
         std::cerr << "Error: tipos incompatibles en operacion" << std::endl;
     }
     char op = b.getOp();
+    if ((l == "aru" || r == "aru") && op != '+') {
+        std::cerr << "Error: operacion invalida sobre textos" << std::endl;
+    }
     if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
         currentType = "chiqa";
     else
@@ -256,6 +263,37 @@ void SemanticAnalyzer::visit(UnaryExpr &u) {
     u.getExpr()->accept(*this);
     if (u.getOp() == '!') {
         currentType = "chiqa";
+    }
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(TernaryExpr &t) {
+    t.getCondition()->accept(*this);
+    std::string condType = currentType;
+    if (condType != "chiqa") {
+        std::cerr << "Error: condicion del ternario debe ser booleana" << std::endl;
+    }
+    t.getThen()->accept(*this);
+    std::string thenType = currentType;
+    t.getElse()->accept(*this);
+    std::string elseType = currentType;
+    if (thenType != elseType) {
+        std::cerr << "Error: tipos incompatibles en operador ternario" << std::endl;
+    }
+    currentType = thenType;
+    lastInputCall = false;
+}
+
+void SemanticAnalyzer::visit(IncDecExpr &e) {
+    if (!isDeclared(e.getName())) {
+        std::cerr << "Error: variable '" << e.getName() << "' no declarada" << std::endl;
+        currentType = "";
+    } else {
+        std::string t = lookup(e.getName());
+        if (t != "jakhüwi") {
+            std::cerr << "Error: incremento/decremento requiere numero" << std::endl;
+        }
+        currentType = t;
     }
     lastInputCall = false;
 }
