@@ -31,8 +31,8 @@ compilador.
 
 ## Archivos generados
 
-- `build/<nombre>.asm`: salida NASM.
-- `build/<nombre>.o`: objeto ensamblado.
+- `build/<nombre>.asm`: salida NASM (se elimina automáticamente en Windows).
+- `build/<nombre>.o`: objeto ensamblado (en Windows se usa `.obj` y se elimina automáticamente).
 - `bin/<nombre>` o `bin/<nombre>.exe`: ejecutable final.
 
 ## Consejos de depuración

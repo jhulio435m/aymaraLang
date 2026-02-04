@@ -2063,6 +2063,11 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
         std::cerr << "Error enlazando " << obj.string() << std::endl;
         return;
     }
+    if (windows) {
+        std::error_code ec;
+        fs::remove(asmPath, ec);
+        fs::remove(obj, ec);
+    }
     std::cout << "[aymc] Ejecutable generado: " << bin.string() << std::endl;
 }
 
