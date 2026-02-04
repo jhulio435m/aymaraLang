@@ -40,6 +40,27 @@
     <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLDIR" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
+    <CustomAction Id="CheckNasm"
+                  Directory="SystemFolder"
+                  ExeCommand="where.exe nasm.exe"
+                  Execute="immediate"
+                  Return="check" />
+    <CustomAction Id="CheckGcc"
+                  Directory="SystemFolder"
+                  ExeCommand="where.exe gcc.exe"
+                  Execute="immediate"
+                  Return="check" />
+
+    <InstallUISequence>
+      <Custom Action="CheckNasm" Before="CostFinalize">NOT Installed</Custom>
+      <Custom Action="CheckGcc" Before="CostFinalize">NOT Installed</Custom>
+    </InstallUISequence>
+
+    <InstallExecuteSequence>
+      <Custom Action="CheckNasm" Before="InstallInitialize">NOT Installed</Custom>
+      <Custom Action="CheckGcc" Before="InstallInitialize">NOT Installed</Custom>
+    </InstallExecuteSequence>
+
     <Feature Id="CoreFeature" Title="Core" Level="1">
       <ComponentGroupRef Id="CoreRootFiles" />
       <ComponentGroupRef Id="CoreBinFiles" />

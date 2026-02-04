@@ -1,0 +1,8 @@
+Package: aymaralang
+Version: 0.1.0
+Section: devel
+Priority: optional
+Architecture: amd64
+Maintainer: AymaraLang Project <dev@aymaralang.local>
+Description: Compilador AymaraLang (aymc)
+ Lenguaje de programación inspirado en la lengua aymara.

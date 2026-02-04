@@ -38,34 +38,47 @@ El script intenta usar `winget`, `choco` o `scoop` para instalar CMake, NASM,
 NSIS, WiX Toolset y LLVM (opcional). Si no encuentra gestor de paquetes,
 mostrará la lista de dependencias a instalar manualmente.
 
+### Generar ejecutables y dist (Windows)
+
+Para empaquetar el compilador y todos los recursos en `dist/`:
+
+```powershell
+./scripts/build_dist.ps1 -Config Release
+```
+
+El ejecutable resultante queda en `dist\bin\aymc.exe`.
+
 ### Generar instaladores de Windows (MSI y EXE)
 
-Puedes generar un MSI (WiX Toolset) y/o un EXE (NSIS) con interfaz gráfica
-similar al instalador de Python. Ambos incluyen el compilador, la carpeta
-`runtime` y el script de dependencias de Windows.
-
-1. Compila el binario primero:
+Una vez que `dist/` está listo, genera los instaladores:
 
 ```powershell
-cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+./scripts/build_msi.ps1
+./scripts/build_nsis.ps1
+```
+
+El MSI se guarda en `artifacts/AymaraLang-Setup.msi` y el EXE en
+`artifacts/AymaraLang-Setup.exe`.
+
+> Nota: ambos instaladores usan `assets/logo.ico` como icono.
+
+### Generar paquete `.deb` (Linux)
+
+1. Construye e instala en `dist/`:
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
+cmake --install build --prefix dist
 ```
 
-2. Genera el MSI (recomendado si necesitas un instalador corporativo):
+2. Empaqueta el `.deb`:
 
-```powershell
-./scripts/build_windows_installer_msi.ps1 -AppVersion 0.1.0
+```bash
+bash scripts/build_deb.sh
 ```
 
-El MSI resultante se guarda en `dist/AymaraLang-Setup-<versión>.msi`.
-
-3. Genera el EXE (NSIS):
-
-```powershell
-./scripts/build_windows_installer.ps1 -AppVersion 0.1.0
-```
-
-El EXE resultante se guarda en `dist/AymaraLang-Setup-<versión>.exe`.
+El paquete se guarda en `artifacts/`.
 
 ### Generar el paquete `.tar.gz` para GitHub
 

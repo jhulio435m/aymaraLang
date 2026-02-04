@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+if [ -x /opt/aymaralang/bin/aymc ]; then
+  ln -sf /opt/aymaralang/bin/aymc /usr/bin/aymc
+fi
+
+exit 0
