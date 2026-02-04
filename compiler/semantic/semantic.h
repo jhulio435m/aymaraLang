@@ -36,6 +36,7 @@ private:
     bool lastInputCall = false;
 
     void visit(NumberExpr &) override;
+    void visit(BoolExpr &) override;
     void visit(StringExpr &) override;
     void visit(VariableExpr &) override;
     void visit(BinaryExpr &) override;

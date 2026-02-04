@@ -16,8 +16,7 @@ el lenguaje de forma incremental.
 - `control_flow/if_switch.aym`, `control_flow/condicionales.aym`,
   `control_flow/else.aym` – condicionales.
 - `control_flow/for.aym`, `control_flow/for_loops.aym`,
-  `control_flow/while.aym`, `control_flow/do_while.aym`,
-  `control_flow/range_for.aym` – bucles.
+  `control_flow/while.aym`, `control_flow/range_for.aym` – bucles.
 - `control_flow/bucles.aym`, `control_flow/condloop.aym`,
   `control_flow/loop.aym`, `control_flow/switch.aym` – variantes y combinaciones.
 

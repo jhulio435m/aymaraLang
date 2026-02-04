@@ -1,37 +1,40 @@
+qallta
 // Ejemplos de estructuras condicionales
 
-jach’a x = 5;
-jach’a y = 3;
+yatiya jakhüwi x = 5;
+yatiya jakhüwi y = 3;
 
 // if simple
-si (x > y) {
-    willt’aña("x es mayor que y");
+suti (x > y) {
+    qillqa("x es mayor que y");
 }
 
 // if-else
-si (x == y) {
-    willt’aña("iguales");
-} sino {
-    willt’aña("diferentes");
+suti (x == y) {
+    qillqa("iguales");
+} jani {
+    qillqa("diferentes");
 }
 
 // if-else if-else
-si (x < y) {
-    willt’aña("menor");
-} sino si (x == y) {
-    willt’aña("igual");
-} sino {
-    willt’aña("mayor");
+suti (x < y) {
+    qillqa("menor");
+} jani {
+    suti (x == y) {
+        qillqa("igual");
+    } jani {
+        qillqa("mayor");
+    }
 }
 
-// switch
-tantachaña (x) {
-    jamusa 1:
-        willt’aña("uno");
-        jalña;
-    jamusa 5:
-        willt’aña("cinco");
-        jalña;
-    akhamawa:
-        willt’aña("otro");
+// alternativa al switch
+suti (x == 1) {
+    qillqa("uno");
+} jani {
+    suti (x == 5) {
+        qillqa("cinco");
+    } jani {
+        qillqa("otro");
+    }
 }
+tukuya

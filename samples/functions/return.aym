@@ -1,6 +1,8 @@
+qallta
 // Uso de 'return'
-luräwi inc(n) {
-    kutiyana n + 1;
+lurawi inc(jakhüwi n) : jakhüwi {
+    kuttaya n + 1;
 }
 
-willt’aña(inc(4));
+qillqa(inc(4));
+tukuya

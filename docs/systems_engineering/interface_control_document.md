@@ -13,7 +13,7 @@ Definir las interfaces principales del sistema AymaraLang y sus contratos de uso
 - **Salidas:** `.asm`, `.ll` y binario nativo.
 
 ### 2.3 Runtime
-- **Interfaz:** llamadas a funciones integradas (`willt’aña`, `input`, matemáticas, arreglos).
+- **Interfaz:** llamadas a funciones integradas (`qillqa`, `input`, matemáticas, arreglos).
 
 ## 3. Interfaces internas
 | Interfaz | Descripción |

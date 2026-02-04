@@ -1,21 +1,25 @@
+qallta
 // Condicionales encadenados y switch
-jach’a x = 30;
+yatiya jakhüwi x = 30;
 
-si (x == 1) {
-    willt’aña(1);
-} sino si (x == 2) {
-    willt’aña(2);
-} sino {
-    willt’aña(0);
+suti (x == 1) {
+    qillqa(1);
+} jani {
+    suti (x == 2) {
+        qillqa(2);
+    } jani {
+        qillqa(0);
+    }
 }
 
-tantachaña (x) {
-    jamusa 1:
-        willt’aña(10);
-        jalña;
-    jamusa 2:
-        willt’aña(20);
-        jalña;
-    akhamawa:
-        willt’aña(99);
+// Alternativa al switch con cadena de suti/jani
+suti (x == 1) {
+    qillqa(10);
+} jani {
+    suti (x == 2) {
+        qillqa(20);
+    } jani {
+        qillqa(99);
+    }
 }
+tukuya

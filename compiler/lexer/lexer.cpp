@@ -46,74 +46,42 @@ std::vector<Token> Lexer::tokenize() {
                     break;
                 }
             }
-            if (word == "willt’aña") {
-                tokens.push_back({TokenType::KeywordPrint, word, startLine, startColumn});
-            } else if (word == "si") {
-                tokens.push_back({TokenType::KeywordIf, word, startLine, startColumn});
-            } else if (word == "sino") {
-                tokens.push_back({TokenType::KeywordElse, word, startLine, startColumn});
-            } else if (word == "mientras") {
-                tokens.push_back({TokenType::KeywordWhile, word, startLine, startColumn});
-            } else if (word == "haceña") {
-                tokens.push_back({TokenType::KeywordDo, word, startLine, startColumn});
-            } else if (word == "para") {
-                tokens.push_back({TokenType::KeywordFor, word, startLine, startColumn});
-            } else if (word == "en") {
-                tokens.push_back({TokenType::KeywordIn, word, startLine, startColumn});
-            } else if (word == "jalña") {
-                tokens.push_back({TokenType::KeywordBreak, word, startLine, startColumn});
-            } else if (word == "sarantaña") {
-                tokens.push_back({TokenType::KeywordContinue, word, startLine, startColumn});
-            } else if (word == "luräwi") {
-                tokens.push_back({TokenType::KeywordFunc, word, startLine, startColumn});
-            } else if (word == "kutiyana") {
-                tokens.push_back({TokenType::KeywordReturn, word, startLine, startColumn});
-            } else if (word == "tantachaña") {
-                tokens.push_back({TokenType::KeywordSwitch, word, startLine, startColumn});
-            } else if (word == "jamusa") {
-                tokens.push_back({TokenType::KeywordCase, word, startLine, startColumn});
-            } else if (word == "akhamawa") {
-                tokens.push_back({TokenType::KeywordDefault, word, startLine, startColumn});
-            } else if (word == "uka") {
-                tokens.push_back({TokenType::KeywordAnd, word, startLine, startColumn});
-            } else if (word == "jan") {
-                size_t i = pos;
-                while (i < src.size() && std::isspace(static_cast<unsigned char>(src[i]))) ++i;
-                std::string next;
-                while (i < src.size()) {
-                    char ch2 = src[i];
-                    if (std::isalnum(static_cast<unsigned char>(ch2)) || ch2 == '_' || (ch2 & 0x80)) {
-                        next += ch2;
-                        ++i;
-                    } else {
-                        break;
-                    }
-                }
-                if (next == "uka") {
-                    while (pos < src.size() && std::isspace(static_cast<unsigned char>(peek()))) get();
-                    for (size_t j = 0; j < 3 && pos < src.size(); ++j) get();
-                    tokens.push_back({TokenType::KeywordOr, "jan uka", startLine, startColumn});
-                } else if (next == "cheka") {
-                    while (pos < src.size() && std::isspace(static_cast<unsigned char>(peek()))) get();
-                    for (size_t j = 0; j < 5 && pos < src.size(); ++j) get();
-                    tokens.push_back({TokenType::Number, "0", startLine, startColumn});
-                } else {
-                    tokens.push_back({TokenType::Identifier, word, startLine, startColumn});
-                }
-            } else if (word == "janiwa") {
-                tokens.push_back({TokenType::KeywordNot, word, startLine, startColumn});
-            } else if (word == "jach’a") {
-                tokens.push_back({TokenType::KeywordInt, word, startLine, startColumn});
-            } else if (word == "lliphiphi") {
-                tokens.push_back({TokenType::KeywordFloat, word, startLine, startColumn});
-            } else if (word == "chuymani") {
-                tokens.push_back({TokenType::KeywordBool, word, startLine, startColumn});
+            if (word == "qallta") {
+                tokens.push_back({TokenType::KeywordStart, word, startLine, startColumn});
+            } else if (word == "tukuya") {
+                tokens.push_back({TokenType::KeywordEnd, word, startLine, startColumn});
+            } else if (word == "yatiya") {
+                tokens.push_back({TokenType::KeywordDeclare, word, startLine, startColumn});
             } else if (word == "qillqa") {
-                tokens.push_back({TokenType::KeywordString, word, startLine, startColumn});
-            } else if (word == "apu") {
+                tokens.push_back({TokenType::KeywordPrint, word, startLine, startColumn});
+            } else if (word == "suti") {
+                tokens.push_back({TokenType::KeywordIf, word, startLine, startColumn});
+            } else if (word == "jani") {
+                tokens.push_back({TokenType::KeywordElse, word, startLine, startColumn});
+            } else if (word == "kunawsati") {
+                tokens.push_back({TokenType::KeywordWhile, word, startLine, startColumn});
+            } else if (word == "sapüru") {
+                tokens.push_back({TokenType::KeywordFor, word, startLine, startColumn});
+            } else if (word == "lurawi") {
+                tokens.push_back({TokenType::KeywordFunc, word, startLine, startColumn});
+            } else if (word == "kuttaya") {
+                tokens.push_back({TokenType::KeywordReturn, word, startLine, startColumn});
+            } else if (word == "apnaq") {
                 tokens.push_back({TokenType::KeywordImport, word, startLine, startColumn});
-            } else if (word == "cheka") {
-                tokens.push_back({TokenType::Number, "1", startLine, startColumn});
+            } else if (word == "jakhüwi") {
+                tokens.push_back({TokenType::KeywordTypeNumber, word, startLine, startColumn});
+            } else if (word == "aru") {
+                tokens.push_back({TokenType::KeywordTypeString, word, startLine, startColumn});
+            } else if (word == "chiqa") {
+                tokens.push_back({TokenType::KeywordTypeBool, word, startLine, startColumn});
+            } else if (word == "listaña") {
+                tokens.push_back({TokenType::KeywordTypeList, word, startLine, startColumn});
+            } else if (word == "mapa") {
+                tokens.push_back({TokenType::KeywordTypeMap, word, startLine, startColumn});
+            } else if (word == "utji") {
+                tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
+            } else if (word == "janiutji") {
+                tokens.push_back({TokenType::KeywordFalse, word, startLine, startColumn});
             } else {
                 tokens.push_back({TokenType::Identifier, word, startLine, startColumn});
             }
@@ -165,13 +133,13 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
-        if (c == '"') {
-            get();
+        if (c == '"' || c == '\'') {
+            char quote = get();
             std::string str;
             bool terminated = false;
             while (pos < src.size()) {
                 char ch = get();
-                if (ch == '"') { terminated = true; break; }
+                if (ch == quote) { terminated = true; break; }
                 if (ch == '\\') {
                     if (pos >= src.size()) break;
                     char esc = get();
@@ -181,6 +149,7 @@ std::vector<Token> Lexer::tokenize() {
                         case 'r': str += '\r'; break;
                         case '\\': str += '\\'; break;
                         case '"': str += '"'; break;
+                        case '\'': str += '\''; break;
                         case '0': str += '\0'; break;
                         default: str += esc; break;
                     }

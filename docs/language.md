@@ -7,63 +7,69 @@ Si buscas detalles exhaustivos de operadores y funciones integradas, consulta la
 ## Hola mundo
 
 ```aymara
-willt’aña("Kamisaraki!");
+qallta
+qillqa("Kamisaraki!");
+tukuya
 ```
 
 ## Tipos y variables
 
 ```aymara
-jach’a contador = 3;
-lliphiphi promedio = 3.14;
-qillqa saludo = "kamisaraki";
-chuymani activo = cheka;
+yatiya jakhüwi contador = 3;
+yatiya jakhüwi promedio = 3;
+yatiya aru saludo = "kamisaraki";
+yatiya chiqa activo = utji;
 ```
 
 También puedes usar literales enteros en hexadecimal o binario:
 
 ```aymara
-jach’a mascara = 0b1010;
-jach’a color = 0xFF;
+yatiya jakhüwi mascara = 0b1010;
+yatiya jakhüwi color = 0xFF;
 ```
 
 ## Condicionales
 
 ```aymara
-si (contador > 0) {
-    willt’aña(saludo);
-} sino {
-    willt’aña("janiwa");
+qallta
+suti (contador > 0) {
+    qillqa(saludo);
+} jani {
+    qillqa("janiwa");
 }
+tukuya
 ```
 
 ## Bucles
 
 ```aymara
-para i en range(0, 3) {
-    willt’aña(i);
+qallta
+sapüru (yatiya jakhüwi i = 0; i < 3; i = i + 1;) {
+    qillqa(i);
 }
 
-mientras (contador > 0) {
+kunawsati (contador > 0) {
     contador = contador - 1;
 }
+tukuya
 ```
 
 ## Funciones
 
 ```aymara
-luräwi inc(n) {
-    kutiyana n + 1;
+lurawi inc(jakhüwi n) : jakhüwi {
+    kuttaya n + 1;
 }
 
-willt’aña(inc(5));
+qillqa(inc(5));
 ```
 
 ## Módulos
 
 ```aymara
-apu "modules/aritmetica";
+apnaq("modules/aritmetica");
 
-willt’aña("suma: " + suma(3, 4));
+qillqa("suma: " + suma(3, 4));
 ```
 
 Los módulos se resuelven desde el directorio del archivo principal, desde una
@@ -73,7 +79,6 @@ carpeta `modules/` y desde rutas adicionales definidas en la variable de entorno
 ## Comentarios
 
 ```aymara
-# comentario estilo aym
 // comentario estilo C
 /* bloque de comentario */
 ```

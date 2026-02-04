@@ -1,39 +1,36 @@
+qallta
 // Ejemplos detallados del bucle for
 
 // for con inicialización y aumento
-para (jach’a i = 0; i < 5; i = i + 1;) {
-    willt’aña(i);
+sapüru (yatiya jakhüwi i = 0; i < 5; i = i + 1;) {
+    qillqa(i);
 }
 
 // for con decremento
-para (jach’a j = 5; j > 0; j = j - 1;) {
-    willt’aña(j);
+sapüru (yatiya jakhüwi j = 5; j > 0; j = j - 1;) {
+    qillqa(j);
 }
 
 // for con paso personalizado
-para (jach’a k = 0; k < 10; k = k + 2;) {
-    willt’aña(k);
+sapüru (yatiya jakhüwi k = 0; k < 10; k = k + 2;) {
+    qillqa(k);
 }
 
-// for con range
-para n en range(0, 5) {
-    willt’aña(n);
-}
-
-// for con continue y break
-para (jach’a m = 0; m < 10; m = m + 1;) {
-    si (m == 3) {
-        sarantaña;
+// for con condición interna
+sapüru (yatiya jakhüwi m = 0; m < 10; m = m + 1;) {
+    suti (m == 3) {
+        qillqa("salta tres");
     }
-    si (m == 7) {
-        jalña;
+    suti (m == 7) {
+        qillqa("llega siete");
     }
-    willt’aña(m);
+    qillqa(m);
 }
 
 // for anidado
-para (jach’a x = 1; x <= 2; x = x + 1;) {
-    para (jach’a y = 1; y <= 2; y = y + 1;) {
-        willt’aña(x * y);
+sapüru (yatiya jakhüwi x = 1; x <= 2; x = x + 1;) {
+    sapüru (yatiya jakhüwi y = 1; y <= 2; y = y + 1;) {
+        qillqa(x * y);
     }
 }
+tukuya

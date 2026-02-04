@@ -1,7 +1,9 @@
-luräwi suma(a, b) {
-    kutiyana(a + b);
+qallta
+lurawi suma(jakhüwi a, jakhüwi b) : jakhüwi {
+    kuttaya(a + b);
 }
 
-luräwi resta(a, b) {
-    kutiyana(a - b);
+lurawi resta(jakhüwi a, jakhüwi b) : jakhüwi {
+    kuttaya(a - b);
 }
+tukuya

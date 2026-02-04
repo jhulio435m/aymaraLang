@@ -1,39 +1,41 @@
+qallta
 // Ejemplos detallados del bucle while
 
 // while simple
-jach’a a = 0;
-mientras (a < 3) {
-    willt’aña(a);
+yatiya jakhüwi a = 0;
+kunawsati (a < 3) {
+    qillqa(a);
     a = a + 1;
 }
 
 // while con decremento
-jach’a b = 5;
-mientras (b > 0) {
-    willt’aña(b);
+yatiya jakhüwi b = 5;
+kunawsati (b > 0) {
+    qillqa(b);
     b = b - 1;
 }
 
-// while con continue y break
-jach’a c = 0;
-mientras (c < 10) {
+// while con condiciones internas
+yatiya jakhüwi c = 0;
+kunawsati (c < 10) {
     c = c + 1;
-    si (c == 3) {
-        sarantaña;
+    suti (c == 3) {
+        qillqa("salta tres");
     }
-    si (c == 7) {
-        jalña;
+    suti (c == 7) {
+        qillqa("llega siete");
     }
-    willt’aña(c);
+    qillqa(c);
 }
 
 // while anidado
-jach’a x = 0;
-mientras (x < 2) {
-    jach’a y = 0;
-    mientras (y < 2) {
-        willt’aña(x + y);
+yatiya jakhüwi x = 0;
+kunawsati (x < 2) {
+    yatiya jakhüwi y = 0;
+    kunawsati (y < 2) {
+        qillqa(x + y);
         y = y + 1;
     }
     x = x + 1;
 }
+tukuya

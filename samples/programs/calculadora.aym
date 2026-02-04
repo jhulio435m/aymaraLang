@@ -1,7 +1,9 @@
+qallta
 // Calculadora muy simple: suma dos numeros
-willt’aña("Ingrese el primer número: ")
-jach’a a = input();
-willt’aña("Ingrese el segundo número: ")
-jach’a b = input();
-willt’aña("La suma es: ")
-willt’aña(a + b);
+qillqa("Ingrese el primer número: ");
+yatiya jakhüwi a = input();
+qillqa("Ingrese el segundo número: ");
+yatiya jakhüwi b = input();
+qillqa("La suma es: ");
+qillqa(a + b);
+tukuya

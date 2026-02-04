@@ -6,40 +6,43 @@ desarrollo.
 
 ## Tipos soportados
 
-- `jach’a` → enteros
-- `lliphiphi` → flotantes
-- `chuymani` → booleanos
-- `qillqa` → cadenas
+- `jakhüwi` → números enteros
+- `aru` → cadenas
+- `chiqa` → booleanos
+- `listaña` → listas (soporte inicial)
+- `mapa` → mapas (Español)
 
 ### Valores booleanos
 
-En `aym` los literales lógicos utilizan vocabulario aymara. La palabra `cheka`
-representa **verdadero** (`true`) y la expresión `jan cheka` equivale a **falso**
-(`false`). Son útiles para inicializar variables y para las condiciones en
-estructuras de control.
+En `aym` los literales lógicos utilizan vocabulario aymara. La palabra `utji`
+representa **verdadero** (`true`) y `janiutji` equivale a **falso** (`false`).
+Son útiles para inicializar variables y para las condiciones en estructuras de
+control.
 
 ```aymara
-chuymani bandera = cheka;
-si (bandera) {
-    willt’aña("activado");
+qallta
+yatiya chiqa bandera = utji;
+suti (bandera) {
+    qillqa("activado");
 }
 
-chuymani otra = jan cheka;
-si (otra) {
-    willt’aña("esto no se imprime");
-} sino {
-    willt’aña("desactivado");
+yatiya chiqa otra = janiutji;
+suti (otra) {
+    qillqa("esto no se imprime");
+} jani {
+    qillqa("desactivado");
 }
+tukuya
 ```
 
 ## Sintaxis soportada
 
 - Variables y asignación.
-- Impresión con `willt’aña(expr)` y `write(str)`.
-- Control de flujo: `si`/`sino`, `mientras`, `haceña...mientras`, `para`, `tantachaña`.
-- Funciones con `luräwi nombre(params) { ... }`.
+- Impresión con `qillqa(expr)` y `write(str)`.
+- Control de flujo: `suti`/`jani`, `kunawsati`, `sapüru`.
+- Funciones con `lurawi nombre(tipo param) { ... }`.
 - Expresiones aritméticas `+ - * / % ^` y operadores unarios `-expr`, `+expr`, `!expr`.
-- Operadores lógicos `uka`, `jan uka`, `janiwa`, comparaciones `== != < <= > >=`.
+- Operadores lógicos `&&`, `||`, `!`, comparaciones `== != < <= > >=`.
 - Comentarios `//` y `/* */`.
 - Lectura de consola con `input()`.
 - Longitud de cadenas con `length()`.
@@ -54,88 +57,83 @@ si (otra) {
 
 ### Entrada y salida
 ```aymara
-qillqa nombre = input();
-willt’aña(nombre);
+qallta
+yatiya aru nombre = input();
+qillqa(nombre);
+tukuya
 ```
 
 ### Arreglos dinámicos
 ```aymara
-jach’a size = 3;
-jach’a arr = array(size);
+qallta
+yatiya jakhüwi size = 3;
+yatiya jakhüwi arr = array(size);
 array_set(arr, 0, 10);
 array_set(arr, 1, 20);
 array_set(arr, 2, 30);
-willt’aña(array_get(arr, 1));
+qillqa(array_get(arr, 1));
 array_free(arr);
+tukuya
 ```
 
 ### Funciones y recursividad
 ```aymara
-luräwi fact(n) {
-    si (n == 0) {
-        kutiyana(1);
+lurawi fact(jakhüwi n) : jakhüwi {
+    suti (n == 0) {
+        kuttaya(1);
     }
-    kutiyana(n * fact(n - 1));
+    kuttaya(n * fact(n - 1));
 }
 
-willt’aña(fact(5));
+qillqa(fact(5));
 ```
 
-### Bucle con `range`
-
-La forma `para x en range(inicio, fin)` simplifica la iteración sobre rangos
-numéricos.
+### Bucle `sapüru`
 
 ```aymara
-para x en range(0, 4) {
-    willt’aña(x);
+qallta
+sapüru (yatiya jakhüwi x = 0; x < 4; x = x + 1;) {
+    qillqa(x);
 }
+tukuya
 ```
-
-Este fragmento puede encontrarse en `samples/control_flow/range_for.aym`.
 
 ## Errores comunes
 
 - Variable no declarada.
 - Tipos incompatibles en asignaciones o expresiones.
-- Uso de `break` o `continue` fuera de bucles.
 - `return` fuera de una función.
 
 ## Palabras clave
 
-`willt’aña`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`,
+`qillqa`, `write`, `sleep`, `array`, `array_get`, `array_set`, `array_free`,
 `array_length`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sqrt`, `pow`, `exp`,
-`log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `si`, `sino`, `mientras`,
-`haceña`, `para`, `en`, `jalña`, `sarantaña`, `luräwi`, `kutiyana`, `tantachaña`,
-`jamusa`, `akhamawa`, `uka`, `jan uka`, `janiwa`, `jach’a`, `lliphiphi`,
-`chuymani`, `qillqa`, `input`, `length`, `random`.
+`log`, `log10`, `floor`, `ceil`, `round`, `fabs`, `qallta`, `tukuya`, `yatiya`,
+`suti`, `jani`, `kunawsati`, `sapüru`, `lurawi`, `kuttaya`, `jakhüwi`, `aru`,
+`chiqa`, `listaña`, `mapa`, `utji`, `janiutji`, `input`, `length`, `random`.
 
 ## Glosario de palabras clave
 
 | Aimara / Español | Significado |
 |------------------|------------|
-| `willt’aña`      | imprimir |
+| `qillqa`         | imprimir |
 | `write`          | imprimir sin salto |
-| `si`             | if |
-| `sino`           | else |
-| `mientras`       | while |
-| `haceña`         | do |
-| `para`           | for |
-| `en`             | in |
-| `tantachaña`     | switch |
-| `jamusa`         | case |
-| `akhamawa`       | default |
-| `jalña`          | break |
-| `sarantaña`      | continue |
-| `luräwi`         | func |
-| `kutiyana`       | return |
-| `jach’a`         | int |
-| `lliphiphi`      | float |
-| `chuymani`       | bool |
-| `qillqa`         | string |
-| `uka`            | and |
-| `jan uka`        | or |
-| `janiwa`         | not |
+| `qallta`         | inicio de programa |
+| `tukuya`         | fin de programa |
+| `yatiya`         | declarar |
+| `suti`           | if |
+| `jani`           | else |
+| `kunawsati`      | while |
+| `sapüru`         | for |
+| `lurawi`         | func |
+| `kuttaya`        | return |
+| `jakhüwi`        | numérico |
+| `aru`            | string |
+| `chiqa`          | bool |
+| `listaña`        | lista |
+| `mapa`           | mapa |
+| `utji`           | true |
+| `janiutji`       | false |
 
 ---
 

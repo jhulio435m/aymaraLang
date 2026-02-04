@@ -8,6 +8,7 @@
 namespace aym {
 
 class NumberExpr;
+class BoolExpr;
 class StringExpr;
 class VariableExpr;
 class BinaryExpr;
@@ -33,6 +34,7 @@ class ASTVisitor {
 public:
     virtual ~ASTVisitor() = default;
     virtual void visit(NumberExpr &) = 0;
+    virtual void visit(BoolExpr &) = 0;
     virtual void visit(StringExpr &) = 0;
     virtual void visit(VariableExpr &) = 0;
     virtual void visit(BinaryExpr &) = 0;
@@ -84,6 +86,15 @@ public:
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     long long value;
+};
+
+class BoolExpr : public Expr {
+public:
+    explicit BoolExpr(bool v) : value(v) {}
+    bool getValue() const { return value; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    bool value;
 };
 
 class StringExpr : public Expr {
@@ -145,12 +156,12 @@ private:
 
 class PrintStmt : public Stmt {
 public:
-    explicit PrintStmt(std::unique_ptr<Expr> expr)
-        : expression(std::move(expr)) {}
-    Expr *getExpr() const { return expression.get(); }
+    explicit PrintStmt(std::vector<std::unique_ptr<Expr>> exprs)
+        : expressions(std::move(exprs)) {}
+    const std::vector<std::unique_ptr<Expr>> &getExprs() const { return expressions; }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
-    std::unique_ptr<Expr> expression;
+    std::vector<std::unique_ptr<Expr>> expressions;
 };
 
 class ExprStmt : public Stmt {
@@ -246,17 +257,25 @@ private:
 
 class FunctionStmt : public Stmt {
 public:
+    struct Param {
+        std::string type;
+        std::string name;
+    };
+
     FunctionStmt(std::string n,
-                 std::vector<std::string> p,
+                 std::vector<Param> p,
+                 std::string r,
                  std::unique_ptr<BlockStmt> b)
-        : name(std::move(n)), params(std::move(p)), body(std::move(b)) {}
+        : name(std::move(n)), params(std::move(p)), returnType(std::move(r)), body(std::move(b)) {}
     const std::string &getName() const { return name; }
-    const std::vector<std::string> &getParams() const { return params; }
+    const std::vector<Param> &getParams() const { return params; }
+    const std::string &getReturnType() const { return returnType; }
     BlockStmt *getBody() const { return body.get(); }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::string name;
-    std::vector<std::string> params;
+    std::vector<Param> params;
+    std::string returnType;
     std::unique_ptr<BlockStmt> body;
 };
 

@@ -19,7 +19,7 @@ struct BuiltinInfo {
     std::vector<Type> paramTypes;
 };
 
-constexpr const char BUILTIN_PRINT[] = "willt’aña";
+constexpr const char BUILTIN_PRINT[] = "qillqa";
 constexpr const char BUILTIN_INPUT[] = "input";
 constexpr const char BUILTIN_LENGTH[] = "length";
 constexpr const char BUILTIN_RANDOM[] = "random";

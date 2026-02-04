@@ -1,13 +1,14 @@
-// Sentencia switch (tantachaña)
-jach’a valor = 2;
+qallta
+// Alternativa al switch con suti/jani
+yatiya jakhüwi valor = 2;
 
-tantachaña (valor) {
-    jamusa 1:
-        willt’aña("uno");
-        jalña;
-    jamusa 2:
-        willt’aña("dos");
-        jalña;
-    akhamawa:
-        willt’aña("otro");
+suti (valor == 1) {
+    qillqa("uno");
+} jani {
+    suti (valor == 2) {
+        qillqa("dos");
+    } jani {
+        qillqa("otro");
+    }
 }
+tukuya
