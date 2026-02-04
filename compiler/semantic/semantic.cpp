@@ -1,5 +1,6 @@
 #include "semantic.h"
 #include "../builtins/builtins.h"
+#include "../utils/class_names.h"
 #include <iostream>
 #include <algorithm>
 
@@ -43,6 +44,7 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
             paramTypes[p.first] = types;
         }
     }
+    collectClassInfo(nodes);
 
     struct FuncCollector : ASTVisitor {
         SemanticAnalyzer *self;
@@ -50,11 +52,19 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
             self->functions[fn.getName()] = fn.getParams().size();
             std::vector<std::string> types;
             for (const auto &p : fn.getParams()) {
-                types.push_back(p.type);
+                std::string t = p.type;
+                if (t == "t'aqa") t = "t'aqa:jakhüwi";
+                if (t == "mapa") t = "mapa:jakhüwi";
+                if (self->isClassName(t)) t = "kasta:" + t;
+                types.push_back(t);
             }
             self->paramTypes[fn.getName()] = std::move(types);
             if (!fn.getReturnType().empty()) {
-                self->functionReturnTypes[fn.getName()] = fn.getReturnType();
+                std::string ret = fn.getReturnType();
+                if (ret == "t'aqa") ret = "t'aqa:jakhüwi";
+                if (ret == "mapa") ret = "mapa:jakhüwi";
+                if (self->isClassName(ret)) ret = "kasta:" + ret;
+                self->functionReturnTypes[fn.getName()] = ret;
             }
         }
         void visit(NumberExpr&) override {}
@@ -87,6 +97,11 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         void visit(ImportStmt&) override {}
         void visit(ThrowStmt&) override {}
         void visit(TryStmt&) override {}
+        void visit(ClassStmt&) override {}
+        void visit(MemberCallExpr&) override {}
+        void visit(NewExpr&) override {}
+        void visit(FunctionRefExpr&) override {}
+        void visit(SuperExpr&) override {}
     } collector;
     collector.self = this;
     for (const auto &n : nodes) n->accept(collector);
@@ -132,7 +147,31 @@ void SemanticAnalyzer::visit(IndexAssignStmt &a) {
     a.getIndex()->accept(*this);
     a.getValue()->accept(*this);
     std::string valueType = currentType;
-    if (baseType.rfind("t'aqa:", 0) == 0) {
+    if (baseType.rfind("kasta-ref:", 0) == 0) {
+        std::string className = baseType.substr(10);
+        auto *indexLiteral = dynamic_cast<StringExpr*>(a.getIndex());
+        if (!indexLiteral) {
+            std::cerr << "Error: acceso de atributo estatico invalido" << std::endl;
+        } else {
+            std::string fieldType = lookupStaticFieldType(className, indexLiteral->getValue());
+            if (!fieldType.empty() && valueType != fieldType) {
+                std::cerr << "Error: tipo incompatible en asignacion estatica" << std::endl;
+            }
+        }
+        currentType = valueType;
+    } else if (baseType.rfind("kasta:", 0) == 0) {
+        std::string className = baseType.substr(6);
+        auto *indexLiteral = dynamic_cast<StringExpr*>(a.getIndex());
+        if (!indexLiteral) {
+            std::cerr << "Error: acceso de atributo invalido" << std::endl;
+        } else {
+            std::string fieldType = lookupFieldType(className, indexLiteral->getValue());
+            if (!fieldType.empty() && valueType != fieldType) {
+                std::cerr << "Error: tipo incompatible en asignacion de atributo" << std::endl;
+            }
+        }
+        currentType = valueType;
+    } else if (baseType.rfind("t'aqa:", 0) == 0) {
         std::string elementType = baseType.substr(6);
         if (!elementType.empty() && valueType != elementType) {
             std::cerr << "Error: tipo incompatible en asignacion de lista" << std::endl;
@@ -159,6 +198,9 @@ void SemanticAnalyzer::visit(VarDeclStmt &v) {
         if (lastInputCall) t = v.getType();
     }
     std::string declaredType = v.getType();
+    if (isClassName(declaredType)) {
+        declaredType = "kasta:" + declaredType;
+    }
     if (declaredType == "t'aqa") {
         if (t.rfind("t'aqa:", 0) == 0) {
             declaredType = t;
@@ -284,8 +326,12 @@ void SemanticAnalyzer::visit(StringExpr &) {
 
 void SemanticAnalyzer::visit(VariableExpr &v) {
     if (!isDeclared(v.getName())) {
-        std::cerr << "Error: variable '" << v.getName() << "' no declarada" << std::endl;
-        currentType = "";
+        if (isClassName(v.getName())) {
+            currentType = "kasta-ref:" + v.getName();
+        } else {
+            std::cerr << "Error: variable '" << v.getName() << "' no declarada" << std::endl;
+            currentType = "";
+        }
     } else {
         currentType = lookup(v.getName());
     }
@@ -469,6 +515,11 @@ void SemanticAnalyzer::visit(CallExpr &c) {
     lastInputCall = (nameLower == BUILTIN_INPUT);
 }
 
+void SemanticAnalyzer::visit(FunctionRefExpr &) {
+    currentType = "";
+    lastInputCall = false;
+}
+
 void SemanticAnalyzer::visit(ListExpr &l) {
     std::string elementType;
     for (const auto &elem : l.getElements()) {
@@ -536,10 +587,36 @@ void SemanticAnalyzer::visit(IndexExpr &i) {
 
 void SemanticAnalyzer::visit(MemberExpr &m) {
     m.getBase()->accept(*this);
-    if (currentType != "excepcion") {
+    std::string baseType = currentType;
+    if (baseType == "excepcion") {
+        m.setExceptionAccess(true);
+        currentType = "aru";
+        m.setResolvedType("aru");
+    } else if (baseType.rfind("kasta:", 0) == 0) {
+        std::string className = baseType.substr(6);
+        std::string fieldType = lookupFieldType(className, m.getMember());
+        if (fieldType.empty()) {
+            std::cerr << "Error: atributo '" << m.getMember() << "' no existe en '" << className << "'" << std::endl;
+            currentType = "";
+        } else {
+            currentType = fieldType;
+            m.setResolvedType(fieldType);
+        }
+    } else if (baseType.rfind("kasta-ref:", 0) == 0) {
+        std::string className = baseType.substr(10);
+        std::string fieldType = lookupStaticFieldType(className, m.getMember());
+        if (fieldType.empty()) {
+            std::cerr << "Error: atributo estatico '" << m.getMember() << "' no existe en '" << className << "'" << std::endl;
+            currentType = "";
+        } else {
+            m.setStaticField(classStaticFieldName(className, m.getMember()));
+            currentType = fieldType;
+            m.setResolvedType(fieldType);
+        }
+    } else {
         std::cerr << "Error: acceso de miembro invalido" << std::endl;
+        currentType = "";
     }
-    currentType = "aru";
     lastInputCall = false;
 }
 

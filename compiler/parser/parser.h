@@ -29,7 +29,12 @@ private:
     void synchronize();
     void parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool stopAtBrace = false);
     std::unique_ptr<Stmt> parseSingleStatement();
+    std::unique_ptr<Stmt> parseClassStatement();
+    std::unique_ptr<ClassStmt> parseClassBody(const std::string &name, const std::string &baseName, const Token &startTok);
     std::unique_ptr<Expr> parseExpression();
+    std::unique_ptr<Expr> parsePrimary();
+    std::unique_ptr<Expr> parseClassPrimary();
+    std::string parseTypeName();
     std::unique_ptr<Expr> parseTernary();
     std::unique_ptr<Expr> parseLogic();
     std::unique_ptr<Expr> parseEquality();

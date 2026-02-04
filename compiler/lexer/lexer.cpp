@@ -58,6 +58,28 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordDeclare, word, startLine, startColumn});
             } else if (lower == "qillqa") {
                 tokens.push_back({TokenType::KeywordPrint, word, startLine, startColumn});
+            } else if (lower == "kasta") {
+                tokens.push_back({TokenType::KeywordClass, word, startLine, startColumn});
+            } else if (lower == "machaqa") {
+                tokens.push_back({TokenType::KeywordNew, word, startLine, startColumn});
+            } else if (lower == "aka") {
+                tokens.push_back({TokenType::KeywordThis, word, startLine, startColumn});
+            } else if (lower == "jila") {
+                tokens.push_back({TokenType::KeywordExtends, word, startLine, startColumn});
+            } else if (lower == "jikxata") {
+                tokens.push_back({TokenType::KeywordOverride, word, startLine, startColumn});
+            } else if (lower == "sapa") {
+                tokens.push_back({TokenType::KeywordPrivate, word, startLine, startColumn});
+            } else if (lower == "taqi") {
+                tokens.push_back({TokenType::KeywordPublic, word, startLine, startColumn});
+            } else if (lower == "sapakasta") {
+                tokens.push_back({TokenType::KeywordStatic, word, startLine, startColumn});
+            } else if (lower == "uñt'aya") {
+                tokens.push_back({TokenType::KeywordGetter, word, startLine, startColumn});
+            } else if (lower == "chura") {
+                tokens.push_back({TokenType::KeywordSetter, word, startLine, startColumn});
+            } else if (lower == "jilaaka") {
+                tokens.push_back({TokenType::KeywordSuper, word, startLine, startColumn});
             } else if (lower == "suti" || lower == "jisa") {
                 tokens.push_back({TokenType::KeywordIf, word, startLine, startColumn});
             } else if (lower == "jani" || lower == "maysatxa") {

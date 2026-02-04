@@ -18,21 +18,47 @@ public:
     const std::unordered_map<std::string, std::string> &getFunctionReturnTypes() const { return functionReturnTypes; }
 
 private:
+    struct MethodInfo {
+        std::string returnType;
+        std::vector<std::string> paramTypes;
+        bool isStatic = false;
+    };
+
+    struct ClassInfo {
+        std::string name;
+        std::string base;
+        std::unordered_map<std::string, std::string> fields;
+        std::unordered_map<std::string, std::string> staticFields;
+        std::unordered_map<std::string, MethodInfo> methods;
+        std::unordered_map<std::string, MethodInfo> staticMethods;
+        std::unordered_map<size_t, std::vector<std::string>> constructors;
+    };
+
     std::vector<std::unordered_map<std::string, std::string>> scopes;
     std::unordered_map<std::string, size_t> functions;
     std::unordered_map<std::string, std::vector<std::string>> paramTypes;
     std::unordered_map<std::string, std::string> functionReturnTypes;
     std::unordered_set<std::string> globals;
     std::unordered_map<std::string, std::string> globalTypes;
+    std::unordered_map<std::string, ClassInfo> classes;
     int loopDepth = 0;
     int switchDepth = 0;
     int functionDepth = 0;
+    std::string currentClass;
+    std::string currentBaseClass;
 
     void pushScope();
     void popScope();
     void declare(const std::string &name, const std::string &type);
     bool isDeclared(const std::string &name) const;
     std::string lookup(const std::string &name) const;
+    bool isClassName(const std::string &name) const;
+    const ClassInfo *lookupClass(const std::string &name) const;
+    const MethodInfo *lookupMethod(const std::string &className, const std::string &methodName) const;
+    const MethodInfo *lookupStaticMethod(const std::string &className, const std::string &methodName) const;
+    std::string lookupFieldType(const std::string &className, const std::string &fieldName) const;
+    std::string lookupStaticFieldType(const std::string &className, const std::string &fieldName) const;
+    void collectClassInfo(const std::vector<std::unique_ptr<Node>> &nodes);
 
     std::string currentType;
     bool lastInputCall = false;
@@ -46,6 +72,10 @@ private:
     void visit(TernaryExpr &) override;
     void visit(IncDecExpr &) override;
     void visit(CallExpr &) override;
+    void visit(MemberCallExpr &) override;
+    void visit(NewExpr &) override;
+    void visit(FunctionRefExpr &) override;
+    void visit(SuperExpr &) override;
     void visit(ListExpr &) override;
     void visit(MapExpr &) override;
     void visit(IndexExpr &) override;
@@ -62,6 +92,7 @@ private:
     void visit(ReturnStmt &) override;
     void visit(VarDeclStmt &) override;
     void visit(FunctionStmt &) override;
+    void visit(ClassStmt &) override;
     void visit(WhileStmt &) override;
     void visit(DoWhileStmt &) override;
     void visit(SwitchStmt &) override;
