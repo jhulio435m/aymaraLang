@@ -4,36 +4,36 @@
     "body": "qillqa(${1:mensaje});",
     "description": "Imprimir con salto de línea"
   },
-  "Leer input": {
-    "prefix": "input",
-    "body": "yatiya ${1:jakhüwi} ${2:nombre} = input();",
-    "description": "Lectura por consola"
+  "Leer con katu": {
+    "prefix": "katu",
+    "body": "yatiya ${1:aru} ${2:nombre} = katu(\"${3:Mensaje}: \", tuku=\"\");",
+    "description": "Lectura por consola con prompt"
   },
-  "Suti / Jani": {
-    "prefix": "suti",
+  "Jisa / Maysatxa": {
+    "prefix": "jisa",
     "body": [
-      "suti (${1:condicion}) {",
+      "jisa (${1:condicion}) {",
       "    ${2:// ...}",
-      "} jani {",
+      "} maysatxa {",
       "    ${3:// ...}",
       "}"
     ],
-    "description": "Condicional suti/jani"
+    "description": "Condicional jisa/maysatxa"
   },
-  "Kunawsati": {
-    "prefix": "kunawsati",
+  "Ukhakamaxa": {
+    "prefix": "ukhakamaxa",
     "body": [
-      "kunawsati (${1:condicion}) {",
+      "ukhakamaxa (${1:condicion}) {",
       "    ${2:// ...}",
       "}"
     ],
     "description": "Bucle mientras"
   },
-  "Sapüru clásico": {
-    "prefix": "sapuru",
+  "Taki clásico": {
+    "prefix": "taki",
     "body": [
-      "sapüru (yatiya ${1:jakhüwi} ${2:i} = 0; ${3:i < 10}; ${4:i = i + 1;}) {",
-      "    ${4:// ...}",
+      "taki (yatiya ${1:jakhüwi} ${2:i} = 0; ${3:i < 10}; ${4:i++}) {",
+      "    ${5:// ...}",
       "}"
     ],
     "description": "Bucle para clásico"

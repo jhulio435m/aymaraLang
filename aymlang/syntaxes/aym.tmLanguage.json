@@ -43,11 +43,11 @@
 			"patterns": [
 				{
 					"name": "keyword.control.aym",
-					"match": "\\b(qallta|tukuya|yatiya|suti|jani|kunawsati|sapüru)\\b"
+					"match": "(?i)\\b(qallta|tukuya|yatiya|suti|jani|kunawsati|sapüru|jisa|maysatxa|ukhakamaxa|taki|p'akhiña|sarantaña)\\b"
 				},
 				{
 					"name": "keyword.other.aym",
-					"match": "\\b(lurawi|kuttaya|apnaq)\\b"
+					"match": "(?i)\\b(lurawi|kuttaya|apnaq)\\b"
 				}
 			]
 		},
@@ -55,7 +55,7 @@
 			"patterns": [
 				{
 					"name": "storage.type.aym",
-					"match": "\\b(jakhüwi|aru|chiqa|listaña|mapa)\\b"
+					"match": "(?i)\\b(jakhüwi|aru|chiqa|listaña|t'aqa|mapa)\\b"
 				}
 			]
 		},
@@ -63,7 +63,7 @@
 			"patterns": [
 				{
 					"name": "support.function.aym",
-					"match": "\\b(qillqa|write|input|length|random|sleep|array|array_get|array_set|array_free|array_length|sin|cos|tan|asin|acos|atan|sqrt|pow|exp|log|log10|floor|ceil|round|fabs)\\b"
+					"match": "(?i)\\b(qillqa|write|input|katu|length|random|sleep|array|array_get|array_set|array_free|array_length|largo|push|sin|cos|tan|asin|acos|atan|sqrt|pow|exp|log|log10|floor|ceil|round|fabs)\\b"
 				}
 			]
 		},
@@ -71,7 +71,7 @@
 			"patterns": [
 				{
 					"name": "constant.language.aym",
-					"match": "\\b(utji|janiutji)\\b"
+					"match": "(?i)\\b(utji|janiutji|chiqa|k'ari)\\b"
 				}
 			]
 		},

@@ -1,93 +1,90 @@
-qallta
-Yatiya Jakhüwi n = 5;
-Jisa(n > 3) {
-  Qillqa("jach'a");
+yatiya jakhüwi n = 5;
+jisa(n > 3) {
+  qillqa("jach'a");
 }
 
-Yatiya Jakhüwi n2 = 2;
-Jisa(n2 > 3) {
-  Qillqa("jach'a");
-} Maysatxa {
-  Qillqa("jisk'a");
+yatiya jakhüwi n2 = 2;
+jisa(n2 > 3) {
+  qillqa("jach'a");
+} maysatxa {
+  qillqa("jisk'a");
 }
 
-Yatiya Jakhüwi n3 = -1;
-Jisa(n3 > 0) {
-  Qillqa("positivu");
-} Maysatxa {
-  Jisa(n3 == 0) {
-    Qillqa("ch'usa");
-  } Maysatxa {
-    Qillqa("negativu");
+yatiya jakhüwi n3 = -1;
+jisa(n3 > 0) {
+  qillqa("positivu");
+} maysatxa {
+  jisa(n3 == 0) {
+    qillqa("ch'usa");
+  } maysatxa {
+    qillqa("negativu");
   }
 }
 
-Yatiya Jakhüwi n4 = 10;
-Jisa(n4 > 0) {
-  Jisa(n4 % 2 == 0) {
-    Qillqa("positivu par");
-  } Maysatxa {
-    Qillqa("positivu impar");
+yatiya jakhüwi n4 = 10;
+jisa(n4 > 0) {
+  jisa(n4 % 2 == 0) {
+    qillqa("positivu par");
+  } maysatxa {
+    qillqa("positivu impar");
   }
-} Maysatxa {
-  Qillqa("jani positivukiti");
+} maysatxa {
+  qillqa("jani positivukiti");
 }
 
-Yatiya Jakhüwi edad = 17;
-Yatiya Chiqa permiso = Chiqa;
-Jisa((edad >= 18) || permiso) {
-  Qillqa("mantani");
-} Maysatxa {
-  Qillqa("jani mantani");
+yatiya jakhüwi edad = 17;
+yatiya chiqa permiso = chiqa;
+jisa((edad >= 18) || permiso) {
+  qillqa("mantani");
+} maysatxa {
+  qillqa("jani mantani");
 }
 
-Yatiya Chiqa ok = K'ari;
-Jisa(!ok) {
-  Qillqa("jani ok");
+yatiya chiqa ok = k'ari;
+jisa(!ok) {
+  qillqa("jani ok");
 }
 
-Yatiya Jakhüwi n5 = 1;
-Jisa(n5 == 1) { Qillqa("maya"); } Maysatxa { Qillqa("jani maya"); }
+yatiya jakhüwi n5 = 1;
+jisa(n5 == 1) { qillqa("maya"); } maysatxa { qillqa("jani maya"); }
 
-Yatiya Jakhüwi n6 = 3;
-Qillqa(n6 % 2 == 0 ? "par" : "impar");
+yatiya jakhüwi n6 = 3;
+qillqa(n6 % 2 == 0 ? "par" : "impar");
 
-Yatiya Jakhüwi n7 = 0;
-Qillqa(n7 > 0 ? "positivu" : (n7 == 0 ? "ch'usa" : "negativu"));
+yatiya jakhüwi n7 = 0;
+qillqa(n7 > 0 ? "positivu" : (n7 == 0 ? "ch'usa" : "negativu"));
 
-Yatiya Jakhüwi i = 0;
-Ukhakamaxa(i < 3) {
-  Qillqa(i);
+yatiya jakhüwi i = 0;
+ukhakamaxa(i < 3) {
+  qillqa(i);
   i++;
 }
 
-Yatiya Jakhüwi j = 0;
-Ukhakamaxa(Chiqa) {
-  Jisa(j == 2) { P'akhiña; }
-  Qillqa(j);
+yatiya jakhüwi j = 0;
+ukhakamaxa(chiqa) {
+  jisa(j == 2) { p'akhiña; }
+  qillqa(j);
   j++;
 }
 
-Taki(Yatiya Jakhüwi k = 0; k < 3; k++) {
-  Qillqa(k);
+taki(yatiya jakhüwi k = 0; k < 3; k++) {
+  qillqa(k);
 }
 
-Taki(Yatiya Jakhüwi m = 3; m > 0; m--) {
-  Qillqa(m);
+taki(yatiya jakhüwi m = 3; m > 0; m--) {
+  qillqa(m);
 }
 
-Taki(Yatiya Jakhüwi p = 0; p < 5; p++) {
-  Jisa(p == 2) { Sarantaña; }
-  Qillqa(p);
+taki(yatiya jakhüwi p = 0; p < 5; p++) {
+  jisa(p == 2) { sarantaña; }
+  qillqa(p);
 }
 
-Taki(Yatiya Jakhüwi t = 0; t < 6; t++) {
-  Jisa(t == 4) { P'akhiña; }
-  Jisa(t % 2 == 0) {
-    Qillqa(t % 2 == 0 ? "par" : "impar");
-  } Maysatxa {
-    Sarantaña;
+taki(yatiya jakhüwi t = 0; t < 6; t++) {
+  jisa(t == 4) { p'akhiña; }
+  jisa(t % 2 == 0) {
+    qillqa(t % 2 == 0 ? "par" : "impar");
+  } maysatxa {
+    sarantaña;
   }
 }
-
-tukuya

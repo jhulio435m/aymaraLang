@@ -173,6 +173,7 @@ int main(int argc, char** argv) {
                 output + ".asm",
                 sem.getGlobals(),
                 sem.getParamTypes(),
+                sem.getFunctionReturnTypes(),
                 sem.getGlobalTypes(),
                 windowsTarget,
                 seedProvided ? seed : -1,

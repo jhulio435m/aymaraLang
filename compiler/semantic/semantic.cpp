@@ -53,6 +53,9 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
                 types.push_back(p.type);
             }
             self->paramTypes[fn.getName()] = std::move(types);
+            if (!fn.getReturnType().empty()) {
+                self->functionReturnTypes[fn.getName()] = fn.getReturnType();
+            }
         }
         void visit(NumberExpr&) override {}
         void visit(BoolExpr&) override {}
@@ -217,6 +220,7 @@ void SemanticAnalyzer::visit(FunctionStmt &fn) {
     for (const auto &param : fn.getParams()) {
         std::string t = "jakhüwi";
         if (it != paramTypes.end() && idx < it->second.size()) t = it->second[idx];
+        if (t == "t'aqa") t = "t'aqa:jakhüwi";
         declare(param.name, t);
         ++idx;
     }
@@ -278,7 +282,7 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
         std::cerr << "Error: tipos incompatibles en operacion" << std::endl;
     }
     char op = b.getOp();
-    if ((l == "aru" || r == "aru") && op != '+') {
+    if ((l == "aru" || r == "aru") && op != '+' && op != 's' && op != 'd') {
         std::cerr << "Error: operacion invalida sobre textos" << std::endl;
     }
     if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')

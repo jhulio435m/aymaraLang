@@ -28,7 +28,7 @@
   ],
   "wordPattern": "(-?\\d+\\.\\d+)|(-?\\d+)|([A-Za-z_\\u00C0-\\u1FFF\\u2C00-\\uD7FF][A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF]*)",
   "indentationRules": {
-    "increaseIndentPattern": "^\\s*(suti|kunawsati|sapüru|lurawi|jani).*\\{\\s*$",
+    "increaseIndentPattern": "(?i)^\\s*(suti|jisa|kunawsati|ukhakamaxa|sapüru|taki|lurawi|jani|maysatxa).*\\{\\s*$",
     "decreaseIndentPattern": "^\\s*\\}"
   }
 }

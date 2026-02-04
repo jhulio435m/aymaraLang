@@ -6,4 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Initial release
+- N/A
+
+## [0.0.3]
+
+- Actualiza palabras clave y funciones integradas para la sintaxis actual.
+- Mejora snippets con `jisa`, `maysatxa`, `ukhakamaxa`, `taki` y `katu`.

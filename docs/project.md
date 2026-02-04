@@ -13,9 +13,9 @@
 
 ## Extensión para Visual Studio Code
 
-La extensión básica para resaltado de sintaxis vive en `vscode-extension/`.
+La extensión básica para resaltado de sintaxis vive en `aymlang/`.
 Para empaquetar un `.vsix`, sigue las instrucciones en
-[`vscode-extension/README.md`](https://github.com/jhulio435m/aymaraLang/blob/main/vscode-extension/README.md).
+[`aymlang/README.md`](https://github.com/jhulio435m/aymaraLang/blob/main/aymlang/README.md).
 
 ## Documentación
 
@@ -38,7 +38,7 @@ mkdocs serve
 │   ├── codegen/     # Generador de código
 │   └── utils/       # Utilidades comunes
 ├── runtime/         # Biblioteca estándar mínima
-├── samples/         # Ejemplos en .aym (basics/, control_flow/, functions/, data/)
+├── samples/         # Ejemplos en .aym (aymara_flow.aym, ejemplos/)
 ├── tests/           # Tests automatizados
 ├── docs/            # Documentación técnica (MkDocs)
 ├── build/           # Archivos generados

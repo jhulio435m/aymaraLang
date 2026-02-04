@@ -4,13 +4,13 @@
 
 Palabras clave principales del lenguaje:
 
-- `jakhüwi`, `aru`, `chiqa` – tipos base (numérico, cadenas, booleanos)
+- `jakhüwi`, `aru`, `chiqa`, `t'aqa` – tipos base (numérico, cadenas, booleanos/listas)
 - `yatiya` – declaración de variables
 - `qallta` / `tukuya` – inicio y fin del programa
 - `qillqa` – salida por pantalla
-- `input` – lectura de consola
+- `katu` / `input` – lectura de consola
 - `lurawi` / `kuttaya` – definición de funciones y retorno
-- `suti`, `jani`, `kunawsati`, `sapüru`
+- `jisa`/`maysatxa`, `ukhakamaxa`, `taki` (compatibles con `suti`, `jani`, `kunawsati`, `sapüru`)
 - `apnaq` – importación de módulos desde otros archivos
 
 ---
@@ -34,9 +34,8 @@ Empieza aquí y navega por la documentación en módulos más pequeños:
 Compila y ejecuta un ejemplo sencillo:
 
 ```bash
-$ ./bin/aymc samples/basics/hola.aym
-$ ./bin/hola
-Kamisaraki!
+$ ./bin/aymc samples/aymara_flow.aym
+$ ./samples/aymara_flow
 ```
 
 Para pasos detallados por sistema operativo, revisa la guía de compilación en
