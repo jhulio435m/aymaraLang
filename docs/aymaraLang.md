@@ -116,7 +116,9 @@ taki (yatiya jakhüwi x = 0; x < 4; x++) {
 `qallta`, `tukuya`, `yatiya`, `jisa`, `maysatxa`, `ukhakamaxa`, `taki`,
 `p'akhiña`, `sarantaña`, `lurawi`, `kuttaya`, `jakhüwi`, `aru`, `chiqa`,
 `t'aqa`, `listaña`, `mapa`, `k'ari`, `utji`, `janiutji`, `input`, `length`,
-`random`, `yant'aña`, `katjaña`, `tukuyawi`, `pantja`.
+`random`, `yant'aña`, `katjaña`, `tukuyawi`, `pantja`,
+`kasta`, `machaqa`, `aka`, `jila`, `jikxata`, `sapa`, `taqi`, `sapakasta`,
+`uñt'aya`, `chura`, `jilaaka`.
 
 ## Glosario de palabras clave
 
@@ -139,6 +141,17 @@ taki (yatiya jakhüwi x = 0; x < 4; x++) {
 | `katjaña`        | catch |
 | `tukuyawi`       | finally |
 | `pantja`         | throw |
+| `kasta`          | class |
+| `machaqa`        | new |
+| `aka`            | this |
+| `jila`           | extends |
+| `jikxata`        | override |
+| `sapa`           | private |
+| `taqi`           | public |
+| `sapakasta`      | static |
+| `uñt'aya`        | getter (nombre reservado) |
+| `chura`          | setter (nombre reservado) |
+| `jilaaka`        | super |
 | `jakhüwi`        | numérico |
 | `aru`            | string |
 | `chiqa`          | bool / true |

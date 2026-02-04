@@ -28,6 +28,18 @@ std::string normalizeTypeName(const Token &tok) {
 
 Parser::Parser(const std::vector<Token>& t) : tokens(t) {}
 
+std::string Parser::parseTypeName() {
+    if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
+        match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
+        match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
+        return normalizeTypeName(tokens[pos-1]);
+    }
+    if (match(TokenType::Identifier)) {
+        return tokens[pos-1].text;
+    }
+    return "";
+}
+
 std::vector<std::unique_ptr<Node>> Parser::parse() {
     std::vector<std::unique_ptr<Stmt>> stmts;
     bool hasStart = match(TokenType::KeywordStart);
@@ -46,6 +58,12 @@ std::vector<std::unique_ptr<Node>> Parser::parse() {
 
 std::unique_ptr<Expr> Parser::parseExpressionOnly() {
     auto expr = parseExpression();
+    if (!expr) {
+        match(TokenType::Semicolon);
+        auto node = std::make_unique<NumberExpr>(0);
+        node->setLocation(tokens[pos-1].line, tokens[pos-1].column);
+        return node;
+    }
     if (peek().type != TokenType::EndOfFile) {
         parseError("token inesperado en expresion");
     }
@@ -86,6 +104,9 @@ void Parser::parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool sto
 }
 
 std::unique_ptr<Stmt> Parser::parseSingleStatement() {
+    if (match(TokenType::KeywordClass)) {
+        return parseClassStatement();
+    }
     if (match(TokenType::KeywordImport)) {
         Token importTok = tokens[pos-1];
         std::string moduleName;
@@ -193,12 +214,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
 
     if (match(TokenType::KeywordDeclare)) {
         Token declTok = tokens[pos-1];
-        std::string type;
-        if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
-            match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-            match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
-            type = normalizeTypeName(tokens[pos-1]);
-        } else {
+        std::string type = parseTypeName();
+        if (type.empty()) {
             parseError("se esperaba un tipo despues de 'yatiya'");
         }
         std::string name;
@@ -400,16 +417,13 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         std::string name = "";
         if (peek().type == TokenType::Identifier) name = get().text;
         match(TokenType::LParen);
-        std::vector<FunctionStmt::Param> params;
+        std::vector<Param> params;
         if (peek().type != TokenType::RParen) {
-            FunctionStmt::Param param;
-                if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
-                    match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                    match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
-                    param.type = normalizeTypeName(tokens[pos-1]);
-                } else {
-                    parseError("se esperaba un tipo de parametro");
-                }
+            Param param;
+            param.type = parseTypeName();
+            if (param.type.empty()) {
+                parseError("se esperaba un tipo de parametro");
+            }
             if (peek().type == TokenType::Identifier) {
                 param.name = get().text;
             } else {
@@ -417,12 +431,9 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
             }
             params.push_back(param);
             while (match(TokenType::Comma)) {
-                FunctionStmt::Param next;
-                if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
-                    match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                    match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
-                    next.type = normalizeTypeName(tokens[pos-1]);
-                } else {
+                Param next;
+                next.type = parseTypeName();
+                if (next.type.empty()) {
                     parseError("se esperaba un tipo de parametro");
                 }
                 if (peek().type == TokenType::Identifier) {
@@ -436,11 +447,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         match(TokenType::RParen);
         std::string returnType;
         if (match(TokenType::Colon)) {
-            if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
-                match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
-                returnType = normalizeTypeName(tokens[pos-1]);
-            } else {
+            returnType = parseTypeName();
+            if (returnType.empty()) {
                 parseError("se esperaba un tipo de retorno");
             }
         }
@@ -460,38 +468,33 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         return node;
     }
 
-    if (peek().type == TokenType::Identifier) {
-        std::string name = get().text;
-        Token nameTok = tokens[pos-1];
-        if (match(TokenType::LBracket)) {
-            auto index = parseExpression();
-            if (!match(TokenType::RBracket)) {
-                parseError("se esperaba ']' en acceso de lista");
-            }
-            if (!match(TokenType::Equal)) {
-                parseError("se esperaba '=' en asignacion de lista");
-            }
-            auto value = parseExpression();
-            match(TokenType::Semicolon);
-            auto base = std::make_unique<VariableExpr>(name);
-            base->setLocation(nameTok.line, nameTok.column);
-            auto node = std::make_unique<IndexAssignStmt>(std::move(base), std::move(index), std::move(value));
-            node->setLocation(nameTok.line, nameTok.column);
-            return node;
-        }
-        if (match(TokenType::Equal)) {
-            auto value = parseExpression();
-            match(TokenType::Semicolon);
-            auto node = std::make_unique<AssignStmt>(name, std::move(value));
-            node->setLocation(nameTok.line, nameTok.column);
-            return node;
-        }
-        // not an assignment, rewind so expression parsing sees the identifier
-        --pos;
-    }
-
-    // Fallback: expression statement
+    // Fallback: expression or assignment statement
     auto expr = parseExpression();
+    if (match(TokenType::Equal)) {
+        auto value = parseExpression();
+        match(TokenType::Semicolon);
+        if (auto *var = dynamic_cast<VariableExpr*>(expr.get())) {
+            auto node = std::make_unique<AssignStmt>(var->getName(), std::move(value));
+            node->setLocation(var->getLine(), var->getColumn());
+            return node;
+        }
+        if (auto *idx = dynamic_cast<IndexExpr*>(expr.get())) {
+            auto node = std::make_unique<IndexAssignStmt>(idx->takeBase(),
+                                                          idx->takeIndex(),
+                                                          std::move(value));
+            node->setLocation(idx->getLine(), idx->getColumn());
+            return node;
+        }
+        if (auto *mem = dynamic_cast<MemberExpr*>(expr.get())) {
+            auto key = std::make_unique<StringExpr>(mem->getMember());
+            auto node = std::make_unique<IndexAssignStmt>(mem->takeBase(),
+                                                          std::move(key),
+                                                          std::move(value));
+            node->setLocation(mem->getLine(), mem->getColumn());
+            return node;
+        }
+        parseError("asignacion invalida");
+    }
     size_t line = expr ? expr->getLine() : 0;
     size_t column = expr ? expr->getColumn() : 0;
     match(TokenType::Semicolon);
@@ -680,7 +683,7 @@ std::unique_ptr<Expr> Parser::parseFactor() {
     if (match(TokenType::PlusPlus) || match(TokenType::MinusMinus)) {
         Token tok = tokens[pos-1];
         bool increment = (tok.type == TokenType::PlusPlus);
-        if (match(TokenType::Identifier)) {
+        if (match(TokenType::Identifier) || match(TokenType::KeywordThis)) {
             Token idTok = tokens[pos-1];
             auto node = std::make_unique<IncDecExpr>(idTok.text, increment, true);
             node->setLocation(tok.line, tok.column);
@@ -709,6 +712,64 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         auto node = std::make_unique<UnaryExpr>('!', std::move(e));
         node->setLocation(tok.line, tok.column);
         return node;
+    }
+    auto node = parsePrimary();
+    if (!node) return nullptr;
+    while (true) {
+        if (match(TokenType::LBracket)) {
+            Token bracketTok = tokens[pos-1];
+            auto index = parseExpression();
+            if (!match(TokenType::RBracket)) {
+                parseError("se esperaba ']' en acceso de lista");
+            }
+            auto indexed = std::make_unique<IndexExpr>(std::move(node), std::move(index));
+            indexed->setLocation(bracketTok.line, bracketTok.column);
+            node = std::move(indexed);
+            continue;
+        }
+        if (match(TokenType::Dot)) {
+            Token dotTok = tokens[pos-1];
+            if (peek().type != TokenType::Identifier &&
+                peek().type != TokenType::KeywordIf &&
+                peek().type != TokenType::KeywordTypeString &&
+                peek().type != TokenType::KeywordGetter &&
+                peek().type != TokenType::KeywordSetter) {
+                parseError("se esperaba nombre de miembro despues de '.'");
+                break;
+            }
+            std::string member = get().text;
+            if (match(TokenType::LParen)) {
+                auto args = parseArguments();
+                match(TokenType::RParen);
+                auto callNode = std::make_unique<MemberCallExpr>(std::move(node), member, std::move(args));
+                callNode->setLocation(dotTok.line, dotTok.column);
+                node = std::move(callNode);
+            } else {
+                auto memberNode = std::make_unique<MemberExpr>(std::move(node), member);
+                memberNode->setLocation(dotTok.line, dotTok.column);
+                node = std::move(memberNode);
+            }
+            continue;
+        }
+        if (match(TokenType::PlusPlus) || match(TokenType::MinusMinus)) {
+            Token opTok = tokens[pos-1];
+            bool increment = (opTok.type == TokenType::PlusPlus);
+            if (auto *var = dynamic_cast<VariableExpr*>(node.get())) {
+                auto incNode = std::make_unique<IncDecExpr>(var->getName(), increment, false);
+                incNode->setLocation(opTok.line, opTok.column);
+                return incNode;
+            }
+            parseError("incremento/decremento solo permitido en variables");
+            return node;
+        }
+        break;
+    }
+    return node;
+}
+
+std::unique_ptr<Expr> Parser::parsePrimary() {
+    if (auto classExpr = parseClassPrimary()) {
+        return classExpr;
     }
     if (match(TokenType::Number)) {
         Token tok = tokens[pos-1];
@@ -789,66 +850,12 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         if (match(TokenType::LParen)) {
             auto args = parseArguments();
             match(TokenType::RParen);
-            std::unique_ptr<Expr> node = std::make_unique<CallExpr>(name, std::move(args));
+            auto node = std::make_unique<CallExpr>(name, std::move(args));
             node->setLocation(idTok.line, idTok.column);
-            while (match(TokenType::Dot)) {
-                Token dotTok = tokens[pos-1];
-                if (peek().type != TokenType::Identifier &&
-                    peek().type != TokenType::KeywordIf &&
-                    peek().type != TokenType::KeywordTypeString) {
-                    parseError("se esperaba nombre de miembro despues de '.'");
-                    break;
-                }
-                std::string member = get().text;
-                node = std::make_unique<MemberExpr>(std::move(node), member);
-                node->setLocation(dotTok.line, dotTok.column);
-            }
             return node;
         }
-        if (match(TokenType::LBracket)) {
-            auto index = parseExpression();
-            if (!match(TokenType::RBracket)) {
-                parseError("se esperaba ']' en acceso de lista");
-            }
-            auto base = std::make_unique<VariableExpr>(name);
-            base->setLocation(idTok.line, idTok.column);
-            std::unique_ptr<Expr> node = std::make_unique<IndexExpr>(std::move(base), std::move(index));
-            node->setLocation(idTok.line, idTok.column);
-            while (match(TokenType::Dot)) {
-                Token dotTok = tokens[pos-1];
-                if (peek().type != TokenType::Identifier &&
-                    peek().type != TokenType::KeywordIf &&
-                    peek().type != TokenType::KeywordTypeString) {
-                    parseError("se esperaba nombre de miembro despues de '.'");
-                    break;
-                }
-                std::string member = get().text;
-                node = std::make_unique<MemberExpr>(std::move(node), member);
-                node->setLocation(dotTok.line, dotTok.column);
-            }
-            return node;
-        }
-        std::unique_ptr<Expr> node = std::make_unique<VariableExpr>(name);
+        auto node = std::make_unique<VariableExpr>(name);
         node->setLocation(idTok.line, idTok.column);
-        if (match(TokenType::PlusPlus) || match(TokenType::MinusMinus)) {
-            Token opTok = tokens[pos-1];
-            bool increment = (opTok.type == TokenType::PlusPlus);
-            auto incNode = std::make_unique<IncDecExpr>(name, increment, false);
-            incNode->setLocation(opTok.line, opTok.column);
-            return incNode;
-        }
-        while (match(TokenType::Dot)) {
-            Token dotTok = tokens[pos-1];
-            if (peek().type != TokenType::Identifier &&
-                peek().type != TokenType::KeywordIf &&
-                peek().type != TokenType::KeywordTypeString) {
-                parseError("se esperaba nombre de miembro despues de '.'");
-                break;
-            }
-            std::string member = get().text;
-            node = std::make_unique<MemberExpr>(std::move(node), member);
-            node->setLocation(dotTok.line, dotTok.column);
-        }
         return node;
     }
     if (match(TokenType::LParen)) {
