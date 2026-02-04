@@ -1,10 +1,14 @@
 {
   "name": "aymlang",
   "displayName": "aymLang",
-  "description": "Exteniòn para el lenguaje de programaciòn AymaraLang",
+  "description": "Extensión oficial para el lenguaje de programación AymaraLang con resaltado de sintaxis, snippets y autocompletado",
   "version": "0.0.3",
   "publisher": "JhulioMoran",
   "icon": "icon.png",
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onLanguage:aym"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/jhulio435m/aymaraLang"

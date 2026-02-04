@@ -4,16 +4,20 @@
     "body": "qillqa(${1:mensaje});",
     "description": "Imprimir con salto de línea"
   },
-  "Leer con katu": {
-    "prefix": "katu",
-    "body": "yatiya ${1:aru} ${2:nombre} = katu(\"${3:Mensaje}: \", tuku=\"\");",
-    "description": "Lectura por consola con prompt"
+  "Programa básico": {
+    "prefix": "qallta",
+    "body": [
+      "qallta",
+      "    ${1:// ...}",
+      "tukuya"
+    ],
+    "description": "Estructura básica de programa"
   },
   "Jisa / Maysatxa": {
     "prefix": "jisa",
     "body": [
       "jisa (${1:condicion}) {",
-      "    ${2:// ...}",
+        "    ${2:// ...}",
       "} maysatxa {",
       "    ${3:// ...}",
       "}"
@@ -46,6 +50,28 @@
       "}"
     ],
     "description": "Definición de función"
+  },
+  "Clase": {
+    "prefix": "kasta",
+    "body": [
+      "kasta ${1:Nombre} {",
+      "    ${2:// ...}",
+      "}"
+    ],
+    "description": "Declaración de clase"
+  },
+  "Try / Catch / Finally": {
+    "prefix": "yant'aña",
+    "body": [
+      "yant'aña {",
+      "    ${1:// ...}",
+      "} katjaña (${2:error}) {",
+      "    ${3:// ...}",
+      "} tukuyawi {",
+      "    ${4:// ...}",
+      "}"
+    ],
+    "description": "Manejo de errores"
   },
   "Retorno": {
     "prefix": "kuttaya",
