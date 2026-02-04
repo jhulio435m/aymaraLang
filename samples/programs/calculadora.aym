@@ -1,9 +1,0 @@
-qallta
-// Calculadora muy simple: suma dos numeros
-qillqa("Ingrese el primer número: ");
-yatiya jakhüwi a = input();
-qillqa("Ingrese el segundo número: ");
-yatiya jakhüwi b = input();
-qillqa("La suma es: ");
-qillqa(a + b);
-tukuya

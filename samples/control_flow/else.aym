@@ -1,9 +1,0 @@
-qallta
-// Condicional con rama else
-
-suti (0) {
-    qillqa("then");
-} jani {
-    qillqa("else");
-}
-tukuya

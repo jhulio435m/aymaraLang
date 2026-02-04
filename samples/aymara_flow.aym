@@ -1,0 +1,93 @@
+qallta
+Yatiya Jakhüwi n = 5;
+Jisa(n > 3) {
+  Qillqa("jach'a");
+}
+
+Yatiya Jakhüwi n2 = 2;
+Jisa(n2 > 3) {
+  Qillqa("jach'a");
+} Maysatxa {
+  Qillqa("jisk'a");
+}
+
+Yatiya Jakhüwi n3 = -1;
+Jisa(n3 > 0) {
+  Qillqa("positivu");
+} Maysatxa {
+  Jisa(n3 == 0) {
+    Qillqa("ch'usa");
+  } Maysatxa {
+    Qillqa("negativu");
+  }
+}
+
+Yatiya Jakhüwi n4 = 10;
+Jisa(n4 > 0) {
+  Jisa(n4 % 2 == 0) {
+    Qillqa("positivu par");
+  } Maysatxa {
+    Qillqa("positivu impar");
+  }
+} Maysatxa {
+  Qillqa("jani positivukiti");
+}
+
+Yatiya Jakhüwi edad = 17;
+Yatiya Chiqa permiso = Chiqa;
+Jisa((edad >= 18) || permiso) {
+  Qillqa("mantani");
+} Maysatxa {
+  Qillqa("jani mantani");
+}
+
+Yatiya Chiqa ok = K'ari;
+Jisa(!ok) {
+  Qillqa("jani ok");
+}
+
+Yatiya Jakhüwi n5 = 1;
+Jisa(n5 == 1) { Qillqa("maya"); } Maysatxa { Qillqa("jani maya"); }
+
+Yatiya Jakhüwi n6 = 3;
+Qillqa(n6 % 2 == 0 ? "par" : "impar");
+
+Yatiya Jakhüwi n7 = 0;
+Qillqa(n7 > 0 ? "positivu" : (n7 == 0 ? "ch'usa" : "negativu"));
+
+Yatiya Jakhüwi i = 0;
+Ukhakamaxa(i < 3) {
+  Qillqa(i);
+  i++;
+}
+
+Yatiya Jakhüwi j = 0;
+Ukhakamaxa(Chiqa) {
+  Jisa(j == 2) { P'akhiña; }
+  Qillqa(j);
+  j++;
+}
+
+Taki(Yatiya Jakhüwi k = 0; k < 3; k++) {
+  Qillqa(k);
+}
+
+Taki(Yatiya Jakhüwi m = 3; m > 0; m--) {
+  Qillqa(m);
+}
+
+Taki(Yatiya Jakhüwi p = 0; p < 5; p++) {
+  Jisa(p == 2) { Sarantaña; }
+  Qillqa(p);
+}
+
+Taki(Yatiya Jakhüwi t = 0; t < 6; t++) {
+  Jisa(t == 4) { P'akhiña; }
+  Jisa(t % 2 == 0) {
+    Qillqa(t % 2 == 0 ? "par" : "impar");
+  } Maysatxa {
+    Sarantaña;
+  }
+}
+
+tukuya

@@ -1,8 +1,0 @@
-qallta
-// Operadores logicos
-suti (1 && !0) {
-    qillqa("ok");
-} jani {
-    qillqa("fail");
-}
-tukuya

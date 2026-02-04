@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include <cctype>
 #include <stdexcept>
+#include <algorithm>
 
 namespace aym {
 
@@ -40,47 +41,52 @@ std::vector<Token> Lexer::tokenize() {
             std::string word;
             while (pos < src.size()) {
                 char ch = peek();
-                if (std::isalnum(static_cast<unsigned char>(ch)) || ch == '_' || (ch & 0x80)) {
+                if (std::isalnum(static_cast<unsigned char>(ch)) || ch == '_' || ch == '\'' || (ch & 0x80)) {
                     word += get();
                 } else {
                     break;
                 }
             }
-            if (word == "qallta") {
+            std::string lower = word;
+            std::transform(lower.begin(), lower.end(), lower.begin(),
+                           [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+            if (lower == "qallta") {
                 tokens.push_back({TokenType::KeywordStart, word, startLine, startColumn});
-            } else if (word == "tukuya") {
+            } else if (lower == "tukuya") {
                 tokens.push_back({TokenType::KeywordEnd, word, startLine, startColumn});
-            } else if (word == "yatiya") {
+            } else if (lower == "yatiya") {
                 tokens.push_back({TokenType::KeywordDeclare, word, startLine, startColumn});
-            } else if (word == "qillqa") {
+            } else if (lower == "qillqa") {
                 tokens.push_back({TokenType::KeywordPrint, word, startLine, startColumn});
-            } else if (word == "suti") {
+            } else if (lower == "suti" || lower == "jisa") {
                 tokens.push_back({TokenType::KeywordIf, word, startLine, startColumn});
-            } else if (word == "jani") {
+            } else if (lower == "jani" || lower == "maysatxa") {
                 tokens.push_back({TokenType::KeywordElse, word, startLine, startColumn});
-            } else if (word == "kunawsati") {
+            } else if (lower == "kunawsati" || lower == "ukhakamaxa") {
                 tokens.push_back({TokenType::KeywordWhile, word, startLine, startColumn});
-            } else if (word == "sapüru") {
+            } else if (lower == "sapüru" || lower == "taki") {
                 tokens.push_back({TokenType::KeywordFor, word, startLine, startColumn});
+            } else if (lower == "p'akhiña") {
+                tokens.push_back({TokenType::KeywordBreak, word, startLine, startColumn});
+            } else if (lower == "sarantaña") {
+                tokens.push_back({TokenType::KeywordContinue, word, startLine, startColumn});
             } else if (word == "lurawi") {
                 tokens.push_back({TokenType::KeywordFunc, word, startLine, startColumn});
             } else if (word == "kuttaya") {
                 tokens.push_back({TokenType::KeywordReturn, word, startLine, startColumn});
             } else if (word == "apnaq") {
                 tokens.push_back({TokenType::KeywordImport, word, startLine, startColumn});
-            } else if (word == "jakhüwi") {
+            } else if (lower == "jakhüwi") {
                 tokens.push_back({TokenType::KeywordTypeNumber, word, startLine, startColumn});
-            } else if (word == "aru") {
+            } else if (lower == "aru") {
                 tokens.push_back({TokenType::KeywordTypeString, word, startLine, startColumn});
-            } else if (word == "chiqa") {
-                tokens.push_back({TokenType::KeywordTypeBool, word, startLine, startColumn});
-            } else if (word == "listaña") {
+            } else if (lower == "listaña") {
                 tokens.push_back({TokenType::KeywordTypeList, word, startLine, startColumn});
-            } else if (word == "mapa") {
+            } else if (lower == "mapa") {
                 tokens.push_back({TokenType::KeywordTypeMap, word, startLine, startColumn});
-            } else if (word == "utji") {
+            } else if (lower == "utji" || lower == "chiqa") {
                 tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
-            } else if (word == "janiutji") {
+            } else if (lower == "janiutji" || lower == "k'ari") {
                 tokens.push_back({TokenType::KeywordFalse, word, startLine, startColumn});
             } else {
                 tokens.push_back({TokenType::Identifier, word, startLine, startColumn});
@@ -167,12 +173,29 @@ std::vector<Token> Lexer::tokenize() {
         }
 
         switch (c) {
-            case '+': tokens.push_back({TokenType::Plus, "+", startLine, startColumn}); get(); break;
-            case '-': tokens.push_back({TokenType::Minus, "-", startLine, startColumn}); get(); break;
+            case '+':
+                if (pos + 1 < src.size() && src[pos + 1] == '+') {
+                    tokens.push_back({TokenType::PlusPlus, "++", startLine, startColumn});
+                    get(); get();
+                } else {
+                    tokens.push_back({TokenType::Plus, "+", startLine, startColumn});
+                    get();
+                }
+                break;
+            case '-':
+                if (pos + 1 < src.size() && src[pos + 1] == '-') {
+                    tokens.push_back({TokenType::MinusMinus, "--", startLine, startColumn});
+                    get(); get();
+                } else {
+                    tokens.push_back({TokenType::Minus, "-", startLine, startColumn});
+                    get();
+                }
+                break;
             case '*': tokens.push_back({TokenType::Star, "*", startLine, startColumn}); get(); break;
             case '/': tokens.push_back({TokenType::Slash, "/", startLine, startColumn}); get(); break;
             case '%': tokens.push_back({TokenType::Percent, "%", startLine, startColumn}); get(); break;
             case '^': tokens.push_back({TokenType::Caret, "^", startLine, startColumn}); get(); break;
+            case '?': tokens.push_back({TokenType::Question, "?", startLine, startColumn}); get(); break;
             case '&':
                 if (pos + 1 < src.size() && src[pos + 1] == '&') {
                     tokens.push_back({TokenType::AmpAmp, "&&", startLine, startColumn});

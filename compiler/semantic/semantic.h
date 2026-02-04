@@ -41,6 +41,8 @@ private:
     void visit(VariableExpr &) override;
     void visit(BinaryExpr &) override;
     void visit(UnaryExpr &) override;
+    void visit(TernaryExpr &) override;
+    void visit(IncDecExpr &) override;
     void visit(CallExpr &) override;
     void visit(PrintStmt &) override;
     void visit(ExprStmt &) override;

@@ -1,6 +1,0 @@
-qallta
-// Declaración de variables y operaciones aritméticas
-yatiya jakhüwi x = 5;
-yatiya jakhüwi y = x * 2 + 3;
-qillqa(y); // imprime 13
-tukuya

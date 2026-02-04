@@ -94,3 +94,16 @@ long aym_array_length(intptr_t arr) {
     return len;
 }
 
+char *aym_str_concat(const char *left, const char *right) {
+    if (!left) left = "";
+    if (!right) right = "";
+    size_t left_len = strlen(left);
+    size_t right_len = strlen(right);
+    size_t total = left_len + right_len + 1;
+    char *out = (char *)malloc(total);
+    if (!out) return NULL;
+    memcpy(out, left, left_len);
+    memcpy(out + left_len, right, right_len);
+    out[total - 1] = '\0';
+    return out;
+}

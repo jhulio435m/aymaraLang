@@ -44,6 +44,7 @@ public:
         const FunctionStmt *node;
         std::vector<std::string> locals;
         std::unordered_map<std::string,bool> stringLocals;
+        std::unordered_map<std::string,std::string> localTypes;
     };
 
     std::vector<FunctionInfo> functions;
@@ -51,6 +52,8 @@ public:
     std::unordered_map<std::string, std::vector<std::string>> paramTypes;
     std::unordered_map<std::string,bool> currentParamStrings;
     std::unordered_map<std::string,bool> currentLocalStrings;
+    std::unordered_map<std::string,std::string> currentParamTypes;
+    std::unordered_map<std::string,std::string> currentLocalTypes;
     std::unordered_map<std::string,std::string> globalTypes;
     std::vector<std::string> breakLabels;
     std::vector<std::string> continueLabels;
@@ -68,8 +71,16 @@ private:
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt,
                        std::vector<std::string> &locs,
-                       std::unordered_map<std::string,bool> &strs);
+                       std::unordered_map<std::string,bool> &strs,
+                       std::unordered_map<std::string,std::string> &types);
     void collectGlobal(const Stmt *stmt);
+    bool isStringExpr(const Expr *expr,
+                      const std::unordered_map<std::string,int> *locals) const;
+    bool isBoolExpr(const Expr *expr,
+                    const std::unordered_map<std::string,int> *locals) const;
+    void emitPrintValue(const Expr *expr,
+                        const std::unordered_map<std::string,int> *locals);
+    void emitPrintDefault(const std::string &label);
 
     void emitStmt(const Stmt *stmt,
                   const std::unordered_map<std::string,int> *locals,
@@ -96,6 +107,12 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
         collectStrings(u->getExpr());
         return;
     }
+    if (auto *t = dynamic_cast<const TernaryExpr*>(expr)) {
+        collectStrings(t->getCondition());
+        collectStrings(t->getThen());
+        collectStrings(t->getElse());
+        return;
+    }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         for (const auto &a : c->getArgs()) collectStrings(a.get());
         return;
@@ -104,10 +121,12 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
 
 void CodeGenImpl::collectLocals(const Stmt *stmt,
                                 std::vector<std::string> &locs,
-                                std::unordered_map<std::string,bool> &strs) {
+                                std::unordered_map<std::string,bool> &strs,
+                                std::unordered_map<std::string,std::string> &types) {
     if (auto *v = dynamic_cast<const VarDeclStmt*>(stmt)) {
         locs.push_back(v->getName());
         if (v->getType() == "aru") strs[v->getName()] = true;
+        types[v->getName()] = v->getType();
         collectStrings(v->getInit());
         return;
     }
@@ -115,6 +134,8 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
         for (const auto &expr : p->getExprs()) {
             collectStrings(expr.get());
         }
+        collectStrings(p->getSeparator());
+        collectStrings(p->getTerminator());
         return;
     }
     if (auto *a = dynamic_cast<const AssignStmt*>(stmt)) {
@@ -122,39 +143,39 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
         return;
     }
     if (auto *b = dynamic_cast<const BlockStmt*>(stmt)) {
-        for (const auto &s : b->statements) collectLocals(s.get(), locs, strs);
+        for (const auto &s : b->statements) collectLocals(s.get(), locs, strs, types);
         return;
     }
     if (auto *i = dynamic_cast<const IfStmt*>(stmt)) {
         collectStrings(i->getCondition());
-        collectLocals(i->getThen(), locs, strs);
-        if (i->getElse()) collectLocals(i->getElse(), locs, strs);
+        collectLocals(i->getThen(), locs, strs, types);
+        if (i->getElse()) collectLocals(i->getElse(), locs, strs, types);
         return;
     }
     if (auto *w = dynamic_cast<const WhileStmt*>(stmt)) {
         collectStrings(w->getCondition());
-        collectLocals(w->getBody(), locs, strs);
+        collectLocals(w->getBody(), locs, strs, types);
         return;
     }
     if (auto *dw = dynamic_cast<const DoWhileStmt*>(stmt)) {
-        collectLocals(dw->getBody(), locs, strs);
+        collectLocals(dw->getBody(), locs, strs, types);
         collectStrings(dw->getCondition());
         return;
     }
     if (auto *f = dynamic_cast<const ForStmt*>(stmt)) {
-        collectLocals(f->getInit(), locs, strs);
+        collectLocals(f->getInit(), locs, strs, types);
         collectStrings(f->getCondition());
-        collectLocals(f->getPost(), locs, strs);
-        collectLocals(f->getBody(), locs, strs);
+        collectLocals(f->getPost(), locs, strs, types);
+        collectLocals(f->getBody(), locs, strs, types);
         return;
     }
     if (auto *sw = dynamic_cast<const SwitchStmt*>(stmt)) {
         collectStrings(sw->getExpr());
         for (const auto &c : sw->getCases()) {
             collectStrings(c.first.get());
-            collectLocals(c.second.get(), locs, strs);
+            collectLocals(c.second.get(), locs, strs, types);
         }
-        if (sw->getDefault()) collectLocals(sw->getDefault(), locs, strs);
+        if (sw->getDefault()) collectLocals(sw->getDefault(), locs, strs, types);
         return;
     }
     if (auto *ret = dynamic_cast<const ReturnStmt*>(stmt)) {
@@ -182,6 +203,8 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
         for (const auto &expr : p->getExprs()) {
             collectStrings(expr.get());
         }
+        collectStrings(p->getSeparator());
+        collectStrings(p->getTerminator());
         return;
     }
     if (auto *b = dynamic_cast<const BlockStmt*>(stmt)) {
@@ -230,6 +253,94 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
     }
 }
 
+bool CodeGenImpl::isStringExpr(const Expr *expr,
+                               const std::unordered_map<std::string,int> *locals) const {
+    if (!expr) return false;
+    if (dynamic_cast<const StringExpr*>(expr)) return true;
+    if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
+        if (currentParamStrings.count(v->getName())) return true;
+        if (locals && currentLocalStrings.count(v->getName())) return true;
+        if (globalTypes.count(v->getName()) && globalTypes.at(v->getName()) == "aru") return true;
+        return false;
+    }
+    if (auto *b = dynamic_cast<const BinaryExpr*>(expr)) {
+        if (b->getOp() == '+') {
+            return isStringExpr(b->getLeft(), locals) && isStringExpr(b->getRight(), locals);
+        }
+        return false;
+    }
+    if (auto *t = dynamic_cast<const TernaryExpr*>(expr)) {
+        return isStringExpr(t->getThen(), locals) && isStringExpr(t->getElse(), locals);
+    }
+    return false;
+}
+
+bool CodeGenImpl::isBoolExpr(const Expr *expr,
+                             const std::unordered_map<std::string,int> *locals) const {
+    if (!expr) return false;
+    if (dynamic_cast<const BoolExpr*>(expr)) return true;
+    if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
+        if (currentParamTypes.count(v->getName()) && currentParamTypes.at(v->getName()) == "chiqa")
+            return true;
+        if (locals && currentLocalTypes.count(v->getName()) &&
+            currentLocalTypes.at(v->getName()) == "chiqa")
+            return true;
+        if (globalTypes.count(v->getName()) && globalTypes.at(v->getName()) == "chiqa")
+            return true;
+        return false;
+    }
+    if (auto *b = dynamic_cast<const BinaryExpr*>(expr)) {
+        char op = b->getOp();
+        if (op == '&' || op == '|' || op == 's' || op == 'd' || op == '<' || op == '>' ||
+            op == 'l' || op == 'g') {
+            return true;
+        }
+        return false;
+    }
+    if (auto *u = dynamic_cast<const UnaryExpr*>(expr)) {
+        return u->getOp() == '!';
+    }
+    if (auto *t = dynamic_cast<const TernaryExpr*>(expr)) {
+        return isBoolExpr(t->getThen(), locals) && isBoolExpr(t->getElse(), locals);
+    }
+    return false;
+}
+
+void CodeGenImpl::emitPrintDefault(const std::string &label) {
+    out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
+    out << "    lea " << reg2(this->windows) << ", [rel " << label << "]\n";
+    out << "    xor eax,eax\n";
+    out << "    call printf\n";
+}
+
+void CodeGenImpl::emitPrintValue(const Expr *expr,
+                                 const std::unordered_map<std::string,int> *locals) {
+    if (!expr) return;
+    if (isBoolExpr(expr, locals)) {
+        std::string falseLbl = genLabel("bool_false");
+        std::string endLbl = genLabel("bool_end");
+        emitExpr(expr, locals);
+        out << "    cmp rax,0\n";
+        out << "    je " << falseLbl << "\n";
+        emitPrintDefault("bool_true");
+        out << "    jmp " << endLbl << "\n";
+        out << falseLbl << ":\n";
+        emitPrintDefault("bool_false");
+        out << endLbl << ":\n";
+        return;
+    }
+    emitExpr(expr, locals);
+    if (isStringExpr(expr, locals)) {
+        out << "    mov " << reg2(this->windows) << ", rax\n";
+        out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
+    } else {
+        out << "    mov " << reg2(this->windows) << ", rax\n";
+        out << "    lea " << reg1(this->windows) << ", [rel fmt_int_raw]\n";
+    }
+    out << "    xor eax,eax\n";
+    out << "    call printf\n";
+}
+
 void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     std::unordered_map<std::string,int> offsets;
     int off = 0;
@@ -242,13 +353,17 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     int stackSize = (off + shadow + 15) & ~15;
 
     currentParamStrings.clear();
+    currentParamTypes.clear();
     currentLocalStrings = info.stringLocals;
+    currentLocalTypes = info.localTypes;
     auto pit = paramTypes.find(info.node->getName());
     if (pit != paramTypes.end()) {
         size_t idx = 0;
         for (const auto &p : info.node->getParams()) {
-            if (idx < pit->second.size() && pit->second[idx] == "aru")
-                currentParamStrings[p.name] = true;
+            if (idx < pit->second.size()) {
+                currentParamTypes[p.name] = pit->second[idx];
+                if (pit->second[idx] == "aru") currentParamStrings[p.name] = true;
+            }
             ++idx;
         }
     }
@@ -285,39 +400,18 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
                            const std::unordered_map<std::string,int> *locals,
                            const std::string &endLabel) {
     if (auto *p = dynamic_cast<const PrintStmt *>(stmt)) {
-        for (const auto &expr : p->getExprs()) {
-            if (!expr) continue;
-            if (auto *s = dynamic_cast<StringExpr *>(expr.get())) {
-                size_t idx = findString(s->getValue());
-                out << "    lea " << reg1(this->windows) << ", [rel fmt_str]\n";
-                out << "    lea " << reg2(this->windows) << ", [rel str" << idx << "]\n";
-                out << "    xor eax,eax\n";
-                out << "    call printf\n";
-            } else if (auto *v = dynamic_cast<VariableExpr *>(expr.get())) {
-                emitExpr(v, locals);
-                bool isStr = false;
-                if (currentParamStrings.count(v->getName())) {
-                    isStr = true;
-                } else if (!locals && globalTypes.count(v->getName()) && globalTypes[v->getName()] == "aru") {
-                    isStr = true;
-                }
-                if (isStr) {
-                    out << "    mov " << reg2(this->windows) << ", rax\n";
-                    out << "    lea " << reg1(this->windows) << ", [rel fmt_str]\n";
-                } else {
-                    out << "    mov " << reg2(this->windows) << ", rax\n";
-                    out << "    lea " << reg1(this->windows) << ", [rel fmt_int]\n";
-                }
-                out << "    xor eax,eax\n";
-                out << "    call printf\n";
-            } else {
-                emitExpr(expr.get(), locals);
-                out << "    mov " << reg2(this->windows) << ", rax\n";
-                out << "    lea " << reg1(this->windows) << ", [rel fmt_int]\n";
-                out << "    xor eax,eax\n";
-                out << "    call printf\n";
+        const auto &exprs = p->getExprs();
+        const Expr *sepExpr = p->getSeparator();
+        const Expr *termExpr = p->getTerminator();
+        for (size_t i = 0; i < exprs.size(); ++i) {
+            emitPrintValue(exprs[i].get(), locals);
+            if (i + 1 < exprs.size()) {
+                if (sepExpr) emitPrintValue(sepExpr, locals);
+                else emitPrintDefault("print_sep");
             }
         }
+        if (termExpr) emitPrintValue(termExpr, locals);
+        else emitPrintDefault("print_term");
         return;
     }
     if (auto *e = dynamic_cast<const ExprStmt *>(stmt)) {
@@ -516,14 +610,82 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         }
         return;
     }
+    if (auto *inc = dynamic_cast<const IncDecExpr *>(expr)) {
+        bool isLocal = locals && locals->count(inc->getName());
+        if (isLocal) {
+            out << "    mov rax, [rbp-" << locals->at(inc->getName()) << "]\n";
+        } else {
+            out << "    mov rax, [rel " << inc->getName() << "]\n";
+        }
+        if (inc->prefix()) {
+            if (inc->increment()) out << "    add rax, 1\n";
+            else out << "    sub rax, 1\n";
+            if (isLocal) {
+                out << "    mov [rbp-" << locals->at(inc->getName()) << "], rax\n";
+            } else {
+                out << "    mov [rel " << inc->getName() << "], rax\n";
+            }
+        } else {
+            out << "    mov rbx, rax\n";
+            if (inc->increment()) out << "    add rax, 1\n";
+            else out << "    sub rax, 1\n";
+            if (isLocal) {
+                out << "    mov [rbp-" << locals->at(inc->getName()) << "], rax\n";
+            } else {
+                out << "    mov [rel " << inc->getName() << "], rax\n";
+            }
+            out << "    mov rax, rbx\n";
+        }
+        return;
+    }
     if (auto *b = dynamic_cast<const BinaryExpr *>(expr)) {
+        if (b->getOp() == '&') {
+            std::string falseLbl = genLabel("and_false");
+            std::string endLbl = genLabel("and_end");
+            emitExpr(b->getLeft(), locals);
+            out << "    cmp rax,0\n";
+            out << "    je " << falseLbl << "\n";
+            emitExpr(b->getRight(), locals);
+            out << "    cmp rax,0\n";
+            out << "    setne al\n";
+            out << "    movzx rax,al\n";
+            out << "    jmp " << endLbl << "\n";
+            out << falseLbl << ":\n";
+            out << "    mov rax,0\n";
+            out << endLbl << ":\n";
+            return;
+        }
+        if (b->getOp() == '|') {
+            std::string trueLbl = genLabel("or_true");
+            std::string endLbl = genLabel("or_end");
+            emitExpr(b->getLeft(), locals);
+            out << "    cmp rax,0\n";
+            out << "    jne " << trueLbl << "\n";
+            emitExpr(b->getRight(), locals);
+            out << "    cmp rax,0\n";
+            out << "    setne al\n";
+            out << "    movzx rax,al\n";
+            out << "    jmp " << endLbl << "\n";
+            out << trueLbl << ":\n";
+            out << "    mov rax,1\n";
+            out << endLbl << ":\n";
+            return;
+        }
         emitExpr(b->getLeft(), locals);
         out << "    push rax\n";
         emitExpr(b->getRight(), locals);
         out << "    mov rbx, rax\n";
         out << "    pop rax\n";
         switch (b->getOp()) {
-            case '+': out << "    add rax, rbx\n"; break;
+            case '+':
+                if (isStringExpr(b->getLeft(), locals) && isStringExpr(b->getRight(), locals)) {
+                    out << "    mov " << reg1(this->windows) << ", rax\n";
+                    out << "    mov " << reg2(this->windows) << ", rbx\n";
+                    out << "    call aym_str_concat\n";
+                } else {
+                    out << "    add rax, rbx\n";
+                }
+                break;
             case '-': out << "    sub rax, rbx\n"; break;
             case '*': out << "    imul rax, rbx\n"; break;
             case '/': out << "    cqo\n    idiv rbx\n"; break;
@@ -543,16 +705,6 @@ void CodeGenImpl::emitExpr(const Expr *expr,
                 out << end << ":\n";
                 break;
             }
-            case '&':
-                out << "    cmp rax,0\n    setne al\n    movzx rax,al\n";
-                out << "    cmp rbx,0\n    setne bl\n    movzx rbx,bl\n";
-                out << "    and rax, rbx\n";
-                break;
-            case '|':
-                out << "    cmp rax,0\n    setne al\n    movzx rax,al\n";
-                out << "    cmp rbx,0\n    setne bl\n    movzx rbx,bl\n";
-                out << "    or rax, rbx\n";
-                break;
             case '<':
                 out << "    cmp rax, rbx\n    setl al\n    movzx rax,al\n";
                 break;
@@ -588,6 +740,19 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             default:
                 break; // '+' is a no-op
         }
+        return;
+    }
+    if (auto *t = dynamic_cast<const TernaryExpr *>(expr)) {
+        std::string elseLbl = genLabel("tern_else");
+        std::string endLbl = genLabel("tern_end");
+        emitExpr(t->getCondition(), locals);
+        out << "    cmp rax,0\n";
+        out << "    je " << elseLbl << "\n";
+        emitExpr(t->getThen(), locals);
+        out << "    jmp " << endLbl << "\n";
+        out << elseLbl << ":\n";
+        emitExpr(t->getElse(), locals);
+        out << endLbl << ":\n";
         return;
     }
     if (auto *c = dynamic_cast<const CallExpr *>(expr)) {
@@ -722,7 +887,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
             for (const auto &p : fn->getParams()) {
                 info.stringLocals[p.name] = false;
             }
-            collectLocals(fn->getBody(), info.locals, info.stringLocals);
+            collectLocals(fn->getBody(), info.locals, info.stringLocals, info.localTypes);
             functions.push_back(std::move(info));
         } else {
             mainStmts.push_back(static_cast<const Stmt*>(n.get()));
@@ -744,14 +909,20 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern aym_array_set\n";
     out << "extern aym_array_free\n";
     out << "extern aym_array_length\n";
+    out << "extern aym_str_concat\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
     out << "fmt_raw: db \"%s\",0\n";
+    out << "fmt_int_raw: db \"%ld\",0\n";
     out << "fmt_read_int: db \"%ld\",0\n";
     out << "fmt_read_str: db \"%255s\",0\n";
     out << "input_val: dq 0\n";
     out << "input_buf: times 256 db 0\n";
+    out << "print_sep: db \" \",0\n";
+    out << "print_term: db 10,0\n";
+    out << "bool_true: db \"utji\",0\n";
+    out << "bool_false: db \"janiutji\",0\n";
 
     for (size_t i=0;i<strings.size();++i) {
         out << "str" << i << ": db \"" << strings[i] << "\",0\n";
@@ -770,6 +941,10 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "    mov rbp, rsp\n";
     // Preserve rbx (callee-saved) as we use it in expressions
     out << "    push rbx\n";
+    currentParamStrings.clear();
+    currentLocalStrings.clear();
+    currentParamTypes.clear();
+    currentLocalTypes.clear();
     if (this->windows) {
         // Reserve shadow space for Win64 calls
         out << "    sub rsp, 32\n";

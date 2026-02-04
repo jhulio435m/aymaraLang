@@ -1,6 +1,7 @@
 #include "parser.h"
 #include <memory>
 #include <string>
+#include <algorithm>
 
 namespace aym {
 
@@ -15,6 +16,13 @@ long long parseNumberLiteral(const Token &tok) {
         return value;
     }
     return std::stoll(text, nullptr, 0);
+}
+
+std::string normalizeTypeName(const Token &tok) {
+    std::string value = tok.text;
+    std::transform(value.begin(), value.end(), value.begin(),
+                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    return value;
 }
 } // namespace
 
@@ -94,8 +102,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         std::string type;
         if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
             match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-            match(TokenType::KeywordTypeMap)) {
-            type = tokens[pos-1].text;
+            match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
+            type = normalizeTypeName(tokens[pos-1]);
         } else {
             parseError("se esperaba un tipo despues de 'yatiya'");
         }
@@ -125,19 +133,53 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         return node;
     }
 
+    if (match(TokenType::KeywordBreak)) {
+        Token tok = tokens[pos-1];
+        match(TokenType::Semicolon);
+        auto node = std::make_unique<BreakStmt>();
+        node->setLocation(tok.line, tok.column);
+        return node;
+    }
+
+    if (match(TokenType::KeywordContinue)) {
+        Token tok = tokens[pos-1];
+        match(TokenType::Semicolon);
+        auto node = std::make_unique<ContinueStmt>();
+        node->setLocation(tok.line, tok.column);
+        return node;
+    }
+
     if (match(TokenType::KeywordPrint)) {
         Token tok = tokens[pos-1];
         std::vector<std::unique_ptr<Expr>> exprs;
+        std::unique_ptr<Expr> separator;
+        std::unique_ptr<Expr> terminator;
         match(TokenType::LParen);
         if (peek().type != TokenType::RParen) {
-            exprs.push_back(parseExpression());
-            while (match(TokenType::Comma)) {
-                exprs.push_back(parseExpression());
+            while (true) {
+                if (peek().type == TokenType::Identifier && pos + 1 < tokens.size() &&
+                    tokens[pos + 1].type == TokenType::Equal) {
+                    std::string name = get().text;
+                    match(TokenType::Equal);
+                    auto value = parseExpression();
+                    if (name == "t'aqa") {
+                        separator = std::move(value);
+                    } else if (name == "tuku") {
+                        terminator = std::move(value);
+                    } else {
+                        parseError("argumento nombrado desconocido en qillqa");
+                    }
+                } else {
+                    exprs.push_back(parseExpression());
+                }
+                if (!match(TokenType::Comma)) {
+                    break;
+                }
             }
         }
         match(TokenType::RParen);
         match(TokenType::Semicolon);
-        auto node = std::make_unique<PrintStmt>(std::move(exprs));
+        auto node = std::make_unique<PrintStmt>(std::move(exprs), std::move(separator), std::move(terminator));
         node->setLocation(tok.line, tok.column);
         return node;
     }
@@ -192,8 +234,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
                 std::string type;
                 if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
                     match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                    match(TokenType::KeywordTypeMap)) {
-                    type = tokens[pos-1].text;
+                    match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
+                    type = normalizeTypeName(tokens[pos-1]);
                 } else {
                     parseError("se esperaba un tipo en el encabezado de 'sapüru'");
                 }
@@ -245,6 +287,7 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
                 post = std::make_unique<ExprStmt>(std::move(expr));
                 post->setLocation(line, column);
             }
+            match(TokenType::Semicolon);
         }
         if (!post) post = std::make_unique<ExprStmt>(nullptr);
         match(TokenType::RParen);
@@ -266,13 +309,13 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         std::vector<FunctionStmt::Param> params;
         if (peek().type != TokenType::RParen) {
             FunctionStmt::Param param;
-            if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
-                match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                match(TokenType::KeywordTypeMap)) {
-                param.type = tokens[pos-1].text;
-            } else {
-                parseError("se esperaba un tipo de parametro");
-            }
+                if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
+                    match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
+                    match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
+                    param.type = normalizeTypeName(tokens[pos-1]);
+                } else {
+                    parseError("se esperaba un tipo de parametro");
+                }
             if (peek().type == TokenType::Identifier) {
                 param.name = get().text;
             } else {
@@ -283,8 +326,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
                 FunctionStmt::Param next;
                 if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
                     match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                    match(TokenType::KeywordTypeMap)) {
-                    next.type = tokens[pos-1].text;
+                    match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
+                    next.type = normalizeTypeName(tokens[pos-1]);
                 } else {
                     parseError("se esperaba un tipo de parametro");
                 }
@@ -301,8 +344,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
         if (match(TokenType::Colon)) {
             if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
                 match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                match(TokenType::KeywordTypeMap)) {
-                returnType = tokens[pos-1].text;
+                match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
+                returnType = normalizeTypeName(tokens[pos-1]);
             } else {
                 parseError("se esperaba un tipo de retorno");
             }
@@ -348,7 +391,23 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
 }
 
 std::unique_ptr<Expr> Parser::parseExpression() {
-    return parseLogic();
+    return parseTernary();
+}
+
+std::unique_ptr<Expr> Parser::parseTernary() {
+    auto cond = parseLogic();
+    if (match(TokenType::Question)) {
+        Token tok = tokens[pos-1];
+        auto thenExpr = parseExpression();
+        if (!match(TokenType::Colon)) {
+            parseError("se esperaba ':' en operador ternario");
+        }
+        auto elseExpr = parseTernary();
+        auto node = std::make_unique<TernaryExpr>(std::move(cond), std::move(thenExpr), std::move(elseExpr));
+        node->setLocation(tok.line, tok.column);
+        return node;
+    }
+    return cond;
 }
 
 std::unique_ptr<Expr> Parser::parseLogic() {
@@ -492,6 +551,18 @@ std::unique_ptr<Expr> Parser::parsePower() {
 }
 
 std::unique_ptr<Expr> Parser::parseFactor() {
+    if (match(TokenType::PlusPlus) || match(TokenType::MinusMinus)) {
+        Token tok = tokens[pos-1];
+        bool increment = (tok.type == TokenType::PlusPlus);
+        if (match(TokenType::Identifier)) {
+            Token idTok = tokens[pos-1];
+            auto node = std::make_unique<IncDecExpr>(idTok.text, increment, true);
+            node->setLocation(tok.line, tok.column);
+            return node;
+        }
+        parseError("se esperaba un identificador despues de incremento/decremento");
+        return nullptr;
+    }
     if (match(TokenType::Minus)) {
         Token tok = tokens[pos-1];
         auto e = parseFactor();
@@ -549,6 +620,13 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         }
         auto node = std::make_unique<VariableExpr>(name);
         node->setLocation(idTok.line, idTok.column);
+        if (match(TokenType::PlusPlus) || match(TokenType::MinusMinus)) {
+            Token opTok = tokens[pos-1];
+            bool increment = (opTok.type == TokenType::PlusPlus);
+            auto incNode = std::make_unique<IncDecExpr>(name, increment, false);
+            incNode->setLocation(opTok.line, opTok.column);
+            return incNode;
+        }
         return node;
     }
     if (match(TokenType::LParen)) {

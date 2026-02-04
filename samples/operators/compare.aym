@@ -1,9 +1,0 @@
-qallta
-// Comparaciones con operadores relacionales
-
-suti (1 >= 3) {
-    qillqa("ok");
-} jani {
-    qillqa("bad");
-}
-tukuya

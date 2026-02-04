@@ -1,8 +1,0 @@
-qallta
-// Ejemplo de números aleatorios
-yatiya jakhüwi i = 0;
-kunawsati (i < 5) {
-    qillqa(random(100));
-    i = i + 1;
-}
-tukuya
