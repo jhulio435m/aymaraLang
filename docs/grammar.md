@@ -23,6 +23,10 @@ tokenización están implementadas en `compiler/lexer/lexer.cpp`.
 | `KeywordFunc` | `lurawi` | Definición de funciones |
 | `KeywordReturn` | `kuttaya` | Retorno |
 | `KeywordImport` | `apnaq` | Importación |
+| `KeywordTry` | `yant'aña` | Bloque `try` |
+| `KeywordCatch` | `katjaña` | Bloque `catch` |
+| `KeywordFinally` | `tukuyawi` | Bloque `finally` |
+| `KeywordThrow` | `pantja` | Lanzar excepción |
 | `KeywordTypeNumber` | `jakhüwi` | Tipo numérico |
 | `KeywordTypeString` | `aru` | Tipo cadena |
 | `KeywordTypeBool` | `chiqa` | Tipo booleano |
@@ -63,7 +67,8 @@ Los símbolos se mantienen sin cambios:
 programa      = [ "qallta" ] { sentencia } [ "tukuya" ] ;
 
 sentencia     = decl | asigna | if | while | for | func_def
-              | retorno | salida | continuar | imprimir | importar | bloque | ";" ;
+              | retorno | salida | continuar | imprimir | importar
+              | try | throw | bloque | ";" ;
 
 bloque        = "{" { sentencia } "}" ;
 
@@ -87,6 +92,10 @@ param         = tipo id ;
 retorno       = "kuttaya" [ expr ] ";" ;
 salida        = "p'akhiña" ";" ;
 continuar     = "sarantaña" ";" ;
+throw         = "pantja" "(" (str | id) [ "," str ] ")" ";" ;
+try           = "yant'aña" bloque { catch } [ finally ] ;
+catch         = "katjaña" "(" [ str "," ] id ")" bloque ;
+finally       = "tukuyawi" bloque ;
 
 imprimir      = "qillqa" "(" [ args ] ")" ";" ;
 importar      = "apnaq" "(" str ")" ";" ;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <cstddef>
 #include "../utils/fs.h"
 #include <unordered_map>
 #include <unordered_set>
@@ -77,6 +78,10 @@ public:
     std::unordered_map<std::string,std::string> functionReturnTypes;
     std::vector<std::string> breakLabels;
     std::vector<std::string> continueLabels;
+    std::vector<std::string> finallyStack;
+    std::vector<size_t> loopFinallyDepth;
+    std::vector<size_t> throwFinallyLimitStack;
+    size_t tryTempCounter = 0;
     long seed = -1;
 
     void emit(const std::vector<std::unique_ptr<Node>> &nodes,
@@ -95,6 +100,7 @@ private:
                        std::unordered_map<std::string,bool> &strs,
                        std::unordered_map<std::string,std::string> &types);
     void collectGlobal(const Stmt *stmt);
+    void assignTrySlots(Stmt *stmt);
     bool isStringExpr(const Expr *expr,
                       const std::unordered_map<std::string,int> *locals) const;
     bool isBoolExpr(const Expr *expr,
@@ -153,6 +159,10 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
     }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         for (const auto &a : c->getArgs()) collectStrings(a.get());
+        return;
+    }
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        collectStrings(m->getBase());
         return;
     }
 }
@@ -237,12 +247,53 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
         if (sw->getDefault()) collectLocals(sw->getDefault(), locs, strs, types);
         return;
     }
+    if (auto *t = dynamic_cast<const TryStmt*>(stmt)) {
+        if (!t->getHandlerSlot().empty()) {
+            if (std::find(locs.begin(), locs.end(), t->getHandlerSlot()) == locs.end()) {
+                locs.push_back(t->getHandlerSlot());
+                types[t->getHandlerSlot()] = "handler";
+            }
+        }
+        if (!t->getExceptionSlot().empty()) {
+            if (std::find(locs.begin(), locs.end(), t->getExceptionSlot()) == locs.end()) {
+                locs.push_back(t->getExceptionSlot());
+                types[t->getExceptionSlot()] = "excepcion";
+            }
+        }
+        collectLocals(t->getTryBlock(), locs, strs, types);
+        for (const auto &c : t->getCatches()) {
+            if (!c.varName.empty()) {
+                if (std::find(locs.begin(), locs.end(), c.varName) == locs.end()) {
+                    locs.push_back(c.varName);
+                    types[c.varName] = "excepcion";
+                }
+            }
+            if (!c.typeName.empty()) {
+                if (std::find(strings.begin(), strings.end(), c.typeName) == strings.end()) {
+                    strings.push_back(c.typeName);
+                }
+            }
+            collectLocals(c.block.get(), locs, strs, types);
+        }
+        if (t->getFinallyBlock()) collectLocals(t->getFinallyBlock(), locs, strs, types);
+        return;
+    }
     if (auto *ret = dynamic_cast<const ReturnStmt*>(stmt)) {
         collectStrings(ret->getValue());
         return;
     }
     if (auto *e = dynamic_cast<const ExprStmt*>(stmt)) {
         collectStrings(e->getExpr());
+        return;
+    }
+    if (auto *thr = dynamic_cast<const ThrowStmt*>(stmt)) {
+        collectStrings(thr->getType());
+        collectStrings(thr->getMessage());
+        if (!thr->getType()) {
+            if (std::find(strings.begin(), strings.end(), "Error") == strings.end()) {
+                strings.push_back("Error");
+            }
+        }
         return;
     }
 }
@@ -308,12 +359,91 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
         if (sw->getDefault()) collectGlobal(sw->getDefault());
         return;
     }
+    if (auto *t = dynamic_cast<const TryStmt*>(stmt)) {
+        if (!t->getHandlerSlot().empty()) {
+            globals.insert(t->getHandlerSlot());
+        }
+        if (!t->getExceptionSlot().empty()) {
+            globals.insert(t->getExceptionSlot());
+        }
+        collectGlobal(t->getTryBlock());
+        for (const auto &c : t->getCatches()) {
+            if (!c.varName.empty()) {
+                globals.insert(c.varName);
+            }
+            collectGlobal(c.block.get());
+            if (!c.typeName.empty()) {
+                if (std::find(strings.begin(), strings.end(), c.typeName) == strings.end()) {
+                    strings.push_back(c.typeName);
+                }
+            }
+        }
+        if (t->getFinallyBlock()) collectGlobal(t->getFinallyBlock());
+        return;
+    }
     if (auto *ret = dynamic_cast<const ReturnStmt*>(stmt)) {
         collectStrings(ret->getValue());
         return;
     }
     if (auto *e = dynamic_cast<const ExprStmt*>(stmt)) {
         collectStrings(e->getExpr());
+        return;
+    }
+    if (auto *thr = dynamic_cast<const ThrowStmt*>(stmt)) {
+        collectStrings(thr->getType());
+        collectStrings(thr->getMessage());
+        if (!thr->getType()) {
+            if (std::find(strings.begin(), strings.end(), "Error") == strings.end()) {
+                strings.push_back("Error");
+            }
+        }
+        return;
+    }
+}
+
+void CodeGenImpl::assignTrySlots(Stmt *stmt) {
+    if (!stmt) return;
+    if (auto *b = dynamic_cast<BlockStmt*>(stmt)) {
+        for (const auto &s : b->statements) assignTrySlots(s.get());
+        return;
+    }
+    if (auto *i = dynamic_cast<IfStmt*>(stmt)) {
+        assignTrySlots(i->getThen());
+        if (i->getElse()) assignTrySlots(i->getElse());
+        return;
+    }
+    if (auto *w = dynamic_cast<WhileStmt*>(stmt)) {
+        assignTrySlots(w->getBody());
+        return;
+    }
+    if (auto *dw = dynamic_cast<DoWhileStmt*>(stmt)) {
+        assignTrySlots(dw->getBody());
+        return;
+    }
+    if (auto *f = dynamic_cast<ForStmt*>(stmt)) {
+        assignTrySlots(f->getInit());
+        assignTrySlots(f->getPost());
+        assignTrySlots(f->getBody());
+        return;
+    }
+    if (auto *sw = dynamic_cast<SwitchStmt*>(stmt)) {
+        for (const auto &c : sw->getCases()) {
+            assignTrySlots(c.second.get());
+        }
+        if (sw->getDefault()) assignTrySlots(sw->getDefault());
+        return;
+    }
+    if (auto *t = dynamic_cast<TryStmt*>(stmt)) {
+        if (t->getHandlerSlot().empty()) {
+            std::string suffix = std::to_string(tryTempCounter++);
+            t->setHandlerSlot("__try_handler_" + suffix);
+            t->setExceptionSlot("__try_exception_" + suffix);
+        }
+        assignTrySlots(t->getTryBlock());
+        for (const auto &c : t->getCatches()) {
+            assignTrySlots(c.block.get());
+        }
+        if (t->getFinallyBlock()) assignTrySlots(t->getFinallyBlock());
         return;
     }
 }
@@ -331,6 +461,9 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
     }
     if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
         return listElementType(i->getBase(), locals) == "aru";
+    }
+    if (dynamic_cast<const MemberExpr*>(expr)) {
+        return true;
     }
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
         if (currentParamStrings.count(v->getName()) && currentParamStrings.at(v->getName())) return true;
@@ -687,6 +820,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         std::string end = genLabel("endloop");
         breakLabels.push_back(end);
         continueLabels.push_back(cont);
+        loopFinallyDepth.push_back(finallyStack.size());
         out << loop << ":\n";
         if (w->getCondition()) {
             emitExpr(w->getCondition(), locals);
@@ -699,6 +833,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         out << end << ":\n";
         breakLabels.pop_back();
         continueLabels.pop_back();
+        loopFinallyDepth.pop_back();
         return;
     }
     if (auto *f = dynamic_cast<const ForStmt *>(stmt)) {
@@ -708,6 +843,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         emitStmt(f->getInit(), locals, endLabel);
         breakLabels.push_back(end);
         continueLabels.push_back(cont);
+        loopFinallyDepth.push_back(finallyStack.size());
         out << loop << ":\n";
         if (f->getCondition()) {
             emitExpr(f->getCondition(), locals);
@@ -721,6 +857,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         out << end << ":\n";
         breakLabels.pop_back();
         continueLabels.pop_back();
+        loopFinallyDepth.pop_back();
         return;
     }
     if (auto *dw = dynamic_cast<const DoWhileStmt *>(stmt)) {
@@ -729,6 +866,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         std::string end = genLabel("doend");
         breakLabels.push_back(end);
         continueLabels.push_back(cont);
+        loopFinallyDepth.push_back(finallyStack.size());
         out << loop << ":\n";
         emitStmt(dw->getBody(), locals, endLabel);
         out << cont << ":\n";
@@ -738,6 +876,7 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         out << end << ":\n";
         breakLabels.pop_back();
         continueLabels.pop_back();
+        loopFinallyDepth.pop_back();
         return;
     }
     if (auto *sw = dynamic_cast<const SwitchStmt *>(stmt)) {
@@ -775,18 +914,183 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
         return;
     }
     if (dynamic_cast<const BreakStmt *>(stmt)) {
+        size_t limit = loopFinallyDepth.empty() ? 0 : loopFinallyDepth.back();
+        for (size_t i = finallyStack.size(); i > limit; --i) {
+            out << "    call " << finallyStack[i - 1] << "\n";
+        }
         if (!breakLabels.empty())
             out << "    jmp " << breakLabels.back() << "\n";
         return;
     }
     if (dynamic_cast<const ContinueStmt *>(stmt)) {
+        size_t limit = loopFinallyDepth.empty() ? 0 : loopFinallyDepth.back();
+        for (size_t i = finallyStack.size(); i > limit; --i) {
+            out << "    call " << finallyStack[i - 1] << "\n";
+        }
         if (!continueLabels.empty())
             out << "    jmp " << continueLabels.back() << "\n";
         return;
     }
     if (auto *ret = dynamic_cast<const ReturnStmt *>(stmt)) {
         if (ret->getValue()) emitExpr(ret->getValue(), locals);
+        if (!finallyStack.empty()) {
+            if (ret->getValue()) out << "    push rax\n";
+            for (size_t i = finallyStack.size(); i > 0; --i) {
+                out << "    call " << finallyStack[i - 1] << "\n";
+            }
+            if (ret->getValue()) out << "    pop rax\n";
+        }
         out << "    jmp " << endLabel << "\n";
+        return;
+    }
+    if (auto *thr = dynamic_cast<const ThrowStmt *>(stmt)) {
+        if (thr->getType()) {
+            emitExpr(thr->getType(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+        } else {
+            size_t idx = findString("Error");
+            out << "    lea " << reg1(this->windows) << ", [rel str" << idx << "]\n";
+        }
+        if (thr->getMessage()) {
+            emitExpr(thr->getMessage(), locals);
+        } else {
+            out << "    mov rax, 0\n";
+        }
+        out << "    mov " << reg2(this->windows) << ", rax\n";
+        out << "    call aym_exception_new\n";
+        if (!throwFinallyLimitStack.empty() && throwFinallyLimitStack.back() != SIZE_MAX) {
+            out << "    push rax\n";
+            size_t limit = throwFinallyLimitStack.back();
+            for (size_t i = finallyStack.size(); i > limit; --i) {
+                out << "    call " << finallyStack[i - 1] << "\n";
+            }
+            out << "    pop rax\n";
+        }
+        out << "    mov " << reg1(this->windows) << ", rax\n";
+        out << "    call aym_throw\n";
+        return;
+    }
+    if (auto *t = dynamic_cast<const TryStmt *>(stmt)) {
+        std::string catchLabel = genLabel("catch");
+        std::string end = genLabel("tryend");
+        std::string finallyLabel;
+        if (t->getFinallyBlock()) finallyLabel = genLabel("finally");
+
+        out << "    call aym_try_push\n";
+        if (locals && locals->count(t->getHandlerSlot())) {
+            out << "    mov [rbp-" << locals->at(t->getHandlerSlot()) << "], rax\n";
+        } else {
+            out << "    mov [rel " << t->getHandlerSlot() << "], rax\n";
+        }
+        out << "    mov " << reg1(this->windows) << ", rax\n";
+        out << "    call aym_try_enter\n";
+        out << "    cmp rax,0\n";
+        out << "    jne " << catchLabel << "\n";
+
+        if (t->getFinallyBlock()) finallyStack.push_back(finallyLabel);
+        emitStmt(t->getTryBlock(), locals, endLabel);
+        if (t->getFinallyBlock()) finallyStack.pop_back();
+
+        if (locals && locals->count(t->getHandlerSlot())) {
+            out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getHandlerSlot()) << "]\n";
+        } else {
+            out << "    mov " << reg1(this->windows) << ", [rel " << t->getHandlerSlot() << "]\n";
+        }
+        out << "    call aym_try_pop\n";
+        if (t->getFinallyBlock()) out << "    call " << finallyLabel << "\n";
+        out << "    jmp " << end << "\n";
+
+        out << catchLabel << ":\n";
+        if (locals && locals->count(t->getHandlerSlot())) {
+            out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getHandlerSlot()) << "]\n";
+        } else {
+            out << "    mov " << reg1(this->windows) << ", [rel " << t->getHandlerSlot() << "]\n";
+        }
+        out << "    call aym_try_get_exception\n";
+        if (locals && locals->count(t->getExceptionSlot())) {
+            out << "    mov [rbp-" << locals->at(t->getExceptionSlot()) << "], rax\n";
+        } else {
+            out << "    mov [rel " << t->getExceptionSlot() << "], rax\n";
+        }
+        if (locals && locals->count(t->getHandlerSlot())) {
+            out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getHandlerSlot()) << "]\n";
+        } else {
+            out << "    mov " << reg1(this->windows) << ", [rel " << t->getHandlerSlot() << "]\n";
+        }
+        out << "    call aym_try_pop\n";
+
+        if (t->getCatches().empty()) {
+            if (t->getFinallyBlock()) out << "    call " << finallyLabel << "\n";
+            if (locals && locals->count(t->getExceptionSlot())) {
+                out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
+            } else {
+                out << "    mov " << reg1(this->windows) << ", [rel " << t->getExceptionSlot() << "]\n";
+            }
+            out << "    call aym_throw\n";
+        } else {
+            std::string noMatch = genLabel("catch_nomatch");
+            for (size_t idx = 0; idx < t->getCatches().size(); ++idx) {
+                const auto &c = t->getCatches()[idx];
+                std::string nextLabel = genLabel("catch_next");
+                if (!c.typeName.empty()) {
+                    if (locals && locals->count(t->getExceptionSlot())) {
+                        out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
+                    } else {
+                        out << "    mov " << reg1(this->windows) << ", [rel " << t->getExceptionSlot() << "]\n";
+                    }
+                    out << "    call aym_exception_type\n";
+                    out << "    mov " << reg2(this->windows) << ", rax\n";
+                    size_t typeIdx = findString(c.typeName);
+                    out << "    lea " << reg1(this->windows) << ", [rel str" << typeIdx << "]\n";
+                    out << "    call strcmp\n";
+                    out << "    cmp rax,0\n";
+                    out << "    jne " << nextLabel << "\n";
+                }
+                if (locals && locals->count(c.varName)) {
+                    if (locals && locals->count(t->getExceptionSlot())) {
+                        out << "    mov rax, [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
+                    } else {
+                        out << "    mov rax, [rel " << t->getExceptionSlot() << "]\n";
+                    }
+                    out << "    mov [rbp-" << locals->at(c.varName) << "], rax\n";
+                } else {
+                    if (locals && locals->count(t->getExceptionSlot())) {
+                        out << "    mov rax, [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
+                    } else {
+                        out << "    mov rax, [rel " << t->getExceptionSlot() << "]\n";
+                    }
+                    out << "    mov [rel " << c.varName << "], rax\n";
+                }
+                if (t->getFinallyBlock()) finallyStack.push_back(finallyLabel);
+                if (t->getFinallyBlock()) {
+                    throwFinallyLimitStack.push_back(finallyStack.size() - 1);
+                } else {
+                    throwFinallyLimitStack.push_back(SIZE_MAX);
+                }
+                emitStmt(c.block.get(), locals, endLabel);
+                throwFinallyLimitStack.pop_back();
+                if (t->getFinallyBlock()) finallyStack.pop_back();
+                if (t->getFinallyBlock()) out << "    call " << finallyLabel << "\n";
+                out << "    jmp " << end << "\n";
+                out << nextLabel << ":\n";
+            }
+            out << noMatch << ":\n";
+            if (t->getFinallyBlock()) out << "    call " << finallyLabel << "\n";
+            if (locals && locals->count(t->getExceptionSlot())) {
+                out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
+            } else {
+                out << "    mov " << reg1(this->windows) << ", [rel " << t->getExceptionSlot() << "]\n";
+            }
+            out << "    call aym_throw\n";
+        }
+
+        if (t->getFinallyBlock()) {
+            out << "    jmp " << end << "\n";
+            out << finallyLabel << ":\n";
+            emitStmt(t->getFinallyBlock(), locals, endLabel);
+            out << "    ret\n";
+        }
+        out << end << ":\n";
         return;
     }
 }
@@ -830,6 +1134,18 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         emitExpr(i->getBase(), locals);
         out << "    mov " << reg1(this->windows) << ", rax\n";
         out << "    call aym_array_get\n";
+        return;
+    }
+    if (auto *m = dynamic_cast<const MemberExpr *>(expr)) {
+        emitExpr(m->getBase(), locals);
+        out << "    mov " << reg1(this->windows) << ", rax\n";
+        if (m->getMember() == "suti") {
+            out << "    call aym_exception_type\n";
+        } else if (m->getMember() == "aru") {
+            out << "    call aym_exception_message\n";
+        } else {
+            out << "    mov rax, 0\n";
+        }
         return;
     }
     if (auto *v = dynamic_cast<const VariableExpr *>(expr)) {
@@ -1201,6 +1517,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     for (const auto &n : nodes) {
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
             FunctionInfo info; info.node = fn;
+            assignTrySlots(fn->getBody());
             for (const auto &param : fn->getParams()) {
                 info.locals.push_back(param.name);
             }
@@ -1210,6 +1527,7 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
             collectLocals(fn->getBody(), info.locals, info.stringLocals, info.localTypes);
             functions.push_back(std::move(info));
         } else {
+            assignTrySlots(static_cast<Stmt*>(n.get()));
             mainStmts.push_back(static_cast<const Stmt*>(n.get()));
             collectGlobal(static_cast<const Stmt*>(n.get()));
         }
@@ -1234,6 +1552,14 @@ void CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     out << "extern aym_str_concat\n";
     out << "extern aym_to_string\n";
     out << "extern aym_to_number\n";
+    out << "extern aym_try_push\n";
+    out << "extern aym_try_pop\n";
+    out << "extern aym_try_enter\n";
+    out << "extern aym_try_get_exception\n";
+    out << "extern aym_throw\n";
+    out << "extern aym_exception_new\n";
+    out << "extern aym_exception_type\n";
+    out << "extern aym_exception_message\n";
     out << "section .data\n";
     out << "fmt_int: db \"%ld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";

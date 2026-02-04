@@ -18,6 +18,7 @@ class IncDecExpr;
 class CallExpr;
 class ListExpr;
 class IndexExpr;
+class MemberExpr;
 class PrintStmt;
 class ExprStmt;
 class AssignStmt;
@@ -34,6 +35,8 @@ class WhileStmt;
 class DoWhileStmt;
 class SwitchStmt;
 class ImportStmt;
+class ThrowStmt;
+class TryStmt;
 
 class ASTVisitor {
 public:
@@ -49,6 +52,7 @@ public:
     virtual void visit(CallExpr &) = 0;
     virtual void visit(ListExpr &) = 0;
     virtual void visit(IndexExpr &) = 0;
+    virtual void visit(MemberExpr &) = 0;
     virtual void visit(PrintStmt &) = 0;
     virtual void visit(ExprStmt &) = 0;
     virtual void visit(AssignStmt &) = 0;
@@ -65,6 +69,8 @@ public:
     virtual void visit(DoWhileStmt &) = 0;
     virtual void visit(SwitchStmt &) = 0;
     virtual void visit(ImportStmt &) = 0;
+    virtual void visit(ThrowStmt &) = 0;
+    virtual void visit(TryStmt &) = 0;
 };
 
 class Node {
@@ -216,6 +222,18 @@ public:
 private:
     std::unique_ptr<Expr> base;
     std::unique_ptr<Expr> index;
+};
+
+class MemberExpr : public Expr {
+public:
+    MemberExpr(std::unique_ptr<Expr> baseExpr, std::string memberName)
+        : base(std::move(baseExpr)), member(std::move(memberName)) {}
+    Expr *getBase() const { return base.get(); }
+    const std::string &getMember() const { return member; }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::unique_ptr<Expr> base;
+    std::string member;
 };
 
 class PrintStmt : public Stmt {
@@ -419,6 +437,50 @@ public:
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::string moduleName;
+};
+
+class ThrowStmt : public Stmt {
+public:
+    ThrowStmt(std::unique_ptr<Expr> typeExpr,
+              std::unique_ptr<Expr> messageExpr)
+        : type(std::move(typeExpr)), message(std::move(messageExpr)) {}
+    Expr *getType() const { return type.get(); }
+    Expr *getMessage() const { return message.get(); }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+private:
+    std::unique_ptr<Expr> type;
+    std::unique_ptr<Expr> message;
+};
+
+class TryStmt : public Stmt {
+public:
+    struct CatchClause {
+        std::string typeName;
+        std::string varName;
+        std::unique_ptr<BlockStmt> block;
+    };
+
+    TryStmt(std::unique_ptr<BlockStmt> t,
+            std::vector<CatchClause> c,
+            std::unique_ptr<BlockStmt> f)
+        : tryBlock(std::move(t)),
+          catches(std::move(c)),
+          finallyBlock(std::move(f)) {}
+    BlockStmt *getTryBlock() const { return tryBlock.get(); }
+    const std::vector<CatchClause> &getCatches() const { return catches; }
+    BlockStmt *getFinallyBlock() const { return finallyBlock.get(); }
+    void accept(ASTVisitor &v) override { v.visit(*this); }
+
+    void setHandlerSlot(std::string name) { handlerSlot = std::move(name); }
+    void setExceptionSlot(std::string name) { exceptionSlot = std::move(name); }
+    const std::string &getHandlerSlot() const { return handlerSlot; }
+    const std::string &getExceptionSlot() const { return exceptionSlot; }
+private:
+    std::unique_ptr<BlockStmt> tryBlock;
+    std::vector<CatchClause> catches;
+    std::unique_ptr<BlockStmt> finallyBlock;
+    std::string handlerSlot;
+    std::string exceptionSlot;
 };
 
 

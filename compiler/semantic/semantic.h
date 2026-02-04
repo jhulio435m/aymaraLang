@@ -48,6 +48,7 @@ private:
     void visit(CallExpr &) override;
     void visit(ListExpr &) override;
     void visit(IndexExpr &) override;
+    void visit(MemberExpr &) override;
     void visit(PrintStmt &) override;
     void visit(ExprStmt &) override;
     void visit(AssignStmt &) override;
@@ -64,6 +65,8 @@ private:
     void visit(DoWhileStmt &) override;
     void visit(SwitchStmt &) override;
     void visit(ImportStmt &) override;
+    void visit(ThrowStmt &) override;
+    void visit(TryStmt &) override;
 }; 
 
 } // namespace aym

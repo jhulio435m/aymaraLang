@@ -76,6 +76,14 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenType::KeywordReturn, word, startLine, startColumn});
             } else if (lower == "apnaq") {
                 tokens.push_back({TokenType::KeywordImport, word, startLine, startColumn});
+            } else if (lower == "yant'aña") {
+                tokens.push_back({TokenType::KeywordTry, word, startLine, startColumn});
+            } else if (lower == "katjaña") {
+                tokens.push_back({TokenType::KeywordCatch, word, startLine, startColumn});
+            } else if (lower == "tukuyawi") {
+                tokens.push_back({TokenType::KeywordFinally, word, startLine, startColumn});
+            } else if (lower == "pantja") {
+                tokens.push_back({TokenType::KeywordThrow, word, startLine, startColumn});
             } else if (lower == "jakhüwi") {
                 tokens.push_back({TokenType::KeywordTypeNumber, word, startLine, startColumn});
             } else if (lower == "aru") {

@@ -58,6 +58,11 @@ lurawi inc(jakhüwi n) : jakhüwi {
 qillqa(inc(5));
 ```
 
+## Manejo de errores
+
+Para manejar errores puedes usar `Yant'aña`/`Katjaña`/`Tukuyawi` y `Pantja`.
+Consulta la sección dedicada en [Manejo de errores](exceptions.md).
+
 ## Módulos
 
 ```aymara

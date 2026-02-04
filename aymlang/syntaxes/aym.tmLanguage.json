@@ -43,7 +43,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.aym",
-					"match": "(?i)\\b(qallta|tukuya|yatiya|suti|jani|kunawsati|sapüru|jisa|maysatxa|ukhakamaxa|taki|p'akhiña|sarantaña)\\b"
+					"match": "(?i)\\b(qallta|tukuya|yatiya|suti|jani|kunawsati|sapüru|jisa|maysatxa|ukhakamaxa|taki|p'akhiña|sarantaña|yant'aña|katjaña|tukuyawi|pantja)\\b"
 				},
 				{
 					"name": "keyword.other.aym",
