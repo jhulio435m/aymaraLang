@@ -15,8 +15,8 @@ donde $\Sigma$ es el alfabeto y $\Sigma^*$ el conjunto de todas las cadenas.
 
 ```mermaid
 flowchart LR
-    Sigma[\u03a3] --> SigmaStar[\u03a3*]
-    SigmaStar --> Language[L]
+Sigma[Σ] --> SigmaStar[Σ*]
+SigmaStar --> Language[L]
 ```
 
 ### Grafos

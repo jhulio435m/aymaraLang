@@ -34,10 +34,10 @@ resolver funciones estándar.
 
 ```mermaid
 flowchart LR
-    A[Persona usuaria] -->|Escribe .aym| B[Editor/CLI]
+    A[Usuario] -->|Escribe código .aym| B[Editor o CLI]
     B --> C[Compilador aymc]
-    C --> D[Binario nativo]
-    D --> E[Runtime]
+    C --> D[Ejecutable nativo]
+    D --> E[Runtime del lenguaje]
 ```
 
 La salida nativa evita una máquina virtual, y el costo dominante se concentra en

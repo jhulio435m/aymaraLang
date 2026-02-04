@@ -9,14 +9,14 @@ con módulos desacoplados.
 ## 2. Arquitectura funcional
 
 ```mermaid
-flowchart LR
+    flowchart LR
     A[Fuente .aym] --> B[Lexer]
     B --> C[Parser]
     C --> D[AST]
     D --> E[Semántica]
     E --> F[Codegen NASM]
     F --> G[Linker]
-    E --> H[LLVM (opcional)]
+    E --> H[LLVM opcional]
     H --> I[IR .ll]
 ```
 
