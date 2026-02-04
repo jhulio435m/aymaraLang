@@ -8,6 +8,14 @@ Definir las interfaces principales del sistema AymaraLang y sus contratos de uso
 - **Comando:** `aymc [opciones] archivo.aym ...`
 - **Opciones principales:** `--debug`, `--dump-ast`, `--seed`, `--llvm`, `--windows`, `--linux`, `-o`.
 
+```mermaid
+flowchart LR
+    User[Usuario] --> CLI[CLI aymc]
+    CLI --> FS[Sistema de archivos]
+    CLI --> Runtime[Runtime]
+    CLI --> Backend[Backend NASM/LLVM]
+```
+
 ### 2.2 Sistema de archivos
 - **Entradas:** archivos `.aym`.
 - **Salidas:** `.asm`, `.ll` y binario nativo.

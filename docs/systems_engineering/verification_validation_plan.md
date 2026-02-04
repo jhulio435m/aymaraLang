@@ -15,6 +15,15 @@ Definir cómo se verificará y validará AymaraLang y su compilador para asegura
 | Prueba | Ejecución de casos de prueba automatizados |
 | Análisis | Comparación de resultados esperados |
 
+```mermaid
+flowchart LR
+    A[Requisitos] --> B[Plan de pruebas]
+    B --> C[Ejecución]
+    C --> D[Resultados]
+    D --> E[Correcciones]
+    E --> B
+```
+
 ## 4. Matriz de verificación (resumen)
 | Requisito | Método | Evidencia |
 |---|---|---|

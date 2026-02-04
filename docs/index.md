@@ -1,42 +1,35 @@
-# AymaraLang — Documentación oficial
+# AymaraLang — documentación
 
-Bienvenido a la documentación oficial de **AymaraLang** (`aym`), un lenguaje de
-programación inspirado en la lengua aymara y con un compilador escrito en C++17.
-Aquí encontrarás desde una introducción general hasta una referencia completa del
-lenguaje, la arquitectura del compilador y las guías de instalación.
+Bienvenido/a. Esta documentación resume el lenguaje, el compilador y los
+materiales de investigación del proyecto de forma concisa.
 
-## ¿Por dónde empezar?
+## Rutas principales
 
-- **Primera vez:** lee la [Visión general](overview.md) y el apartado de
-  [Primeros pasos](language.md).
-- **Aprendizaje práctico:** consulta la [Guía de características](guide.md).
-- **Referencia completa:** revisa la [Referencia del lenguaje](aymaraLang.md) y la
+- **Panorama del proyecto:** [Visión general](overview.md),
+  [Compilación e instalación](build.md), [CLI del compilador](compiler.md) y
+  [Arquitectura](arquitectura.md).
+- **Lenguaje:** [Primeros pasos](language.md),
+  [Referencia rápida](aymaraLang.md), [Manejo de errores](exceptions.md) y
   [Gramática formal](grammar.md).
-- **Desarrollo del compilador:** visita [Arquitectura](arquitectura.md) y
-  [CLI y flujo de compilación](compiler.md).
+- **Investigación y teoría:** [Fundamentos matemáticos y de compiladores](investigacion.md).
+- **Ingeniería de sistemas (investigación):** documentos en
+  [`docs/systems_engineering/`](systems_engineering/).
+  Incluyen plan de gestión, requisitos, arquitectura y validación.
+- **LaTeX/Overleaf:** los insumos en
+  [`docs/systems_engineering/overleaf/`](systems_engineering/overleaf/) son
+  parte del material de investigación y se mantienen vigentes.
 
-## Estructura de la documentación
-
-1. **Visión general**: identidad, objetivos y conceptos clave.
-2. **Lenguaje**: sintaxis base, ejemplos y guía de características.
-3. **Referencia**: operadores, funciones integradas, palabras clave y gramática.
-4. **Compilador**: arquitectura y flujo de compilación.
-5. **Construcción e instalación**: pasos por plataforma y generación de instaladores.
-6. **Proyecto**: estructura del repo, contribuciones y roadmap.
-7. **Sistemas de ingeniería**: documentos de arquitectura, requisitos y validación.
-8. **Recursos**: presentaciones y material complementario.
-
-## Construir la documentación con MkDocs
-
-La documentación está preparada para **MkDocs**.
+## Sitio MkDocs
 
 ```bash
 pip install mkdocs
 mkdocs serve
 ```
 
-Luego abre `http://127.0.0.1:8000` en tu navegador.
+Luego abre `http://127.0.0.1:8000`.
 
----
+## Recursos visuales y fórmulas
 
-**Siguiente:** [Visión general](overview.md)
+La documentación usa diagramas Mermaid y fórmulas matemáticas para reforzar la
+investigación. Por ejemplo, el tiempo de análisis léxico puede modelarse como
+$O(n)$ respecto al tamaño de la entrada.

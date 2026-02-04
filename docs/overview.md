@@ -1,42 +1,49 @@
-# Visión general del lenguaje
+# Visión general
 
-AymaraLang (`aym`) es un lenguaje de programación moderno basado en la lengua
-originaria aymara. Su objetivo es facilitar el aprendizaje y la creación de
-software sin sacrificar conceptos de ingeniería de compiladores.
+AymaraLang (`.aym`) es un lenguaje de programación con sintaxis en aymara y un
+compilador (`aymc`) implementado en **C++17**. El compilador genera ejecutables
+nativos (con extensión `.exe` en Windows). El runtime acompaña al binario para
+resolver funciones estándar.
 
-## Identidad del lenguaje
+## Identidad y alcance actual
 
-| Elemento                | Valor                              |
-|-------------------------|------------------------------------|
-| **Nombre del lenguaje** | `aym`                              |
-| **Compilador**          | `aymc`                             |
-| **Extensión fuente**    | `.aym`                             |
-| **Ejecutable final**    | `.ayn`                             |
-| **Inspiración**         | Sintaxis con bloques indentados y palabras clave en aymara; backend en C++ |
-| **Paradigmas**          | Imperativo, orientado a objetos    |
-| **Tipado**              | Estático, fuerte                   |
+| Elemento | Detalle |
+| --- | --- |
+| Compilador | `aymc` |
+| Lenguaje | AymaraLang (`.aym`) |
+| Salida | Binario nativo (sin extensión en Unix, `.exe` en Windows) |
+| Paradigma | Imperativo con soporte de funciones y clases |
+| Tipado | Estático, fuerte |
+| Backend principal | NASM + enlazado por GCC/LD (o MinGW) |
+| Backend opcional | LLVM (si se compila con soporte) |
 
-## Principios de diseño
+## Principios del proyecto
 
 - **Cercanía cultural:** palabras clave en aymara y ejemplos contextualizados.
-- **Enseñanza progresiva:** sintaxis clara, cercana a lenguajes modernos.
-- **Compilación nativa:** salida a ejecutables sin dependencias externas.
-- **Portabilidad:** soporte para Linux, Windows y macOS.
+- **Compilación nativa:** no requiere VM para ejecutar los binarios generados.
+- **Modularidad:** el compilador separa lexer, parser, semántica y codegen.
+- **Documentación de investigación:** incluye ingeniería de sistemas y LaTeX.
 
-## Sintaxis del lenguaje
+## Sintaxis base
 
-- Los bloques de código se definen mediante `:` y niveles de sangría.
-- Todas las palabras clave y estructuras de control utilizan vocabulario aymara.
-- `jaqichawi` actúa como punto de entrada del programa.
-- Los comentarios se introducen con `#` (y también se admite `//`).
+- Bloques con `{}` y fin de sentencia con `;`.
+- Palabras clave en aymara (`jisa`, `taki`, `lurawi`, etc.).
+- Comentarios `//` y `/* */`.
 
-## Objetivos del proyecto
+## Contexto del sistema
 
-- Crear un lenguaje expresivo utilizando aymara como idioma principal.
-- Implementar un compilador autónomo y multiplataforma sin dependencias externas.
-- Promover la enseñanza de programación en comunidades originarias.
-- Servir como base cultural y técnica para proyectos educativos y lingüísticos.
+```mermaid
+flowchart LR
+    A[Persona usuaria] -->|Escribe .aym| B[Editor/CLI]
+    B --> C[Compilador aymc]
+    C --> D[Binario nativo]
+    D --> E[Runtime]
+```
+
+La salida nativa evita una máquina virtual, y el costo dominante se concentra en
+las fases de análisis. En términos simplificados, si $n$ es el número de
+tokens, el parseo LL se mantiene en $O(n)$.
 
 ---
 
-**Anterior:** [Inicio](index.md) | **Siguiente:** [Primeros pasos](language.md)
+**Siguiente:** [Primeros pasos](language.md)

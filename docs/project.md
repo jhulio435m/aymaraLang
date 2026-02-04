@@ -2,77 +2,48 @@
 
 ## Tecnologías y herramientas
 
-* **Lenguaje:** C++17
-* **Arquitectura objetivo:** x86_64 Linux/Windows
-* **Assembler:** NASM
-* **Linker:** GNU LD / GCC (MinGW)
-* **Sistema de construcción:** Make (Linux) / `build.bat` (Windows)
-* **IDE recomendados:** CLion, VSCode, Vim
-* **Control de versiones:** Git + GitHub
-* **Tests:** `make test`
+- **Lenguaje:** C++17
+- **Assembler:** NASM
+- **Enlace:** GCC/LD (Linux) o MinGW (Windows)
+- **Build:** CMake (principal), `make`/`build.bat` (legacy)
+- **Extensión de VS Code:** `aymlang/`
+- **Tests:** carpeta `tests/`
 
 ## Extensión para Visual Studio Code
 
-La extensión básica para resaltado de sintaxis vive en `aymlang/`.
-Para empaquetar un `.vsix`, sigue las instrucciones en
-[`aymlang/README.md`](https://github.com/jhulio435m/aymaraLang/blob/main/aymlang/README.md).
-
-## Documentación
-
-El sitio de documentación está gestionado con **MkDocs** y vive en `docs/`.
-Para levantarlo en local:
+La extensión vive en `aymlang/` y ofrece resaltado y snippets. Para empaquetar
+un `.vsix`:
 
 ```bash
-pip install mkdocs
-mkdocs serve
+cd aymlang
+npm install
+npx @vscode/vsce package
 ```
 
-## Estructura del repositorio
+Luego instala el `.vsix` desde VS Code (**Extensions → Install from VSIX**).
+
+## Documentación y materiales de investigación
+
+- Sitio MkDocs en `docs/`.
+- Ingeniería de sistemas en `docs/systems_engineering/`.
+- Fuentes LaTeX/Overleaf en `docs/systems_engineering/overleaf/`.
+
+## Estructura del repositorio (resumen)
 
 ```
-/aym/
-├── compiler/        # Código fuente de 'aymc'
-│   ├── lexer/       # Analizador léxico
-│   ├── parser/      # Analizador sintáctico
-│   ├── ast/         # Representación del AST
-│   ├── codegen/     # Generador de código
-│   └── utils/       # Utilidades comunes
-├── runtime/         # Biblioteca estándar mínima
-├── samples/         # Ejemplos en .aym (aymara_flow.aym, ejemplos/)
-├── tests/           # Tests automatizados
-├── docs/            # Documentación técnica (MkDocs)
-├── build/           # Archivos generados
-├── Makefile
-└── README.md
+compiler/   # compilador C++
+runtime/    # runtime estándar
+aymlang/    # extensión VS Code
+scripts/    # automatizaciones de build/packaging
+samples/    # ejemplos .aym
+tests/      # pruebas automatizadas
 ```
 
-## Cronograma de desarrollo
-
-| Semana | Hito                                      |
-| ------ | ----------------------------------------- |
-| 1      | Diseño completo del lenguaje y gramática  |
-| 2-3    | Implementación de Lexer y Parser          |
-| 4      | Construcción del AST y sistema de tipos   |
-| 5-6    | Generación de código + ensamblado inicial |
-| 7-8    | Soporte para clases, ciclos y condiciones |
-| 9-10   | Manejador de errores y mejoras de CLI     |
-| 11     | Librería estándar mínima (`runtime/`)     |
-| 12     | Documentación, empaquetado y publicación  |
-
-## Licencia
-
-Este proyecto se distribuye bajo la **licencia MIT**.
-
-## Contribuciones
-
-Este proyecto es abierto a toda colaboración. Nos interesa especialmente:
-
-* Hablantes nativos de aymara
-* Desarrolladores C++ con experiencia en compiladores
-* Educadores y promotores de software libre
-
-> ✨ ¡Únete al desarrollo y forma parte del cambio tecnológico-cultural!
-
----
-
-**Anterior:** [Instaladores](installers.md)
+```mermaid
+flowchart LR
+    Compiler[compiler/] --> Runtime[runtime/]
+    Compiler --> Scripts[scripts/]
+    Compiler --> Samples[samples/]
+    Compiler --> Tests[tests/]
+    Compiler --> VSCode[aymlang/]
+```

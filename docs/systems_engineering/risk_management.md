@@ -8,6 +8,14 @@ Identificar, evaluar y mitigar riesgos técnicos y de proyecto asociados al desa
 - Evaluación de probabilidad e impacto.
 - Planes de mitigación y contingencia.
 
+```mermaid
+flowchart LR
+    A[Identificar] --> B[Evaluar]
+    B --> C[Plan de mitigación]
+    C --> D[Monitorear]
+    D --> A
+```
+
 ## 3. Registro de riesgos
 | ID | Riesgo | Probabilidad | Impacto | Mitigación |
 |---|---|---|---|---|
