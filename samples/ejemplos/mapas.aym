@@ -1,0 +1,56 @@
+qallta
+yatiya mapa m = {"suti": "Ana", "edad": 20};
+qillqa(m["suti"]);
+m["ciudad"] = "Huancayo";
+apsusuti(m, "edad");
+qillqa(m);
+
+qillqa(utjisuti({"a": 1}, "a") ? "Chiqa" : "K'ari");
+qillqa(utjisuti({"a": 1}, "x") ? "Chiqa" : "K'ari");
+
+qillqa(suyum({}));
+qillqa(suyum({"a": 1, "b": 2}));
+
+qillqa(sutinaka({"a": 1, "b": 2}));
+qillqa(chaninaka({"a": 1, "b": 2}));
+
+yatiya mapa m2 = {"a": 1, "b": 2};
+apsusuti(m2, "a");
+qillqa(m2);
+
+yant'aña {
+  qillqa(chanim({"a": 1}, "x"));
+} katjaña(e) {
+  qillqa(e.suti);
+}
+
+qillqa(chanim({"a": 1}, "x", 0));
+
+yatiya t'aqa xs = ["a", "b", "a"];
+yatiya mapa c = {};
+taki(yatiya jakhüwi i = 0; i < suyut(xs); i++) {
+  yatiya aru k = xs[i];
+  jisa(utjisuti(c, k)) {
+    c[k] = c[k] + 1;
+  } maysatxa {
+    c[k] = 1;
+  }
+}
+qillqa(c);
+
+yatiya mapa m3 = {"x": 10, "y": 20};
+yatiya t'aqa ks = sutinaka(m3);
+taki(yatiya jakhüwi i = 0; i < suyut(ks); i++) {
+  yatiya aru k = ks[i];
+  qillqa(aru(k) + "=" + aru(m3[k]));
+}
+
+yant'aña {
+  yatiya mapa m4 = {"a": 1};
+  qillqa(chanim(m4, "b"));
+} katjaña("CLAVE", e) {
+  qillqa("clave no existe");
+} tukuyawi {
+  qillqa("fin");
+}
+tukuya

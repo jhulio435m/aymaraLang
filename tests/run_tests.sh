@@ -88,6 +88,29 @@ EOF
 diff -u tmp.expected tmp.out
 rm tmp.expected tmp.out
 
+cat > tmp.expected <<'EOF'
+Ana
+{suti: "Ana", ciudad: "Huancayo"}
+Chiqa
+K'ari
+0
+2
+["a", "b"]
+[1, 2]
+{b: 2}
+CLAVE
+0
+{a: 2, b: 1}
+x=10
+y=20
+clave no existe
+fin
+EOF
+./bin/aymc samples/ejemplos/mapas.aym >/dev/null
+./samples/ejemplos/mapas > tmp.out
+diff -u tmp.expected tmp.out
+rm tmp.expected tmp.out
+
 echo "[test] all samples compiled and ran successfully"
 
 ./tests/packaging_smoke.sh

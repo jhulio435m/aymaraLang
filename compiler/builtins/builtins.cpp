@@ -44,7 +44,13 @@ static const std::unordered_map<std::string, BuiltinInfo> builtins = {
     {BUILTIN_CHULLU, {2, {Type::Int, Type::Int}}},
     {BUILTIN_APSU, {1, {Type::Int}}},
     {BUILTIN_APSU_UKA, {2, {Type::Int, Type::Int}}},
-    {BUILTIN_UTJIT, {2, {Type::Int, Type::Int}}}
+    {BUILTIN_UTJIT, {2, {Type::Int, Type::Int}}},
+    {BUILTIN_UTJI_SUTI, {2, {}}},
+    {BUILTIN_SUYU_M, {1, {}}},
+    {BUILTIN_SUTINAKA, {1, {}}},
+    {BUILTIN_CHANINAKA, {1, {}}},
+    {BUILTIN_APSU_SUTI, {2, {}}},
+    {BUILTIN_CHANI_M, {2, {}}}
 };
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions() {

@@ -61,6 +61,12 @@ constexpr const char BUILTIN_CHULLU[] = "ch'ullu";
 constexpr const char BUILTIN_APSU[] = "apsu";
 constexpr const char BUILTIN_APSU_UKA[] = "apsuuka";
 constexpr const char BUILTIN_UTJIT[] = "utjit";
+constexpr const char BUILTIN_UTJI_SUTI[] = "utjisuti";
+constexpr const char BUILTIN_SUYU_M[] = "suyum";
+constexpr const char BUILTIN_SUTINAKA[] = "sutinaka";
+constexpr const char BUILTIN_CHANINAKA[] = "chaninaka";
+constexpr const char BUILTIN_APSU_SUTI[] = "apsusuti";
+constexpr const char BUILTIN_CHANI_M[] = "chanim";
 
 const std::unordered_map<std::string, BuiltinInfo> &getBuiltinFunctions();
 std::string typeName(Type t);

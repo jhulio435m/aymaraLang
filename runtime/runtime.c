@@ -19,6 +19,8 @@ static void aym_throw_typed(const char *type, const char *message) {
     aym_throw(exc);
 }
 
+char *aym_str_concat(const char *left, const char *right);
+
 static char *aym_str_copy(const char *src, size_t len) {
     char *out = (char *)malloc(len + 1);
     if (!out) return NULL;
@@ -197,6 +199,193 @@ long aym_array_contains_str(intptr_t arr, const char *value) {
         if (strcmp(item, value) == 0) return 1;
     }
     return 0;
+}
+
+typedef struct {
+    long len;
+    long cap;
+    char **keys;
+    intptr_t *values;
+    unsigned char *types;
+} AymMap;
+
+static long aym_map_find(AymMap *map, const char *key) {
+    if (!map || !key) return -1;
+    for (long i = 0; i < map->len; i++) {
+        if (map->keys[i] && strcmp(map->keys[i], key) == 0) return i;
+    }
+    return -1;
+}
+
+intptr_t aym_map_new(long size) {
+    if (size < 0) return 0;
+    AymMap *map = calloc(1, sizeof(AymMap));
+    if (!map) {
+        fprintf(stderr, "aym_map_new: allocation failed\n");
+        return 0;
+    }
+    map->len = 0;
+    map->cap = size;
+    if (size > 0) {
+        map->keys = calloc((size_t)size, sizeof(char *));
+        map->values = calloc((size_t)size, sizeof(intptr_t));
+        map->types = calloc((size_t)size, sizeof(unsigned char));
+        if (!map->keys || !map->values || !map->types) {
+            fprintf(stderr, "aym_map_new: allocation failed\n");
+            free(map->keys);
+            free(map->values);
+            free(map->types);
+            free(map);
+            return 0;
+        }
+    }
+    return (intptr_t)map;
+}
+
+static int aym_map_grow(AymMap *map) {
+    long newCap = map->cap > 0 ? map->cap * 2 : 1;
+    char **newKeys = realloc(map->keys, sizeof(char *) * (size_t)newCap);
+    intptr_t *newValues = realloc(map->values, sizeof(intptr_t) * (size_t)newCap);
+    unsigned char *newTypes = realloc(map->types, sizeof(unsigned char) * (size_t)newCap);
+    if (!newKeys || !newValues || !newTypes) {
+        fprintf(stderr, "aym_map_set: allocation failed\n");
+        free(newKeys);
+        free(newValues);
+        free(newTypes);
+        return 0;
+    }
+    map->keys = newKeys;
+    map->values = newValues;
+    map->types = newTypes;
+    map->cap = newCap;
+    return 1;
+}
+
+long aym_map_size(intptr_t map) {
+    if (!map) return 0;
+    return ((AymMap*)map)->len;
+}
+
+long aym_map_contains(intptr_t map, const char *key) {
+    if (!map || !key) return 0;
+    return aym_map_find((AymMap*)map, key) >= 0;
+}
+
+long aym_map_set(intptr_t map, const char *key, long value, int is_string) {
+    if (!map || !key) return 0;
+    AymMap *m = (AymMap*)map;
+    long idx = aym_map_find(m, key);
+    if (idx >= 0) {
+        m->values[idx] = (intptr_t)value;
+        m->types[idx] = (unsigned char)(is_string ? 1 : 0);
+        return value;
+    }
+    if (m->len >= m->cap) {
+        if (!aym_map_grow(m)) return 0;
+    }
+    m->keys[m->len] = (char *)key;
+    m->values[m->len] = (intptr_t)value;
+    m->types[m->len] = (unsigned char)(is_string ? 1 : 0);
+    m->len++;
+    return value;
+}
+
+static void aym_map_missing_key(const char *key) {
+    const char *suffix = key ? key : "";
+    char *message = aym_str_concat("no existe: ", suffix);
+    aym_throw_typed("CLAVE", message ? message : "no existe");
+}
+
+long aym_map_get(intptr_t map, const char *key) {
+    if (!map) {
+        aym_map_missing_key(key);
+        return 0;
+    }
+    AymMap *m = (AymMap*)map;
+    long idx = aym_map_find(m, key);
+    if (idx < 0) {
+        aym_map_missing_key(key);
+        return 0;
+    }
+    return (long)m->values[idx];
+}
+
+long aym_map_get_default(intptr_t map, const char *key, long default_value) {
+    if (!map || !key) return default_value;
+    AymMap *m = (AymMap*)map;
+    long idx = aym_map_find(m, key);
+    if (idx < 0) return default_value;
+    return (long)m->values[idx];
+}
+
+long aym_map_delete(intptr_t map, const char *key) {
+    if (!map) {
+        aym_map_missing_key(key);
+        return 0;
+    }
+    AymMap *m = (AymMap*)map;
+    long idx = aym_map_find(m, key);
+    if (idx < 0) {
+        aym_map_missing_key(key);
+        return 0;
+    }
+    intptr_t value = m->values[idx];
+    for (long i = idx + 1; i < m->len; i++) {
+        m->keys[i - 1] = m->keys[i];
+        m->values[i - 1] = m->values[i];
+        m->types[i - 1] = m->types[i];
+    }
+    m->len--;
+    return (long)value;
+}
+
+intptr_t aym_map_keys(intptr_t map) {
+    if (!map) return 0;
+    AymMap *m = (AymMap*)map;
+    intptr_t arr = aym_array_new(m->len);
+    for (long i = 0; i < m->len; i++) {
+        aym_array_set(arr, i, (long)m->keys[i]);
+    }
+    return arr;
+}
+
+intptr_t aym_map_values(intptr_t map) {
+    if (!map) return 0;
+    AymMap *m = (AymMap*)map;
+    intptr_t arr = aym_array_new(m->len);
+    for (long i = 0; i < m->len; i++) {
+        aym_array_set(arr, i, (long)m->values[i]);
+    }
+    return arr;
+}
+
+const char *aym_map_key_at(intptr_t map, long idx) {
+    if (!map) return "";
+    AymMap *m = (AymMap*)map;
+    if (idx < 0 || idx >= m->len) return "";
+    return m->keys[idx] ? m->keys[idx] : "";
+}
+
+long aym_map_value_at(intptr_t map, long idx) {
+    if (!map) return 0;
+    AymMap *m = (AymMap*)map;
+    if (idx < 0 || idx >= m->len) return 0;
+    return (long)m->values[idx];
+}
+
+long aym_map_value_is_string(intptr_t map, long idx) {
+    if (!map) return 0;
+    AymMap *m = (AymMap*)map;
+    if (idx < 0 || idx >= m->len) return 0;
+    return m->types[idx] ? 1 : 0;
+}
+
+long aym_map_value_is_string_key(intptr_t map, const char *key) {
+    if (!map || !key) return 0;
+    AymMap *m = (AymMap*)map;
+    long idx = aym_map_find(m, key);
+    if (idx < 0) return 0;
+    return m->types[idx] ? 1 : 0;
 }
 
 char *aym_str_concat(const char *left, const char *right) {

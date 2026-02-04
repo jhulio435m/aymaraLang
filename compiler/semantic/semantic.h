@@ -47,6 +47,7 @@ private:
     void visit(IncDecExpr &) override;
     void visit(CallExpr &) override;
     void visit(ListExpr &) override;
+    void visit(MapExpr &) override;
     void visit(IndexExpr &) override;
     void visit(MemberExpr &) override;
     void visit(PrintStmt &) override;
