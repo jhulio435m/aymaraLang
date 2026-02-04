@@ -3,10 +3,12 @@ set -e
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 DIST_DIR="${ROOT_DIR}/dist"
+BUILD_DIR="${ROOT_DIR}/build"
 ARTIFACTS_DIR="${ROOT_DIR}/artifacts"
 PKG_NAME="aymaralang"
 ARCH="amd64"
 ICON_FILE="${ROOT_DIR}/assets/logo.ico"
+BUILD_TYPE="${BUILD_TYPE:-Release}"
 
 if ! command -v dpkg-deb >/dev/null 2>&1; then
   echo "dpkg-deb no está disponible. Instala dpkg (Debian/Ubuntu) o dpkg-deb." >&2
@@ -14,8 +16,16 @@ if ! command -v dpkg-deb >/dev/null 2>&1; then
 fi
 
 if [ ! -d "${DIST_DIR}" ]; then
-  echo "No se encontró ${DIST_DIR}. Ejecuta la instalación a dist primero." >&2
-  exit 1
+  if ! command -v cmake >/dev/null 2>&1; then
+    echo "No se encontró ${DIST_DIR} y cmake no está disponible para generar dist." >&2
+    exit 1
+  fi
+  if [ ! -d "${BUILD_DIR}" ]; then
+    echo "No se encontró ${DIST_DIR} ni ${BUILD_DIR}. Ejecuta: cmake -S . -B build -DCMAKE_BUILD_TYPE=${BUILD_TYPE}" >&2
+    exit 1
+  fi
+  echo "No se encontró ${DIST_DIR}. Generando dist desde ${BUILD_DIR} (BUILD_TYPE=${BUILD_TYPE})..."
+  cmake --install "${BUILD_DIR}" --config "${BUILD_TYPE}" --prefix "${DIST_DIR}"
 fi
 if [ ! -f "${ICON_FILE}" ]; then
   echo "No se encontró ${ICON_FILE}. Verifica el icono en assets/." >&2
