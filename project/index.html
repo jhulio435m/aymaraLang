@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Guía del proyecto - AymaraLang</title>
+    <title>Estructura del proyecto - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,7 +13,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Gu\u00eda del proyecto";
+        var mkdocs_page_name = "Estructura del proyecto";
         var mkdocs_page_input_path = "project.md";
         var mkdocs_page_url = null;
       </script>
@@ -41,39 +41,63 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Panorama del proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Estructura del proyecto</a>
     <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Guía del proyecto</a>
-                </li>
+    <li class="toctree-l2"><a class="reference internal" href="#directorios-principales">Directorios principales</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#cli-de-proyecto-aym">CLI de proyecto (aym)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#archivos-de-proyecto">Archivos de proyecto</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#flujo-recomendado">Flujo recomendado</a>
+    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,9 +134,8 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Panorama del proyecto</li>
-      <li class="breadcrumb-item active">Guía del proyecto</li>
+          <li class="breadcrumb-item">Manual técnico</li>
+      <li class="breadcrumb-item active">Estructura del proyecto</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/project.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -122,50 +145,88 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="guia-del-proyecto">Guía del proyecto<a class="headerlink" href="#guia-del-proyecto" title="Permanent link">&para;</a></h1>
-<h2 id="tecnologias-y-herramientas">Tecnologías y herramientas<a class="headerlink" href="#tecnologias-y-herramientas" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Lenguaje:</strong> C++17</li>
-<li><strong>Assembler:</strong> NASM</li>
-<li><strong>Enlace:</strong> GCC/LD (Linux) o MinGW (Windows)</li>
-<li><strong>Build:</strong> CMake (principal), <code>make</code>/<code>build.bat</code> (legacy)</li>
-<li><strong>Extensión de VS Code:</strong> <code>aymlang/</code></li>
-<li><strong>Tests:</strong> carpeta <code>tests/</code></li>
-</ul>
-<h2 id="extension-para-visual-studio-code">Extensión para Visual Studio Code<a class="headerlink" href="#extension-para-visual-studio-code" title="Permanent link">&para;</a></h2>
-<p>La extensión vive en <code>aymlang/</code> y ofrece resaltado y snippets. Para empaquetar
-un <code>.vsix</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>aymlang
-npm<span class="w"> </span>install
-npx<span class="w"> </span>@vscode/vsce<span class="w"> </span>package
+                <h1 id="estructura-del-proyecto">Estructura del proyecto<a class="headerlink" href="#estructura-del-proyecto" title="Permanent link">&para;</a></h1>
+<h2 id="directorios-principales">Directorios principales<a class="headerlink" href="#directorios-principales" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Ruta</th>
+<th>Contenido</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compiler/</code></td>
+<td>Implementación de <code>aymc</code></td>
+</tr>
+<tr>
+<td><code>runtime/</code></td>
+<td>Runtime del lenguaje</td>
+</tr>
+<tr>
+<td><code>tools/aym/</code></td>
+<td>Gestor de proyectos <code>aym</code></td>
+</tr>
+<tr>
+<td><code>samples/</code></td>
+<td>Programas de ejemplo</td>
+</tr>
+<tr>
+<td><code>tests/</code></td>
+<td>Pruebas automatizadas</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>Automatización de build/install/test</td>
+</tr>
+<tr>
+<td><code>installer/</code></td>
+<td>Definiciones de instaladores Windows</td>
+</tr>
+<tr>
+<td><code>packaging/</code></td>
+<td>Empaquetado Linux (<code>.deb</code>)</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>Documentación técnica</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cli-de-proyecto-aym">CLI de proyecto (<code>aym</code>)<a class="headerlink" href="#cli-de-proyecto-aym" title="Permanent link">&para;</a></h2>
+<p>Uso:</p>
+<div class="highlight"><pre><span></span><code>aym<span class="w"> </span>&lt;comando&gt;<span class="w"> </span><span class="o">[</span>opciones<span class="o">]</span>
 </code></pre></div>
-<p>Luego instala el <code>.vsix</code> desde VS Code (<strong>Extensions → Install from VSIX</strong>).</p>
-<h2 id="documentacion-y-materiales-de-investigacion">Documentación y materiales de investigación<a class="headerlink" href="#documentacion-y-materiales-de-investigacion" title="Permanent link">&para;</a></h2>
+<p>Comandos principales:</p>
 <ul>
-<li>Sitio MkDocs en <code>docs/</code>.</li>
-<li>Ingeniería de sistemas en <code>docs/systems_engineering/</code>.</li>
-<li>Fuentes LaTeX/Overleaf en <code>docs/systems_engineering/overleaf/</code>.</li>
+<li><code>new</code>: crea estructura de proyecto.</li>
+<li><code>build</code>: compila el proyecto.</li>
+<li><code>run</code>: compila y ejecuta.</li>
+<li><code>test</code>: valida <code>tests/*.aym</code>.</li>
+<li><code>lock</code>: sincroniza o valida lockfile.</li>
+<li><code>cache</code>: inspecciona/sincroniza/limpia caché local.</li>
+<li><code>add</code>: agrega dependencia al manifest.</li>
 </ul>
-<h2 id="estructura-del-repositorio-resumen">Estructura del repositorio (resumen)<a class="headerlink" href="#estructura-del-repositorio-resumen" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>compiler/   # compilador C++
-runtime/    # runtime estándar
-aymlang/    # extensión VS Code
-scripts/    # automatizaciones de build/packaging
-samples/    # ejemplos .aym
-tests/      # pruebas automatizadas
-</code></pre></div>
-<div class="mermaid">flowchart LR
-    Compiler[compiler/] --&gt; Runtime[runtime/]
-    Compiler --&gt; Scripts[scripts/]
-    Compiler --&gt; Samples[samples/]
-    Compiler --&gt; Tests[tests/]
-    Compiler --&gt; VSCode[aymlang/]</div>
+<h2 id="archivos-de-proyecto">Archivos de proyecto<a class="headerlink" href="#archivos-de-proyecto" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>aym.toml</code>: manifest.</li>
+<li><code>aym.lock</code>: lockfile reproducible.</li>
+<li><code>.aym/repo</code> y <code>.aym/cache</code>: almacenamiento local de dependencias.</li>
+</ul>
+<h2 id="flujo-recomendado">Flujo recomendado<a class="headerlink" href="#flujo-recomendado" title="Permanent link">&para;</a></h2>
+<ol>
+<li><code>aym new &lt;nombre&gt;</code></li>
+<li><code>aym add &lt;dep&gt; &lt;requirement&gt;</code></li>
+<li><code>aym build</code></li>
+<li><code>aym run</code></li>
+<li><code>aym test</code></li>
+</ol>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../arquitectura/" class="btn btn-neutral float-left" title="Arquitectura del compilador"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../language/" class="btn btn-neutral float-right" title="Primeros pasos">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../modernizacion/" class="btn btn-neutral float-right" title="Estado de modernización">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -195,7 +256,7 @@ tests/      # pruebas automatizadas
       <span><a href="../arquitectura/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../language/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../modernizacion/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

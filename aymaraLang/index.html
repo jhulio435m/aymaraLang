@@ -41,39 +41,65 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
-              <ul class="current">
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
-                </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Referencia rápida</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tipos">Tipos</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#literales">Literales</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#estructuras-principales">Estructuras principales</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#poo-kasta">POO (kasta)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#biblioteca-estandar-built-ins">Biblioteca estándar (built-ins)</a>
+    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Lenguaje</a>
-    <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,7 +136,6 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
           <li class="breadcrumb-item">Lenguaje</li>
       <li class="breadcrumb-item active">Referencia rápida</li>
     <li class="wy-breadcrumbs-aside">
@@ -135,7 +160,7 @@ gramática formal revisa <a href="../grammar/">Gramática</a>.</p>
 </ul>
 <h2 id="literales">Literales<a class="headerlink" href="#literales" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Booleanos: <code>chiqa</code> / <code>k'ari</code> (legacy: <code>utji</code> / <code>janiutji</code>).</li>
+<li>Booleanos: <code>chiqa</code> / <code>k'ari</code> (compatibilidad: <code>utji</code> / <code>janiutji</code>).</li>
 <li>Números: decimales, <code>0x</code> (hex) y <code>0b</code> (binario).</li>
 <li>Cadenas: comillas simples o dobles con escapes.</li>
 </ul>
@@ -144,14 +169,39 @@ gramática formal revisa <a href="../grammar/">Gramática</a>.</p>
 <li>Condicionales: <code>jisa</code> / <code>maysatxa</code></li>
 <li>Bucles: <code>ukhakamaxa</code>, <code>taki</code></li>
 <li>Funciones: <code>lurawi</code> / <code>kuttaya</code></li>
+<li>Enumeraciones: <code>siqicha</code> (compat: <code>enum</code>)</li>
+<li>Selección por patrones simples: <code>khiti</code>, <code>kuna</code>, <code>yaqha</code> (compat: <code>match</code>, <code>case</code>, <code>default</code>) para <code>jakhüwi</code> y <code>aru</code>; <code>kuna</code> acepta múltiples valores separados por <code>,</code> y rangos <code>a..b</code> (en <code>jakhüwi</code>)</li>
 <li>Clases: <code>kasta</code>, <code>machaqa</code>, <code>aka</code>, <code>jila</code>, <code>jikxata</code>, <code>sapa</code>, <code>taqi</code>, <code>sapakasta</code>, <code>uñt'aya</code>, <code>chura</code>, <code>jilaaka</code></li>
 <li>Excepciones: <code>yant'aña</code>, <code>katjaña</code>, <code>tukuyawi</code>, <code>pantja</code></li>
 <li>Módulos: <code>apnaq</code></li>
 </ul>
+<h2 id="poo-kasta">POO (kasta)<a class="headerlink" href="#poo-kasta" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Instancia: <code>yatiya MiClase x = machaqa MiClase(...)</code></li>
+<li><code>aka</code>: referencia al objeto actual.</li>
+<li><code>jila</code>: herencia simple.</li>
+<li><code>jilaaka</code>: llamada al método de la clase base (solo dentro de clases derivadas).</li>
+<li><code>sapakasta</code>: miembros estáticos (<code>MiClase.campo</code>, <code>MiClase.metodo()</code>).</li>
+<li><code>sapa</code>: miembro privado (solo accesible dentro de su clase dueña).</li>
+<li><code>jikxata</code>: sobrescritura de método.</li>
+<li>Reglas: debe existir método base, misma firma (tipos de parámetros) y mismo tipo de retorno.</li>
+<li>Constructores:</li>
+<li>Soporta sobrecarga por aridad.</li>
+<li>Si no hay constructores declarados, solo se permite <code>machaqa Clase()</code> sin argumentos.</li>
+<li>Polimorfismo:</li>
+<li>Se permite asignar una subclase a una variable del tipo base.</li>
+</ul>
 <h2 id="biblioteca-estandar-built-ins">Biblioteca estándar (built-ins)<a class="headerlink" href="#biblioteca-estandar-built-ins" title="Permanent link">&para;</a></h2>
 <h3 id="entradasalida-y-utilidades">Entrada/Salida y utilidades<a class="headerlink" href="#entradasalida-y-utilidades" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>qillqa</code>, <code>write</code>, <code>input</code>, <code>katu</code>, <code>sleep</code>, <code>random</code></li>
+<li><code>qillqa</code>, <code>write</code>, <code>input</code>, <code>katu</code>, <code>sleep</code>, <code>random</code>, <code>tiempo_ms</code></li>
+<li>Consola interactiva: <code>pantalla_limpia</code>, <code>cursor_mover</code>, <code>color</code>, <code>color_restablecer</code>, <code>cursor_visible</code>, <code>tecla</code></li>
+</ul>
+<h3 id="operadores-logicos">Operadores lógicos<a class="headerlink" href="#operadores-logicos" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>&amp;&amp;</code> (AND)</li>
+<li><code>||</code> (OR)</li>
+<li><code>!</code> (NOT)</li>
 </ul>
 <h3 id="conversion-y-longitud">Conversión y longitud<a class="headerlink" href="#conversion-y-longitud" title="Permanent link">&para;</a></h3>
 <ul>

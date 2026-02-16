@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Compilación e instalación - AymaraLang</title>
+    <title>Compilación e instalación desde fuente - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,7 +13,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Compilaci\u00f3n e instalaci\u00f3n";
+        var mkdocs_page_name = "Compilaci\u00f3n e instalaci\u00f3n desde fuente";
         var mkdocs_page_input_path = "build.md";
         var mkdocs_page_url = null;
       </script>
@@ -41,39 +41,67 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Panorama del proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Compilación e instalación desde fuente</a>
     <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
-                </li>
+    <li class="toctree-l2"><a class="reference internal" href="#requisitos">Requisitos</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#compilacion-recomendada">Compilación recomendada</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#binarios-esperados">Binarios esperados</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#empaquetado">Empaquetado</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#validaciones">Validaciones</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#estructura-de-salida">Estructura de salida</a>
+    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,9 +138,8 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Panorama del proyecto</li>
-      <li class="breadcrumb-item active">Compilación e instalación</li>
+          <li class="breadcrumb-item">Manual técnico</li>
+      <li class="breadcrumb-item active">Compilación e instalación desde fuente</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/build.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -122,62 +149,62 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="compilacion-e-instalacion-guia-unificada">Compilación e instalación (guía unificada)<a class="headerlink" href="#compilacion-e-instalacion-guia-unificada" title="Permanent link">&para;</a></h1>
-<p>Esta guía consolida los pasos de compilación, empaquetado e instalación para
-AymaraLang.</p>
+                <h1 id="compilacion-e-instalacion-desde-fuente">Compilación e instalación desde fuente<a class="headerlink" href="#compilacion-e-instalacion-desde-fuente" title="Permanent link">&para;</a></h1>
+<p>Guía técnica para construir AymaraLang desde el repositorio.</p>
 <h2 id="requisitos">Requisitos<a class="headerlink" href="#requisitos" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CMake</strong> &gt;= 3.15</li>
-<li><strong>Compilador C++17</strong> (<code>g++</code>, <code>clang++</code> o MSVC)</li>
-<li><strong>NASM</strong></li>
-<li><strong>GCC/LD</strong> (Linux) o <strong>MinGW</strong> (Windows)</li>
+<li>CMake &gt;= 3.15</li>
+<li>Compilador C++17 (<code>g++</code>, <code>clang++</code> o MSVC)</li>
+<li>NASM</li>
+<li>GCC/LD o MinGW según plataforma</li>
 </ul>
-<h2 id="build-rapido-con-cmake-recomendado">Build rápido con CMake (recomendado)<a class="headerlink" href="#build-rapido-con-cmake-recomendado" title="Permanent link">&para;</a></h2>
-<h3 id="linuxmacos">Linux/macOS<a class="headerlink" href="#linuxmacos" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release
-cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>-j
+<h2 id="compilacion-recomendada">Compilación recomendada<a class="headerlink" href="#compilacion-recomendada" title="Permanent link">&para;</a></h2>
+<h3 id="linux">Linux<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build-linux<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release
+cmake<span class="w"> </span>--build<span class="w"> </span>build-linux<span class="w"> </span>-j
+cmake<span class="w"> </span>--install<span class="w"> </span>build-linux<span class="w"> </span>--prefix<span class="w"> </span>dist
 </code></pre></div>
-<h3 id="windows-mingw">Windows (MinGW)<a class="headerlink" href="#windows-mingw" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">cmake</span> <span class="n">-S</span> <span class="p">.</span> <span class="n">-B</span> <span class="n">build</span> <span class="n">-G</span> <span class="s2">&quot;MinGW Makefiles&quot;</span> <span class="n">-DCMAKE_BUILD_TYPE</span><span class="p">=</span><span class="n">Release</span>
-<span class="n">cmake</span> <span class="p">-</span><span class="n">-build</span> <span class="n">build</span> <span class="n">-j</span>
+<h3 id="windows-visual-studio-2022">Windows (Visual Studio 2022)<a class="headerlink" href="#windows-visual-studio-2022" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="o">-File</span> <span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">build</span><span class="p">\</span><span class="n">build_dist</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-BuildDir</span> <span class="n">build-win</span> <span class="n">-Config</span> <span class="n">Release</span>
 </code></pre></div>
-<p>El binario queda en <code>build/bin/aymc</code> (o <code>build/bin/aymc.exe</code>).</p>
-<h3 id="flujo-de-build-resumen">Flujo de build (resumen)<a class="headerlink" href="#flujo-de-build-resumen" title="Permanent link">&para;</a></h3>
-<div class="mermaid">flowchart LR
-    A[Fuente C++/CMake] --&gt; B[Generación build/]
-    B --&gt; C[Compilación]
-    C --&gt; D[Enlace]
-    D --&gt; E[aymc]</div>
-<h2 id="scripts-de-dependencias">Scripts de dependencias<a class="headerlink" href="#scripts-de-dependencias" title="Permanent link">&para;</a></h2>
+<p>Este script configura, compila e instala en <code>dist/</code>.</p>
+<h2 id="binarios-esperados">Binarios esperados<a class="headerlink" href="#binarios-esperados" title="Permanent link">&para;</a></h2>
+<p>En <code>dist/bin/</code>:</p>
 <ul>
-<li><strong>Linux:</strong> <code>scripts/install_deps_linux.sh</code> (apt/dnf/pacman).</li>
-<li><strong>Windows:</strong> <code>scripts/install_deps_windows.ps1</code> (winget/choco/scoop).</li>
+<li><code>aymc</code> o <code>aymc.exe</code></li>
+<li><code>aym</code> o <code>aym.exe</code></li>
 </ul>
-<h2 id="empaquetado-y-distribuciones">Empaquetado y distribuciones<a class="headerlink" href="#empaquetado-y-distribuciones" title="Permanent link">&para;</a></h2>
-<h3 id="windows-dist-instaladores">Windows (dist + instaladores)<a class="headerlink" href="#windows-dist-instaladores" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">build_dist</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Config</span> <span class="n">Release</span>
-<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">build_msi</span><span class="p">.</span><span class="n">ps1</span>
-<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">build_nsis</span><span class="p">.</span><span class="n">ps1</span>
+<h2 id="empaquetado">Empaquetado<a class="headerlink" href="#empaquetado" title="Permanent link">&para;</a></h2>
+<h3 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="o">-File</span> <span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">build</span><span class="p">\</span><span class="n">build_msi</span><span class="p">.</span><span class="n">ps1</span>
+<span class="n">pwsh</span> <span class="o">-File</span> <span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">build</span><span class="p">\</span><span class="n">build_nsis</span><span class="p">.</span><span class="n">ps1</span>
 </code></pre></div>
-<p>Los instaladores quedan en <code>artifacts/</code>.</p>
-<h3 id="linux-deb">Linux (<code>.deb</code>)<a class="headerlink" href="#linux-deb" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release
-cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>-j
-cmake<span class="w"> </span>--install<span class="w"> </span>build<span class="w"> </span>--prefix<span class="w"> </span>dist
-bash<span class="w"> </span>scripts/build_deb.sh
+<h3 id="linux-deb">Linux (.deb)<a class="headerlink" href="#linux-deb" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>bash<span class="w"> </span>scripts/install/install_deps_linux.sh<span class="w"> </span>--with-deb-tools
+bash<span class="w"> </span>scripts/build/build_deb.sh
 </code></pre></div>
-<h2 id="notas">Notas<a class="headerlink" href="#notas" title="Permanent link">&para;</a></h2>
+<h2 id="validaciones">Validaciones<a class="headerlink" href="#validaciones" title="Permanent link">&para;</a></h2>
+<h3 id="linux_1">Linux<a class="headerlink" href="#linux_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>bash<span class="w"> </span>scripts/test/test_deb.sh
+bash<span class="w"> </span>scripts/test/test_deb_e2e.sh
+bash<span class="w"> </span>scripts/test/test_samples.sh
+</code></pre></div>
+<h3 id="windows_1">Windows<a class="headerlink" href="#windows_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li>El runtime debe acompañar a <code>aymc</code> para compilar programas (carpeta <code>runtime/</code>).</li>
-<li><strong>Alternativas legacy:</strong> <code>make</code> (Linux) y <code>build.bat</code> (Windows).</li>
+<li>Validar build local con <code>aymc --help</code> y compilación de un <code>sample</code>.</li>
+<li>Validar instaladores con instalación, smoke y desinstalación.</li>
 </ul>
-<hr />
-<p><strong>Siguiente:</strong> <a href="../compiler/">CLI del compilador</a></p>
+<h2 id="estructura-de-salida">Estructura de salida<a class="headerlink" href="#estructura-de-salida" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>dist/</code>: árbol instalable.</li>
+<li><code>artifacts/</code>: paquetes de distribución (MSI, EXE, DEB).</li>
+<li><code>build-*</code>: directorios de compilación.</li>
+</ul>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../overview/" class="btn btn-neutral float-left" title="Visión general"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../install/" class="btn btn-neutral float-left" title="Instalación por sistema operativo"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../compiler/" class="btn btn-neutral float-right" title="CLI del compilador">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -205,7 +232,7 @@ bash<span class="w"> </span>scripts/build_deb.sh
         </span>
     
     
-      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../install/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../compiler/" style="color: #fcfcfc">Next &raquo;</a></span>

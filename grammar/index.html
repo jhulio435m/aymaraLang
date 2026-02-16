@@ -41,39 +41,61 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
-              <ul class="current">
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
-                </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Gramática formal</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tokens-lexicos">Tokens léxicos</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#notacion-ebnf-utilizada">Notación EBNF utilizada</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#gramatica-sintactica">Gramática sintáctica</a>
+    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Lenguaje</a>
-    <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,7 +132,6 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
           <li class="breadcrumb-item">Lenguaje</li>
       <li class="breadcrumb-item active">Gramática formal</li>
     <li class="wy-breadcrumbs-aside">
@@ -206,6 +227,26 @@ tokenización están implementadas en <code>compiler/lexer/lexer.cpp</code>.</p>
 <td><code>KeywordImport</code></td>
 <td><code>apnaq</code></td>
 <td>Importación</td>
+</tr>
+<tr>
+<td><code>KeywordEnum</code></td>
+<td><code>siqicha</code>, <code>enum</code></td>
+<td>Enumeraciones</td>
+</tr>
+<tr>
+<td><code>KeywordMatch</code></td>
+<td><code>khiti</code>, <code>match</code></td>
+<td>Selección por patrón</td>
+</tr>
+<tr>
+<td><code>KeywordCase</code></td>
+<td><code>kuna</code>, <code>case</code></td>
+<td>Rama de <code>match</code></td>
+</tr>
+<tr>
+<td><code>KeywordDefault</code></td>
+<td><code>yaqha</code>, <code>default</code></td>
+<td>Rama por defecto</td>
 </tr>
 <tr>
 <td><code>KeywordTry</code></td>
@@ -330,6 +371,7 @@ tokenización están implementadas en <code>compiler/lexer/lexer.cpp</code>.</p>
 <li>Operadores: <code>+ - * / % ^</code></li>
 <li>Comparación: <code>== != &lt; &lt;= &gt; &gt;=</code></li>
 <li>Lógicos: <code>&amp;&amp; || !</code></li>
+<li>Rango en <code>case</code>: <code>..</code> (solo en <code>khiti/match</code>)</li>
 <li>Comentarios: <code>//</code> y <code>/* */</code></li>
 </ul>
 <h3 id="literales">Literales<a class="headerlink" href="#literales" title="Permanent link">&para;</a></h3>
@@ -348,7 +390,7 @@ tokenización están implementadas en <code>compiler/lexer/lexer.cpp</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="k">programa      </span><span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;qallta&quot;</span> <span class="p">]</span> <span class="p">{</span> <span class="k">sentencia </span><span class="p">}</span> <span class="p">[</span> <span class="s2">&quot;tukuya&quot;</span> <span class="p">]</span> <span class="p">;</span>
 
 <span class="k">sentencia     </span><span class="o">=</span> <span class="k">decl </span><span class="p">|</span> <span class="k">asigna </span><span class="p">|</span> <span class="k">if </span><span class="p">|</span> <span class="k">while </span><span class="p">|</span> <span class="k">for </span><span class="p">|</span> <span class="k">func_def </span><span class="p">|</span> <span class="k">class_def</span>
-              <span class="p">|</span> <span class="k">retorno </span><span class="p">|</span> <span class="k">salida </span><span class="p">|</span> <span class="k">continuar </span><span class="p">|</span> <span class="k">imprimir </span><span class="p">|</span> <span class="k">importar</span>
+              <span class="p">|</span> <span class="k">enum_def </span><span class="p">|</span> <span class="k">match </span><span class="p">|</span> <span class="k">retorno </span><span class="p">|</span> <span class="k">salida </span><span class="p">|</span> <span class="k">continuar </span><span class="p">|</span> <span class="k">imprimir </span><span class="p">|</span> <span class="k">importar</span>
               <span class="p">|</span> <span class="k">try </span><span class="p">|</span> <span class="k">throw </span><span class="p">|</span> <span class="k">bloque </span><span class="p">|</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
 
 <span class="k">bloque        </span><span class="o">=</span> <span class="s2">&quot;{&quot;</span> <span class="p">{</span> <span class="k">sentencia </span><span class="p">}</span> <span class="s2">&quot;}&quot;</span> <span class="p">;</span>
@@ -375,6 +417,16 @@ tokenización están implementadas en <code>compiler/lexer/lexer.cpp</code>.</p>
 <span class="k">modificador   </span><span class="o">=</span> <span class="s2">&quot;sapa&quot;</span> <span class="p">|</span> <span class="s2">&quot;taqi&quot;</span> <span class="p">|</span> <span class="s2">&quot;sapakasta&quot;</span> <span class="p">|</span> <span class="s2">&quot;jikxata&quot;</span> <span class="p">;</span>
 <span class="k">metodo        </span><span class="o">=</span> <span class="s2">&quot;lurawi&quot;</span> <span class="k">id </span><span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">params </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="p">[</span> <span class="s2">&quot;:&quot;</span> <span class="k">tipo </span><span class="p">]</span> <span class="k">bloque </span><span class="p">;</span>
 <span class="k">ctor          </span><span class="o">=</span> <span class="s2">&quot;qallta&quot;</span> <span class="s2">&quot;(&quot;</span> <span class="p">[</span> <span class="k">params </span><span class="p">]</span> <span class="s2">&quot;)&quot;</span> <span class="k">bloque </span><span class="p">;</span>
+
+<span class="k">enum_def      </span><span class="o">=</span> <span class="p">(</span><span class="s2">&quot;siqicha&quot;</span> <span class="p">|</span> <span class="s2">&quot;enum&quot;</span><span class="p">)</span> <span class="k">id </span><span class="s2">&quot;{&quot;</span> <span class="k">enum_item </span><span class="p">{</span> <span class="s2">&quot;,&quot;</span> <span class="k">enum_item </span><span class="p">}</span> <span class="s2">&quot;}&quot;</span> <span class="p">[</span> <span class="s2">&quot;;&quot;</span> <span class="p">]</span> <span class="p">;</span>
+<span class="k">enum_item     </span><span class="o">=</span> <span class="k">id </span><span class="p">[</span> <span class="s2">&quot;=&quot;</span> <span class="k">expr </span><span class="p">]</span> <span class="p">;</span>
+
+<span class="k">match         </span><span class="o">=</span> <span class="p">(</span><span class="s2">&quot;khiti&quot;</span> <span class="p">|</span> <span class="s2">&quot;match&quot;</span><span class="p">)</span> <span class="s2">&quot;(&quot;</span> <span class="k">expr </span><span class="s2">&quot;)&quot;</span> <span class="s2">&quot;{&quot;</span>
+                <span class="p">{</span> <span class="p">(</span><span class="s2">&quot;kuna&quot;</span> <span class="p">|</span> <span class="s2">&quot;case&quot;</span><span class="p">)</span> <span class="k">case_valores </span><span class="s2">&quot;:&quot;</span> <span class="k">bloque </span><span class="p">}</span>
+                <span class="p">[</span> <span class="p">(</span><span class="s2">&quot;yaqha&quot;</span> <span class="p">|</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="s2">&quot;:&quot;</span> <span class="k">bloque </span><span class="p">]</span>
+                <span class="s2">&quot;}&quot;</span> <span class="p">[</span> <span class="s2">&quot;;&quot;</span> <span class="p">]</span> <span class="p">;</span>
+<span class="k">case_valores  </span><span class="o">=</span> <span class="k">case_valor </span><span class="p">{</span> <span class="s2">&quot;,&quot;</span> <span class="k">case_valor </span><span class="p">}</span> <span class="p">;</span>
+<span class="k">case_valor    </span><span class="o">=</span> <span class="k">expr </span><span class="p">[</span> <span class="s2">&quot;..&quot;</span> <span class="k">expr </span><span class="p">]</span> <span class="p">;</span>
 
 <span class="k">retorno       </span><span class="o">=</span> <span class="s2">&quot;kuttaya&quot;</span> <span class="p">[</span> <span class="k">expr </span><span class="p">]</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
 <span class="k">salida        </span><span class="o">=</span> <span class="s2">&quot;p&#39;akhiña&quot;</span> <span class="s2">&quot;;&quot;</span> <span class="p">;</span>
@@ -422,7 +474,7 @@ tokenización están implementadas en <code>compiler/lexer/lexer.cpp</code>.</p>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../exceptions/" class="btn btn-neutral float-left" title="Manejo de errores"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../investigacion/" class="btn btn-neutral float-right" title="Fundamentos">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../benchmarks/baseline_2026_02_15/" class="btn btn-neutral float-right" title="Baseline (2026-02-15)">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -452,7 +504,7 @@ tokenización están implementadas en <code>compiler/lexer/lexer.cpp</code>.</p>
       <span><a href="../exceptions/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../investigacion/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../benchmarks/baseline_2026_02_15/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

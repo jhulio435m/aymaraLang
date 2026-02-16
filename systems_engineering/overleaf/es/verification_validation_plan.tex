@@ -20,7 +20,6 @@ Definir cómo se verificará y validará AymaraLang y su compilador para asegura
 \section{Alcance}
 \begin{itemize}
     \item Compilador \texttt{aymc} (lexer, parser, semantic, codegen).
-    \item Backend LLVM experimental.
     \item Runtime mínimo.
 \end{itemize}
 
@@ -39,7 +38,7 @@ Análisis & Comparación de resultados esperados \\ \bottomrule
 \textbf{Requisito} & \textbf{Método} & \textbf{Evidencia} \\ \midrule
 FR-01 & Prueba & Compila múltiples archivos \texttt{.aym} \\
 FR-05 & Prueba & Binario ejecuta ejemplos \\
-FR-07 & Prueba & Generación de \texttt{.ll} \\
+FR-07 & Prueba & Se produce artefacto intermedio \texttt{.asm} \\
 NFR-03 & Inspección & Mensajes de error legibles \\ \bottomrule
 \end{longtable}
 

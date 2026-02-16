@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Visión general - AymaraLang</title>
+    <title>Estado de modernización - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,8 +13,8 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Visi\u00f3n general";
-        var mkdocs_page_input_path = "overview.md";
+        var mkdocs_page_name = "Estado de modernizaci\u00f3n";
+        var mkdocs_page_input_path = "modernizacion.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -47,21 +47,7 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Visión general</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#definicion-del-proyecto">Definición del proyecto</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#componentes-principales">Componentes principales</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#flujo-de-compilacion">Flujo de compilación</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#plataformas-objetivo">Plataformas objetivo</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#estado-funcional-resumido">Estado funcional resumido</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#referencias-relacionadas">Referencias relacionadas</a>
-    </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
                   </li>
@@ -73,7 +59,19 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Estado de modernización</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#objetivo">Objetivo</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#estado-actual">Estado actual</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#capacidades-consolidadas">Capacidades consolidadas</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#trabajo-pendiente-backlog-activo">Trabajo pendiente (backlog activo)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#criterio-de-avance">Criterio de avance</a>
+    </li>
+    </ul>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Lenguaje</span></p>
@@ -139,9 +137,9 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Manual técnico</li>
-      <li class="breadcrumb-item active">Visión general</li>
+      <li class="breadcrumb-item active">Estado de modernización</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/overview.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/modernizacion.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -149,72 +147,83 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="vision-general">Visión general<a class="headerlink" href="#vision-general" title="Permanent link">&para;</a></h1>
-<h2 id="definicion-del-proyecto">Definición del proyecto<a class="headerlink" href="#definicion-del-proyecto" title="Permanent link">&para;</a></h2>
-<p>AymaraLang es un lenguaje compilado con sintaxis basada en aymara. El
-compilador oficial, <code>aymc</code>, está implementado en C++17 y genera ejecutables
-nativos.</p>
-<h2 id="componentes-principales">Componentes principales<a class="headerlink" href="#componentes-principales" title="Permanent link">&para;</a></h2>
+                <h1 id="estado-de-modernizacion">Estado de modernización<a class="headerlink" href="#estado-de-modernizacion" title="Permanent link">&para;</a></h1>
+<p>Este documento resume el estado técnico vigente del plan de modernización.</p>
+<h2 id="objetivo">Objetivo<a class="headerlink" href="#objetivo" title="Permanent link">&para;</a></h2>
+<p>Consolidar AymaraLang como toolchain reproducible y mantenible para uso real en
+Windows y Linux.</p>
+<h2 id="estado-actual">Estado actual<a class="headerlink" href="#estado-actual" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Componente</th>
-<th>Propósito</th>
+<th>Línea</th>
+<th>Estado</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>aymc</code></td>
-<td>Compila archivos <code>.aym</code> a ejecutables nativos</td>
+<td>Compilación nativa (<code>aymc</code>)</td>
+<td>Operativa</td>
 </tr>
 <tr>
-<td><code>aym</code></td>
-<td>Orquesta flujos de proyecto (<code>new</code>, <code>build</code>, <code>run</code>, <code>test</code>, <code>lock</code>, <code>cache</code>, <code>add</code>)</td>
+<td>Gestor de proyectos (<code>aym</code>)</td>
+<td>Operativo</td>
 </tr>
 <tr>
-<td>Runtime (<code>dist/share/aymaraLang/runtime</code>)</td>
-<td>Soporte de funciones de ejecución</td>
+<td>Manifest/lock (<code>aym.toml</code>, <code>aym.lock</code>)</td>
+<td>Operativo</td>
 </tr>
 <tr>
-<td><code>samples/</code></td>
-<td>Programas de referencia y validación funcional</td>
+<td>Diagnósticos estructurados</td>
+<td>Operativo</td>
+</tr>
+<tr>
+<td>Pipeline con métricas y timeout</td>
+<td>Operativo</td>
+</tr>
+<tr>
+<td>Empaquetado Windows (MSI/NSIS)</td>
+<td>Operativo</td>
+</tr>
+<tr>
+<td>Empaquetado Linux (.deb)</td>
+<td>Operativo</td>
+</tr>
+<tr>
+<td>Asociación <code>.aym</code> con icono</td>
+<td>Operativa</td>
 </tr>
 </tbody>
 </table>
-<h2 id="flujo-de-compilacion">Flujo de compilación<a class="headerlink" href="#flujo-de-compilacion" title="Permanent link">&para;</a></h2>
-<div class="mermaid">flowchart LR
-    A[Fuente .aym] --&gt; B[Lexer]
-    B --&gt; C[Parser]
-    C --&gt; D[AST]
-    D --&gt; E[Semántica]
-    E --&gt; F[Codegen NASM]
-    F --&gt; G[Ensamblado y enlace]
-    G --&gt; H[Ejecutable nativo]</div>
-<h2 id="plataformas-objetivo">Plataformas objetivo<a class="headerlink" href="#plataformas-objetivo" title="Permanent link">&para;</a></h2>
+<h2 id="capacidades-consolidadas">Capacidades consolidadas<a class="headerlink" href="#capacidades-consolidadas" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Windows x64</li>
-<li>Linux x64</li>
+<li>Validación de manifest y lockfile con comandos dedicados.</li>
+<li>Resolución de imports por dependencia usando caché/repo local.</li>
+<li>Exporte de AST, diagnósticos y métricas en JSON.</li>
+<li>Modos de compilación por etapa (<code>--compile-only</code>, <code>--link-only</code>).</li>
+<li>Smoke tests de empaquetado e instalación.</li>
 </ul>
-<h2 id="estado-funcional-resumido">Estado funcional resumido<a class="headerlink" href="#estado-funcional-resumido" title="Permanent link">&para;</a></h2>
+<h2 id="trabajo-pendiente-backlog-activo">Trabajo pendiente (backlog activo)<a class="headerlink" href="#trabajo-pendiente-backlog-activo" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Compilación nativa operativa.</li>
-<li>Asociación de archivos <code>.aym</code> en instaladores.</li>
-<li>Gestión de proyectos con manifest (<code>aym.toml</code>) y lockfile (<code>aym.lock</code>).</li>
-<li>Pruebas automatizadas para build, smoke y empaquetado.</li>
+<li>Endurecer cobertura de pruebas por módulos de lenguaje avanzados.</li>
+<li>Mejorar documentación de API/built-ins por dominio.</li>
+<li>Evolucionar tooling de editor (diagnóstico/UX).</li>
+<li>Definir política formal de compatibilidad de lenguaje para <code>1.x</code>.</li>
 </ul>
-<h2 id="referencias-relacionadas">Referencias relacionadas<a class="headerlink" href="#referencias-relacionadas" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../install/">Instalación</a></li>
-<li><a href="../build/">Compilación desde fuente</a></li>
-<li><a href="../compiler/">CLI del compilador</a></li>
-<li><a href="../arquitectura/">Arquitectura</a></li>
-</ul>
+<h2 id="criterio-de-avance">Criterio de avance<a class="headerlink" href="#criterio-de-avance" title="Permanent link">&para;</a></h2>
+<p>Se considera incremento aceptado cuando cumple simultáneamente:</p>
+<ol>
+<li>Build reproducible en Windows y Linux.</li>
+<li>Pruebas automatizadas en verde.</li>
+<li>Documentación actualizada en el mismo cambio.</li>
+<li>Sin regresiones en instaladores.</li>
+</ol>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../manual_usuario/" class="btn btn-neutral float-left" title="Manual de usuario"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../install/" class="btn btn-neutral float-right" title="Instalación por sistema operativo">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../project/" class="btn btn-neutral float-left" title="Estructura del proyecto"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../language/" class="btn btn-neutral float-right" title="Primeros pasos">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -241,10 +250,10 @@ nativos.</p>
         </span>
     
     
-      <span><a href="../manual_usuario/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../project/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../install/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../language/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Visión general - AymaraLang</title>
+    <title>Instalación por sistema operativo - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,8 +13,8 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Visi\u00f3n general";
-        var mkdocs_page_input_path = "overview.md";
+        var mkdocs_page_name = "Instalaci\u00f3n por sistema operativo";
+        var mkdocs_page_input_path = "install.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -47,23 +47,17 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Visión general</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Instalación por sistema operativo</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#definicion-del-proyecto">Definición del proyecto</a>
+    <li class="toctree-l2"><a class="reference internal" href="#windows">Windows</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#componentes-principales">Componentes principales</a>
+    <li class="toctree-l2"><a class="reference internal" href="#linux">Linux</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#flujo-de-compilacion">Flujo de compilación</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#plataformas-objetivo">Plataformas objetivo</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#estado-funcional-resumido">Estado funcional resumido</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#referencias-relacionadas">Referencias relacionadas</a>
+    <li class="toctree-l2"><a class="reference internal" href="#notas-operativas">Notas operativas</a>
     </li>
     </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
                   </li>
@@ -139,9 +133,9 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Manual técnico</li>
-      <li class="breadcrumb-item active">Visión general</li>
+      <li class="breadcrumb-item active">Instalación por sistema operativo</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/overview.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/install.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -149,72 +143,77 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="vision-general">Visión general<a class="headerlink" href="#vision-general" title="Permanent link">&para;</a></h1>
-<h2 id="definicion-del-proyecto">Definición del proyecto<a class="headerlink" href="#definicion-del-proyecto" title="Permanent link">&para;</a></h2>
-<p>AymaraLang es un lenguaje compilado con sintaxis basada en aymara. El
-compilador oficial, <code>aymc</code>, está implementado en C++17 y genera ejecutables
-nativos.</p>
-<h2 id="componentes-principales">Componentes principales<a class="headerlink" href="#componentes-principales" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Componente</th>
-<th>Propósito</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>aymc</code></td>
-<td>Compila archivos <code>.aym</code> a ejecutables nativos</td>
-</tr>
-<tr>
-<td><code>aym</code></td>
-<td>Orquesta flujos de proyecto (<code>new</code>, <code>build</code>, <code>run</code>, <code>test</code>, <code>lock</code>, <code>cache</code>, <code>add</code>)</td>
-</tr>
-<tr>
-<td>Runtime (<code>dist/share/aymaraLang/runtime</code>)</td>
-<td>Soporte de funciones de ejecución</td>
-</tr>
-<tr>
-<td><code>samples/</code></td>
-<td>Programas de referencia y validación funcional</td>
-</tr>
-</tbody>
-</table>
-<h2 id="flujo-de-compilacion">Flujo de compilación<a class="headerlink" href="#flujo-de-compilacion" title="Permanent link">&para;</a></h2>
-<div class="mermaid">flowchart LR
-    A[Fuente .aym] --&gt; B[Lexer]
-    B --&gt; C[Parser]
-    C --&gt; D[AST]
-    D --&gt; E[Semántica]
-    E --&gt; F[Codegen NASM]
-    F --&gt; G[Ensamblado y enlace]
-    G --&gt; H[Ejecutable nativo]</div>
-<h2 id="plataformas-objetivo">Plataformas objetivo<a class="headerlink" href="#plataformas-objetivo" title="Permanent link">&para;</a></h2>
+                <h1 id="instalacion-por-sistema-operativo">Instalación por sistema operativo<a class="headerlink" href="#instalacion-por-sistema-operativo" title="Permanent link">&para;</a></h1>
+<p>Esta guía cubre instalación de binarios publicados en Releases.</p>
+<h2 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">&para;</a></h2>
+<h3 id="dependencias-requeridas">Dependencias requeridas<a class="headerlink" href="#dependencias-requeridas" title="Permanent link">&para;</a></h3>
+<p><code>aymc</code> requiere toolchain en <code>PATH</code>:</p>
 <ul>
-<li>Windows x64</li>
-<li>Linux x64</li>
+<li><code>nasm</code></li>
+<li><code>gcc</code> (MSYS2/MinGW)</li>
 </ul>
-<h2 id="estado-funcional-resumido">Estado funcional resumido<a class="headerlink" href="#estado-funcional-resumido" title="Permanent link">&para;</a></h2>
+<p>Instalación/validación automática de dependencias:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="o">-File</span> <span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">install</span><span class="p">\</span><span class="n">install_deps_windows</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<p>Solo validar (sin instalar):</p>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="o">-File</span> <span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">install</span><span class="p">\</span><span class="n">install_deps_windows</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-CheckOnly</span>
+</code></pre></div>
+<h3 id="instalacion-de-aymaralang">Instalación de AymaraLang<a class="headerlink" href="#instalacion-de-aymaralang" title="Permanent link">&para;</a></h3>
+<p>Desde artefactos de release:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># MSI (recomendado)</span>
+<span class="n">msiexec</span> <span class="p">/</span><span class="n">i</span> <span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">msi</span> <span class="p">/</span><span class="n">passive</span>
+
+<span class="c"># MSI silencioso total (requiere consola elevada)</span>
+<span class="n">msiexec</span> <span class="p">/</span><span class="n">i</span> <span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">msi</span> <span class="p">/</span><span class="n">qn</span>
+
+<span class="c"># NSIS interactivo</span>
+<span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">exe</span>
+
+<span class="c"># NSIS silencioso</span>
+<span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">exe</span> <span class="p">/</span><span class="n">S</span>
+</code></pre></div>
+<h3 id="verificacion-rapida">Verificación rápida<a class="headerlink" href="#verificacion-rapida" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">aymc</span> <span class="p">-</span><span class="n">-help</span>
+<span class="n">aym</span> <span class="p">-</span><span class="n">-help</span>
+</code></pre></div>
+<h2 id="linux">Linux<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h2>
+<h3 id="dependencias-requeridas_1">Dependencias requeridas<a class="headerlink" href="#dependencias-requeridas_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Compilación nativa operativa.</li>
-<li>Asociación de archivos <code>.aym</code> en instaladores.</li>
-<li>Gestión de proyectos con manifest (<code>aym.toml</code>) y lockfile (<code>aym.lock</code>).</li>
-<li>Pruebas automatizadas para build, smoke y empaquetado.</li>
+<li><code>nasm</code></li>
+<li><code>gcc</code></li>
+<li><code>g++</code></li>
 </ul>
-<h2 id="referencias-relacionadas">Referencias relacionadas<a class="headerlink" href="#referencias-relacionadas" title="Permanent link">&para;</a></h2>
+<p>Instalación/validación automática de dependencias:</p>
+<div class="highlight"><pre><span></span><code>bash<span class="w"> </span>scripts/install/install_deps_linux.sh
+</code></pre></div>
+<p>Solo validar (sin instalar):</p>
+<div class="highlight"><pre><span></span><code>bash<span class="w"> </span>scripts/install/install_deps_linux.sh<span class="w"> </span>--check-only
+</code></pre></div>
+<h3 id="instalacion-de-paquete-deb">Instalación de paquete <code>.deb</code><a class="headerlink" href="#instalacion-de-paquete-deb" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>aymaralang_&lt;version&gt;_amd64.deb
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-f<span class="w"> </span>-y
+</code></pre></div>
+<p>Desinstalación:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>dpkg<span class="w"> </span>--purge<span class="w"> </span>aymaralang
+</code></pre></div>
+<h3 id="verificacion-rapida_1">Verificación rápida<a class="headerlink" href="#verificacion-rapida_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>--help
+aym<span class="w"> </span>--help
+</code></pre></div>
+<h2 id="notas-operativas">Notas operativas<a class="headerlink" href="#notas-operativas" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../install/">Instalación</a></li>
-<li><a href="../build/">Compilación desde fuente</a></li>
-<li><a href="../compiler/">CLI del compilador</a></li>
-<li><a href="../arquitectura/">Arquitectura</a></li>
+<li>Los instaladores registran asociación para archivos <code>.aym</code>.</li>
+<li>En Windows, el icono de <code>.aym</code> se instala como <code>logo.ico</code> en el directorio de
+  instalación.</li>
+<li>Tras actualizar instaladores, el refresco de iconos puede requerir reiniciar
+  sesión o reiniciar <code>explorer.exe</code>.</li>
 </ul>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../manual_usuario/" class="btn btn-neutral float-left" title="Manual de usuario"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../install/" class="btn btn-neutral float-right" title="Instalación por sistema operativo">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../overview/" class="btn btn-neutral float-left" title="Visión general"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../build/" class="btn btn-neutral float-right" title="Compilación e instalación desde fuente">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -241,10 +240,10 @@ nativos.</p>
         </span>
     
     
-      <span><a href="../manual_usuario/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../install/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../build/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -1,0 +1,73 @@
+{
+  "schema": "aymc.pipeline.thresholds.v1",
+  "targets": {
+    "windows-latest": {
+      "full": {
+        "assemble_max_ms": 250,
+        "runtime_compile_max_ms": 2500,
+        "link_max_ms": 1500,
+        "total_max_ms": 3000,
+        "pipeline_health": {
+          "failed_runs_max": 0,
+          "failed_max": 0,
+          "timed_out_max": 0,
+          "reason_nonzero_exit_max": 0,
+          "reason_timeout_max": 0,
+          "reason_missing_input_max": 0,
+          "reason_internal_error_max": 0,
+          "reason_other_max": 0
+        }
+      },
+      "compile-only": {
+        "assemble_max_ms": 250,
+        "runtime_compile_max_ms": 0,
+        "link_max_ms": 0,
+        "total_max_ms": 600,
+        "pipeline_health": {
+          "failed_runs_max": 0,
+          "failed_max": 0,
+          "timed_out_max": 0,
+          "reason_nonzero_exit_max": 0,
+          "reason_timeout_max": 0,
+          "reason_missing_input_max": 0,
+          "reason_internal_error_max": 0,
+          "reason_other_max": 0
+        }
+      }
+    },
+    "ubuntu-latest": {
+      "full": {
+        "assemble_max_ms": 250,
+        "runtime_compile_max_ms": 2500,
+        "link_max_ms": 1500,
+        "total_max_ms": 2800,
+        "pipeline_health": {
+          "failed_runs_max": 0,
+          "failed_max": 0,
+          "timed_out_max": 0,
+          "reason_nonzero_exit_max": 0,
+          "reason_timeout_max": 0,
+          "reason_missing_input_max": 0,
+          "reason_internal_error_max": 0,
+          "reason_other_max": 0
+        }
+      },
+      "compile-only": {
+        "assemble_max_ms": 250,
+        "runtime_compile_max_ms": 0,
+        "link_max_ms": 0,
+        "total_max_ms": 600,
+        "pipeline_health": {
+          "failed_runs_max": 0,
+          "failed_max": 0,
+          "timed_out_max": 0,
+          "reason_nonzero_exit_max": 0,
+          "reason_timeout_max": 0,
+          "reason_missing_input_max": 0,
+          "reason_internal_error_max": 0,
+          "reason_other_max": 0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Manual de usuario - AymaraLang</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Manual de usuario";
+        var mkdocs_page_input_path = "manual_usuario.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../img/logo_aymaralang.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Manual de usuario</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-objetivo">1. Objetivo</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-requisitos-previos">2. Requisitos previos</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-instalacion-de-aymaralang">3. Instalación de AymaraLang</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4-verificacion-inicial">4. Verificación inicial</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#5-uso-basico-con-aymc-archivo-suelto">5. Uso básico con aymc (archivo suelto)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#6-uso-por-proyecto-con-aym">6. Uso por proyecto con aym</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#7-archivos-relevantes-del-usuario">7. Archivos relevantes del usuario</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#8-resolucion-de-problemas-frecuentes">8. Resolución de problemas frecuentes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#9-desinstalacion">9. Desinstalación</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#10-buenas-practicas-de-uso">10. Buenas prácticas de uso</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Ingeniería de Sistemas</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/systems_engineering_management_plan/">Plan de Gestión (SEMP)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/requirements/">Requisitos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/architecture/">Arquitectura de Sistemas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/conops/">CONOPS</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/interface_control_document/">Control de Interfaces (ICD)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/risk_management/">Gestión de Riesgos</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../systems_engineering/verification_validation_plan/">Verificación y Validación</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">AymaraLang</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Manual técnico</li>
+      <li class="breadcrumb-item active">Manual de usuario</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/manual_usuario.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="manual-de-usuario">Manual de usuario<a class="headerlink" href="#manual-de-usuario" title="Permanent link">&para;</a></h1>
+<p><strong>Producto:</strong> AymaraLang<br />
+<strong>Versión:</strong> 0.1.0<br />
+<strong>Documento:</strong> MU-AYM-001</p>
+<h2 id="1-objetivo">1. Objetivo<a class="headerlink" href="#1-objetivo" title="Permanent link">&para;</a></h2>
+<p>Este manual describe el uso operativo de AymaraLang para usuarios finales:</p>
+<ul>
+<li>instalación,</li>
+<li>verificación,</li>
+<li>compilación de programas <code>.aym</code>,</li>
+<li>flujo de trabajo por proyecto con <code>aym</code>,</li>
+<li>resolución de problemas frecuentes.</li>
+</ul>
+<h2 id="2-requisitos-previos">2. Requisitos previos<a class="headerlink" href="#2-requisitos-previos" title="Permanent link">&para;</a></h2>
+<h3 id="21-windows">2.1 Windows<a class="headerlink" href="#21-windows" title="Permanent link">&para;</a></h3>
+<p>Dependencias requeridas para compilar con <code>aymc</code>:</p>
+<ul>
+<li><code>nasm</code> en <code>PATH</code></li>
+<li><code>gcc</code> en <code>PATH</code> (MSYS2/MinGW)</li>
+</ul>
+<p>Instalación automática recomendada:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="o">-File</span> <span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">install</span><span class="p">\</span><span class="n">install_deps_windows</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<h3 id="22-linux">2.2 Linux<a class="headerlink" href="#22-linux" title="Permanent link">&para;</a></h3>
+<p>Dependencias requeridas:</p>
+<ul>
+<li><code>nasm</code></li>
+<li><code>gcc</code></li>
+<li><code>g++</code></li>
+</ul>
+<p>Instalación automática recomendada:</p>
+<div class="highlight"><pre><span></span><code>bash<span class="w"> </span>scripts/install/install_deps_linux.sh
+</code></pre></div>
+<h2 id="3-instalacion-de-aymaralang">3. Instalación de AymaraLang<a class="headerlink" href="#3-instalacion-de-aymaralang" title="Permanent link">&para;</a></h2>
+<h3 id="31-windows">3.1 Windows<a class="headerlink" href="#31-windows" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c"># MSI (recomendado)</span>
+<span class="n">msiexec</span> <span class="p">/</span><span class="n">i</span> <span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">msi</span> <span class="p">/</span><span class="n">passive</span>
+
+<span class="c"># NSIS interactivo</span>
+<span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">exe</span>
+
+<span class="c"># NSIS silencioso</span>
+<span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">exe</span> <span class="p">/</span><span class="n">S</span>
+</code></pre></div>
+<h3 id="32-linux-deb">3.2 Linux (.deb)<a class="headerlink" href="#32-linux-deb" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>aymaralang_&lt;version&gt;_amd64.deb
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-f<span class="w"> </span>-y
+</code></pre></div>
+<h2 id="4-verificacion-inicial">4. Verificación inicial<a class="headerlink" href="#4-verificacion-inicial" title="Permanent link">&para;</a></h2>
+<p>Después de instalar:</p>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>--help
+aym<span class="w"> </span>--help
+</code></pre></div>
+<p>Si ambos comandos muestran ayuda, la instalación quedó operativa.</p>
+<h2 id="5-uso-basico-con-aymc-archivo-suelto">5. Uso básico con <code>aymc</code> (archivo suelto)<a class="headerlink" href="#5-uso-basico-con-aymc-archivo-suelto" title="Permanent link">&para;</a></h2>
+<h3 id="51-compilar-un-archivo">5.1 Compilar un archivo<a class="headerlink" href="#51-compilar-un-archivo" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>samples/fundamentos/basicos.aym
+</code></pre></div>
+<h3 id="52-definir-salida">5.2 Definir salida<a class="headerlink" href="#52-definir-salida" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>-o<span class="w"> </span>build/app<span class="w"> </span>samples/fundamentos/basicos.aym
+</code></pre></div>
+<p>En Windows la salida final será <code>build/app.exe</code>.</p>
+<h3 id="53-validar-sin-generar-binario">5.3 Validar sin generar binario<a class="headerlink" href="#53-validar-sin-generar-binario" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>--check<span class="w"> </span>samples/fundamentos/basicos.aym
+</code></pre></div>
+<h3 id="54-exportar-diagnosticos-json">5.4 Exportar diagnósticos JSON<a class="headerlink" href="#54-exportar-diagnosticos-json" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>--check<span class="w"> </span>--diagnostics-json<span class="w"> </span>samples/fundamentos/basicos.aym
+</code></pre></div>
+<h2 id="6-uso-por-proyecto-con-aym">6. Uso por proyecto con <code>aym</code><a class="headerlink" href="#6-uso-por-proyecto-con-aym" title="Permanent link">&para;</a></h2>
+<h3 id="61-crear-proyecto">6.1 Crear proyecto<a class="headerlink" href="#61-crear-proyecto" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aym<span class="w"> </span>new<span class="w"> </span>demo
+</code></pre></div>
+<h3 id="62-compilar-y-ejecutar">6.2 Compilar y ejecutar<a class="headerlink" href="#62-compilar-y-ejecutar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>demo
+aym<span class="w"> </span>build
+aym<span class="w"> </span>run
+</code></pre></div>
+<h3 id="63-probar">6.3 Probar<a class="headerlink" href="#63-probar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aym<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<h3 id="64-dependencias">6.4 Dependencias<a class="headerlink" href="#64-dependencias" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aym<span class="w"> </span>add<span class="w"> </span>math<span class="w"> </span>^1.2.0
+aym<span class="w"> </span>lock<span class="w"> </span>check
+aym<span class="w"> </span>lock<span class="w"> </span>sync
+</code></pre></div>
+<h2 id="7-archivos-relevantes-del-usuario">7. Archivos relevantes del usuario<a class="headerlink" href="#7-archivos-relevantes-del-usuario" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>aym.toml</code>: manifest del proyecto.</li>
+<li><code>aym.lock</code>: lockfile reproducible.</li>
+<li><code>.aym/cache</code> y <code>.aym/repo</code>: caché/repositorio local de dependencias.</li>
+</ul>
+<h2 id="8-resolucion-de-problemas-frecuentes">8. Resolución de problemas frecuentes<a class="headerlink" href="#8-resolucion-de-problemas-frecuentes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Síntoma</th>
+<th>Causa común</th>
+<th>Acción recomendada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nasm</code> no encontrado</td>
+<td>Dependencia ausente en <code>PATH</code></td>
+<td>Ejecutar script de dependencias y abrir nueva terminal</td>
+</tr>
+<tr>
+<td><code>gcc</code> no encontrado</td>
+<td>Toolchain MinGW/MSYS2 no disponible</td>
+<td>Instalar dependencias y validar <code>gcc --version</code></td>
+</tr>
+<tr>
+<td>MSI error de privilegios (1925/1603)</td>
+<td>Instalación sin elevación suficiente</td>
+<td>Usar terminal elevada o <code>msiexec /i ... /passive</code></td>
+</tr>
+<tr>
+<td>Inconsistencia <code>manifest-lock</code></td>
+<td><code>aym.toml</code> y <code>aym.lock</code> desalineados</td>
+<td>Ejecutar <code>aym lock sync</code> o recompilar con lock actualizado</td>
+</tr>
+<tr>
+<td>Ícono <code>.aym</code> no se refresca en Windows</td>
+<td>Caché visual del shell</td>
+<td>Reiniciar <code>explorer.exe</code> o cerrar sesión</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-desinstalacion">9. Desinstalación<a class="headerlink" href="#9-desinstalacion" title="Permanent link">&para;</a></h2>
+<h3 id="91-windows">9.1 Windows<a class="headerlink" href="#91-windows" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c"># MSI</span>
+<span class="n">msiexec</span> <span class="p">/</span><span class="n">x</span> <span class="p">.\</span><span class="n">AymaraLang-Setup</span><span class="p">.</span><span class="n">msi</span> <span class="p">/</span><span class="n">passive</span>
+
+<span class="c"># NSIS</span>
+<span class="s2">&quot;C:\Program Files\AymaraLang\Uninstall.exe&quot;</span> <span class="p">/</span><span class="n">S</span>
+</code></pre></div>
+<h3 id="92-linux">9.2 Linux<a class="headerlink" href="#92-linux" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>dpkg<span class="w"> </span>--purge<span class="w"> </span>aymaralang
+</code></pre></div>
+<h2 id="10-buenas-practicas-de-uso">10. Buenas prácticas de uso<a class="headerlink" href="#10-buenas-practicas-de-uso" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Mantener <code>aym.toml</code> y <code>aym.lock</code> sincronizados.</li>
+<li>Ejecutar <code>aym test</code> antes de publicar cambios.</li>
+<li>Usar <code>--check</code> para validaciones rápidas en CI o pre-commit.</li>
+<li>Conservar scripts de build/packaging del repositorio como única fuente de verdad.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Inicio"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../overview/" class="btn btn-neutral float-right" title="Visión general">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jhulio435m/aymaraLang" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../javascripts/scroll-top.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="../javascripts/mermaid-init.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

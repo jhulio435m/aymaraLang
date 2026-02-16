@@ -41,39 +41,53 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
-              <ul class="current">
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../project/">Guía del proyecto</a>
-                </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../manual_usuario/">Manual de usuario</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../language/">Primeros pasos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,7 +124,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
+          <li class="breadcrumb-item">Anexos</li>
           <li class="breadcrumb-item">Ingeniería de Sistemas</li>
       <li class="breadcrumb-item active">Requisitos</li>
     <li class="wy-breadcrumbs-aside">
@@ -182,8 +196,7 @@
 - Dependencias de compilación: <code>g++</code>/<code>clang++</code>, <code>nasm</code>, <code>gcc/ld</code>.</p>
 <p><strong>Interfaces externas clave:</strong>
 - CLI del compilador (<code>aymc</code>).
-- Sistema de archivos (lectura <code>.aym</code>, escritura <code>.asm</code>/<code>.ll</code> y binarios).
-- Backend LLVM (opcional, activado con <code>--llvm</code>).</p>
+- Sistema de archivos (lectura <code>.aym</code>, escritura <code>.asm</code> y binarios).</p>
 <h2 id="6-arquitectura-funcional-resumen">6. Arquitectura funcional (resumen)<a class="headerlink" href="#6-arquitectura-funcional-resumen" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -212,7 +225,7 @@
 <tr>
 <td>Generación de código</td>
 <td>AST validado</td>
-<td><code>.asm</code>/<code>.ll</code></td>
+<td><code>.asm</code></td>
 </tr>
 <tr>
 <td>Ensamblado/enlace</td>
@@ -227,7 +240,7 @@
     FR03[FR-03 Parser] --&gt; Parser[compiler/parser]
     FR04[FR-04 Semántica] --&gt; Semantic[compiler/semantic]
     FR05[FR-05 Codegen] --&gt; Codegen[compiler/codegen]
-    FR07[FR-07 LLVM] --&gt; LLVM[compiler/codegen/llvm]</div>
+    FR07[FR-07 Artefacto ASM] --&gt; Codegen</div>
 <h2 id="7-requisitos-del-sistema">7. Requisitos del sistema<a class="headerlink" href="#7-requisitos-del-sistema" title="Permanent link">&para;</a></h2>
 <h3 id="71-requisitos-funcionales-fr">7.1 Requisitos funcionales (FR)<a class="headerlink" href="#71-requisitos-funcionales-fr" title="Permanent link">&para;</a></h3>
 <p><strong>FR-01</strong> El sistema debe aceptar uno o más archivos <code>.aym</code> como entrada por CLI.</p>
@@ -236,7 +249,7 @@
 <p><strong>FR-04</strong> El sistema debe validar semántica (tipado, símbolos y llamadas) antes de generar código.</p>
 <p><strong>FR-05</strong> El sistema debe generar ensamblador NASM x86_64 y enlazar un ejecutable nativo.</p>
 <p><strong>FR-06</strong> El sistema debe permitir seleccionar objetivo Linux o Windows desde la CLI.</p>
-<p><strong>FR-07</strong> El sistema debe admitir un backend LLVM experimental que genere <code>.ll</code>.</p>
+<p><strong>FR-07</strong> El sistema debe generar un archivo <code>.asm</code> intermedio previo al enlace.</p>
 <p><strong>FR-08</strong> El sistema debe soportar módulos importados desde archivos externos.</p>
 <p><strong>FR-09</strong> El sistema debe incluir funciones integradas (E/S, matemáticas, arreglos, aleatoriedad).</p>
 <h3 id="72-requisitos-no-funcionales-nfr">7.2 Requisitos no funcionales (NFR)<a class="headerlink" href="#72-requisitos-no-funcionales-nfr" title="Permanent link">&para;</a></h3>
@@ -247,12 +260,11 @@
 <p><strong>NFR-05</strong> El proyecto debe compilarse con C++17.</p>
 <h3 id="73-requisitos-de-interfaz-ir">7.3 Requisitos de interfaz (IR)<a class="headerlink" href="#73-requisitos-de-interfaz-ir" title="Permanent link">&para;</a></h3>
 <p><strong>IR-01</strong> CLI principal: <code>aymc [opciones] archivo.aym ...</code>.</p>
-<p><strong>IR-02</strong> Opciones: <code>--debug</code>, <code>--dump-ast</code>, <code>--seed</code>, <code>--llvm</code>, <code>--windows</code>, <code>--linux</code>, <code>-o</code>.</p>
-<p><strong>IR-03</strong> Archivos de salida: <code>.asm</code> (NASM), <code>.ll</code> (LLVM), y ejecutable nativo.</p>
+<p><strong>IR-02</strong> Opciones: <code>--debug</code>, <code>--dump-ast</code>, <code>--seed</code>, <code>--windows</code>, <code>--linux</code>, <code>-o</code>.</p>
+<p><strong>IR-03</strong> Archivos de salida: <code>.asm</code> (NASM) y ejecutable nativo.</p>
 <h2 id="8-restricciones-y-supuestos">8. Restricciones y supuestos<a class="headerlink" href="#8-restricciones-y-supuestos" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Se requiere toolchain (NASM y GCC/LD o MinGW) disponible en PATH.</li>
-<li>El backend LLVM es opcional y depende de compilación con soporte.</li>
 <li>El lenguaje está orientado a tipado estático y a constructs definidos en la gramática.</li>
 </ul>
 <h2 id="9-verificacion-y-validacion-vv">9. Verificación y validación (V&amp;V)<a class="headerlink" href="#9-verificacion-y-validacion-vv" title="Permanent link">&para;</a></h2>
@@ -278,7 +290,7 @@
 <tr>
 <td>FR-07</td>
 <td>Prueba</td>
-<td>Se genera archivo <code>.ll</code></td>
+<td>Se conserva artefacto <code>.asm</code> intermedio</td>
 </tr>
 <tr>
 <td>NFR-05</td>
@@ -324,8 +336,8 @@
 </tr>
 <tr>
 <td>FR-07</td>
-<td><code>codegen/llvm/</code></td>
-<td>LLVM IR</td>
+<td><code>codegen/</code></td>
+<td>Artefacto NASM intermedio</td>
 </tr>
 <tr>
 <td>FR-08</td>
@@ -342,7 +354,6 @@
 <h2 id="11-riesgos-tecnicos-alto-nivel">11. Riesgos técnicos (alto nivel)<a class="headerlink" href="#11-riesgos-tecnicos-alto-nivel" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Dependencia de toolchain externo para ensamblado/enlace.</li>
-<li>Backend LLVM incompleto o experimental.</li>
 <li>Compatibilidad limitada con arquitecturas distintas de x86_64.</li>
 </ul>
 <h2 id="12-glosario">12. Glosario<a class="headerlink" href="#12-glosario" title="Permanent link">&para;</a></h2>

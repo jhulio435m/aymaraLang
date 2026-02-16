@@ -41,39 +41,65 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Panorama del proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Arquitectura del compilador</a>
     <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
-                </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pipeline">Pipeline</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#componentes">Componentes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#artefactos-intermedios">Artefactos intermedios</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#decisiones-de-diseno-vigentes">Decisiones de diseño vigentes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#observabilidad">Observabilidad</a>
+    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,8 +136,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Panorama del proyecto</li>
+          <li class="breadcrumb-item">Manual técnico</li>
       <li class="breadcrumb-item active">Arquitectura del compilador</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/arquitectura.md" class="icon icon-github"> Edit on GitHub</a>
@@ -122,58 +147,93 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="arquitectura-del-compilador-aymc">Arquitectura del compilador <code>aymc</code><a class="headerlink" href="#arquitectura-del-compilador-aymc" title="Permanent link">&para;</a></h1>
-<p>Este documento resume los módulos principales y su flujo de compilación.</p>
-<h2 id="vista-general">Vista general<a class="headerlink" href="#vista-general" title="Permanent link">&para;</a></h2>
+                <h1 id="arquitectura-del-compilador">Arquitectura del compilador<a class="headerlink" href="#arquitectura-del-compilador" title="Permanent link">&para;</a></h1>
+<h2 id="pipeline">Pipeline<a class="headerlink" href="#pipeline" title="Permanent link">&para;</a></h2>
 <div class="mermaid">flowchart LR
-classDef front fill:#dbeafe,stroke:#1e40af,color:#000;
-classDef middle fill:#dcfce7,stroke:#166534,color:#000;
-classDef back fill:#fee2e2,stroke:#7f1d1d,color:#000;
-
-A[Fuente .aym] --&gt; B[Lexer]
-B --&gt; C[Parser]
-C --&gt; D[AST]
-D --&gt; E[Analisis semantico]
-E --&gt; F[Codegen NASM]
-F --&gt; G[Ensamblador + Linker]
-G --&gt; H[Ejecutable nativo]
-E --&gt; I[Codegen LLVM opcional]
-I --&gt; J[IR LLVM .ll]
-
-class A,B,C,D front
-class E middle
-class F,G,H,I,J back</div>
-<h2 id="modulos-principales">Módulos principales<a class="headerlink" href="#modulos-principales" title="Permanent link">&para;</a></h2>
+    A[Fuente .aym] --&gt; B[Lexer]
+    B --&gt; C[Parser]
+    C --&gt; D[AST]
+    D --&gt; E[Semántica]
+    E --&gt; F[Codegen]
+    F --&gt; G[NASM + GCC/LD]
+    G --&gt; H[Binario nativo]</div>
+<h2 id="componentes">Componentes<a class="headerlink" href="#componentes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Ruta</th>
+<th>Responsabilidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lexer</td>
+<td><code>compiler/lexer/</code></td>
+<td>Tokenización</td>
+</tr>
+<tr>
+<td>Parser</td>
+<td><code>compiler/parser/</code></td>
+<td>Análisis sintáctico y construcción AST</td>
+</tr>
+<tr>
+<td>AST</td>
+<td><code>compiler/ast/</code></td>
+<td>Estructuras intermedias del programa</td>
+</tr>
+<tr>
+<td>Semántica</td>
+<td><code>compiler/semantic/</code></td>
+<td>Validación de tipos, símbolos y reglas</td>
+</tr>
+<tr>
+<td>Codegen</td>
+<td><code>compiler/codegen/</code></td>
+<td>Emisión de ASM/objeto/binario</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td><code>compiler/backend/</code></td>
+<td>Coordinación de modos de salida y pipeline</td>
+</tr>
+<tr>
+<td>Utilidades</td>
+<td><code>compiler/utils/</code></td>
+<td>Diagnósticos, procesos, resolver de módulos</td>
+</tr>
+<tr>
+<td>Runtime</td>
+<td><code>runtime/</code></td>
+<td>Soporte de ejecución para built-ins</td>
+</tr>
+</tbody>
+</table>
+<h2 id="artefactos-intermedios">Artefactos intermedios<a class="headerlink" href="#artefactos-intermedios" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Lexer (<code>compiler/lexer</code>)</strong>: tokeniza el código fuente.</li>
-<li><strong>Parser (<code>compiler/parser</code>)</strong>: construye el AST y valida la sintaxis.</li>
-<li><strong>AST (<code>compiler/ast</code>)</strong>: nodos de expresiones y sentencias.</li>
-<li><strong>Semántica (<code>compiler/semantic</code>)</strong>: tipos, símbolos, clases y excepciones.</li>
-<li><strong>Codegen (<code>compiler/codegen</code>)</strong>: genera NASM o LLVM IR.</li>
-<li><strong>Runtime (<code>runtime/</code>)</strong>: funciones base usadas por los binarios.</li>
-<li><strong>Module resolver (<code>utils/module_resolver</code>)</strong>: carga <code>apnaq</code> y gestiona rutas.</li>
+<li><code>*.asm</code></li>
+<li><code>*.o</code> / <code>*.obj</code></li>
+<li>binario final</li>
 </ul>
-<div class="mermaid">flowchart TB
-    Lexer --&gt; Parser
-    Parser --&gt; AST
-    AST --&gt; Semantica[Semántica]
-    Semantica --&gt; Codegen
-    Codegen --&gt; Runtime
-    Semantica --&gt; Resolver[Module Resolver]</div>
-<h2 id="artefactos-clave">Artefactos clave<a class="headerlink" href="#artefactos-clave" title="Permanent link">&para;</a></h2>
+<h2 id="decisiones-de-diseno-vigentes">Decisiones de diseño vigentes<a class="headerlink" href="#decisiones-de-diseno-vigentes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>*.asm</code> y <code>*.o</code>/<code>*.obj</code> para el backend NASM.</li>
-<li><code>*.ll</code> para el backend LLVM (si está habilitado).</li>
-<li>Binario final nativo.</li>
+<li>Backend principal nativo basado en NASM.</li>
+<li>Integración de diagnósticos estructurados en frontend.</li>
+<li>Pipeline por etapas con métricas y timeout configurable.</li>
+<li>Resolución de dependencias vinculada a <code>aym.toml</code> y <code>aym.lock</code>.</li>
 </ul>
-<hr />
-<p><strong>Siguiente:</strong> <a href="../project/">Guía del proyecto</a></p>
+<h2 id="observabilidad">Observabilidad<a class="headerlink" href="#observabilidad" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>--time-pipeline</code> para tiempos por etapa.</li>
+<li><code>--time-pipeline-json</code> para exporte estructurado.</li>
+<li><code>--diagnostics-json</code> para integración con tooling externo.</li>
+</ul>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../compiler/" class="btn btn-neutral float-left" title="CLI del compilador"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../project/" class="btn btn-neutral float-right" title="Guía del proyecto">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../project/" class="btn btn-neutral float-right" title="Estructura del proyecto">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>

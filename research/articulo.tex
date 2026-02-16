@@ -1,0 +1,224 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+
+\title{AymaraLang: Dise\~no de un Compilador Nativo con Sintaxis en Aymara para Fortalecer la Alfabetizaci\'on Digital Intercultural}
+\author{Autor 1\thanks{Afiliaci\'on 1, correo@institucion.edu} \and Autor 2\thanks{Afiliaci\'on 2, correo@institucion.edu}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+La dominancia del ingl\'es en los lenguajes de programaci\'on incrementa la carga cognitiva inicial en estudiantes cuya lengua materna es distinta, especialmente en contextos de educaci\'on intercultural biling\"ue. Este trabajo presenta AymaraLang, un lenguaje con palabras clave en aymara y un compilador nativo (\texttt{aymc}) implementado en C++17. El pipeline de compilaci\'on incluye an\'alisis l\'exico, parseo, verificaci\'on sem\'antica, generaci\'on de c\'odigo NASM y enlace nativo mediante GCC/LD o MinGW, sin dependencia de m\'aquina virtual. El repositorio actual integra arquitectura modular, soporte de m\'odulos, clases, excepciones y un conjunto de ejemplos ejecutables para escenarios educativos. Adem\'as, se formaliza un protocolo de evaluaci\'on para publicaci\'on indexada, con preguntas de investigaci\'on, m\'etricas de usabilidad y calidad diagn\'ostica, dise\~no cuasi experimental y estrategia de reproducibilidad abierta. Como contribuci\'on principal, el trabajo articula una propuesta t\'ecnica y metodol\'ogica para estudiar si la programaci\'on en lengua originaria reduce barreras de entrada y mejora el desempe\~no en tareas de pensamiento computacional. El manuscrito incluye tambi\'en un plan de fortalecimiento para cumplir criterios de revisi\'on por pares en revistas indexadas en Scopus.
+\end{abstract}
+
+\textbf{Palabras clave:} lenguaje de programaci\'on, aymara, compiladores, educaci\'on intercultural biling\"ue, pensamiento computacional, reproducibilidad.
+
+\section{Introducci\'on}
+La alfabetizaci\'on digital contempor\'anea exige superar un enfoque de consumo tecnol\'ogico y avanzar hacia la creaci\'on de soluciones computacionales \cite{martinez2021,garcia2020}. Sin embargo, en poblaciones escolares donde la lengua de escolarizaci\'on o de uso comunitario no es el ingl\'es, el aprendizaje inicial de programaci\'on suele enfrentar una doble barrera: conceptual y ling\"u\'istica.
+
+El problema es especialmente relevante en contextos andinos, donde la Educaci\'on Intercultural Biling\"ue (EIB) promueve el uso pedag\'ogico de lenguas originarias y la preservaci\'on de su vitalidad en dominios de alto prestigio social \cite{lopez2009,unesco2020,zajicova2017}. En este marco, dise\~nar herramientas de programaci\'on en aymara no solo tiene valor did\'actico, sino tambi\'en valor sociot\'ecnico y cultural.
+
+Este art\'iculo reporta el dise\~no e implementaci\'on de AymaraLang y su compilador nativo \texttt{aymc}. A diferencia de propuestas puramente conceptuales, el trabajo presenta un artefacto funcional y una agenda de evaluaci\'on emp\'irica orientada a publicaci\'on indexada.
+
+\subsection*{Contribuciones}
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+  \item Definici\'on de un lenguaje con sintaxis en aymara para tareas introductorias y de complejidad intermedia.
+  \item Implementaci\'on de un compilador nativo modular en C++17 con backend NASM.
+  \item Protocolo de evaluaci\'on cuantitativa y cualitativa para validar impacto educativo y calidad de ingenier\'ia.
+  \item Gu\'ia expl\'icita de mejoras necesarias para lograr aceptaci\'on en venues indexados en Scopus.
+\end{enumerate}
+
+\section{Antecedentes y trabajo relacionado}
+La literatura de compiladores establece un marco robusto para el dise\~no de lenguajes y traductores de c\'odigo \cite{aho2006}. El enfoque cl\'asico (an\'alisis l\'exico, sint\'actico, sem\'antico y generaci\'on de c\'odigo) sigue vigente en implementaciones contempor\'aneas por su trazabilidad y mantenibilidad.
+
+En paralelo, proyectos educativos como Ezhil (Tamil) y propuestas para Yoruba muestran que una sintaxis localizada puede favorecer apropiaci\'on inicial y pertinencia cultural \cite{ezhil2009}. No obstante, gran parte de trabajos previos reporta prototipos sin evaluaci\'on experimental robusta o sin evidencia de reproducibilidad. Este vac\'io metodol\'ogico limita su impacto en revistas indexadas.
+
+En educaci\'on, el pensamiento computacional se asocia con descomposici\'on, abstracci\'on, reconocimiento de patrones y dise\~no algor\'itmico \cite{wing2006,brennan2012,rojas2023}. Integrar estas competencias con EIB requiere instrumentos que respeten contexto ling\"u\'istico y permitan medici\'on objetiva del aprendizaje.
+
+\section{AymaraLang: dise\~no del lenguaje y del compilador}
+\subsection{Objetivo de dise\~no}
+AymaraLang busca reducir fricci\'on de entrada en estudiantes noveles sin sacrificar principios de compilaci\'on formal. El lenguaje adopta un paradigma imperativo con soporte de funciones, clases, excepciones y m\'odulos.
+
+\subsection{Arquitectura del compilador}
+El compilador \texttt{aymc} est\'a implementado en C++17 y organizado en m\'odulos:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item \textbf{Lexer}: tokenizaci\'on del c\'odigo fuente.
+  \item \textbf{Parser}: construcci\'on de AST y validaci\'on sint\'actica.
+  \item \textbf{Sem\'antica}: verificaci\'on de tipos y s\'imbolos.
+  \item \textbf{Codegen}: generaci\'on de ensamblador NASM.
+  \item \textbf{Toolchain nativa}: ensamblado y enlace para binarios nativos.
+\end{itemize}
+
+El flujo evita m\'aquina virtual e integra runtime propio para funciones base. La salida es ejecutable nativo (Windows y Linux seg\'un toolchain).
+
+\subsection{Estado actual del artefacto}
+A nivel de repositorio, la implementaci\'on incluye:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item CLI de compilaci\'on con opciones de depuraci\'on y selecci\'on de plataforma.
+  \item Soporte de estructuras de control, colecciones, m\'odulos y excepciones.
+  \item Empaquetado para instaladores Windows (MSI/EXE) y scripts para \texttt{.deb}.
+  \item Conjunto de ejemplos de referencia y pruebas automatizadas base.
+\end{itemize}
+
+\section{Preguntas de investigaci\'on e hip\'otesis}
+Para una publicaci\'on indexada, se formulan preguntas medibles:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item \textbf{RQ1}: \textquestiondown{}La sintaxis en aymara reduce el tiempo de comprensi\'on de consignas respecto a una sintaxis en ingl\'es?
+  \item \textbf{RQ2}: \textquestiondown{}Los estudiantes completan m\'as tareas correctas en sesi\'on inicial con AymaraLang?
+  \item \textbf{RQ3}: \textquestiondown{}La calidad diagn\'ostica del compilador mejora la recuperaci\'on de errores en principiantes?
+\end{itemize}
+
+Hip\'otesis principales:
+\begin{align*}
+H_1 &: T_{comprension}^{aym} < T_{comprension}^{control} \\
+H_2 &: Acc_{tareas}^{aym} > Acc_{tareas}^{control} \\
+H_3 &: U_{diag}^{aym} > U_{diag}^{control}
+\end{align*}
+
+\section{Metodolog\'ia propuesta para validaci\'on cient\'ifica}
+\subsection{Dise\~no experimental}
+Se propone un dise\~no cuasi experimental con dos grupos (AymaraLang vs. lenguaje control introductorio), pretest/postest y triangulaci\'on mixta:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item \textbf{Cuantitativo}: tiempos, tasa de \'exito, n\'umero de errores, correcciones por tarea.
+  \item \textbf{Cualitativo}: protocolo think-aloud, entrevistas semiestructuradas y percepci\'on de autoeficacia.
+\end{itemize}
+
+\subsection{M\'etricas operativas}
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item \textbf{Task Completion Rate (TCR)}.
+  \item \textbf{Median Time to Complete (MTC)} por tarea.
+  \item \textbf{Diagnostic Recovery Ratio (DRR)}: porcentaje de errores corregidos tras mensaje del compilador.
+  \item \textbf{Error Density (ED)}: errores por 100 l\'ineas l\'ogicas en ejercicios controlados.
+\end{itemize}
+
+\subsection{An\'alisis estad\'istico}
+Se recomienda:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item Pruebas no param\'etricas (Mann--Whitney U / Wilcoxon) si no hay normalidad.
+  \item Tama\~no de efecto (Cliff's delta o \(r\)).
+  \item Intervalos de confianza al 95\% para diferencias de medianas/proporciones.
+\end{itemize}
+
+\section{Evidencia preliminar del repositorio (pre-publicaci\'on)}
+La versi\'on actual del proyecto cuenta con implementaci\'on compilable y artefactos de validaci\'on de ingenier\'ia:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item 26 programas de ejemplo en \texttt{samples/}.
+  \item 67 archivos fuente C/C++ en el compilador y m\'odulos relacionados.
+  \item Suite base de pruebas automatizadas en \texttt{tests/}.
+\end{itemize}
+
+Estos datos no sustituyen una evaluaci\'on educativa controlada, pero muestran madurez t\'ecnica inicial para un estudio reproducible.
+
+\section{Amenazas a la validez}
+\subsection{Validez interna}
+Efectos de instructor, motivaci\'on previa y heterogeneidad en alfabetizaci\'on digital pueden sesgar resultados.
+
+\subsection{Validez externa}
+Resultados en una regi\'on o rango etario pueden no generalizar a otras comunidades ling\"u\'isticas.
+
+\subsection{Validez de constructo}
+El "\'exito" en programaci\'on no debe reducirse a compilar sin errores; debe incluir comprensi\'on conceptual y transferencia.
+
+\subsection{Validez de conclusi\'on}
+Muestras peque\~nas o ausencia de tama\~nos de efecto pueden sobredimensionar hallazgos.
+
+\section{Reproducibilidad y ciencia abierta}
+Para aumentar probabilidad de aceptaci\'on en revistas indexadas:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item Fijar versi\'on del compilador y dependencias (commit/tag).
+  \item Publicar scripts de ejecuci\'on experimental y anonimizar datos.
+  \item Entregar instrumentos (rubricas, cuestionarios, tareas) en anexo.
+  \item Reportar resultados negativos y fallas de implementaci\'on.
+\end{itemize}
+
+\section{Mejoras necesarias para env\'io Scopus}
+\begin{longtable}{p{0.26\textwidth} p{0.68\textwidth}}
+\toprule
+\textbf{Eje} & \textbf{Acci\'on requerida antes del env\'io} \\
+\midrule
+Contribuci\'on cient\'ifica & Declarar novedad verificable: impacto de sintaxis en lengua originaria sobre m\'etricas de aprendizaje y depuraci\'on. \\
+M\'etodo & Definir protocolo preregistrado, criterios de inclusi\'on/exclusi\'on y plan de an\'alisis estad\'istico. \\
+Evidencia emp\'irica & Ejecutar estudio con n suficiente y publicar tablas completas de resultados (no solo ejemplos anecd\'oticos). \\
+Calidad bibliogr\'afica & Sustituir fuentes no acad\'emicas (blogs/wikis) por art\'iculos revisados por pares y reportes institucionales trazables. \\
+Ingenier\'ia del artefacto & Medir calidad de diagn\'osticos del compilador, estabilidad en pruebas y tiempo de compilaci\'on por benchmark. \\
+Reproducibilidad & Liberar repositorio replicable, dataset, scripts y gu\'ia de reproducci\'on en anexo o material suplementario. \\
+\bottomrule
+\end{longtable}
+
+\section{Conclusiones}
+AymaraLang constituye una base t\'ecnica viable para investigar programaci\'on en lengua originaria con rigor ingenieril. El compilador nativo y su arquitectura modular permiten una evaluaci\'on emp\'irica trazable. No obstante, para publicaci\'on indexada en Scopus se requiere cerrar la brecha metodol\'ogica entre prototipo funcional y evidencia experimental robusta: hip\'otesis medibles, muestras controladas, an\'alisis estad\'istico y reproducibilidad abierta.
+
+El siguiente hito del proyecto debe ser un estudio comparativo formal en aula intercultural biling\"ue que cuantifique impacto en comprensi\'on, desempe\~no y recuperaci\'on de errores, junto con un paquete de replicaci\'on p\'ublico.
+
+\begin{thebibliography}{99}
+
+\bibitem{aho2006}
+Aho, A. V., Lam, M. S., Sethi, R., \& Ullman, J. D.
+\newblock \emph{Compilers: Principles, Techniques, and Tools} (2nd ed.).
+\newblock Pearson, 2006.
+
+\bibitem{wing2006}
+Wing, J. M.
+\newblock Computational Thinking.
+\newblock \emph{Communications of the ACM}, 49(3):33--35, 2006.
+
+\bibitem{brennan2012}
+Brennan, K., \& Resnick, M.
+\newblock New frameworks for studying and assessing the development of computational thinking.
+\newblock In \emph{Proceedings of AERA}, 2012.
+
+\bibitem{ezhil2009}
+Annamalai, M.
+\newblock Ezhil: A Tamil Programming Language.
+\newblock arXiv:0907.4960, 2009.
+
+\bibitem{lopez2009}
+L\'opez, L. E.
+\newblock Re-imaginando la educaci\'on intercultural biling\"ue en Am\'erica Latina.
+\newblock \emph{Revista de la Integraci\'on}, 2:17--64, 2009.
+
+\bibitem{unesco2020}
+UNESCO.
+\newblock Educaci\'on Intercultural Biling\"ue en Am\'erica Latina y el Caribe.
+\newblock Informe regional, 2020.
+
+\bibitem{garcia2020}
+Garc\'ia-Pe\~nalvo, F. J.
+\newblock Nueva visi\'on de la competencia digital docente en tiempos de pandemia.
+\newblock \emph{Utop\'ia y Praxis Latinoamericana}, 27(96), 2020.
+
+\bibitem{rojas2023}
+Rojas Lopera, S., \& Aravena Domich, M.
+\newblock Pensamiento computacional en la educaci\'on: aprendizajes y desempe\~no acad\'emico.
+\newblock \emph{Revista Franz Tamayo}, 5(13), 2023.
+
+\bibitem{zajicova2017}
+Zaj\'icov\'a, L.
+\newblock Lenguas ind\'igenas en la legislaci\'on de los pa\'ises hispanoamericanos.
+\newblock \emph{\'Etudes Romanes de Brno}, 38(1):173--194, 2017.
+
+\bibitem{martinez2021}
+Mart\'inez Bravo, M. C., Sampedro Requena, B. E., \& Poveda-R\'ios, S.
+\newblock Alfabetizaci\'on digital en la educaci\'on superior.
+\newblock \emph{Revista de Educaci\'on y Desarrollo}, 58:105--116, 2021.
+
+\end{thebibliography}
+
+\end{document}

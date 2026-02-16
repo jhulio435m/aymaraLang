@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Comunidad AymaraLang" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Visión general - AymaraLang</title>
+    <title>Índice de investigación - AymaraLang</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,8 +13,8 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Visi\u00f3n general";
-        var mkdocs_page_input_path = "overview.md";
+        var mkdocs_page_name = "\u00cdndice de investigaci\u00f3n";
+        var mkdocs_page_input_path = "research\\README.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -42,26 +42,12 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Manual técnico</span></p>
-              <ul class="current">
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Visión general</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#definicion-del-proyecto">Definición del proyecto</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#componentes-principales">Componentes principales</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#flujo-de-compilacion">Flujo de compilación</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#plataformas-objetivo">Plataformas objetivo</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#estado-funcional-resumido">Estado funcional resumido</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#referencias-relacionadas">Referencias relacionadas</a>
-    </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
                   </li>
@@ -88,7 +74,7 @@
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Anexos</span></p>
-              <ul>
+              <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
     <ul>
                 <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
@@ -97,11 +83,11 @@
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Investigación y teoría</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Índice de investigación</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -138,10 +124,11 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Manual técnico</li>
-      <li class="breadcrumb-item active">Visión general</li>
+          <li class="breadcrumb-item">Anexos</li>
+          <li class="breadcrumb-item">Investigación y teoría</li>
+      <li class="breadcrumb-item active">Índice de investigación</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/overview.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/research/README.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -149,72 +136,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="vision-general">Visión general<a class="headerlink" href="#vision-general" title="Permanent link">&para;</a></h1>
-<h2 id="definicion-del-proyecto">Definición del proyecto<a class="headerlink" href="#definicion-del-proyecto" title="Permanent link">&para;</a></h2>
-<p>AymaraLang es un lenguaje compilado con sintaxis basada en aymara. El
-compilador oficial, <code>aymc</code>, está implementado en C++17 y genera ejecutables
-nativos.</p>
-<h2 id="componentes-principales">Componentes principales<a class="headerlink" href="#componentes-principales" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Componente</th>
-<th>Propósito</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>aymc</code></td>
-<td>Compila archivos <code>.aym</code> a ejecutables nativos</td>
-</tr>
-<tr>
-<td><code>aym</code></td>
-<td>Orquesta flujos de proyecto (<code>new</code>, <code>build</code>, <code>run</code>, <code>test</code>, <code>lock</code>, <code>cache</code>, <code>add</code>)</td>
-</tr>
-<tr>
-<td>Runtime (<code>dist/share/aymaraLang/runtime</code>)</td>
-<td>Soporte de funciones de ejecución</td>
-</tr>
-<tr>
-<td><code>samples/</code></td>
-<td>Programas de referencia y validación funcional</td>
-</tr>
-</tbody>
-</table>
-<h2 id="flujo-de-compilacion">Flujo de compilación<a class="headerlink" href="#flujo-de-compilacion" title="Permanent link">&para;</a></h2>
-<div class="mermaid">flowchart LR
-    A[Fuente .aym] --&gt; B[Lexer]
-    B --&gt; C[Parser]
-    C --&gt; D[AST]
-    D --&gt; E[Semántica]
-    E --&gt; F[Codegen NASM]
-    F --&gt; G[Ensamblado y enlace]
-    G --&gt; H[Ejecutable nativo]</div>
-<h2 id="plataformas-objetivo">Plataformas objetivo<a class="headerlink" href="#plataformas-objetivo" title="Permanent link">&para;</a></h2>
+                <h1 id="research-notes">Research notes<a class="headerlink" href="#research-notes" title="Permanent link">&para;</a></h1>
+<p>This folder contains supporting research material used as annexes in the public
+technical documentation.</p>
 <ul>
-<li>Windows x64</li>
-<li>Linux x64</li>
-</ul>
-<h2 id="estado-funcional-resumido">Estado funcional resumido<a class="headerlink" href="#estado-funcional-resumido" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Compilación nativa operativa.</li>
-<li>Asociación de archivos <code>.aym</code> en instaladores.</li>
-<li>Gestión de proyectos con manifest (<code>aym.toml</code>) y lockfile (<code>aym.lock</code>).</li>
-<li>Pruebas automatizadas para build, smoke y empaquetado.</li>
-</ul>
-<h2 id="referencias-relacionadas">Referencias relacionadas<a class="headerlink" href="#referencias-relacionadas" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../install/">Instalación</a></li>
-<li><a href="../build/">Compilación desde fuente</a></li>
-<li><a href="../compiler/">CLI del compilador</a></li>
-<li><a href="../arquitectura/">Arquitectura</a></li>
+<li><code>investigacion.md</code>: mathematical and compiler-theory foundations.</li>
+<li><code>articulo.tex</code>: source for article-style writeup.</li>
+<li><code>articulo.txt</code>: plain text export.</li>
 </ul>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../manual_usuario/" class="btn btn-neutral float-left" title="Manual de usuario"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../install/" class="btn btn-neutral float-right" title="Instalación por sistema operativo">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../benchmarks/pipeline_2026_02_16/" class="btn btn-neutral float-left" title="Pipeline (2026-02-16)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="investigacion/" class="btn btn-neutral float-right" title="Fundamentos">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -241,10 +176,10 @@ nativos.</p>
         </span>
     
     
-      <span><a href="../manual_usuario/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../benchmarks/pipeline_2026_02_16/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../install/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="investigacion/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -41,39 +41,67 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Panorama del proyecto</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">CLI del compilador</a>
     <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
-                </li>
+    <li class="toctree-l2"><a class="reference internal" href="#uso">Uso</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#opciones">Opciones</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#artefactos-de-salida">Artefactos de salida</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#manifest-y-lockfile">Manifest y lockfile</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#resolucion-de-modulos">Resolución de módulos</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ejemplos">Ejemplos</a>
+    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../language/">Primeros pasos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,8 +138,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
-          <li class="breadcrumb-item">Panorama del proyecto</li>
+          <li class="breadcrumb-item">Manual técnico</li>
       <li class="breadcrumb-item active">CLI del compilador</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/compiler.md" class="icon icon-github"> Edit on GitHub</a>
@@ -122,51 +149,84 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="cli-del-compilador">CLI del compilador<a class="headerlink" href="#cli-del-compilador" title="Permanent link">&para;</a></h1>
-<p><code>aymc</code> compila archivos <code>.aym</code> a ejecutables nativos. Por defecto genera el
-binario junto al archivo de entrada.</p>
-<h2 id="uso-basico">Uso básico<a class="headerlink" href="#uso-basico" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>archivo.aym
+                <h1 id="cli-del-compilador-aymc">CLI del compilador (<code>aymc</code>)<a class="headerlink" href="#cli-del-compilador-aymc" title="Permanent link">&para;</a></h1>
+<h2 id="uso">Uso<a class="headerlink" href="#uso" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span><span class="o">[</span>opciones<span class="o">]</span><span class="w"> </span>archivo.aym<span class="w"> </span>...
 </code></pre></div>
-<p>Si se entregan varios archivos, se concatenan en una sola unidad de compilación.</p>
-<div class="mermaid">sequenceDiagram
-    participant U as Usuario
-    participant C as aymc
-    participant FS as Sistema de archivos
-    U-&gt;&gt;C: aymc archivo.aym
-    C-&gt;&gt;FS: leer fuente
-    C-&gt;&gt;C: lexer/parser/semántica
-    C-&gt;&gt;FS: escribir asm/obj/binario
-    C--&gt;&gt;U: ejecutable listo</div>
-<h2 id="opciones-principales">Opciones principales<a class="headerlink" href="#opciones-principales" title="Permanent link">&para;</a></h2>
+<p>Si se entregan varios archivos, se compilan como una unidad.</p>
+<h2 id="opciones">Opciones<a class="headerlink" href="#opciones" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>-o &lt;ruta&gt;</code>: nombre/salida del ejecutable.</li>
-<li><code>--debug</code>: imprime tokens en consola.</li>
-<li><code>--dump-ast</code>: imprime el total de nodos del AST.</li>
-<li><code>--windows</code> / <code>--linux</code>: fuerza plataforma de salida.</li>
-<li><code>--seed &lt;valor&gt;</code>: fija la semilla del generador pseudoaleatorio.</li>
-<li><code>--llvm</code>: genera <code>output.ll</code> (requiere compilar con soporte LLVM).</li>
+<li><code>-h</code>, <code>--help</code>: muestra ayuda.</li>
+<li><code>-o &lt;ruta&gt;</code>: define salida del ejecutable.</li>
+<li><code>--backend &lt;nombre&gt;</code>: selecciona backend (<code>native</code> o <code>ir</code>).</li>
+<li><code>--debug</code>: imprime tokens.</li>
+<li><code>--dump-ast</code>: imprime resumen de nodos AST.</li>
+<li><code>--check</code>: valida sintaxis/semántica sin generar binario.</li>
+<li><code>--emit-asm</code>: conserva ASM intermedio.</li>
+<li><code>--compile-only</code>: genera ASM/objeto sin enlazar.</li>
+<li><code>--link-only</code>: enlaza objeto existente (requiere <code>-o</code>).</li>
+<li><code>--time-pipeline</code>: imprime tiempos por etapa.</li>
+<li><code>--time-pipeline-json[=ruta]</code>: exporta métricas de pipeline a JSON.</li>
+<li><code>--tool-timeout-ms &lt;ms&gt;</code>: timeout para comandos externos (<code>0</code> sin límite).</li>
+<li><code>--emit-ast-json[=ruta]</code>: exporta AST en JSON.</li>
+<li><code>--diagnostics-json[=ruta]</code>: exporta diagnósticos en JSON.</li>
+<li><code>--check-manifest[=ruta]</code>: valida <code>aym.toml</code>.</li>
+<li><code>--manifest &lt;ruta&gt;</code>: ruta explícita de manifest.</li>
+<li><code>--emit-lock[=ruta]</code>: genera <code>aym.lock</code>.</li>
+<li><code>--check-lock[=ruta]</code>: valida <code>aym.lock</code>.</li>
+<li><code>--lock &lt;ruta&gt;</code>: ruta explícita de lockfile.</li>
+<li><code>--windows</code>: fuerza objetivo Windows.</li>
+<li><code>--linux</code>: fuerza objetivo Linux.</li>
+<li><code>--seed &lt;valor&gt;</code>: fija semilla de PRNG.</li>
 </ul>
-<h2 id="archivos-generados">Archivos generados<a class="headerlink" href="#archivos-generados" title="Permanent link">&para;</a></h2>
+<h2 id="artefactos-de-salida">Artefactos de salida<a class="headerlink" href="#artefactos-de-salida" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>output.asm</code>: código NASM (temporal, según plataforma).</li>
-<li><code>output.o</code> / <code>output.obj</code>: objeto intermedio.</li>
-<li><code>output</code> / <code>output.exe</code>: ejecutable final.</li>
+<li>Ejecutable final: <code>output</code> o <code>output.exe</code>.</li>
+<li>ASM: <code>output.asm</code> (si se conserva).</li>
+<li>Objeto: <code>output.o</code> o <code>output.obj</code>.</li>
+<li>IR: <code>output.ir</code> (backend <code>ir</code>).</li>
+<li>Diagnósticos JSON: <code>output.diagnostics.json</code>.</li>
+<li>AST JSON: <code>output.ast.json</code>.</li>
+<li>Pipeline JSON: <code>output.pipeline.json</code>.</li>
 </ul>
+<h2 id="manifest-y-lockfile">Manifest y lockfile<a class="headerlink" href="#manifest-y-lockfile" title="Permanent link">&para;</a></h2>
+<p>Formato mínimo de <code>aym.toml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[package]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;mi_proyecto&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">edition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;2026&quot;</span>
+
+<span class="k">[dependencies]</span>
+<span class="n">math</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;^1.2.3&quot;</span>
+</code></pre></div>
+<p>Validaciones típicas:</p>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>--check-manifest<span class="w"> </span>--emit-lock
+aymc<span class="w"> </span>--check-manifest<span class="w"> </span>--check-lock
+</code></pre></div>
 <h2 id="resolucion-de-modulos">Resolución de módulos<a class="headerlink" href="#resolucion-de-modulos" title="Permanent link">&para;</a></h2>
-<p>La sentencia <code>apnaq("ruta")</code> busca módulos en:</p>
+<p><code>apnaq("ruta")</code> resuelve por:</p>
 <ol>
-<li>El directorio del archivo principal.</li>
-<li>Una carpeta <code>modules/</code> dentro de ese directorio.</li>
-<li>Rutas adicionales definidas en la variable de entorno <code>AYM_PATH</code>.</li>
+<li>Directorio del archivo fuente.</li>
+<li><code>modules/</code> bajo el directorio fuente.</li>
+<li><code>AYM_PATH</code>.</li>
 </ol>
-<hr />
-<p><strong>Siguiente:</strong> <a href="../arquitectura/">Arquitectura del compilador</a></p>
+<p>Para imports por paquete (<code>apnaq("dep/mod")</code>) y <code>aym.lock</code> presente, usa:</p>
+<ol>
+<li><code>.aym/cache/&lt;dep&gt;/&lt;resolved&gt;/modules/</code></li>
+<li><code>.aym/repo/&lt;dep&gt;/&lt;resolved&gt;/modules/</code></li>
+</ol>
+<h2 id="ejemplos">Ejemplos<a class="headerlink" href="#ejemplos" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>aymc<span class="w"> </span>programa.aym
+aymc<span class="w"> </span>--check<span class="w"> </span>--diagnostics-json<span class="w"> </span>programa.aym
+aymc<span class="w"> </span>--emit-asm<span class="w"> </span>-o<span class="w"> </span>build/app<span class="w"> </span>programa.aym
+aymc<span class="w"> </span>--compile-only<span class="w"> </span>-o<span class="w"> </span>build/app<span class="w"> </span>programa.aym
+aymc<span class="w"> </span>--time-pipeline-json<span class="w"> </span>-o<span class="w"> </span>build/app<span class="w"> </span>programa.aym
+</code></pre></div>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../build/" class="btn btn-neutral float-left" title="Compilación e instalación"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../build/" class="btn btn-neutral float-left" title="Compilación e instalación desde fuente"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../arquitectura/" class="btn btn-neutral float-right" title="Arquitectura del compilador">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 

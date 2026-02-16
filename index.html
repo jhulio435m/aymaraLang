@@ -41,47 +41,63 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Inicio</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#rutas-principales">Rutas principales</a>
+    <li class="toctree-l2"><a class="reference internal" href="#alcance">Alcance</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#lectura-recomendada">Lectura recomendada</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#estado-documental">Estado documental</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#sitio-mkdocs">Sitio MkDocs</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#recursos-visuales-y-formulas">Recursos visuales y fórmulas</a>
-    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="project/">Guía del proyecto</a>
-                </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="manual_usuario/">Manual de usuario</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Lenguaje</a>
+                  <li class="toctree-l1"><a class="reference internal" href="overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="language/">Primeros pasos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="language/">Primeros pasos</a>
+                <li class="toctree-l2"><a class="reference internal" href="benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -118,7 +134,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
+          <li class="breadcrumb-item">Manual técnico</li>
       <li class="breadcrumb-item active">Inicio</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/jhulio435m/aymaraLang/edit/main/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
@@ -129,39 +145,42 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="aymaralang-documentacion">AymaraLang — documentación<a class="headerlink" href="#aymaralang-documentacion" title="Permanent link">&para;</a></h1>
-<p>Bienvenido/a. Esta documentación resume el lenguaje, el compilador y los
-materiales de investigación del proyecto de forma concisa.</p>
-<h2 id="rutas-principales">Rutas principales<a class="headerlink" href="#rutas-principales" title="Permanent link">&para;</a></h2>
+                <h1 id="aymaralang-manual-tecnico">AymaraLang - Manual técnico<a class="headerlink" href="#aymaralang-manual-tecnico" title="Permanent link">&para;</a></h1>
+<p>Este sitio concentra la documentación operativa y técnica de AymaraLang con
+criterio de uso real: instalación, compilación, operación del compilador,
+arquitectura y estado de modernización.</p>
+<h2 id="alcance">Alcance<a class="headerlink" href="#alcance" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Panorama del proyecto:</strong> <a href="overview/">Visión general</a>,
-  <a href="build/">Compilación e instalación</a>, <a href="compiler/">CLI del compilador</a> y
-  <a href="arquitectura/">Arquitectura</a>.</li>
-<li><strong>Lenguaje:</strong> <a href="language/">Primeros pasos</a>,
-  <a href="aymaraLang/">Referencia rápida</a>, <a href="exceptions/">Manejo de errores</a> y
-  <a href="grammar/">Gramática formal</a>.</li>
-<li><strong>Investigación y teoría:</strong> <a href="investigacion/">Fundamentos matemáticos y de compiladores</a>.</li>
-<li><strong>Ingeniería de sistemas (investigación):</strong> documentos en
-  <a href="systems_engineering/"><code>docs/systems_engineering/</code></a>.
-  Incluyen plan de gestión, requisitos, arquitectura y validación.</li>
-<li><strong>LaTeX/Overleaf:</strong> los insumos en
-  <a href="systems_engineering/overleaf/"><code>docs/systems_engineering/overleaf/</code></a> son
-  parte del material de investigación y se mantienen vigentes.</li>
+<li>Uso del compilador <code>aymc</code> y del gestor de proyectos <code>aym</code>.</li>
+<li>Instalación en Windows y Linux.</li>
+<li>Compilación desde código fuente.</li>
+<li>Referencia del lenguaje y su gramática formal.</li>
+<li>Arquitectura actual del compilador.</li>
+</ul>
+<h2 id="lectura-recomendada">Lectura recomendada<a class="headerlink" href="#lectura-recomendada" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="manual_usuario/">Manual de usuario</a></li>
+<li><a href="install/">Instalación por sistema operativo</a></li>
+<li><a href="build/">Compilación e instalación desde fuente</a></li>
+<li><a href="compiler/">CLI del compilador</a></li>
+<li><a href="language/">Primeros pasos</a></li>
+</ol>
+<h2 id="estado-documental">Estado documental<a class="headerlink" href="#estado-documental" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Esta documentación prioriza material vigente de operación.</li>
+<li>El contenido de investigación y anexos se mantiene separado para no mezclar
+  instrucciones de uso con material histórico.</li>
 </ul>
 <h2 id="sitio-mkdocs">Sitio MkDocs<a class="headerlink" href="#sitio-mkdocs" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>mkdocs
 mkdocs<span class="w"> </span>serve
 </code></pre></div>
 <p>Luego abre <code>http://127.0.0.1:8000</code>.</p>
-<h2 id="recursos-visuales-y-formulas">Recursos visuales y fórmulas<a class="headerlink" href="#recursos-visuales-y-formulas" title="Permanent link">&para;</a></h2>
-<p>La documentación usa diagramas Mermaid y fórmulas matemáticas para reforzar la
-investigación. Por ejemplo, el tiempo de análisis léxico puede modelarse como
-<span class="arithmatex">\(O(n)\)</span> respecto al tamaño de la entrada.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="overview/" class="btn btn-neutral float-right" title="Visión general">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="manual_usuario/" class="btn btn-neutral float-right" title="Manual de usuario">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -189,7 +208,7 @@ investigación. Por ejemplo, el tiempo de análisis léxico puede modelarse como
     
     
     
-      <span><a href="overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="manual_usuario/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

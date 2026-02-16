@@ -29,7 +29,7 @@ Identify, assess, and mitigate technical and project risks associated with devel
 \toprule
 \textbf{ID} & \textbf{Risk} & \textbf{Prob.} & \textbf{Impact} & \textbf{Mitigation} \\ \midrule
 R-01 & Dependency on external toolchain & Medium & High & Document dependencies and validate in CI \\
-R-02 & Incomplete LLVM backend & Medium & Medium & Keep NASM backend as primary \\
+R-02 & NASM or GCC missing from PATH & Medium & Medium & Use installer scripts and pre-build validations \\
 R-03 & Compatibility limited to x86\_64 & High & Medium & Define multi-architecture roadmap \\
 R-04 & Learning curve for Aymara syntax & Medium & Medium & Create accessible guides and examples \\
 R-05 & Lack of resources for Windows testing & Medium & Medium & Automate tests and use multi-OS runners \\ \bottomrule

@@ -41,39 +41,71 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Documentación</span></p>
-              <ul class="current">
+              <p class="caption"><span class="caption-text">Manual técnico</span></p>
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="..">Inicio</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >Panorama del proyecto</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../overview/">Visión general</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../build/">Compilación e instalación</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../compiler/">CLI del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../project/">Guía del proyecto</a>
-                </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manual_usuario/">Manual de usuario</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Visión general</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install/">Instalación por sistema operativo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build/">Compilación e instalación desde fuente</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../compiler/">CLI del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../arquitectura/">Arquitectura del compilador</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../project/">Estructura del proyecto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modernizacion/">Estado de modernización</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Lenguaje</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Primeros pasos</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#hola-mundo">Hola mundo</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tipos-y-variables">Tipos y variables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#control-de-flujo">Control de flujo</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#funciones">Funciones</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#notas-matematicas-rapidas">Notas matemáticas rápidas</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#modulos">Módulos</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#comentarios">Comentarios</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#compatibilidad-de-palabras-clave">Compatibilidad de palabras clave</a>
+    </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >Lenguaje</a>
-    <ul class="current">
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">Primeros pasos</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Anexos</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Benchmarks</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/baseline_2026_02_15/">Baseline (2026-02-15)</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../aymaraLang/">Referencia rápida</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../exceptions/">Manejo de errores</a>
-                </li>
-                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Gramática formal</a>
+                <li class="toctree-l2"><a class="reference internal" href="../benchmarks/pipeline_2026_02_16/">Pipeline (2026-02-16)</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >Investigación y teoría</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../investigacion/">Fundamentos</a>
+                <li class="toctree-l2"><a class="reference internal" href="../research/">Índice de investigación</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../research/investigacion/">Fundamentos</a>
                 </li>
     </ul>
                   </li>
@@ -110,7 +142,6 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Documentación</li>
           <li class="breadcrumb-item">Lenguaje</li>
       <li class="breadcrumb-item active">Primeros pasos</li>
     <li class="wy-breadcrumbs-aside">
@@ -181,7 +212,7 @@ qillqa(&quot;suma: &quot; + suma(3, 4));
 <div class="highlight"><pre><span></span><code>// comentario de línea
 /* comentario de bloque */
 </code></pre></div>
-<h2 id="palabras-clave-legacy">Palabras clave legacy<a class="headerlink" href="#palabras-clave-legacy" title="Permanent link">&para;</a></h2>
+<h2 id="compatibilidad-de-palabras-clave">Compatibilidad de palabras clave<a class="headerlink" href="#compatibilidad-de-palabras-clave" title="Permanent link">&para;</a></h2>
 <p>Se mantiene compatibilidad con las formas <code>suti</code>/<code>jani</code>, <code>kunawsati</code>, <code>sapüru</code>
 y <code>utji</code>/<code>janiutji</code>.</p>
 <hr />
@@ -190,7 +221,7 @@ y <code>utji</code>/<code>janiutji</code>.</p>
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../project/" class="btn btn-neutral float-left" title="Guía del proyecto"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../modernizacion/" class="btn btn-neutral float-left" title="Estado de modernización"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../aymaraLang/" class="btn btn-neutral float-right" title="Referencia rápida">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -218,7 +249,7 @@ y <code>utji</code>/<code>janiutji</code>.</p>
         </span>
     
     
-      <span><a href="../project/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../modernizacion/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../aymaraLang/" style="color: #fcfcfc">Next &raquo;</a></span>
