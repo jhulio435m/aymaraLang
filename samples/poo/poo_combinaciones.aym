@@ -1,0 +1,106 @@
+kasta CajaSegura {
+  sapa yatiya aru codigo = "A1";
+
+  sapa lurawi codigo_interno(): aru {
+    kuttaya aka.codigo;
+  }
+
+  lurawi ver_codigo(): aru {
+    kuttaya aka.codigo_interno();
+  }
+}
+
+kasta ContadorGlobal {
+  sapakasta yatiya jakhüwi total = 0;
+
+  sapakasta lurawi suma(jakhüwi x): jakhüwi {
+    ContadorGlobal.total = ContadorGlobal.total + x;
+    kuttaya ContadorGlobal.total;
+  }
+}
+
+kasta BaseMensaje {
+  lurawi msj(): aru {
+    kuttaya "base";
+  }
+}
+
+kasta SubMensaje jila BaseMensaje {
+  jikxata lurawi msj(): aru {
+    kuttaya jilaaka.msj() + "+sub";
+  }
+}
+
+kasta Punto {
+  yatiya jakhüwi x = 0;
+  yatiya jakhüwi y = 0;
+
+  qallta() {
+    kuttaya;
+  }
+
+  qallta(jakhüwi xx, jakhüwi yy) {
+    aka.x = xx;
+    aka.y = yy;
+  }
+
+  lurawi texto(): aru {
+    kuttaya aru(aka.x) + "," + aru(aka.y);
+  }
+}
+
+kasta Motor {
+  yatiya jakhüwi hp = 0;
+
+  qallta(jakhüwi h) {
+    aka.hp = h;
+  }
+}
+
+kasta Auto {
+  yatiya Motor m;
+
+  qallta(Motor mm) {
+    aka.m = mm;
+  }
+
+  lurawi info(): aru {
+    kuttaya "hp=" + aru(aka.m.hp);
+  }
+}
+
+kasta Animal {
+  lurawi tipo(): aru {
+    kuttaya "animal";
+  }
+}
+
+kasta Perro jila Animal {
+  jikxata lurawi tipo(): aru {
+    kuttaya "perro";
+  }
+}
+
+yatiya CajaSegura c = machaqa CajaSegura();
+qillqa("private interno =", c.ver_codigo());
+
+qillqa("static s1 =", ContadorGlobal.suma(2));
+qillqa("static s2 =", ContadorGlobal.suma(3));
+qillqa("static total =", ContadorGlobal.total);
+
+yatiya BaseMensaje bm = machaqa SubMensaje();
+qillqa("override =", bm.msj());
+
+yatiya Punto p0 = machaqa Punto();
+yatiya Punto p1 = machaqa Punto(3, 4);
+qillqa("ctor0 =", p0.texto());
+qillqa("ctor2 =", p1.texto());
+
+yatiya Motor m = machaqa Motor(150);
+yatiya Auto au = machaqa Auto(m);
+qillqa("composicion =", au.info());
+
+yatiya Animal a = machaqa Perro();
+qillqa("polimorfismo =", a.tipo());
+
+qillqa("poo_combinaciones OK");

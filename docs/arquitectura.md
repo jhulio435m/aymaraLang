@@ -1,56 +1,46 @@
-# Arquitectura del compilador `aymc`
+# Arquitectura del compilador
 
-Este documento resume los módulos principales y su flujo de compilación.
-
-## Vista general
+## Pipeline
 
 ```mermaid
 flowchart LR
-classDef front fill:#dbeafe,stroke:#1e40af,color:#000;
-classDef middle fill:#dcfce7,stroke:#166534,color:#000;
-classDef back fill:#fee2e2,stroke:#7f1d1d,color:#000;
-
-A[Fuente .aym] --> B[Lexer]
-B --> C[Parser]
-C --> D[AST]
-D --> E[Analisis semantico]
-E --> F[Codegen NASM]
-F --> G[Ensamblador + Linker]
-G --> H[Ejecutable nativo]
-E --> I[Codegen LLVM opcional]
-I --> J[IR LLVM .ll]
-
-class A,B,C,D front
-class E middle
-class F,G,H,I,J back
+    A[Fuente .aym] --> B[Lexer]
+    B --> C[Parser]
+    C --> D[AST]
+    D --> E[Semántica]
+    E --> F[Codegen]
+    F --> G[NASM + GCC/LD]
+    G --> H[Binario nativo]
 ```
 
-## Módulos principales
+## Componentes
 
-- **Lexer (`compiler/lexer`)**: tokeniza el código fuente.
-- **Parser (`compiler/parser`)**: construye el AST y valida la sintaxis.
-- **AST (`compiler/ast`)**: nodos de expresiones y sentencias.
-- **Semántica (`compiler/semantic`)**: tipos, símbolos, clases y excepciones.
-- **Codegen (`compiler/codegen`)**: genera NASM o LLVM IR.
-- **Runtime (`runtime/`)**: funciones base usadas por los binarios.
-- **Module resolver (`utils/module_resolver`)**: carga `apnaq` y gestiona rutas.
+| Módulo | Ruta | Responsabilidad |
+| --- | --- | --- |
+| Lexer | `compiler/lexer/` | Tokenización |
+| Parser | `compiler/parser/` | Análisis sintáctico y construcción AST |
+| AST | `compiler/ast/` | Estructuras intermedias del programa |
+| Semántica | `compiler/semantic/` | Validación de tipos, símbolos y reglas |
+| Codegen | `compiler/codegen/` | Emisión de ASM/objeto/binario |
+| Backend | `compiler/backend/` | Coordinación de modos de salida y pipeline |
+| Utilidades | `compiler/utils/` | Diagnósticos, procesos, resolver de módulos |
+| Runtime | `runtime/` | Soporte de ejecución para built-ins |
 
-```mermaid
-flowchart TB
-    Lexer --> Parser
-    Parser --> AST
-    AST --> Semantica[Semántica]
-    Semantica --> Codegen
-    Codegen --> Runtime
-    Semantica --> Resolver[Module Resolver]
-```
+## Artefactos intermedios
 
-## Artefactos clave
+- `*.asm`
+- `*.o` / `*.obj`
+- binario final
 
-- `*.asm` y `*.o`/`*.obj` para el backend NASM.
-- `*.ll` para el backend LLVM (si está habilitado).
-- Binario final nativo.
+## Decisiones de diseño vigentes
 
----
+- Backend principal nativo basado en NASM.
+- Integración de diagnósticos estructurados en frontend.
+- Pipeline por etapas con métricas y timeout configurable.
+- Resolución de dependencias vinculada a `aym.toml` y `aym.lock`.
 
-**Siguiente:** [Guía del proyecto](project.md)
+## Observabilidad
+
+- `--time-pipeline` para tiempos por etapa.
+- `--time-pipeline-json` para exporte estructurado.
+- `--diagnostics-json` para integración con tooling externo.

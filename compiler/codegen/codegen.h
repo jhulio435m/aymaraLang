@@ -11,9 +11,15 @@ namespace aym {
 
 class Node;
 
+enum class CodegenPipelineMode {
+    Full,
+    CompileOnly,
+    LinkOnly
+};
+
 class CodeGenerator {
 public:
-    void generate(const std::vector<std::unique_ptr<Node>> &nodes,
+    bool generate(const std::vector<std::unique_ptr<Node>> &nodes,
                   const std::string &outputPath,
                   const std::unordered_set<std::string> &globals,
                   const std::unordered_map<std::string, std::vector<std::string>> &paramTypes,
@@ -21,7 +27,13 @@ public:
                   const std::unordered_map<std::string, std::string> &globalTypes,
                   bool windows,
                   long seed,
-                  const std::string &runtimeDir);
+                  const std::string &runtimeDir,
+                  bool keepAsm = false,
+                  CodegenPipelineMode mode = CodegenPipelineMode::Full,
+                  bool timePipeline = false,
+                  const std::string &timePipelineJsonPath = "",
+                  long long toolTimeoutMs = 0,
+                  std::string *errorMessage = nullptr);
 };
 
 } // namespace aym

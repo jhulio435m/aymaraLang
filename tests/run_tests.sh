@@ -45,15 +45,15 @@ EOF
 run_exact aymara_flow tmp.expected
 rm tmp.expected
 
-./bin/aymc samples/ejemplos/basicos.aym >/dev/null
-./samples/ejemplos/basicos > tmp.out
+./bin/aymc samples/fundamentos/basicos.aym >/dev/null
+./samples/fundamentos/basicos > tmp.out
 grep -q -- "kamisaraki" tmp.out
 grep -q -- "xdxdd" tmp.out
 grep -q -- "n = 5" tmp.out
 rm tmp.out
 
-./bin/aymc samples/ejemplos/funciones_listas.aym >/dev/null
-printf "Ana\n2\n3\nLuis\n" | ./samples/ejemplos/funciones_listas > tmp.out
+./bin/aymc samples/fundamentos/funciones_listas.aym >/dev/null
+printf "Ana\n2\n3\nLuis\n" | ./samples/fundamentos/funciones_listas > tmp.out
 grep -q -- "Suti = Ana" tmp.out
 grep -q -- "Suti = Luis" tmp.out
 grep -q -- "120" tmp.out
@@ -83,8 +83,8 @@ VACIO
 INDICE
 CONVERSION
 EOF
-./bin/aymc samples/ejemplos/stdlib_texto_listas.aym >/dev/null
-./samples/ejemplos/stdlib_texto_listas > tmp.out
+./bin/aymc samples/colecciones/stdlib_texto_listas.aym >/dev/null
+./samples/colecciones/stdlib_texto_listas > tmp.out
 diff -u tmp.expected tmp.out
 rm tmp.expected tmp.out
 
@@ -106,11 +106,12 @@ y=20
 clave no existe
 fin
 EOF
-./bin/aymc samples/ejemplos/mapas.aym >/dev/null
-./samples/ejemplos/mapas > tmp.out
+./bin/aymc samples/colecciones/mapas.aym >/dev/null
+./samples/colecciones/mapas > tmp.out
 diff -u tmp.expected tmp.out
 rm tmp.expected tmp.out
 
 echo "[test] all samples compiled and ran successfully"
 
 ./tests/packaging_smoke.sh
+

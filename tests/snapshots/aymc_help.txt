@@ -1,0 +1,38 @@
+Uso: aymc [opciones] archivo.aym ...
+
+Opciones:
+  -h, --help                   Muestra esta ayuda
+  -o <ruta>                    Define nombre/ruta del ejecutable
+  --backend <nombre>           Selecciona backend (native|ir)
+  --debug                      Imprime tokens en consola
+  --dump-ast                   Imprime total de nodos AST
+  --check                      Solo valida sintaxis/semantica (sin generar binario)
+  --emit-asm                   Conserva el archivo ASM intermedio
+  --compile-only               Genera ASM/objeto y omite el enlace final
+  --link-only                  Enlaza un objeto existente (requiere -o)
+  --time-pipeline              Reporta tiempos por etapa del backend
+  --time-pipeline-json[=ruta]  Exporta metricas de pipeline a JSON
+  --tool-timeout-ms <ms>       Timeout maximo por comando externo (0 = sin limite)
+  --emit-ast-json[=ruta]       Exporta AST en formato JSON
+  --diagnostics-json[=ruta]    Exporta diagnosticos en JSON
+  --check-manifest[=ruta]      Valida aym.toml (por defecto ./aym.toml)
+  --manifest <ruta>            Define ruta de manifest para check/lock
+  --emit-lock[=ruta]           Genera aym.lock desde el manifest
+  --check-lock[=ruta]          Valida aym.lock (por defecto ./aym.lock)
+  --lock <ruta>                Define ruta de lockfile para check-lock
+  --windows                    Fuerza objetivo Windows
+  --linux                      Fuerza objetivo Linux
+  --seed <valor>               Fija semilla del PRNG
+
+Ejemplos:
+  aymc programa.aym
+  aymc --backend native programa.aym
+  aymc --check --diagnostics-json programa.aym
+  aymc --emit-asm -o build/app programa.aym
+  aymc --compile-only -o build/app programa.aym
+  aymc --link-only -o build/app
+  aymc --time-pipeline -o build/app programa.aym
+  aymc --time-pipeline-json -o build/app programa.aym
+  aymc --tool-timeout-ms 30000 -o build/app programa.aym
+  aymc --check-manifest --emit-lock
+  aymc --check-manifest --check-lock

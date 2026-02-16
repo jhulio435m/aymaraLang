@@ -448,6 +448,7 @@ public:
         : type(std::move(t)), name(std::move(n)), init(std::move(i)) {}
     const std::string &getType() const { return type; }
     const std::string &getName() const { return name; }
+    void setName(std::string n) { name = std::move(n); }
     Expr *getInit() const { return init.get(); }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
@@ -464,6 +465,7 @@ public:
                  std::unique_ptr<BlockStmt> b)
         : name(std::move(n)), params(std::move(p)), returnType(std::move(r)), body(std::move(b)) {}
     const std::string &getName() const { return name; }
+    void setName(std::string n) { name = std::move(n); }
     const std::vector<Param> &getParams() const { return params; }
     const std::string &getReturnType() const { return returnType; }
     BlockStmt *getBody() const { return body.get(); }
@@ -511,6 +513,7 @@ public:
           methods(std::move(methods)),
           ctors(std::move(ctors)) {}
     const std::string &getName() const { return name; }
+    void setName(std::string n) { name = std::move(n); }
     const std::string &getBase() const { return base; }
     const std::vector<FieldDecl> &getFields() const { return fields; }
     const std::vector<MethodDecl> &getMethods() const { return methods; }
@@ -568,12 +571,22 @@ private:
 
 class ImportStmt : public Stmt {
 public:
-    explicit ImportStmt(std::string module)
-        : moduleName(std::move(module)) {}
+    explicit ImportStmt(std::string module,
+                        std::vector<std::string> symbols = {},
+                        std::vector<std::pair<std::string,std::string>> aliases = {})
+        : moduleName(std::move(module)),
+          importSymbols(std::move(symbols)),
+          importAliases(std::move(aliases)) {}
     const std::string &getModule() const { return moduleName; }
+    const std::vector<std::string> &getSymbols() const { return importSymbols; }
+    const std::vector<std::pair<std::string,std::string>> &getAliases() const { return importAliases; }
+    bool hasSelectiveImport() const { return !importSymbols.empty(); }
+    bool hasAliasImport() const { return !importAliases.empty(); }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::string moduleName;
+    std::vector<std::string> importSymbols;
+    std::vector<std::pair<std::string,std::string>> importAliases;
 };
 
 class ThrowStmt : public Stmt {

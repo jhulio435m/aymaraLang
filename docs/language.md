@@ -82,7 +82,7 @@ qillqa("suma: " + suma(3, 4));
 /* comentario de bloque */
 ```
 
-## Palabras clave legacy
+## Compatibilidad de palabras clave
 
 Se mantiene compatibilidad con las formas `suti`/`jani`, `kunawsati`, `sapüru`
 y `utji`/`janiutji`.

@@ -1,0 +1,48 @@
+// Benchmark de compilacion para medir etapas del pipeline nativo.
+
+lurawi suma1(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b; }
+lurawi suma2(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 2; }
+lurawi suma3(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 3; }
+lurawi suma4(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 4; }
+lurawi suma5(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 5; }
+lurawi suma6(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 6; }
+lurawi suma7(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 7; }
+lurawi suma8(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 8; }
+lurawi suma9(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 9; }
+lurawi suma10(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 10; }
+lurawi suma11(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 11; }
+lurawi suma12(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 12; }
+lurawi suma13(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 13; }
+lurawi suma14(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 14; }
+lurawi suma15(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 15; }
+lurawi suma16(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 16; }
+lurawi suma17(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 17; }
+lurawi suma18(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 18; }
+lurawi suma19(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 19; }
+lurawi suma20(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 20; }
+
+yatiya jakhuwi res1 = suma1(1, 2);
+yatiya jakhuwi res2 = suma2(2, 3);
+yatiya jakhuwi res3 = suma3(3, 4);
+yatiya jakhuwi res4 = suma4(4, 5);
+yatiya jakhuwi res5 = suma5(5, 6);
+yatiya jakhuwi res6 = suma6(6, 7);
+yatiya jakhuwi res7 = suma7(7, 8);
+yatiya jakhuwi res8 = suma8(8, 9);
+yatiya jakhuwi res9 = suma9(9, 10);
+yatiya jakhuwi res10 = suma10(10, 11);
+yatiya jakhuwi res11 = suma11(11, 12);
+yatiya jakhuwi res12 = suma12(12, 13);
+yatiya jakhuwi res13 = suma13(13, 14);
+yatiya jakhuwi res14 = suma14(14, 15);
+yatiya jakhuwi res15 = suma15(15, 16);
+yatiya jakhuwi res16 = suma16(16, 17);
+yatiya jakhuwi res17 = suma17(17, 18);
+yatiya jakhuwi res18 = suma18(18, 19);
+yatiya jakhuwi res19 = suma19(19, 20);
+yatiya jakhuwi res20 = suma20(20, 21);
+
+qillqa(
+  res1 + res2 + res3 + res4 + res5 + res6 + res7 + res8 + res9 + res10 +
+  res11 + res12 + res13 + res14 + res15 + res16 + res17 + res18 + res19 + res20
+);

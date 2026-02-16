@@ -1,0 +1,25 @@
+yatiya t'aqa xs = [5, 1, 3, 1, 2, 5];
+yatiya t'aqa xs_ordenado = wakicha(xs);
+yatiya t'aqa xs_sapaki = sapaki(xs);
+
+qillqa("xs =", xs);
+qillqa("wakicha(xs) =", xs_ordenado);
+qillqa("sapaki(xs) =", xs_sapaki);
+qillqa("thaqha(xs_ordenado, 3) =", thaqha(xs_ordenado, 3));
+
+afirma(thaqha(xs_ordenado, 3) == 3, "thaqha numero falla");
+afirma(suyut(xs_sapaki) == 4, "sapaki numero falla");
+
+yatiya t'aqa ars = ["z", "a", "z", "b"];
+yatiya t'aqa ars_ordenado = wakicha(ars);
+yatiya t'aqa ars_sapaki = sapaki(ars);
+
+qillqa("ars =", ars);
+qillqa("wakicha(ars) =", ars_ordenado);
+qillqa("sapaki(ars) =", ars_sapaki);
+qillqa("thaqha(ars_ordenado, \"b\") =", thaqha(ars_ordenado, "b"));
+
+afirma(thaqha(ars_ordenado, "b") == 1, "thaqha aru falla");
+afirma(suyut(ars_sapaki) == 3, "sapaki aru falla");
+
+qillqa("colecciones avanzadas OK");

@@ -3,8 +3,11 @@ project(aymaraLang CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+include(CTest)
 
-option(AYM_ENABLE_LLVM "Enable LLVM backend" OFF)
+option(AYM_ENABLE_UNIT_TESTS "Compila pruebas unitarias C++ con GoogleTest" ON)
+option(AYM_FETCH_GTEST "Descarga GoogleTest si no se encuentra instalado" ON)
+option(AYM_ENABLE_COVERAGE "Habilita instrumentacion de cobertura (gcov/gcovr) en toolchains GNU/Clang" OFF)
 
 set(AYM_VERSION_FILE "${CMAKE_SOURCE_DIR}/VERSION.txt")
 if(EXISTS "${AYM_VERSION_FILE}")
@@ -22,15 +25,163 @@ else()
   add_compile_options($<$<CONFIG:Release>:-O2>)
 endif()
 
+if(AYM_ENABLE_COVERAGE)
+  if(MSVC)
+    message(FATAL_ERROR "AYM_ENABLE_COVERAGE no soportado con MSVC.")
+  endif()
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    message(FATAL_ERROR "AYM_ENABLE_COVERAGE requiere GCC o Clang.")
+  endif()
+  add_compile_options(-O0 -g --coverage)
+  add_link_options(--coverage)
+endif()
+
 file(GLOB_RECURSE AYM_SOURCES CONFIGURE_DEPENDS
   "compiler/*.cpp"
 )
 
 add_executable(aymc ${AYM_SOURCES})
 
+set(AYM_WRAPPER_SOURCES
+  "tools/aym/main.cpp"
+  "compiler/utils/project_tool.cpp"
+  "compiler/utils/project_manifest.cpp"
+  "compiler/utils/semver.cpp"
+)
+
+add_executable(aym ${AYM_WRAPPER_SOURCES})
+target_include_directories(aym PRIVATE ${CMAKE_SOURCE_DIR})
+
+if(BUILD_TESTING AND AYM_ENABLE_UNIT_TESTS)
+  file(GLOB_RECURSE AYM_UNIT_TEST_SOURCES CONFIGURE_DEPENDS
+    "tests/unittests/*.cpp"
+  )
+  if(AYM_UNIT_TEST_SOURCES)
+    set(AYM_CORE_SOURCES ${AYM_SOURCES})
+    list(FILTER AYM_CORE_SOURCES EXCLUDE REGEX "compiler/main\\.cpp$")
+
+    add_executable(aym_unit_tests ${AYM_CORE_SOURCES} ${AYM_UNIT_TEST_SOURCES})
+    target_include_directories(aym_unit_tests PRIVATE ${CMAKE_SOURCE_DIR})
+
+    find_package(GTest CONFIG QUIET)
+    if(NOT GTest_FOUND)
+      if(AYM_FETCH_GTEST)
+        include(FetchContent)
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        FetchContent_Declare(
+          googletest
+          DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+          URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+        )
+        FetchContent_MakeAvailable(googletest)
+      else()
+        message(FATAL_ERROR "GoogleTest no encontrado. Instala GTest o activa AYM_FETCH_GTEST=ON.")
+      endif()
+    endif()
+
+    if(TARGET GTest::gtest)
+      target_link_libraries(aym_unit_tests PRIVATE GTest::gtest)
+    else()
+      target_link_libraries(aym_unit_tests PRIVATE gtest)
+    endif()
+
+    add_test(NAME aym_unit_tests COMMAND aym_unit_tests)
+    set_tests_properties(aym_unit_tests PROPERTIES
+      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    )
+  endif()
+endif()
+
+if(BUILD_TESTING)
+  add_test(
+    NAME aym_wrapper_smoke
+    COMMAND
+      ${CMAKE_COMMAND}
+      -DAYM_WRAPPER=$<TARGET_FILE:aym>
+      -DAYM_COMPILER=$<TARGET_FILE:aymc>
+      -DAYM_SMOKE_ROOT=${CMAKE_BINARY_DIR}/tmp/ctest_wrapper_smoke
+      -P ${CMAKE_SOURCE_DIR}/tests/wrapper_smoke.cmake
+  )
+  set_tests_properties(aym_wrapper_smoke PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+  )
+
+  add_test(
+    NAME aym_diagnostics_smoke
+    COMMAND
+      ${CMAKE_COMMAND}
+      -DAYM_COMPILER=$<TARGET_FILE:aymc>
+      -DAYM_DIAG_ROOT=${CMAKE_BINARY_DIR}/tmp/ctest_diagnostics_smoke
+      -P ${CMAKE_SOURCE_DIR}/tests/diagnostics_smoke.cmake
+  )
+  set_tests_properties(aym_diagnostics_smoke PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+  )
+
+  add_test(
+    NAME aym_lock_contract_smoke
+    COMMAND
+      ${CMAKE_COMMAND}
+      -DAYM_WRAPPER=$<TARGET_FILE:aym>
+      -DAYM_COMPILER=$<TARGET_FILE:aymc>
+      -DAYM_LOCK_CONTRACT_ROOT=${CMAKE_BINARY_DIR}/tmp/ctest_lock_contract_smoke
+      -P ${CMAKE_SOURCE_DIR}/tests/lock_contract_smoke.cmake
+  )
+  set_tests_properties(aym_lock_contract_smoke PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+  )
+
+  add_test(
+    NAME aym_pipeline_modes_smoke
+    COMMAND
+      ${CMAKE_COMMAND}
+      -DAYM_COMPILER=$<TARGET_FILE:aymc>
+      -DAYM_PIPELINE_ROOT=${CMAKE_BINARY_DIR}/tmp/ctest_pipeline_modes_smoke
+      -P ${CMAKE_SOURCE_DIR}/tests/pipeline_modes_smoke.cmake
+  )
+  set_tests_properties(aym_pipeline_modes_smoke PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+  )
+
+  add_test(
+    NAME aym_backend_ir_smoke
+    COMMAND
+      ${CMAKE_COMMAND}
+      -DAYM_COMPILER=$<TARGET_FILE:aymc>
+      -DAYM_BACKEND_IR_ROOT=${CMAKE_BINARY_DIR}/tmp/ctest_backend_ir_smoke
+      -P ${CMAKE_SOURCE_DIR}/tests/backend_ir_smoke.cmake
+  )
+  set_tests_properties(aym_backend_ir_smoke PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+  )
+endif()
+
+if(BUILD_TESTING AND AYM_ENABLE_COVERAGE)
+  find_program(AYM_GCOVR_EXECUTABLE gcovr)
+  if(AYM_GCOVR_EXECUTABLE)
+    add_custom_target(coverage
+      COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/coverage
+      COMMAND ${AYM_GCOVR_EXECUTABLE}
+              --root ${CMAKE_SOURCE_DIR}
+              --object-directory ${CMAKE_BINARY_DIR}
+              --exclude-directories ${CMAKE_BINARY_DIR}/_deps
+              --exclude tests/.*
+              --xml-pretty
+              --output ${CMAKE_BINARY_DIR}/coverage/coverage.xml
+              --html-details ${CMAKE_BINARY_DIR}/coverage/coverage.html
+              --print-summary
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      USES_TERMINAL
+      COMMENT "Ejecutando tests y generando reporte de cobertura en ${CMAKE_BINARY_DIR}/coverage")
+  else()
+    message(WARNING "gcovr no encontrado: no se generara target coverage.")
+  endif()
+endif()
+
 include(GNUInstallDirs)
 
-install(TARGETS aymc
+install(TARGETS aymc aym
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 install(FILES README.md LICENSE
@@ -41,31 +192,8 @@ install(DIRECTORY runtime/
   DESTINATION ${CMAKE_INSTALL_DATADIR}/aymaraLang/runtime
   FILES_MATCHING PATTERN "*.c" PATTERN "README.md")
 
-if(AYM_ENABLE_LLVM)
-  find_package(LLVM QUIET CONFIG)
-  if(LLVM_FOUND)
-    message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-    set(AYM_LLVM_COMPONENTS core support)
-    llvm_map_components_to_libnames(AYM_LLVM_LIBS ${AYM_LLVM_COMPONENTS})
-    target_include_directories(aymc SYSTEM PRIVATE ${LLVM_INCLUDE_DIRS})
-    target_compile_definitions(aymc PRIVATE ${LLVM_DEFINITIONS} AYM_WITH_LLVM)
-    target_link_libraries(aymc PRIVATE ${AYM_LLVM_LIBS})
-    target_compile_options(aymc PRIVATE
-      $<$<CXX_COMPILER_ID:MSVC>:/external:W0>
-      $<$<CXX_COMPILER_ID:MSVC>:/external:anglebrackets>
-    )
-  else()
-    message(WARNING "LLVM solicitado pero no encontrado; compilando sin backend LLVM.")
-  endif()
-  install(DIRECTORY "${CMAKE_SOURCE_DIR}/llvm-backend/"
-    DESTINATION llvm-backend
-    OPTIONAL)
-else()
-  message(STATUS "LLVM backend deshabilitado mediante AYM_ENABLE_LLVM=OFF")
-endif()
-
 # Put binaries into bin/ inside the build directory
-set_target_properties(aymc PROPERTIES
+set_target_properties(aymc aym PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 set(CPACK_PACKAGE_NAME "AymaraLang")
@@ -83,7 +211,9 @@ if(WIN32)
   set(CPACK_NSIS_MODIFY_PATH ON)
   set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
   set(CPACK_NSIS_PACKAGE_NAME "AymaraLang")
-  set(CPACK_PACKAGE_EXECUTABLES "aymc" "AymaraLang Compiler")
+  set(CPACK_PACKAGE_EXECUTABLES
+    "aym" "AymaraLang Wrapper"
+    "aymc" "AymaraLang Compiler")
 else()
   set(CPACK_GENERATOR "TGZ;DEB;RPM")
   set(CPACK_PACKAGE_FILE_NAME "AymaraLang-${AYM_VERSION}-${CMAKE_SYSTEM_NAME}")

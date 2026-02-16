@@ -1,0 +1,13 @@
+kasta Base {
+  lurawi f(jakhüwi x): jakhüwi {
+    kuttaya x;
+  }
+}
+
+kasta Hijo jila Base {
+  jikxata lurawi f(aru x): jakhüwi {
+    kuttaya 0;
+  }
+}
+
+qillqa(machaqa Hijo().f("a"));

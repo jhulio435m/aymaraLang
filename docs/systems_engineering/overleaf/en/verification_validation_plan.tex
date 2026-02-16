@@ -20,7 +20,6 @@ Define how AymaraLang and its compiler will be verified and validated to ensure 
 \section{Scope}
 \begin{itemize}
     \item \texttt{aymc} compiler (lexer, parser, semantic, codegen).
-    \item Experimental LLVM backend.
     \item Minimal runtime.
 \end{itemize}
 
@@ -39,7 +38,7 @@ Analysis & Comparison against expected results \\ \bottomrule
 \textbf{Requirement} & \textbf{Method} & \textbf{Evidence} \\ \midrule
 FR-01 & Test & Compiles multiple \texttt{.aym} files \\
 FR-05 & Test & Binary runs examples \\
-FR-07 & Test & \texttt{.ll} generation \\
+FR-07 & Test & Intermediate \texttt{.asm} artifact is produced \\
 NFR-03 & Inspection & Readable error messages \\ \bottomrule
 \end{longtable}
 

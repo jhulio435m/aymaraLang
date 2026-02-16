@@ -1,7 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=AymaraLang Compiler
-Exec=/opt/aymaralang/bin/aymc
+Exec=/opt/aymaralang/bin/aymc %f
 Icon=aymaralang
 Terminal=true
+MimeType=text/x-aymara;
 Categories=Development;

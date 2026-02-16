@@ -1,0 +1,46 @@
+qallta
+lurawi suma1(jakhüwi x): jakhüwi {
+  kuttaya x + 1;
+}
+
+lurawi junta3(jakhüwi a, jakhüwi b, jakhüwi c): jakhüwi {
+  kuttaya a * 10000 + b * 100 + c;
+}
+
+lurawi nuevo_tablero(jakhüwi ancho, jakhüwi alto): jakhüwi {
+  yatiya jakhüwi tb = array(alto);
+  taki(yatiya jakhüwi y = 0; y < alto; y = y + 1) {
+    yatiya jakhüwi fila = array(ancho);
+    taki(yatiya jakhüwi x = 0; x < ancho; x = x + 1) {
+      array_set(fila, x, 0);
+    }
+    array_set(tb, y, fila);
+  }
+  kuttaya tb;
+}
+
+lurawi celda_set(jakhüwi tb, jakhüwi x, jakhüwi y, jakhüwi v) {
+  yatiya jakhüwi fila = array_get(tb, y);
+  array_set(fila, x, v);
+  kuttaya;
+}
+
+lurawi celda_get(jakhüwi tb, jakhüwi x, jakhüwi y): jakhüwi {
+  yatiya jakhüwi fila = array_get(tb, y);
+  kuttaya array_get(fila, x);
+}
+
+yatiya jakhüwi r = junta3(10 + suma1(1), 20 + suma1(2), 30 + suma1(3));
+qillqa("r =", r);
+afirma(r == 122334, "regresion llamada: argumentos se corrompen");
+
+yatiya jakhüwi tb = nuevo_tablero(5, 3);
+celda_set(tb, 2 + suma1(0), 1 + suma1(0), 9);
+qillqa("c32 =", celda_get(tb, 3, 2));
+qillqa("c22 =", celda_get(tb, 2, 2));
+qillqa("nested =", array_get(array_get(tb, 2), 3));
+afirma(celda_get(tb, 3, 2) == 9, "regresion llamada: primera coordenada perdida");
+afirma(celda_get(tb, 2, 2) == 0, "regresion llamada: coordenada incorrecta");
+afirma(array_get(array_get(tb, 2), 3) == 9, "regresion llamada: builtin anidada falla");
+qillqa("regresion_llamadas OK");
+tukuya

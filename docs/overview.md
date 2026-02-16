@@ -1,49 +1,48 @@
 # Visión general
 
-AymaraLang (`.aym`) es un lenguaje de programación con sintaxis en aymara y un
-compilador (`aymc`) implementado en **C++17**. El compilador genera ejecutables
-nativos (con extensión `.exe` en Windows). El runtime acompaña al binario para
-resolver funciones estándar.
+## Definición del proyecto
 
-## Identidad y alcance actual
+AymaraLang es un lenguaje compilado con sintaxis basada en aymara. El
+compilador oficial, `aymc`, está implementado en C++17 y genera ejecutables
+nativos.
 
-| Elemento | Detalle |
+## Componentes principales
+
+| Componente | Propósito |
 | --- | --- |
-| Compilador | `aymc` |
-| Lenguaje | AymaraLang (`.aym`) |
-| Salida | Binario nativo (sin extensión en Unix, `.exe` en Windows) |
-| Paradigma | Imperativo con soporte de funciones y clases |
-| Tipado | Estático, fuerte |
-| Backend principal | NASM + enlazado por GCC/LD (o MinGW) |
-| Backend opcional | LLVM (si se compila con soporte) |
+| `aymc` | Compila archivos `.aym` a ejecutables nativos |
+| `aym` | Orquesta flujos de proyecto (`new`, `build`, `run`, `test`, `lock`, `cache`, `add`) |
+| Runtime (`dist/share/aymaraLang/runtime`) | Soporte de funciones de ejecución |
+| `samples/` | Programas de referencia y validación funcional |
 
-## Principios del proyecto
-
-- **Cercanía cultural:** palabras clave en aymara y ejemplos contextualizados.
-- **Compilación nativa:** no requiere VM para ejecutar los binarios generados.
-- **Modularidad:** el compilador separa lexer, parser, semántica y codegen.
-- **Documentación de investigación:** incluye ingeniería de sistemas y LaTeX.
-
-## Sintaxis base
-
-- Bloques con `{}` y fin de sentencia con `;`.
-- Palabras clave en aymara (`jisa`, `taki`, `lurawi`, etc.).
-- Comentarios `//` y `/* */`.
-
-## Contexto del sistema
+## Flujo de compilación
 
 ```mermaid
 flowchart LR
-    A[Usuario] -->|Escribe código .aym| B[Editor o CLI]
-    B --> C[Compilador aymc]
-    C --> D[Ejecutable nativo]
-    D --> E[Runtime del lenguaje]
+    A[Fuente .aym] --> B[Lexer]
+    B --> C[Parser]
+    C --> D[AST]
+    D --> E[Semántica]
+    E --> F[Codegen NASM]
+    F --> G[Ensamblado y enlace]
+    G --> H[Ejecutable nativo]
 ```
 
-La salida nativa evita una máquina virtual, y el costo dominante se concentra en
-las fases de análisis. En términos simplificados, si $n$ es el número de
-tokens, el parseo LL se mantiene en $O(n)$.
+## Plataformas objetivo
 
----
+- Windows x64
+- Linux x64
 
-**Siguiente:** [Primeros pasos](language.md)
+## Estado funcional resumido
+
+- Compilación nativa operativa.
+- Asociación de archivos `.aym` en instaladores.
+- Gestión de proyectos con manifest (`aym.toml`) y lockfile (`aym.lock`).
+- Pruebas automatizadas para build, smoke y empaquetado.
+
+## Referencias relacionadas
+
+- [Instalación](install.md)
+- [Compilación desde fuente](build.md)
+- [CLI del compilador](compiler.md)
+- [Arquitectura](arquitectura.md)

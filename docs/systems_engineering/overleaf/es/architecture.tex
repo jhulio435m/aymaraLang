@@ -24,7 +24,7 @@ AymaraLang está compuesto por un compilador modular (\texttt{aymc}), un runtime
 Lexer & Tokenización de código fuente & \texttt{.aym} & Tokens \\
 Parser & Construcción de AST & Tokens & AST \\
 Semantic & Análisis semántico y tipos & AST & AST validado + símbolos \\
-Codegen & Generación de NASM/LLVM & AST validado & \texttt{.asm}/\texttt{.ll} \\
+Codegen & Generación de NASM & AST validado & \texttt{.asm} \\
 Linker & Ensamblado/enlace & \texttt{.asm} & Binario \\
 \bottomrule
 \end{longtable}
@@ -33,7 +33,7 @@ Linker & Ensamblado/enlace & \texttt{.asm} & Binario \\
 \begin{itemize}
     \item \textbf{Entorno local:} Linux/Windows.
     \item \textbf{Dependencias:} NASM, GCC/LD o MinGW, compilador C++17.
-    \item \textbf{Artefactos:} \texttt{.asm}, \texttt{.ll}, binario nativo, logs de error.
+    \item \textbf{Artefactos:} \texttt{.asm}, binario nativo, logs de error.
 \end{itemize}
 
 \section{Interfaces clave}
@@ -54,7 +54,6 @@ Linker & Ensamblado/enlace & \texttt{.asm} & Binario \\
 \begin{itemize}
     \item C++17 como estándar base.
     \item Codegen x86\_64 (NASM) como backend principal.
-    \item LLVM como backend experimental.
 \end{itemize}
 
 \end{document}

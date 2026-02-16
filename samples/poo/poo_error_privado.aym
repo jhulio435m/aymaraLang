@@ -1,0 +1,7 @@
+kasta Secreto {
+  sapa yatiya aru clave = "x";
+  sapa lurawi ver(): aru { kuttaya aka.clave; }
+}
+
+yatiya Secreto s = machaqa Secreto();
+qillqa(s.clave);

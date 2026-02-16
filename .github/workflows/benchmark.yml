@@ -1,0 +1,84 @@
+name: Pipeline Benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      iterations:
+        description: "Numero de iteraciones benchmark"
+        required: true
+        default: "5"
+      mode:
+        description: "Modo de pipeline"
+        required: true
+        default: "full"
+        type: choice
+        options:
+          - full
+          - compile-only
+      enforce_thresholds:
+        description: "Fallar si excede umbrales"
+        required: true
+        default: true
+        type: boolean
+
+jobs:
+  pipeline-benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc g++ nasm
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install -y nasm mingw
+          "$env:ChocolateyInstall\lib\mingw\tools\install\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Configure
+        run: cmake -S . -B build -DBUILD_TESTING=ON -DAYM_ENABLE_UNIT_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --config Release -j
+
+      - name: Run benchmark
+        shell: pwsh
+        run: |
+          if ('${{ inputs.mode }}' -eq 'compile-only') {
+            pwsh -File samples/bench/run_pipeline_bench.ps1 -Iterations ${{ inputs.iterations }} -CompileOnly
+          } else {
+            pwsh -File samples/bench/run_pipeline_bench.ps1 -Iterations ${{ inputs.iterations }}
+          }
+
+      - name: Check thresholds
+        if: ${{ inputs.enforce_thresholds }}
+        shell: pwsh
+        run: |
+          $summaryPath = if ('${{ inputs.mode }}' -eq 'compile-only') {
+            "build/bench/pipeline/compile-only/summary.json"
+          } else {
+            "build/bench/pipeline/full/summary.json"
+          }
+          pwsh -File samples/bench/check_pipeline_thresholds.ps1 `
+            -SummaryPath $summaryPath `
+            -ThresholdsPath docs/benchmarks/pipeline_thresholds.json `
+            -Target ${{ matrix.os }}
+
+      - name: Upload benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-benchmark-${{ matrix.os }}-${{ inputs.mode }}
+          path: |
+            build/bench/pipeline/${{ inputs.mode }}/summary.json
+            build/bench/pipeline/${{ inputs.mode }}/*.pipeline.json

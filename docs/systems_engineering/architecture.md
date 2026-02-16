@@ -16,8 +16,6 @@ con módulos desacoplados.
     D --> E[Semántica]
     E --> F[Codegen NASM]
     F --> G[Linker]
-    E --> H[LLVM opcional]
-    H --> I[IR .ll]
 ```
 
 | Módulo | Responsabilidad | Entradas | Salidas |
@@ -25,14 +23,14 @@ con módulos desacoplados.
 | Lexer | Tokenización de código fuente | `.aym` | Tokens |
 | Parser | Construcción de AST | Tokens | AST |
 | Semantic | Análisis semántico y tipos | AST | AST validado + símbolos |
-| Codegen | Generación de NASM/LLVM | AST validado | `.asm`/`.ll` |
+| Codegen | Generación de NASM | AST validado | `.asm` |
 | Linker | Ensamblado/enlace | `.asm` | Binario |
 
 ## 3. Arquitectura física (deployment)
 
 - **Entorno local:** Linux/Windows.
 - **Dependencias:** NASM, GCC/LD o MinGW, compilador C++17.
-- **Artefactos:** `.asm`, `.ll`, binario nativo, logs de error.
+- **Artefactos:** `.asm`, binario nativo, logs de error.
 
 ## 4. Interfaces clave
 
@@ -50,4 +48,3 @@ con módulos desacoplados.
 
 - C++17 como estándar base.
 - Codegen x86_64 (NASM) como backend principal.
-- LLVM como backend opcional.

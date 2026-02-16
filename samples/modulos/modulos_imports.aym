@@ -1,0 +1,17 @@
+qallta
+apnaq("matematica", {"yapxata":"suma", "iskaya":"dobla"});
+apnaq("yupana");
+
+yatiya jakhüwi a = suma(2, 3);
+yatiya jakhüwi b = dobla(9);
+yatiya jakhüwi c = pusi(8);
+
+qillqa("a =", a);
+qillqa("b =", b);
+qillqa("c =", c);
+
+afirma(a == 5, "modulo yapxata falla");
+afirma(b == 18, "modulo iskaya falla");
+afirma(c == 12, "modulo pusi falla");
+qillqa("modulos imports OK");
+tukuya

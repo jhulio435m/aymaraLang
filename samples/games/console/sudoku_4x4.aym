@@ -1,0 +1,72 @@
+qallta
+lurawi celda_get(jakhüwi tb, jakhüwi f, jakhüwi c): jakhüwi {
+  yatiya jakhüwi fila = array_get(tb, f);
+  kuttaya array_get(fila, c);
+}
+
+lurawi celda_set(jakhüwi tb, jakhüwi f, jakhüwi c, jakhüwi v) {
+  yatiya jakhüwi fila = array_get(tb, f);
+  array_set(fila, c, v);
+  kuttaya;
+}
+
+lurawi valido(jakhüwi tb, jakhüwi f, jakhüwi c, jakhüwi v): chiqa {
+  taki(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    jisa(celda_get(tb, f, i) == v) { kuttaya janiutji; }
+    jisa(celda_get(tb, i, c) == v) { kuttaya janiutji; }
+  }
+
+  yatiya jakhüwi f0 = (f / 2) * 2;
+  yatiya jakhüwi c0 = (c / 2) * 2;
+  taki(yatiya jakhüwi df = 0; df < 2; df = df + 1) {
+    taki(yatiya jakhüwi dc = 0; dc < 2; dc = dc + 1) {
+      jisa(celda_get(tb, f0 + df, c0 + dc) == v) { kuttaya janiutji; }
+    }
+  }
+  kuttaya utji;
+}
+
+lurawi resolver(jakhüwi tb, jakhüwi pos): chiqa {
+  jisa(pos == 16) { kuttaya utji; }
+
+  yatiya jakhüwi f = pos / 4;
+  yatiya jakhüwi c = pos % 4;
+  jisa(celda_get(tb, f, c) != 0) {
+    kuttaya resolver(tb, pos + 1);
+  }
+
+  taki(yatiya jakhüwi v = 1; v <= 4; v = v + 1) {
+    jisa(valido(tb, f, c, v)) {
+      celda_set(tb, f, c, v);
+      jisa(resolver(tb, pos + 1)) { kuttaya utji; }
+      celda_set(tb, f, c, 0);
+    }
+  }
+  kuttaya janiutji;
+}
+
+lurawi imprime(jakhüwi tb) {
+  qillqa("fila1", celda_get(tb, 0, 0), celda_get(tb, 0, 1), celda_get(tb, 0, 2), celda_get(tb, 0, 3), t'aqa=" ");
+  qillqa("fila2", celda_get(tb, 1, 0), celda_get(tb, 1, 1), celda_get(tb, 1, 2), celda_get(tb, 1, 3), t'aqa=" ");
+  qillqa("fila3", celda_get(tb, 2, 0), celda_get(tb, 2, 1), celda_get(tb, 2, 2), celda_get(tb, 2, 3), t'aqa=" ");
+  qillqa("fila4", celda_get(tb, 3, 0), celda_get(tb, 3, 1), celda_get(tb, 3, 2), celda_get(tb, 3, 3), t'aqa=" ");
+  kuttaya;
+}
+
+yatiya jakhüwi tb = array(4);
+yatiya jakhüwi f0 = array(4); array_set(f0, 0, 1); array_set(f0, 1, 0); array_set(f0, 2, 0); array_set(f0, 3, 4); array_set(tb, 0, f0);
+yatiya jakhüwi f1 = array(4); array_set(f1, 0, 0); array_set(f1, 1, 4); array_set(f1, 2, 1); array_set(f1, 3, 2); array_set(tb, 1, f1);
+yatiya jakhüwi f2 = array(4); array_set(f2, 0, 2); array_set(f2, 1, 1); array_set(f2, 2, 4); array_set(f2, 3, 0); array_set(tb, 2, f2);
+yatiya jakhüwi f3 = array(4); array_set(f3, 0, 4); array_set(f3, 1, 0); array_set(f3, 2, 2); array_set(f3, 3, 1); array_set(tb, 3, f3);
+
+yatiya chiqa ok = resolver(tb, 0);
+afirma(ok, "sudoku 4x4 no resuelto");
+imprime(tb);
+
+afirma(celda_get(tb, 0, 1) == 2, "celda [0,1] incorrecta");
+afirma(celda_get(tb, 0, 2) == 3, "celda [0,2] incorrecta");
+afirma(celda_get(tb, 1, 0) == 3, "celda [1,0] incorrecta");
+afirma(celda_get(tb, 2, 3) == 3, "celda [2,3] incorrecta");
+afirma(celda_get(tb, 3, 1) == 3, "celda [3,1] incorrecta");
+qillqa("sudoku_4x4 OK");
+tukuya

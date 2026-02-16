@@ -53,8 +53,13 @@ public:
     std::vector<size_t> throwFinallyLimitStack;
     size_t tryTempCounter = 0;
     long seed = -1;
+    bool keepAsm = false;
+    CodegenPipelineMode pipelineMode = CodegenPipelineMode::Full;
+    bool timePipeline = false;
+    std::string timePipelineJsonPath;
+    long long toolTimeoutMs = 0;
 
-    void emit(const std::vector<std::unique_ptr<Node>> &nodes,
+    bool emit(const std::vector<std::unique_ptr<Node>> &nodes,
               const std::string &path,
               const std::unordered_set<std::string> &semGlobals,
               const std::unordered_map<std::string,std::vector<std::string>> &paramTypesIn,
@@ -62,7 +67,13 @@ public:
               const std::unordered_map<std::string,std::string> &globalTypesIn,
               bool windowsTarget,
               long seedIn,
-              const std::string &runtimeDirIn);
+              const std::string &runtimeDirIn,
+              bool keepAsmIn,
+              CodegenPipelineMode modeIn,
+              bool timePipelineIn,
+              const std::string &timePipelineJsonPathIn,
+              long long toolTimeoutMsIn,
+              std::string *errorMessageOut = nullptr);
 private:
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt,
@@ -94,10 +105,55 @@ private:
     void emitStmt(const Stmt *stmt,
                   const std::unordered_map<std::string,int> *locals,
                   const std::string &endLabel);
+    bool emitStmtBasic(const Stmt *stmt,
+                       const std::unordered_map<std::string,int> *locals,
+                       const std::string &endLabel);
+    bool emitStmtControl(const Stmt *stmt,
+                         const std::unordered_map<std::string,int> *locals,
+                         const std::string &endLabel);
+    bool emitStmtException(const Stmt *stmt,
+                           const std::unordered_map<std::string,int> *locals,
+                           const std::string &endLabel);
     void emitExpr(const Expr *expr,
                   const std::unordered_map<std::string,int> *locals);
+    bool emitExprOperator(const Expr *expr,
+                          const std::unordered_map<std::string,int> *locals);
+    void emitCallExpr(const CallExpr *expr,
+                      const std::unordered_map<std::string,int> *locals);
+    bool emitBuiltinIoCall(const CallExpr *expr,
+                           const std::unordered_map<std::string,int> *locals,
+                           const std::string &nameLower);
+    bool emitBuiltinStringCall(const CallExpr *expr,
+                               const std::unordered_map<std::string,int> *locals,
+                               const std::string &nameLower);
+    bool emitBuiltinCollectionCall(const CallExpr *expr,
+                                   const std::unordered_map<std::string,int> *locals,
+                                   const std::string &nameLower);
+    bool emitBuiltinSystemCall(const CallExpr *expr,
+                               const std::unordered_map<std::string,int> *locals,
+                               const std::string &nameLower);
+    bool emitBuiltinFunctionalCall(const CallExpr *expr,
+                                   const std::unordered_map<std::string,int> *locals,
+                                   const std::string &nameLower);
+    bool emitBuiltinFsCall(const CallExpr *expr,
+                           const std::unordered_map<std::string,int> *locals,
+                           const std::string &nameLower);
+    bool emitBuiltinArrayPrimitiveCall(const CallExpr *expr,
+                                       const std::unordered_map<std::string,int> *locals,
+                                       const std::string &nameLower);
+    void emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
+                      const std::unordered_map<std::string,int> *locals,
+                      size_t regStart = 0);
     void emitFunction(const FunctionInfo &info);
     void emitInput(bool asString);
+    void collectProgramItems(const std::vector<std::unique_ptr<Node>> &nodes);
+    void emitRuntimePrelude();
+    void emitMainEntry();
+    bool assembleAndLinkOutput(const std::string &path,
+                               const std::string &runtimeDirIn,
+                               bool keepAsmIn,
+                               CodegenPipelineMode modeIn,
+                               std::string *errorMessageOut = nullptr);
 
     void registerClass(const ClassStmt *cls);
     void collectClassStrings();

@@ -3,6 +3,7 @@
 
 #include "fs.h"
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -10,6 +11,23 @@
 namespace aym {
 
 class Node;
+
+class ModuleResolverError : public std::runtime_error {
+public:
+    ModuleResolverError(std::string code,
+                        std::string message,
+                        size_t line = 0,
+                        size_t column = 0);
+
+    const std::string &code() const { return code_; }
+    size_t line() const { return line_; }
+    size_t column() const { return column_; }
+
+private:
+    std::string code_;
+    size_t line_ = 0;
+    size_t column_ = 0;
+};
 
 class ModuleResolver {
 public:
@@ -37,7 +55,9 @@ private:
     std::string normalize(const std::string &moduleName) const;
     fs::path findModulePath(const std::string &moduleName,
                             const std::string &normalized,
-                            const fs::path &currentDir) const;
+                            const fs::path &currentDir,
+                            size_t line,
+                            size_t column) const;
     std::vector<std::unique_ptr<Node>> parseModule(const fs::path &path,
                                                    const std::string &moduleName);
 };

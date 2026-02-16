@@ -1,0 +1,28 @@
+qallta
+yatiya mapa stock = {"papa": 12, "quinua": 7, "oca": 4};
+
+stock["papa"] = stock["papa"] + 5;
+stock["canihua"] = 3;
+apsusuti(stock, "oca");
+
+yatiya t'aqa claves = wakicha(sutinaka(stock));
+yatiya aru reporte = "";
+
+taki(yatiya jakhüwi i = 0; i < suyut(claves); i = i + 1) {
+  yatiya aru k = claves[i];
+  reporte = reporte + k + "=" + aru(stock[k]);
+  jisa(i + 1 < suyut(claves)) {
+    reporte = reporte + ",";
+  }
+}
+
+yatiya aru thaki = "samples/_tmp_inventario.txt";
+qillqana_aru(thaki, reporte);
+
+yatiya aru leido = ullana_aru(thaki);
+qillqa("reporte =", leido);
+afirma(utji(leido, "canihua=3"), "falta canihua");
+afirma(utji(leido, "papa=17"), "falta papa");
+afirma(utji(leido, "quinua=7"), "falta quinua");
+qillqa("inventario_archivo OK");
+tukuya

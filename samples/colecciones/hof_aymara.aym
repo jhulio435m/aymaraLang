@@ -1,0 +1,22 @@
+qallta
+lurawi iskaya(jakhüwi x): jakhüwi {
+  kuttaya x * 2;
+}
+
+lurawi paricha(jakhüwi x): chiqa {
+  kuttaya (x % 2) == 0;
+}
+
+lurawi yapxata(jakhüwi s, jakhüwi x): jakhüwi {
+  kuttaya s + x;
+}
+
+yatiya t'aqa xs = [1, 2, 3, 4, 5];
+yatiya t'aqa ys = mayjtaya(xs, &iskaya);
+yatiya t'aqa zs = ajlli(ys, &paricha);
+yatiya jakhüwi total = thaqthapi(zs, &yapxata, 0);
+
+qillqa("ys =", ys);
+qillqa("zs =", zs);
+qillqa("total =", total);
+tukuya

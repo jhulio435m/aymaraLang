@@ -1,0 +1,208 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc g++ nasm
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install -y nasm mingw
+          "$env:ChocolateyInstall\lib\mingw\tools\install\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Configure
+        run: cmake -S . -B build -DBUILD_TESTING=ON -DAYM_ENABLE_UNIT_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --config Release -j
+
+      - name: Unit tests
+        run: ctest --test-dir build --build-config Release --output-on-failure
+
+      - name: Wrapper smoke (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          WRAPPER="./build/bin/aym"
+          "$WRAPPER" new ci_demo --path build/tmp
+          pushd build/tmp/ci_demo
+          ../../../build/bin/aym add math ^1.2.3
+          ../../../build/bin/aym lock check
+          ../../../build/bin/aym lock sync --frozen
+          if ../../../build/bin/aym add io ^1.0.0 --frozen; then
+            echo "ERROR: aym add --frozen debio fallar por modo solo lectura"
+            exit 1
+          fi
+          mkdir -p .aym/repo/math/1.2.3/modules
+          cat > .aym/repo/math/1.2.3/modules/util.aym <<'EOF'
+          qallta
+          lurawi desde_repo() : jakhuwi { kuttaya(42); }
+          tukuya
+          EOF
+          cat > src/main.aym <<'EOF'
+          qallta
+          apnaq("math/util");
+          qillqa(desde_repo());
+          tukuya
+          EOF
+          ../../../build/bin/aym build --check --doctor-fix
+          mkdir -p tests
+          cp src/main.aym tests/smoke.aym
+          ../../../build/bin/aym test --doctor-fix
+          cat > aym.toml <<'EOF'
+          [package]
+          name = "ci_demo"
+          version = "0.1.0"
+          edition = "2026"
+
+          [dependencies]
+          math = "^2.0.0"
+          EOF
+          if ../../../build/bin/aym build --check --frozen; then
+            echo "ERROR: aym build --frozen debio fallar con manifest/lock inconsistente"
+            exit 1
+          fi
+          if ../../../build/bin/aym lock check; then
+            echo "ERROR: aym lock check debio fallar con manifest/lock inconsistente"
+            exit 1
+          fi
+          if ../../../build/bin/aym lock sync --frozen; then
+            echo "ERROR: aym lock sync --frozen debio fallar con manifest/lock inconsistente"
+            exit 1
+          fi
+          if ../../../build/bin/aym cache sync --frozen; then
+            echo "ERROR: aym cache sync --frozen debio fallar con manifest/lock inconsistente"
+            exit 1
+          fi
+          ../../../build/bin/aym lock sync
+          ../../../build/bin/aym lock check
+          ../../../build/bin/aym cache sync --frozen
+          popd
+
+          "$WRAPPER" new ci_demo2 --path build/tmp
+          pushd build/tmp/ci_demo2
+          cat > src/main.aym <<'EOF'
+          qallta
+          lurawi suma(x: jakhuwi, y: jakhuwi) : jakhuwi { kuttaya(x + y); }
+          qillqa(suma(20, 22));
+          tukuya
+          EOF
+          ../../../build/bin/aym build --check --doctor
+          ../../../build/bin/aym lock sync
+          ../../../build/bin/aym lock sync --frozen
+          popd
+
+      - name: Wrapper smoke (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $wrapper = ".\build\bin\Release\aym.exe"
+          & $wrapper new ci_demo --path build\tmp
+          Push-Location build\tmp\ci_demo
+          & ..\..\..\build\bin\Release\aym.exe add math ^1.2.3
+          & ..\..\..\build\bin\Release\aym.exe lock check
+          if ($LASTEXITCODE -ne 0) { throw "aym lock check no debio fallar en estado consistente" }
+          & ..\..\..\build\bin\Release\aym.exe lock sync --frozen
+          if ($LASTEXITCODE -ne 0) { throw "aym lock sync --frozen no debio fallar en estado consistente" }
+          & ..\..\..\build\bin\Release\aym.exe add io ^1.0.0 --frozen
+          if ($LASTEXITCODE -eq 0) { throw "aym add --frozen debio fallar por modo solo lectura" }
+          New-Item -ItemType Directory -Force -Path ".aym\repo\math\1.2.3\modules" | Out-Null
+          @'
+          qallta
+          lurawi desde_repo() : jakhuwi { kuttaya(42); }
+          tukuya
+          '@ | Set-Content -Path ".aym\repo\math\1.2.3\modules\util.aym"
+          @'
+          qallta
+          apnaq("math/util");
+          qillqa(desde_repo());
+          tukuya
+          '@ | Set-Content -Path "src\main.aym"
+          & ..\..\..\build\bin\Release\aym.exe build --check --doctor-fix
+          New-Item -ItemType Directory -Force -Path "tests" | Out-Null
+          Copy-Item "src\main.aym" "tests\smoke.aym"
+          & ..\..\..\build\bin\Release\aym.exe test --doctor-fix
+          @'
+          [package]
+          name = "ci_demo"
+          version = "0.1.0"
+          edition = "2026"
+
+          [dependencies]
+          math = "^2.0.0"
+          '@ | Set-Content -Path "aym.toml"
+          & ..\..\..\build\bin\Release\aym.exe build --check --frozen
+          if ($LASTEXITCODE -eq 0) { throw "aym build --frozen debio fallar con manifest/lock inconsistente" }
+          & ..\..\..\build\bin\Release\aym.exe lock check
+          if ($LASTEXITCODE -eq 0) { throw "aym lock check debio fallar con manifest/lock inconsistente" }
+          & ..\..\..\build\bin\Release\aym.exe lock sync --frozen
+          if ($LASTEXITCODE -eq 0) { throw "aym lock sync --frozen debio fallar con manifest/lock inconsistente" }
+          & ..\..\..\build\bin\Release\aym.exe cache sync --frozen
+          if ($LASTEXITCODE -eq 0) { throw "aym cache sync --frozen debio fallar con manifest/lock inconsistente" }
+          & ..\..\..\build\bin\Release\aym.exe lock sync
+          if ($LASTEXITCODE -ne 0) { throw "aym lock sync no debio fallar al reparar lockfile" }
+          & ..\..\..\build\bin\Release\aym.exe lock check
+          if ($LASTEXITCODE -ne 0) { throw "aym lock check no debio fallar tras reparar lockfile" }
+          & ..\..\..\build\bin\Release\aym.exe cache sync --frozen
+          if ($LASTEXITCODE -ne 0) { throw "aym cache sync --frozen no debio fallar tras reparar lockfile" }
+          Pop-Location
+
+          & $wrapper new ci_demo2 --path build\tmp
+          Push-Location build\tmp\ci_demo2
+          @'
+          qallta
+          lurawi suma(x: jakhuwi, y: jakhuwi) : jakhuwi { kuttaya(x + y); }
+          qillqa(suma(20, 22));
+          tukuya
+          '@ | Set-Content -Path "src\main.aym"
+          & ..\..\..\build\bin\Release\aym.exe build --check --doctor
+          if ($LASTEXITCODE -ne 0) { throw "aym build --check --doctor no debio fallar en ci_demo2" }
+          & ..\..\..\build\bin\Release\aym.exe lock sync
+          if ($LASTEXITCODE -ne 0) { throw "aym lock sync no debio fallar en ci_demo2" }
+          & ..\..\..\build\bin\Release\aym.exe lock sync --frozen
+          if ($LASTEXITCODE -ne 0) { throw "aym lock sync --frozen no debio fallar en ci_demo2" }
+          Pop-Location
+
+  deb-installer-e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux + deb tools)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc g++ nasm dpkg-dev fakeroot
+
+      - name: Validate Linux installer end-to-end
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/test/test_deb_e2e.sh
+
+      - name: Upload deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aymaralang-deb
+          path: artifacts/*.deb

@@ -6,19 +6,19 @@ Definir las interfaces principales del sistema AymaraLang y sus contratos de uso
 ## 2. Interfaces externas
 ### 2.1 CLI del compilador
 - **Comando:** `aymc [opciones] archivo.aym ...`
-- **Opciones principales:** `--debug`, `--dump-ast`, `--seed`, `--llvm`, `--windows`, `--linux`, `-o`.
+- **Opciones principales:** `--debug`, `--dump-ast`, `--seed`, `--windows`, `--linux`, `-o`.
 
 ```mermaid
 flowchart LR
     User[Usuario] --> CLI[CLI aymc]
     CLI --> FS[Sistema de archivos]
     CLI --> Runtime[Runtime]
-    CLI --> Backend[Backend NASM/LLVM]
+    CLI --> Backend[Backend NASM]
 ```
 
 ### 2.2 Sistema de archivos
 - **Entradas:** archivos `.aym`.
-- **Salidas:** `.asm`, `.ll` y binario nativo.
+- **Salidas:** `.asm` y binario nativo.
 
 ### 2.3 Runtime
 - **Interfaz:** llamadas a funciones integradas (`qillqa`, `katu`, `input`, matemáticas, arreglos, listas).
@@ -29,7 +29,7 @@ flowchart LR
 | Lexer → Parser | Tokens con tipo/lexema/posición |
 | Parser → Semantic | AST de nodos `Expr`/`Stmt` |
 | Semantic → Codegen | AST validado + símbolos |
-| Codegen → Linker | `.asm` o `.ll` |
+| Codegen → Linker | `.asm` |
 
 ## 4. Reglas de interoperabilidad
 - El parser debe consumir tokens bien formados del lexer.

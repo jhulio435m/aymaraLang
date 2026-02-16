@@ -1,23 +1,30 @@
-# AymaraLang — documentación
+# AymaraLang - Manual técnico
 
-Bienvenido/a. Esta documentación resume el lenguaje, el compilador y los
-materiales de investigación del proyecto de forma concisa.
+Este sitio concentra la documentación operativa y técnica de AymaraLang con
+criterio de uso real: instalación, compilación, operación del compilador,
+arquitectura y estado de modernización.
 
-## Rutas principales
+## Alcance
 
-- **Panorama del proyecto:** [Visión general](overview.md),
-  [Compilación e instalación](build.md), [CLI del compilador](compiler.md) y
-  [Arquitectura](arquitectura.md).
-- **Lenguaje:** [Primeros pasos](language.md),
-  [Referencia rápida](aymaraLang.md), [Manejo de errores](exceptions.md) y
-  [Gramática formal](grammar.md).
-- **Investigación y teoría:** [Fundamentos matemáticos y de compiladores](investigacion.md).
-- **Ingeniería de sistemas (investigación):** documentos en
-  [`docs/systems_engineering/`](systems_engineering/).
-  Incluyen plan de gestión, requisitos, arquitectura y validación.
-- **LaTeX/Overleaf:** los insumos en
-  [`docs/systems_engineering/overleaf/`](systems_engineering/overleaf/) son
-  parte del material de investigación y se mantienen vigentes.
+- Uso del compilador `aymc` y del gestor de proyectos `aym`.
+- Instalación en Windows y Linux.
+- Compilación desde código fuente.
+- Referencia del lenguaje y su gramática formal.
+- Arquitectura actual del compilador.
+
+## Lectura recomendada
+
+1. [Manual de usuario](manual_usuario.md)
+2. [Instalación por sistema operativo](install.md)
+3. [Compilación e instalación desde fuente](build.md)
+4. [CLI del compilador](compiler.md)
+5. [Primeros pasos](language.md)
+
+## Estado documental
+
+- Esta documentación prioriza material vigente de operación.
+- El contenido de investigación y anexos se mantiene separado para no mezclar
+  instrucciones de uso con material histórico.
 
 ## Sitio MkDocs
 
@@ -27,9 +34,3 @@ mkdocs serve
 ```
 
 Luego abre `http://127.0.0.1:8000`.
-
-## Recursos visuales y fórmulas
-
-La documentación usa diagramas Mermaid y fórmulas matemáticas para reforzar la
-investigación. Por ejemplo, el tiempo de análisis léxico puede modelarse como
-$O(n)$ respecto al tamaño de la entrada.

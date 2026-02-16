@@ -1,0 +1,13 @@
+qallta
+yant'aña {
+  qillqa("antes de afirma");
+  afirma(1 < 2, "debe ser verdadero");
+  qillqa("afirma OK");
+  afirma(2 < 1, "fallo esperado");
+  qillqa("esto no debe verse");
+} katjaña("ASSERT", e) {
+  qillqa("capturada ASSERT");
+  qillqa(e.suti);
+  qillqa(e.aru);
+}
+tukuya

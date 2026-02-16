@@ -1,0 +1,46 @@
+qallta
+lurawi paridad(jakhüwi n): aru {
+  khiti(n % 10) {
+    kuna 0, 2, 4, 6, 8: {
+      kuttaya "par";
+    }
+    kuna 1, 3, 5, 7, 9: {
+      kuttaya "impar";
+    }
+    yaqha: {
+      kuttaya "desconocido";
+    }
+  }
+}
+
+lurawi respuesta(aru x): aru {
+  yatiya aru normal = x;
+  khiti(normal) {
+    kuna "si", "yes", "ok": {
+      kuttaya "aceptado";
+    }
+    kuna "no", "cancelar": {
+      kuttaya "rechazado";
+    }
+    yaqha: {
+      kuttaya "otro";
+    }
+  }
+}
+
+yatiya aru p8 = paridad(8);
+yatiya aru p5 = paridad(5);
+yatiya aru r1 = respuesta("y" + "es");
+yatiya aru r2 = respuesta("cancelar");
+
+qillqa("p8 =", p8);
+qillqa("p5 =", p5);
+qillqa("r1 =", r1);
+qillqa("r2 =", r2);
+
+afirma(p8 == "par", "paridad de 8 falla");
+afirma(p5 == "impar", "paridad de 5 falla");
+afirma(r1 == "aceptado", "match multi-case texto dinamico falla");
+afirma(r2 == "rechazado", "match multi-case texto literal falla");
+qillqa("match_multi_case OK");
+tukuya

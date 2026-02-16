@@ -1,0 +1,13 @@
+qallta
+lurawi yapxata(jakhüwi a, jakhüwi b): jakhüwi {
+  kuttaya a + b;
+}
+
+lurawi iskaya(jakhüwi x): jakhüwi {
+  kuttaya x * 2;
+}
+
+lurawi kimsa(jakhüwi x): jakhüwi {
+  kuttaya x * 3;
+}
+tukuya

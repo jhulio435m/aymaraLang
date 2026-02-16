@@ -176,11 +176,7 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
         return false;
     }
     if (!expr->getStaticCallee().empty()) {
-        std::vector<std::string> regs = paramRegs(this->windows);
-        for (size_t i = 0; i < expr->getArgs().size() && i < regs.size(); ++i) {
-            emitExpr(expr->getArgs()[i].get(), locals);
-            out << "    mov " << regs[i] << ", rax\n";
-        }
+        emitCallArgs(expr->getArgs(), locals, 0);
         out << "    call " << expr->getStaticCallee() << "\n";
         return true;
     }
@@ -206,10 +202,7 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
     }
     out << "    mov r14, rax\n";
     out << "    mov r12, rbx\n";
-    for (size_t i = 0; i < expr->getArgs().size() && i + 1 < regs.size(); ++i) {
-        emitExpr(expr->getArgs()[i].get(), locals);
-        out << "    mov " << regs[i + 1] << ", rax\n";
-    }
+    emitCallArgs(expr->getArgs(), locals, 1);
     out << "    mov " << regs[0] << ", r12\n";
     out << "    call r14\n";
     return true;

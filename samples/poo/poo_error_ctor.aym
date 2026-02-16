@@ -1,0 +1,12 @@
+kasta Punto {
+  yatiya jakhüwi x = 0;
+  yatiya jakhüwi y = 0;
+
+  qallta(jakhüwi xx, jakhüwi yy) {
+    aka.x = xx;
+    aka.y = yy;
+  }
+}
+
+yatiya Punto p = machaqa Punto(1);
+qillqa(p.x);

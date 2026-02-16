@@ -1,0 +1,23 @@
+qallta
+lurawi dup(jakhüwi x): jakhüwi {
+  kuttaya x * 2;
+}
+
+lurawi par(jakhüwi x): chiqa {
+  kuttaya (x % 2) == 0;
+}
+
+lurawi suma2(jakhüwi acc, jakhüwi x): jakhüwi {
+  kuttaya acc + x;
+}
+
+yatiya t'aqa xs = [1, 2, 3, 4, 5];
+yatiya t'aqa ys = map(xs, &dup);
+yatiya t'aqa zs = filter(ys, &par);
+yatiya jakhüwi total = reduce(zs, &suma2, 0);
+
+qillqa("xs =", xs);
+qillqa("map =", ys);
+qillqa("filter =", zs);
+qillqa("reduce =", total);
+tukuya

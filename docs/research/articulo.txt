@@ -1,0 +1,227 @@
+Creación de un Lenguaje de Programación en Aymara: Impulsando la Educación Tecnológica en Niños y Jóvenes de Comunidades Indígenas
+Introducción
+El desarrollo de lenguajes de programación ha evolucionado a través de diversas generaciones, desde lenguajes de máquina hasta los lenguajes lógicos de quinta generación como LISP y PROLOG. Estos últimos buscaron teóricamente reducir la carga de pensamiento del programador mediante el razonamiento computarizado. Sin embargo, su adopción generalizada en proyectos de producción se ha visto limitada por semánticas complejas y un rendimiento inferior en comparación con los lenguajes de cuarta generación. Investigaciones posteriores en programación lógica de restricciones (CLP) y programación lógica probabilística han ampliado las capacidades de razonamiento de estos lenguajes. No obstante, la mayoría de los lenguajes de programación de alto nivel existentes, como Java o C++, basan sus elementos léxicos en el idioma inglés, lo que representa una barrera para los hablantes no nativos de esta lengua. Esta situación ha motivado la exploración de lenguajes de programación basados en idiomas distintos al inglés, como los asiáticos Rapira y Ezhil, demostrando la viabilidad de diversificar la base lingüística de la programación.
+En paralelo a la evolución técnica, ha surgido un creciente interés en la creación de lenguajes de programación basados en lenguas indígenas para mejorar la comprensión de los procesos de resolución de problemas en contextos locales. Investigaciones en África, con el idioma Yoruba como caso de estudio, confirman una alta aceptación y disposición (89% de los encuestados) a utilizar un lenguaje de programación basado en la lengua materna, lo cual facilitaría la enseñanza y el aprendizaje, especialmente en zonas rurales y entre niños. El desarrollo de estas herramientas no solo persigue fines pedagógicos, sino que también busca prevenir la "extinción lingüística" de idiomas indígenas, garantizar su relevancia en la era de la globalización y la tecnología de la información, y reducir la brecha digital. Este enfoque centrado en el usuario, que considera las lenguas nativas y la experiencia previa de los programadores, es fundamental para el diseño de lenguajes de programación más naturales y accesibles. La creación de un lenguaje en aymara se alinea con esta tendencia, buscando aprovechar el potencial educativo y cultural de la programación en lenguas originarias.
+Marco teórico
+
+
+
+
+
+El Lenguaje de Programación como Herramienta Cognitiva y Pedagógica
+Definición y Naturaleza de los Lenguajes de Programación
+
+Un lenguaje de programación se define formalmente como un "conjunto de reglas, símbolos y palabras especiales que permiten construir un programa".2 Consiste en un sistema estructurado de órdenes y comandos que describen un proceso deseado, permitiendo a los seres humanos instruir a las máquinas para que realicen tareas específicas.2 A diferencia de los lenguajes naturales, como el español o el aymara, que se caracterizan por su riqueza semántica, su polisemia y su evolución orgánica, los lenguajes de programación son sistemas formales diseñados con el propósito de la precisión y la ausencia de ambigüedad.2 Mientras que un lenguaje natural permite una comunicación flexible y contextual, un lenguaje de programación exige una sintaxis y semántica estrictas para que pueda ser traducido de manera inequívoca a lenguaje de máquina, el único que un computador puede ejecutar directamente.4
+Es fundamental entender que los lenguajes de programación no son aplicaciones en sí mismos, sino herramientas para construir y adecuar aplicaciones.2 Esta distinción los posiciona como una "meta-habilidad": la capacidad de crear herramientas, soluciones y sistemas digitales. Dominar un lenguaje de programación es, por tanto, dominar el medio de producción de la era digital, lo que representa un salto cualitativo desde el simple uso de la tecnología hacia su creación y control.
+
+Programación para el Desarrollo del Pensamiento Computacional
+
+El aprendizaje de la programación trasciende la mera adquisición de una habilidad técnica; es un ejercicio riguroso que fomenta el desarrollo de competencias cognitivas de orden superior. Central a este proceso es el Pensamiento Computacional (PC), definido como un conjunto de habilidades mentales para la resolución de problemas que se inspira en los conceptos fundamentales de las ciencias de la computación.5 Estas habilidades incluyen la descomposición (dividir un problema complejo en partes manejables), el reconocimiento de patrones, la abstracción (centrarse en lo esencial ignorando detalles irrelevantes) y el pensamiento algorítmico (diseñar una secuencia de pasos para resolver un problema).7
+La evidencia pedagógica demuestra que los proyectos de programación son una de las estrategias más efectivas para cultivar el PC, el pensamiento crítico y la creatividad en los estudiantes.7 El acto de escribir código obliga al aprendiz a estructurar sus pensamientos, anticipar errores, depurar soluciones y refinar su lógica de manera iterativa. Este proceso no solo desarrolla la capacidad para resolver problemas de manera sistemática, sino que también tiene un impacto positivo y medible en el desempeño académico en otras áreas del currículo, particularmente en matemáticas y ciencias. Al aprender a programar, los estudiantes "comprenden y aplican conceptos matemáticos y científicos de manera más efectiva", ya que la programación les proporciona un laboratorio para modelar, simular y visualizar procesos abstractos.7
+
+La Alfabetización Digital como Competencia Fundamental del Siglo XXI
+
+En el contexto contemporáneo, la Alfabetización Digital (AD) ha dejado de ser una habilidad opcional para convertirse en una competencia básica indispensable para la plena participación cívica, económica y social.10 Sin embargo, la AD no debe entenderse de manera reduccionista como la mera capacidad de operar un dispositivo. Es una competencia multidimensional que abarca un espectro de habilidades y conocimientos críticos.10 Sus dimensiones fundamentales incluyen:
+Competencia Técnica: La habilidad para utilizar de manera efectiva herramientas y tecnologías digitales.10
+Alfabetización Informacional: La capacidad crítica para localizar, organizar, evaluar y utilizar información proveniente de fuentes digitales, distinguiendo entre contenido fiable y desinformación.10
+Ciudadanía Digital: La comprensión de los aspectos éticos, legales y de seguridad relacionados con el uso de la tecnología, incluyendo la privacidad de datos y el comportamiento responsable en línea.10
+Creatividad y Resolución de Problemas: El uso de la tecnología como un medio para la expresión creativa, la innovación y la solución de problemas complejos.10
+Alfabetización Mediática: La capacidad de analizar y comprender críticamente los mensajes transmitidos a través de los medios digitales.10
+La importancia de la AD está reconocida a nivel global, alineándose directamente con el Objetivo de Desarrollo Sostenible (ODS) 4 de la UNESCO, que busca "Garantizar una educación inclusiva, equitativa y de calidad y promover oportunidades de aprendizaje durante toda la vida para todos".10 En este marco, la AD es una condición necesaria para la equidad educativa, ya que proporciona las herramientas para acceder al conocimiento y a las oportunidades en un mundo cada vez más digitalizado.13
+En este espectro de competencias, el aprendizaje de la programación representa la cúspide de la alfabetización digital. Si la competencia básica permite a una persona ser un consumidor informado de tecnología, la programación la transforma en un creador activo. Este proyecto, al enseñar a niños y jóvenes aymaras a programar, busca llevarlos más allá de la simple alfabetización hacia la fluidez y la agencia digital. Responde directamente a la preocupación de que muchos jóvenes saben usar aplicaciones pero no cómo crear contenido nuevo o evaluar críticamente la información.11 Al enseñarles la lógica fundamental sobre cómo se construye la tecnología, se les empodera para que se conviertan en arquitectos de su propio mundo digital, no solo en habitantes de uno diseñado por otros, alterando fundamentalmente la dinámica de poder entre usuarios y creadores de tecnología.
+
+Educación, Lengua e Identidad en la Era Digital: El Contexto Andino
+
+
+Principios de la Educación Intercultural Bilingüe (EIB)
+
+La fundamentación pedagógica de este proyecto se arraiga en los principios de la Educación Intercultural Bilingüe (EIB) en América Latina, específicamente en su evolución hacia modelos que superan la visión asimilacionista. Se adopta el modelo de mantenimiento y desarrollo, un enfoque que concibe la lengua materna no como un obstáculo a superar o un puente temporal hacia la lengua dominante, sino como un "recurso pedagógico y como depositaria de saberes, conocimientos, actitudes y valores capaces de enriquecer la educación de todos los educandos".14
+El objetivo de este modelo es el pluralismo cultural y el fomento de un bilingüismo aditivo, en el cual la adquisición de una segunda lengua no se produce a costa de la primera, sino que ambas se fortalecen mutuamente.14 La EIB, desde esta perspectiva, busca la integración dialógica de lenguas y culturas en condiciones de igualdad jerárquica, reconociendo que la lengua es el principal vehículo de la cosmovisión y la identidad de un pueblo.15 La creación de una herramienta de alto valor simbólico y práctico como un lenguaje de programación en aymara es la materialización de este principio. En lugar de utilizar el aymara únicamente para enseñar a programar en un lenguaje basado en el inglés, se posiciona al aymara como un idioma capaz de expresar la lógica computacional, reforzando así su prestigio y utilidad en un dominio moderno y de vanguardia.
+
+El Idioma Aymara: Estatus Oficial y Rol en la Preservación Cultural
+
+El idioma aymara, hablado por comunidades en Bolivia, Perú y Chile, es un pilar fundamental de la identidad y la cohesión cultural del pueblo aymara.17 Su importancia no es meramente simbólica; goza de reconocimiento legal como lengua oficial tanto en Bolivia, según el Artículo 5 de su Constitución Política de 2009, como en Perú, según el Artículo 48 de la Constitución de 1993 y la posterior Ley N° 29735.17
+Sin embargo, el estatus de oficialidad por sí solo no garantiza la vitalidad de una lengua. Para que una lengua prospere, debe ser utilizada en todos los ámbitos de la vida, incluyendo los dominios de alto prestigio como la educación superior, la ciencia y la tecnología.19 La ausencia de una lengua en el espacio digital acelera su marginación y aumenta el riesgo de "extinción lingüística".1 Por lo tanto, introducir el aymara en el campo de la programación no es solo una estrategia educativa, sino un acto de política lingüística proactiva. Asegura que el idioma evolucione para nombrar y estructurar las realidades del siglo XXI, garantizando su relevancia para las nuevas generaciones y fortaleciendo su transmisión intergeneracional.
+
+Descolonizando la Tecnología: Hacia una Programación Plurilingüe
+
+La abrumadora dominancia del inglés en los lenguajes de programación representa una barrera cognitiva y cultural significativa.1 Obliga a los estudiantes a aprender simultáneamente los conceptos abstractos de la programación y un vocabulario técnico en un idioma extranjero. Este proyecto se inscribe en un movimiento global que busca diversificar la base lingüística de la programación, demostrando que la lógica computacional no es patrimonio de ninguna cultura o lengua. Existen precedentes importantes que validan esta visión:
+Característica
+Rapira
+Ezhil
+Yoruba-PL (Propuesto)
+Aymara-PL (Propuesto)
+Lengua Base
+Ruso
+Tamil
+Yoruba
+Aymara
+Región/País
+Unión Soviética
+India
+Nigeria/África Occidental
+Región Andina (Bolivia, Perú)
+Objetivo Principal
+Educación en programación
+Introducción a la computación para niños
+Educación STEM, preservación cultural
+Educación tecnológica, revitalización lingüística
+Paradigma
+Procedural, Interpretado
+Procedural, Interpretado
+Ortográfico, basado en tokens
+Fuente a Fuente (Transpilado)
+Audiencia Clave
+Estudiantes en escuelas soviéticas
+Niños y jóvenes hablantes de Tamil
+Estudiantes y maestros indígenas
+Niños y jóvenes de comunidades aymaras
+
+Fuentes: 1
+Estos ejemplos, desde el temprano Rapira en la Unión Soviética hasta los contemporáneos Ezhil en la India y el proyecto Yoruba en Nigeria, demuestran un reconocimiento creciente de que anclar la enseñanza de la programación en la lengua materna facilita la comprensión y fomenta la apropiación cultural de la tecnología.1
+El desarrollo de estas herramientas constituye un acto tangible de "descolonización epistémica". Desafía la suposición implícita de que el pensamiento científico, lógico y abstracto solo puede articularse de manera efectiva a través de marcos lingüísticos occidentales, predominantemente el inglés. La metodología del proyecto, que busca basar el diseño del lenguaje en las "expresiones, estructuras sintácticas y metáforas" de los propios hablantes aymaras 1, reconoce que diferentes lenguas pueden ofrecer formas distintas y igualmente válidas de expresar la lógica algorítmica. Por consiguiente, crear un lenguaje de programación en aymara no es un simple ejercicio de traducción; es un acto de validación del aymara como un idioma capaz de expresión formal, lógica y computacional. Afirma que la cosmovisión y la estructura lingüística aymara son vehículos legítimos para la creación de tecnología, contribuyendo a descentrar la epistemología anglosajona que actualmente domina el campo.
+
+Desafíos de la Enseñanza de STEM en Contextos Indígenas
+
+La educación en Ciencia, Tecnología, Ingeniería y Matemáticas (STEM, por sus siglas en inglés) en comunidades indígenas enfrenta desafíos particulares que van más allá de la falta de recursos. Uno de los obstáculos más significativos es la "falta de modelos propios vinculados a las STEM" y la desconexión entre los currículos estandarizados y los saberes y prácticas comunitarias.26 Esta desconexión puede generar desinterés y una sensación de alienación cultural en los estudiantes.
+Un lenguaje de programación en aymara aborda directamente este desafío. Se convierte en un modelo propio: una herramienta tecnológica de vanguardia que es cultural y lingüísticamente pertinente. Permite tender un puente entre los sistemas de conocimiento locales y las competencias tecnológicas globales. Al utilizar un lenguaje que resuena con su estructura de pensamiento y su realidad cultural, se mitiga el problema de la "comprensión limitada de las instrucciones... debido a las barreras del idioma" 28 y se fomenta un aprendizaje más significativo y profundo, donde la tecnología no se percibe como algo ajeno e impuesto, sino como una herramienta que puede ser moldeada y utilizada para resolver problemas relevantes para la propia comunidad.
+
+Fundamentos Técnicos para la Creación de un Lenguaje de Programación en Aymara
+
+
+Principios de la Teoría de Compiladores
+
+La propuesta de creación de un nuevo lenguaje de programación, aunque innovadora en su enfoque sociocultural, se fundamenta en los principios bien establecidos de las ciencias de la computación. La teoría de compiladores es la disciplina que estudia el proceso de traducción de un lenguaje de programación a otro, y proporciona el andamiaje teórico y práctico para este proyecto. El proceso de compilación se estructura clásicamente en varias fases, como el análisis léxico, el análisis sintáctico, el análisis semántico y la generación de código.29 La solidez de este proyecto se apoya en décadas de investigación en este campo, encapsuladas en obras canónicas como "Compiladores: Principios, Técnicas y Herramientas" de Aho, Sethi y Ullman, conocido como el "Libro del Dragón", que sirve como referencia estándar en la materia.30 Este anclaje en la teoría formal garantiza que el desarrollo del lenguaje aymara siga un enfoque riguroso y sistemático.
+
+El Enfoque de Compilación de Fuente a Fuente (Transpilación)
+
+Para la implementación del lenguaje aymara, se ha optado por una arquitectura moderna y pragmática: un compilador de fuente a fuente, también conocido como "transpilador" (transpiler).1 A diferencia de un compilador tradicional, que traduce un lenguaje de alto nivel a código máquina de bajo nivel, un transpilador traduce el código fuente de un lenguaje de alto nivel (en este caso, Aymara) a otro lenguaje de alto nivel, como Python o C#.1
+Esta elección es estratégica y ofrece ventajas significativas. En lugar de desarrollar desde cero un complejo entorno de ejecución, un gestor de memoria y optimizadores de bajo nivel, el enfoque de transpilación permite aprovechar todo el ecosistema de un lenguaje de destino maduro y robusto. Esto incluye sus máquinas virtuales altamente optimizadas, sus vastas bibliotecas de funciones estándar y de terceros, su portabilidad multiplataforma y sus robustas herramientas de desarrollo.1 De esta manera, se reduce drásticamente la complejidad del desarrollo, se acelera el tiempo de implementación y se garantiza que el código generado en aymara sea performante y pueda interoperar con el software existente.
+
+El Árbol de Sintaxis Abstracta (AST) como Estructura Central
+
+El componente central en el proceso de transpilación es el Árbol de Sintaxis Abstracta (AST). Un AST es una estructura de datos en forma de árbol que representa la estructura sintáctica del código fuente de manera jerárquica y abstracta, despojada de elementos superfluos como paréntesis o comas, que solo son necesarios para el análisis inicial.34 Cada nodo del árbol corresponde a una construcción del código, como una expresión, una declaración o una estructura de control.35
+El flujo de trabajo propuesto en la metodología del proyecto se articula en torno al AST 1:
+Análisis: El código fuente escrito en aymara es procesado por un analizador (parser) que construye su correspondiente AST. Esta representación captura la "semántica" o el significado estructural del programa, independientemente de la sintaxis específica del aymara.
+Transformación: Un motor de transformación opera sobre este AST, aplicando reglas para reescribir sus nodos y estructuras de una manera que sea compatible con la lógica y los constructos del lenguaje de destino (Python o C#).
+Generación de Código: Finalmente, el AST transformado se recorre para generar el código fuente equivalente en el lenguaje de destino.
+El AST actúa, por tanto, como el puente fundamental que permite una traducción fidedigna de la lógica expresada en aymara a un formato ejecutable por un sistema computacional moderno.36
+La elección de esta arquitectura de transpilación no es una mera conveniencia técnica; es una decisión estratégica que se alinea perfectamente con los objetivos pedagógicos y culturales del proyecto. Al transpilar a un lenguaje como Python, el lenguaje aymara no queda confinado a un ecosistema aislado o limitado. Por el contrario, se convierte en una puerta de entrada al vasto y poderoso mundo de las bibliotecas de Python para ciencia de datos, inteligencia artificial, desarrollo web y mucho más. Esto significa que un estudiante podrá escribir un programa en su lengua materna para analizar datos agrícolas de su comunidad utilizando bibliotecas de vanguardia. Esta capacidad de interoperar con herramientas modernas y resolver problemas del mundo real evita que el lenguaje aymara se convierta en un "lenguaje de juguete" puramente académico. Lo posiciona como una herramienta potente y práctica, maximizando su relevancia, incentivando su adopción y conectando de manera directa la preservación cultural con la capacitación tecnológica de punta.
+
+Métodos
+
+La presente investigación se enmarca en un paradigma de investigación-acción con un enfoque de diseño centrado en el usuario, combinando metodologías cualitativas y de desarrollo tecnológico para crear un artefacto con impacto educativo y sociocultural. El estudio se estructura en cuatro fases secuenciales e iterativas: 1) Diagnóstico y Diseño Conceptual, 2) Desarrollo del Compilador y Entorno de Programación, 3) Implementación Piloto, y 4) Evaluación y Refinamiento.
+
+Fase 1: Diagnóstico y Diseño Conceptual del Lenguaje
+Esta fase inicial se centra en fundamentar el diseño del lenguaje en los requisitos y contextos de la población objetivo. Para ello, se aplicará un estudio de programación natural (natural programming), una técnica de diseño centrado en el usuario que permite explorar las expectativas y habilidades existentes de los potenciales usuarios antes de que un sistema esté completamente definido. Se realizarán entrevistas semiestructuradas y grupos focales con docentes de educación intercultural bilingüe, líderes comunitarios y estudiantes de entre 10 y 18 años de comunidades aymaras del altiplano peruano-boliviano. A los participantes se les presentarán problemas lógicos y algorítmicos sencillos y se les pedirá que describan los pasos para resolverlos utilizando su lengua materna, sin entrenamiento previo en programación. El objetivo es recopilar un corpus de expresiones, estructuras sintácticas y metáforas que informen el diseño del léxico, la sintaxis y los constructos del lenguaje, buscando un equilibrio entre naturalidad y la concisión necesaria para la programación. Los datos cualitativos recopilados serán analizados para identificar patrones lingüísticos y cognitivos recurrentes.
+Diseñar la arquitectura del lenguaje de programación (Modelo C4) 
+Principales funcionalidades del lenguaje de programación
+
+Fase 2: Desarrollo del Compilador y Entorno de Programación
+Basado en los hallazgos de la fase de diagnóstico, se procederá al desarrollo técnico del lenguaje de programación. El compilador se implementará como un compilador de fuente a fuente (source-to-source) utilizando tecnologías modernas de análisis y transformación de código. La arquitectura seguirá un flujo de tres etapas principales:
+
+1. Análisis y Representación Intermedia: Se utilizará un frontend para analizar léxica y sintácticamente el código fuente en aymara y construir un Árbol de Sintaxis Abstracta (AST, por sus siglas en inglés). Esta representación intermedia capturará la estructura y semántica del programa de manera independiente de la sintaxis específica.
+
+2. Transformación del AST: Se desarrollará un motor de transformación (weaver) que operará sobre el AST. Este componente aplicará las reglas de reescritura necesarias para traducir los constructos del lenguaje aymara a un lenguaje de destino de alto nivel, como C# o Python, aprovechando su ecosistema y rendimiento. Se implementarán optimizaciones clave como la especialización de métodos para mejorar el rendimiento del código generado, una técnica que reemplaza los parámetros de tipo dinámico con los tipos estáticos inferidos en tiempo de compilación para reducir la sobrecarga en tiempo de ejecución.
+
+3. Generación de Código: Finalmente, el AST transformado se utilizará para generar el código fuente en el lenguaje de destino, el cual será compilado o interpretado por las herramientas estándar de dicha plataforma.
+Paralelamente, se desarrollará un Entorno de Desarrollo Integrado (IDE) básico, visual y amigable, que facilite la escritura, depuración y ejecución de programas para usuarios noveles.
+
+Fase 3: Implementación Piloto y Estudios de Usabilidad
+Una vez disponible un prototipo funcional, se llevarán a cabo talleres piloto con una muestra intencionada de 60 estudiantes de las comunidades participantes. En estos talleres, se introducirá a los participantes en los conceptos básicos de la lógica computacional a través del nuevo lenguaje. Se diseñarán tareas de programación específicas para evaluar la usabilidad del lenguaje, centradas en la claridad de los constructos, la facilidad de aprendizaje y la capacidad de los estudiantes para expresar soluciones algorítmicas. Se emplearán técnicas como el protocolo de pensamiento en voz alta (think-aloud) para obtener información cualitativa sobre los procesos cognitivos de los participantes mientras resuelven los problemas. Este método permitirá identificar problemas de usabilidad inesperados y comprender las razones subyacentes de los errores cometidos por los estudiantes. Se registrarán observaciones en diarios de campo y se realizarán encuestas post-estudio para medir la motivación y la percepción de los participantes.
+
+Fase 4: Análisis de Datos, Evaluación y Refinamiento
+Los datos recopilados en la fase piloto, tanto cuantitativos (tasas de éxito en tareas, tiempos de resolución) como cualitativos (transcripciones del protocolo think-aloud, notas de campo), serán analizados para evaluar la efectividad del lenguaje como herramienta pedagógica. Se evaluará el impacto del lenguaje en el desarrollo del pensamiento lógico y la apropiación cultural de la tecnología. Los resultados de esta evaluación informarán un ciclo de refinamiento iterativo del diseño del lenguaje y su entorno de desarrollo, con el objetivo de mejorar continuamente su usabilidad y alineación con los objetivos educativos y culturales del proyecto. Los hallazgos también servirán para validar la hipótesis de que un lenguaje de programación basado en la lengua materna reduce las barreras cognitivas y fomenta una mayor participación en la educación tecnológica.
+
+Principales funcionalidades del lenguaje de programación
+1. Sintaxis en Aymara
+Descripción: Todas las palabras clave, estructuras de control y mensajes del lenguaje deben estar en idioma aymara.
+Propósito: Facilitar el aprendizaje al eliminar la barrera del idioma extranjero y reforzar la identidad lingüística.
+2. Diseño Adaptado a Niños y Jóvenes (10–18 años)
+Descripción: Lenguaje simple, con estructuras claras, ejemplos visuales y mensajes de error comprensibles.
+Propósito: Asegurar que los estudiantes puedan aprender sin experiencia previa en programación.
+3. Paradigma Procedural Básico
+Descripción: Soporte para estructuras fundamentales como:
+Declaración de variables
+Condicionales (si, sino)
+Bucles (mientras, para)
+Funciones simples
+Propósito: Enseñar los fundamentos del pensamiento computacional de forma progresiva.
+4. Compilación de Fuente a Fuente (Transpilación)
+Descripción: El código en aymara se traduce automáticamente a un lenguaje como Python o C#.
+Propósito: Aprovechar bibliotecas modernas y permitir que el código sea ejecutable en plataformas existentes.
+5. Uso de Árbol de Sintaxis Abstracta (AST)
+Descripción: Internamente, el lenguaje debe representar el código como un árbol estructurado para facilitar su análisis y transformación.
+Propósito: Permitir una traducción precisa y flexible a otros lenguajes de programación.
+6. Uso del Editor Visual Studio Code para el Lenguaje AymaraLang
+Descripción: Un IDE amigable con:
+Colores y bloques visuales
+Botones para ejecutar y depurar
+Mensajes en aymara
+Propósito: Hacer la experiencia de programación accesible y atractiva para estudiantes noveles.
+7. Documentación y Ayuda en Aymara
+Descripción: Manuales, tutoriales y mensajes de ayuda completamente en aymara.
+Propósito: Promover la autonomía del aprendizaje y la apropiación cultural del lenguaje.
+8. Interoperabilidad con Datos del Mundo Real
+Descripción: Capacidad para trabajar con datos locales (por ejemplo, agrícolas, climáticos o culturales).
+Propósito: Aplicar la programación a contextos relevantes para la comunidad.
+9. Extensibilidad y Modularidad
+Descripción: Posibilidad de crear módulos o bibliotecas reutilizables en aymara.
+Propósito: Fomentar la colaboración y el crecimiento del ecosistema del lenguaje.
+
+Referencias
+
+Aho, A. V., Sethi, R., & Ullman, J. D. (2006). Compilers: Principles, techniques, and tools (2nd ed.). Pearson.
+Annamalai, M. (2009). Ezhil: A Tamil programming language. arXiv. https://arxiv.org/pdf/0907.4960
+Facultad de Contaduría y Administración, Universidad Nacional Autónoma de México. (s.f.). Informática IV. http://fcasua.contad.unam.mx/apuntes/interiores/docs/98/4/informatica_4.pdf
+García-Peñalvo, F. J. (2020). Nueva visión de la competencia digital docente en tiempos de pandemia. Utopía y Praxis Latinoamericana, 27(96), 14. https://doi.org/10.5281/zenodo.5790340
+Gobierno de México. (s.f.). También la alfabetización digital es un derecho humano. Secretaría de Educación Pública. https://www.gob.mx/upn/articulos/tambien-la-alfabetizacion-digital-es-un-derecho-humano
+López, L. E. (2009). Re-imaginando la educación intercultural bilingüe en América Latina: 50 años de avances, retrocesos y desafíos. Revista de la Integración, 2, 17-64.
+Losada, A., Facundo, G., Garcia, M., & Ortin, F. (2022). Mining common syntactic patterns used by Java programmers. IEEE Latin America Transactions, 20(5), 752-760. https://latamt.ieeer9.org/index.php/transactions/article/download/5903/1442
+Martínez Bravo, M. C., Sampedro Requena, B. E., & Poveda-Ríos, S. (2021). Alfabetización digital en la educación superior. Revista de Educación y Desarrollo, 58, 105-116.
+Navarrete-Cazales, Z. (2024). Brecha de género en STEM: desafíos de mujeres indígenas y afrodescendientes en la educación superior. Revista Latinoamericana de Políticas y Administración de la Educación, (21), 40-55. https://revistas.untref.edu.ar/index.php/relapae/article/view/2077
+Olatunji, E. (s.f.-a). Practical 4: The development of a token recognizer for an orthographic Yoruba-based programming language. https://app.vicbhe.org/sites/default/files/Practical-4/OLATUNJI-Ezekiel-Practical%204.docx
+Olatunji, E. (s.f.-b). Practical 8: The development of a token recognizer for an orthographic Yoruba-based programming language. https://app.vicbhe.org/sites/default/files/Practical-8/OLATUNJI-Ezekiel-Practical%208.docx
+República de Bolivia. (2009). Constitución Política del Estado.
+República del Perú. (1993). Constitución Política del Perú.
+Rojas Lopera, S., & Aravena Domich, M. (2023). Pensamiento computacional (PC) en la educación: aprendizajes y desempeño académico. Revista Franz Tamayo, 5(13), 1-25. https://www.redalyc.org/pdf/7605/760579090003.pdf
+Secretaría de Educación Pública. (2004). Políticas y fundamentos de la educación intercultural bilingüe en México. Coordinación General de Educación Intercultural Bilingüe. https://dgeiib.basica.sep.gob.mx/files/fondo-editorial/educacion-intercultural/cgeib_00002.pdf
+UNESCO. (2020). Educación Intercultural Bilingüe en América Latina y el Caribe. Avances y retrocesos en el marco de la pandemia de la COVID-19. UNICEF. https://www.unicef.org/lac/media/22251/file/EIB-AMERICA-LATINA-SPA.pdf
+Zajícová, L. (2017). Lenguas indígenas en la legislación de los países hispanoamericanos. Études Romanes de Brno, 38(1), 173-194. https://dialnet.unirioja.es/descarga/articulo/6476577.pdf
+Obras citadas
+Articulo
+Unidad I. LENGUAJES DE PROGRAMACIÓN 1. Plataforma Teórico ..., fecha de acceso: octubre 11, 2025, http://fcasua.contad.unam.mx/apuntes/interiores/docs/98/4/informatica_4.pdf
+Qué es un lenguaje de programación: Guía para principiantes - OpenWebinars, fecha de acceso: octubre 11, 2025, https://openwebinars.net/blog/que-es-un-lenguaje-de-programacion/
+Programación - Wikipedia, la enciclopedia libre, fecha de acceso: octubre 11, 2025, https://es.wikipedia.org/wiki/Programaci%C3%B3n
+(PDF) Pensamiento computacional y programación en la formación de estudiantes desde edades tempranas - ResearchGate, fecha de acceso: octubre 11, 2025, https://www.researchgate.net/publication/372801366_Pensamiento_computacional_y_programacion_en_la_formacion_de_estudiantes_desde_edades_tempranas
+Pensamiento computacional y aprendizaje adaptativo en la resolución de problemas con fracciones - Redalyc, fecha de acceso: octubre 11, 2025, https://www.redalyc.org/journal/7262/726276429002/726276429002.pdf
+Redalyc.Pensamiento computacional (PC) en la educación ..., fecha de acceso: octubre 11, 2025, https://www.redalyc.org/pdf/7605/760579090003.pdf
+ISSN: 2665-0398 http://www.aulavirtual.web.ve PROGRAMA MACYT EN MATEMÁTICA, ARTE, CIENCIA Y TECNOLOGÍA EN LA EDUCACIÓN SECUN - SciELO - Scientific Electronic Library Online, fecha de acceso: octubre 11, 2025, https://ve.scielo.org/pdf/auvir/v6n13/2665-0398-auvir-6-13-e483.pdf
+Redalyc.Pensamiento computacional: habilidades asociadas y recursos didácticos. Una revisión sistemática, fecha de acceso: octubre 11, 2025, https://www.redalyc.org/pdf/7600/760079756015.pdf
+Alfabetización digital en la educación para el futuro, fecha de acceso: octubre 11, 2025, https://repositorio.uflo.edu.ar/bitstreams/880d4c56-d303-475b-bdff-64e61a784a5c/download
+También la alfabetización digital es un derecho humano - Gob MX, fecha de acceso: octubre 11, 2025, https://www.gob.mx/upn/articulos/tambien-la-alfabetizacion-digital-es-un-derecho-humano
+alfabetización digital: un peldaño hacia la sociedad de la información - SciELO España, fecha de acceso: octubre 11, 2025, https://scielo.isciii.es/pdf/mesetra/v54n210/especial2.pdf
+Alfabetización digital en la formación en la educación superior: Estrategia didáctica en pedagogía virtual - Universidad Piloto de Colombia, fecha de acceso: octubre 11, 2025, https://repository.unipiloto.edu.co/bitstream/handle/20.500.12277/12169/Tesis%20Alfabetizaci%C3%B3n%20digital%20en%20la%20formaci%C3%B3n%20en%20la%20educaci%C3%B3n%20superior.pdf?sequence=1&isAllowed=y
+Educación intercultural bilingüe en Latinoamérica: un breve estado ..., fecha de acceso: octubre 11, 2025, https://www.redalyc.org/pdf/745/74522594002.pdf
+políticas y fundamentos educación intercultural bilingüe en méxico, fecha de acceso: octubre 11, 2025, https://dgeiib.basica.sep.gob.mx/files/fondo-editorial/educacion-intercultural/cgeib_00002.pdf
+EDUCACIÓN INTERCULTURAL BILINGÜE EN AMÉRICA LATINA - UNICEF, fecha de acceso: octubre 11, 2025, https://www.unicef.org/lac/media/22251/file/EIB-AMERICA-LATINA-SPA.pdf
+Idioma aimara - Wikipedia, la enciclopedia libre, fecha de acceso: octubre 11, 2025, https://es.wikipedia.org/wiki/Idioma_aimara
+Lenguas indigenas en la legislacion de los paises ... - Dialnet, fecha de acceso: octubre 11, 2025, https://dialnet.unirioja.es/descarga/articulo/6476577.pdf
+EL MOSAICO DE LAS LENGUAS DE BOLIVIA Las lenguas indígenas de Bolivia ¿Obstáculo o herramienta en la creación de la nación - Tidsskrift.dk, fecha de acceso: octubre 11, 2025, https://tidsskrift.dk/dialogos/article/download/113608/162200
+Rapira - Wikipedia, fecha de acceso: octubre 11, 2025, https://en.wikipedia.org/wiki/Rapira
+Andrey Yershov - Wikipedia, fecha de acceso: octubre 11, 2025, https://en.wikipedia.org/wiki/Andrey_Yershov
+Ezhil (programming language) - Wikipedia, fecha de acceso: octubre 11, 2025, https://en.wikipedia.org/wiki/Ezhil_(programming_language)
+Ezhil (எழல) : A Tamil Programming Language - arXiv, fecha de acceso: octubre 11, 2025, https://arxiv.org/pdf/0907.4960
+app.vicbhe.org, fecha de acceso: octubre 11, 2025, https://app.vicbhe.org/sites/default/files/Practical-4/OLATUNJI-Ezekiel-Practical%204.docx
+app.vicbhe.org, fecha de acceso: octubre 11, 2025, https://app.vicbhe.org/sites/default/files/Practical-8/OLATUNJI-Ezekiel-Practical%208.docx
+DESAFÍOS DE LA EDUCACIÓN STEM EN LA RESIGNIFICACIÓN ..., fecha de acceso: octubre 11, 2025, https://camjol.info/index.php/recsp/article/view/19363/23788
+Desafíos de la Educación STEM en la resignificación de saberes y prácticas comunitarias, fecha de acceso: octubre 11, 2025, https://www.researchgate.net/publication/387288515_Desafios_de_la_Educacion_STEM_en_la_resignificacion_de_saberes_y_practicas_comunitarias
+Desafíos del tránsito de lenguas originarias al castellano y su impacto en la práctica educativa, fecha de acceso: octubre 11, 2025, https://www.pag.org.mx/index.php/PAG/article/download/939/1421/
+Sintaxis y Semántica de Lenguajes - Facultad Regional Resistencia - Universidad Tecnológica Nacional, fecha de acceso: octubre 11, 2025, https://www.frre.utn.edu.ar/isi/clean/files/get/item/13737.pdf
+Compiladores: principios, técnicas y herramientas Guatemala | Ubuy, fecha de acceso: octubre 11, 2025, https://www.ubuy.gt/es/product/99M837IW-compilers-principles-techniques-and-tools-hardcover
+CORPORACIÓN UNIVERSITARIA REMINGTON – CURRÍCULO DE ASIGNATURA, fecha de acceso: octubre 11, 2025, https://sf190e022846d0632.jimcontent.com/download/version/1553367537/module/10428742271/name/Compiladores_curriculo.pdf
+Apuntes - para Un - Compilador | PDF | Compilador | Lenguaje de programación - Scribd, fecha de acceso: octubre 11, 2025, https://es.scribd.com/document/49405825/Apuntes-para-un-Compilador
+Transpilador, una palabra sin sentido : r/ProgrammingLanguages - Reddit, fecha de acceso: octubre 11, 2025, https://www.reddit.com/r/ProgrammingLanguages/comments/15rxlp0/transpiler_a_meaningless_word/?tl=es-es
+Mining Common Syntactic Patterns Used by Java Programmers, fecha de acceso: octubre 11, 2025, https://latamt.ieeer9.org/index.php/transactions/article/download/5903/1442
+www.studysmarter.es, fecha de acceso: octubre 11, 2025, https://www.studysmarter.es/resumenes/ciencias-de-la-computacion/estructuras-de-datos/estructura-de-datos-de-arbol/#:~:text=Un%20%C3%A1rbol%20abstracto%20en%20la%20estructura%20de%20datos%20significa%20un,algoritmos%20de%20resoluci%C3%B3n%20de%20problemas.
+Intérprete (informática) - Wikipedia, la enciclopedia libre, fecha de acceso: octubre 11, 2025, https://es.wikipedia.org/wiki/Int%C3%A9rprete_(inform%C3%A1tica)

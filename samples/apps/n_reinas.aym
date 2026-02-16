@@ -1,0 +1,68 @@
+qallta
+yatiya jakhüwi N = 8;
+yatiya t'aqa col = [];
+yatiya t'aqa diag_prin = [];
+yatiya t'aqa diag_sec = [];
+yatiya jakhüwi soluciones = 0;
+
+lurawi reinicia_marcadores() {
+  col = [];
+  diag_prin = [];
+  diag_sec = [];
+
+  taki(yatiya jakhüwi i = 0; i < N; i = i + 1) {
+    push(col, 0);
+  }
+
+  taki(yatiya jakhüwi i = 0; i < (2 * N - 1); i = i + 1) {
+    push(diag_prin, 0);
+    push(diag_sec, 0);
+  }
+  kuttaya;
+}
+
+lurawi idx_diag_prin(jakhüwi fila, jakhüwi columna): jakhüwi {
+  kuttaya fila - columna + N - 1;
+}
+
+lurawi idx_diag_sec(jakhüwi fila, jakhüwi columna): jakhüwi {
+  kuttaya fila + columna;
+}
+
+lurawi disponible(jakhüwi fila, jakhüwi columna): chiqa {
+  jisa(col[columna] == 1) { kuttaya janiutji; }
+  jisa(diag_prin[idx_diag_prin(fila, columna)] == 1) { kuttaya janiutji; }
+  jisa(diag_sec[idx_diag_sec(fila, columna)] == 1) { kuttaya janiutji; }
+  kuttaya utji;
+}
+
+lurawi marca(jakhüwi fila, jakhüwi columna, jakhüwi valor) {
+  col[columna] = valor;
+  diag_prin[idx_diag_prin(fila, columna)] = valor;
+  diag_sec[idx_diag_sec(fila, columna)] = valor;
+  kuttaya;
+}
+
+lurawi busca(jakhüwi fila) {
+  jisa(fila == N) {
+    soluciones = soluciones + 1;
+    kuttaya;
+  }
+
+  taki(yatiya jakhüwi c = 0; c < N; c = c + 1) {
+    jisa(! disponible(fila, c)) { sarantaña; }
+    marca(fila, c, 1);
+    busca(fila + 1);
+    marca(fila, c, 0);
+  }
+  kuttaya;
+}
+
+reinicia_marcadores();
+busca(0);
+
+qillqa("n =", N);
+qillqa("soluciones =", soluciones);
+afirma(soluciones == 92, "n-reinas N=8 deberia tener 92 soluciones");
+qillqa("n_reinas OK");
+tukuya

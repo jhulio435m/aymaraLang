@@ -1,0 +1,7 @@
+qallta
+qillqa("argc =", arg_cantidad());
+
+taki(yatiya jakhüwi i = 0; i < arg_cantidad(); i = i + 1) {
+  qillqa("arg", i, "=", arg_obtener(i));
+}
+tukuya

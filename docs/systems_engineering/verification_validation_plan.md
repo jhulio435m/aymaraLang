@@ -5,7 +5,6 @@ Definir cómo se verificará y validará AymaraLang y su compilador para asegura
 
 ## 2. Alcance
 - Compilador `aymc` (lexer, parser, semantic, codegen).
-- Backend LLVM experimental.
 - Runtime mínimo.
 
 ## 3. Estrategia de V&V
@@ -29,7 +28,7 @@ flowchart LR
 |---|---|---|
 | FR-01 | Prueba | Compila múltiples archivos `.aym` |
 | FR-05 | Prueba | Binario ejecuta ejemplos | 
-| FR-07 | Prueba | Generación de `.ll` |
+| FR-07 | Prueba | Presencia de `.asm` intermedio |
 | NFR-03 | Inspección | Mensajes de error legibles |
 
 ## 5. Criterios de aceptación

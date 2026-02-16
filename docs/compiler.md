@@ -1,51 +1,88 @@
-# CLI del compilador
+# CLI del compilador (`aymc`)
 
-`aymc` compila archivos `.aym` a ejecutables nativos. Por defecto genera el
-binario junto al archivo de entrada.
-
-## Uso básico
+## Uso
 
 ```bash
-aymc archivo.aym
+aymc [opciones] archivo.aym ...
 ```
 
-Si se entregan varios archivos, se concatenan en una sola unidad de compilación.
+Si se entregan varios archivos, se compilan como una unidad.
 
-```mermaid
-sequenceDiagram
-    participant U as Usuario
-    participant C as aymc
-    participant FS as Sistema de archivos
-    U->>C: aymc archivo.aym
-    C->>FS: leer fuente
-    C->>C: lexer/parser/semántica
-    C->>FS: escribir asm/obj/binario
-    C-->>U: ejecutable listo
+## Opciones
+
+- `-h`, `--help`: muestra ayuda.
+- `-o <ruta>`: define salida del ejecutable.
+- `--backend <nombre>`: selecciona backend (`native` o `ir`).
+- `--debug`: imprime tokens.
+- `--dump-ast`: imprime resumen de nodos AST.
+- `--check`: valida sintaxis/semántica sin generar binario.
+- `--emit-asm`: conserva ASM intermedio.
+- `--compile-only`: genera ASM/objeto sin enlazar.
+- `--link-only`: enlaza objeto existente (requiere `-o`).
+- `--time-pipeline`: imprime tiempos por etapa.
+- `--time-pipeline-json[=ruta]`: exporta métricas de pipeline a JSON.
+- `--tool-timeout-ms <ms>`: timeout para comandos externos (`0` sin límite).
+- `--emit-ast-json[=ruta]`: exporta AST en JSON.
+- `--diagnostics-json[=ruta]`: exporta diagnósticos en JSON.
+- `--check-manifest[=ruta]`: valida `aym.toml`.
+- `--manifest <ruta>`: ruta explícita de manifest.
+- `--emit-lock[=ruta]`: genera `aym.lock`.
+- `--check-lock[=ruta]`: valida `aym.lock`.
+- `--lock <ruta>`: ruta explícita de lockfile.
+- `--windows`: fuerza objetivo Windows.
+- `--linux`: fuerza objetivo Linux.
+- `--seed <valor>`: fija semilla de PRNG.
+
+## Artefactos de salida
+
+- Ejecutable final: `output` o `output.exe`.
+- ASM: `output.asm` (si se conserva).
+- Objeto: `output.o` o `output.obj`.
+- IR: `output.ir` (backend `ir`).
+- Diagnósticos JSON: `output.diagnostics.json`.
+- AST JSON: `output.ast.json`.
+- Pipeline JSON: `output.pipeline.json`.
+
+## Manifest y lockfile
+
+Formato mínimo de `aym.toml`:
+
+```toml
+[package]
+name = "mi_proyecto"
+version = "0.1.0"
+edition = "2026"
+
+[dependencies]
+math = "^1.2.3"
 ```
 
-## Opciones principales
+Validaciones típicas:
 
-- `-o <ruta>`: nombre/salida del ejecutable.
-- `--debug`: imprime tokens en consola.
-- `--dump-ast`: imprime el total de nodos del AST.
-- `--windows` / `--linux`: fuerza plataforma de salida.
-- `--seed <valor>`: fija la semilla del generador pseudoaleatorio.
-- `--llvm`: genera `output.ll` (requiere compilar con soporte LLVM).
-
-## Archivos generados
-
-- `output.asm`: código NASM (temporal, según plataforma).
-- `output.o` / `output.obj`: objeto intermedio.
-- `output` / `output.exe`: ejecutable final.
+```bash
+aymc --check-manifest --emit-lock
+aymc --check-manifest --check-lock
+```
 
 ## Resolución de módulos
 
-La sentencia `apnaq("ruta")` busca módulos en:
+`apnaq("ruta")` resuelve por:
 
-1. El directorio del archivo principal.
-2. Una carpeta `modules/` dentro de ese directorio.
-3. Rutas adicionales definidas en la variable de entorno `AYM_PATH`.
+1. Directorio del archivo fuente.
+2. `modules/` bajo el directorio fuente.
+3. `AYM_PATH`.
 
----
+Para imports por paquete (`apnaq("dep/mod")`) y `aym.lock` presente, usa:
 
-**Siguiente:** [Arquitectura del compilador](arquitectura.md)
+1. `.aym/cache/<dep>/<resolved>/modules/`
+2. `.aym/repo/<dep>/<resolved>/modules/`
+
+## Ejemplos
+
+```bash
+aymc programa.aym
+aymc --check --diagnostics-json programa.aym
+aymc --emit-asm -o build/app programa.aym
+aymc --compile-only -o build/app programa.aym
+aymc --time-pipeline-json -o build/app programa.aym
+```

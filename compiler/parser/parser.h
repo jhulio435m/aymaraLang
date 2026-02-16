@@ -10,9 +10,11 @@
 
 namespace aym {
 
+class DiagnosticEngine;
+
 class Parser {
 public:
-    explicit Parser(const std::vector<Token>& tokens);
+    explicit Parser(const std::vector<Token>& tokens, DiagnosticEngine *diagnostics = nullptr);
     std::vector<std::unique_ptr<Node>> parse();
     std::unique_ptr<Expr> parseExpressionOnly();
     bool hasError() const { return hadError; }
@@ -20,7 +22,9 @@ private:
     std::vector<Token> tokens;
     size_t pos = 0;
     std::unordered_map<std::string, int> dummy; // reserved for future use
+    size_t syntheticCounter = 0;
     bool hadError = false;
+    DiagnosticEngine *diagnostics = nullptr;
 
     const Token &peek() const;
     const Token &get();
@@ -29,6 +33,20 @@ private:
     void synchronize();
     void parseStatements(std::vector<std::unique_ptr<Stmt>> &nodes, bool stopAtBrace = false);
     std::unique_ptr<Stmt> parseSingleStatement();
+    std::vector<std::string> parseImportSymbols();
+    std::vector<std::pair<std::string,std::string>> parseImportAliases();
+    std::unique_ptr<Stmt> parseImportStatement(const Token &importTok);
+    std::unique_ptr<Stmt> parseEnumStatement(const Token &enumTok);
+    std::unique_ptr<Stmt> parseMatchStatement(const Token &matchTok);
+    std::unique_ptr<Stmt> parseThrowStatement(const Token &throwTok);
+    std::unique_ptr<Stmt> parseTryStatement(const Token &tryTok);
+    std::unique_ptr<Stmt> parseVarDeclStatement(const Token &declTok);
+    std::unique_ptr<Stmt> parsePrintStatement(const Token &printTok);
+    std::unique_ptr<Stmt> parseIfStatement(const Token &ifTok);
+    std::unique_ptr<Stmt> parseWhileStatement(const Token &whileTok);
+    std::unique_ptr<Stmt> parseForStatement(const Token &forTok);
+    std::unique_ptr<Stmt> parseFunctionStatement(const Token &funcTok);
+    std::unique_ptr<Stmt> parseExpressionOrAssignmentStatement();
     std::unique_ptr<Stmt> parseClassStatement();
     std::unique_ptr<ClassStmt> parseClassBody(const std::string &name, const std::string &baseName, const Token &startTok);
     std::unique_ptr<Expr> parseExpression();

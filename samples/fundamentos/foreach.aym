@@ -1,0 +1,11 @@
+qallta
+yatiya t'aqa xs = [1, 2, 3, 4];
+yatiya jakhüwi suma = 0;
+
+taki(yatiya jakhüwi x: xs) {
+  suma = suma + x;
+  qillqa("item", x);
+}
+
+qillqa("suma =", suma);
+tukuya

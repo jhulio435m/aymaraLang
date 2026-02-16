@@ -1,0 +1,271 @@
+kasta Actor {
+  yatiya jakhüwi x = 0;
+  yatiya jakhüwi y = 0;
+  yatiya jakhüwi w = 0;
+  yatiya jakhüwi h = 0;
+
+  qallta(jakhüwi xx, jakhüwi yy, jakhüwi ww, jakhüwi hh) {
+    aka.x = xx;
+    aka.y = yy;
+    aka.w = ww;
+    aka.h = hh;
+  }
+
+  lurawi tupu(Actor o): chiqa {
+    jisa(aka.x + aka.w < o.x) { kuttaya janiutji; }
+    jisa(o.x + o.w < aka.x) { kuttaya janiutji; }
+    jisa(aka.y + aka.h < o.y) { kuttaya janiutji; }
+    jisa(o.y + o.h < aka.y) { kuttaya janiutji; }
+    kuttaya utji;
+  }
+
+  lurawi dibuja() {
+    uja_suyu(aka.x, aka.y, aka.w, aka.h, 190, 190, 190);
+    kuttaya;
+  }
+}
+
+kasta Paleta jila Actor {
+  yatiya jakhüwi v = 9;
+
+  qallta(jakhüwi xx, jakhüwi yy, jakhüwi ww, jakhüwi hh) {
+    aka.x = xx;
+    aka.y = yy;
+    aka.w = ww;
+    aka.h = hh;
+    aka.v = 9;
+  }
+
+  lurawi ir_chiqa(jakhüwi limite) {
+    aka.x = aka.x - aka.v;
+    jisa(aka.x < 0) { aka.x = 0; }
+    kuttaya;
+  }
+
+  lurawi ir_kupi(jakhüwi limite) {
+    aka.x = aka.x + aka.v;
+    jisa(aka.x + aka.w > limite) {
+      aka.x = limite - aka.w;
+    }
+    kuttaya;
+  }
+
+  jikxata lurawi dibuja() {
+    uja_suyu(aka.x, aka.y, aka.w, aka.h, 58, 166, 255);
+    uja_suyu(aka.x + 8, aka.y + 6, aka.w - 16, aka.h - 12, 195, 232, 255);
+    kuttaya;
+  }
+}
+
+kasta Pelota jila Actor {
+  yatiya jakhüwi vx = 4;
+  yatiya jakhüwi vy = -4;
+
+  qallta(jakhüwi xx, jakhüwi yy, jakhüwi tam) {
+    aka.x = xx;
+    aka.y = yy;
+    aka.w = tam;
+    aka.h = tam;
+    aka.vx = 4;
+    aka.vy = -4;
+  }
+
+  lurawi wakicha(jakhüwi xx, jakhüwi yy) {
+    aka.x = xx;
+    aka.y = yy;
+    aka.vy = -4;
+    jisa(random(2) == 0) {
+      aka.vx = -4;
+    } maysatxa {
+      aka.vx = 4;
+    }
+    kuttaya;
+  }
+
+  lurawi muyu() {
+    aka.x = aka.x + aka.vx;
+    aka.y = aka.y + aka.vy;
+    kuttaya;
+  }
+
+  lurawi rebota_x() {
+    aka.vx = -aka.vx;
+    kuttaya;
+  }
+
+  lurawi rebota_y() {
+    aka.vy = -aka.vy;
+    kuttaya;
+  }
+
+  jikxata lurawi dibuja() {
+    uja_suyu(aka.x, aka.y, aka.w, aka.h, 255, 204, 77);
+    uja_suyu(aka.x + 4, aka.y + 4, aka.w - 8, aka.h - 8, 255, 240, 180);
+    kuttaya;
+  }
+}
+
+kasta Juego {
+  sapakasta yatiya jakhüwi mejor = 0;
+
+  yatiya jakhüwi ANCHU = 860;
+  yatiya jakhüwi SAYA = 560;
+
+  yatiya Paleta jugador;
+  yatiya Pelota pelota;
+
+  yatiya jakhüwi puntaje = 0;
+  yatiya jakhüwi jan_waltawi = 3;
+  yatiya chiqa tukusi = janiutji;
+  yatiya jakhüwi jutiri_muyu = 0;
+  yatiya chiqa listo = utji;
+
+  qallta() {
+    aka.jugador = machaqa Paleta((aka.ANCHU / 2) - 90, aka.SAYA - 56, 180, 24);
+    aka.pelota = machaqa Pelota((aka.ANCHU / 2) - 10, aka.SAYA - 88, 20);
+    aka.qallta_machaqa();
+  }
+
+  lurawi qallta_machaqa() {
+    aka.puntaje = 0;
+    aka.jan_waltawi = 3;
+    aka.tukusi = janiutji;
+    aka.listo = utji;
+    aka.jugador.x = (aka.ANCHU / 2) - 90;
+    aka.jugador.y = aka.SAYA - 56;
+    aka.pelota.wakicha((aka.ANCHU / 2) - 10, aka.SAYA - 88);
+    aka.jutiri_muyu = tiempo_ms() + 16;
+    kuttaya;
+  }
+
+  lurawi mayampi_ronda() {
+    aka.jugador.x = (aka.ANCHU / 2) - 90;
+    aka.jugador.y = aka.SAYA - 56;
+    aka.pelota.wakicha((aka.ANCHU / 2) - 10, aka.SAYA - 88);
+    aka.jutiri_muyu = tiempo_ms() + 300;
+    kuttaya;
+  }
+
+  lurawi katu_aru() {
+    yatiya jakhüwi k = tecla();
+    yatiya chiqa chiqa_ichi = (k == 97 || k == 65 || k == 1003 || uja_tecla(97) || uja_tecla(65) || uja_tecla(1003));
+    yatiya chiqa chiqa_kupi = (k == 100 || k == 68 || k == 1004 || uja_tecla(100) || uja_tecla(68) || uja_tecla(1004));
+    yatiya chiqa mistu = (k == 113 || k == 81 || k == 27 || uja_tecla(113) || uja_tecla(81) || uja_tecla(27));
+
+    jisa(mistu) {
+      aka.tukusi = utji;
+      aka.jan_waltawi = 0;
+    }
+
+    jisa(aka.tukusi) {
+      yatiya chiqa r_tecla = (k == 114 || k == 82 || uja_tecla(114) || uja_tecla(82));
+      yatiya chiqa q_tecla = mistu;
+      jisa((r_tecla || q_tecla) && aka.listo) {
+        jisa(r_tecla) { aka.qallta_machaqa(); }
+        jisa(q_tecla) { aka.jan_waltawi = 0; }
+        aka.listo = janiutji;
+      }
+      jisa(! (r_tecla || q_tecla)) {
+        aka.listo = utji;
+      }
+      kuttaya;
+    }
+
+    jisa(chiqa_ichi) { aka.jugador.ir_chiqa(aka.ANCHU); }
+    jisa(chiqa_kupi) { aka.jugador.ir_kupi(aka.ANCHU); }
+    kuttaya;
+  }
+
+  lurawi muyu() {
+    jisa(aka.tukusi) { kuttaya; }
+
+    yatiya jakhüwi jichha = tiempo_ms();
+    jisa(jichha < aka.jutiri_muyu) { kuttaya; }
+    aka.jutiri_muyu = jichha + 16;
+
+    aka.pelota.muyu();
+
+    jisa(aka.pelota.x <= 0) {
+      aka.pelota.x = 0;
+      aka.pelota.rebota_x();
+    }
+    jisa(aka.pelota.x + aka.pelota.w >= aka.ANCHU) {
+      aka.pelota.x = aka.ANCHU - aka.pelota.w;
+      aka.pelota.rebota_x();
+    }
+    jisa(aka.pelota.y <= 0) {
+      aka.pelota.y = 0;
+      aka.pelota.rebota_y();
+    }
+
+    jisa(aka.pelota.tupu(aka.jugador) && aka.pelota.vy > 0) {
+      aka.pelota.y = aka.jugador.y - aka.pelota.h - 1;
+      aka.pelota.rebota_y();
+      aka.puntaje = aka.puntaje + 1;
+      jisa(aka.puntaje > Juego.mejor) {
+        Juego.mejor = aka.puntaje;
+      }
+    }
+
+    jisa(aka.pelota.y > aka.SAYA) {
+      aka.jan_waltawi = aka.jan_waltawi - 1;
+      jisa(aka.jan_waltawi <= 0) {
+        aka.tukusi = utji;
+        aka.listo = utji;
+      } maysatxa {
+        aka.mayampi_ronda();
+      }
+    }
+    kuttaya;
+  }
+
+  lurawi dibuja() {
+    uja_pichha(13, 16, 26);
+    uja_suyu(0, 0, aka.ANCHU, aka.SAYA, 18, 22, 34);
+    uja_suyu(0, aka.SAYA - 4, aka.ANCHU, 4, 46, 58, 84);
+
+    aka.jugador.dibuja();
+    aka.pelota.dibuja();
+
+    uja_qillqa("Paleta POO", 14, 10, 240, 240, 240);
+    uja_qillqa("Jakhuwi: " + aru(aka.puntaje), 14, 32, 214, 230, 200);
+    uja_qillqa("Jan waltawi: " + aru(aka.jan_waltawi), 200, 32, 245, 205, 205);
+    uja_qillqa("Mejor: " + aru(Juego.mejor), 420, 32, 180, 220, 255);
+    uja_qillqa("A/D jan ukaxa flecha | Q/Esc mistuña", 14, aka.SAYA - 28, 170, 188, 214);
+
+    jisa(aka.tukusi) {
+      uja_suyu(200, 180, 470, 170, 10, 12, 18);
+      uja_qillqa("Tukusiwayi", 365, 220, 255, 110, 110);
+      uja_qillqa("R wasitata qallta", 338, 255, 225, 225, 225);
+      uja_qillqa("Q jan ukaxa Esc mistuña", 320, 286, 198, 214, 226);
+    }
+
+    uja_ustaya();
+    kuttaya;
+  }
+
+  lurawi saraya() {
+    yatiya chiqa ok = uja_qallta(aka.ANCHU, aka.SAYA, "Paleta POO");
+    jisa(! ok) {
+      qillqa("Uja interfaz jan qalltkiti");
+      kuttaya;
+    }
+
+    ukhakamaxa(uja_utji() && aka.jan_waltawi >= 0) {
+      aka.katu_aru();
+      aka.muyu();
+      aka.dibuja();
+      jisa(aka.tukusi && aka.jan_waltawi == 0 && (uja_tecla(113) || uja_tecla(81) || uja_tecla(27))) {
+        aka.jan_waltawi = -1;
+      }
+      sleep(8);
+    }
+
+    uja_tukuya();
+    kuttaya;
+  }
+}
+
+yatiya Juego anatawi = machaqa Juego();
+anatawi.saraya();
+qillqa("Paleta POO tukuyata");

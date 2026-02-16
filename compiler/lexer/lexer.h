@@ -27,6 +27,7 @@ enum class TokenType {
     EqualEqual,
     BangEqual,
     Bang,
+    Amp,
     AmpAmp,
     PipePipe,
     Equal,
@@ -53,6 +54,10 @@ enum class TokenType {
     KeywordFunc,
     KeywordReturn,
     KeywordImport,
+    KeywordEnum,
+    KeywordMatch,
+    KeywordCase,
+    KeywordDefault,
     KeywordTry,
     KeywordCatch,
     KeywordFinally,
@@ -90,6 +95,12 @@ public:
     explicit Lexer(const std::string &source);
     std::vector<Token> tokenize();
 private:
+    bool skipComment(size_t startLine, size_t startColumn);
+    void lexIdentifierOrKeyword(std::vector<Token> &tokens, size_t startLine, size_t startColumn);
+    void lexNumber(std::vector<Token> &tokens, size_t startLine, size_t startColumn);
+    void lexInterpolatedString(std::vector<Token> &tokens, size_t startLine, size_t startColumn);
+    void lexString(std::vector<Token> &tokens, size_t startLine, size_t startColumn);
+    void lexOperatorOrPunctuation(std::vector<Token> &tokens, size_t startLine, size_t startColumn);
     char peek() const;
     char get();
 

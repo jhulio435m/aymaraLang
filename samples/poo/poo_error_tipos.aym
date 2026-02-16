@@ -1,0 +1,5 @@
+kasta Animal {}
+kasta Perro jila Animal {}
+
+yatiya Perro p = machaqa Animal();
+qillqa("x");

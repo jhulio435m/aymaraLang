@@ -1,32 +1,42 @@
 @echo off
-REM Build script for AymaraLang compiler using MinGW-w64 and NASM
-if not exist build mkdir build
-if not exist bin mkdir bin
+setlocal
 
-set "LLVM_CONFIG=llvm-config"
-where %LLVM_CONFIG% >nul 2>nul
-if %errorlevel%==0 (
-  for /f "delims=" %%i in ('%LLVM_CONFIG% --cxxflags') do set "LLVM_CXXFLAGS=%%i"
-  for /f "delims=" %%i in ('%LLVM_CONFIG% --ldflags --libs core support') do set "LLVM_LDFLAGS=%%i"
-  set "LLVM_DEFINE=-DAYM_WITH_LLVM"
-) else (
-  echo LLVM backend deshabilitado ^(llvm-config no encontrado^); construyendo sin soporte LLVM.
-  set "LLVM_CXXFLAGS="
-  set "LLVM_LDFLAGS="
-  set "LLVM_DEFINE="
+set "BUILD_DIR=build"
+set "CONFIG=Release"
+
+where cmake >nul 2>nul
+if errorlevel 1 (
+  echo [ERROR] CMake no encontrado en PATH.
+  exit /b 1
 )
 
-g++ -std=c++17 -Wall -O2 %LLVM_CXXFLAGS% %LLVM_DEFINE% ^
-  compiler\ast\ast.cpp ^
-  compiler\builtins\builtins.cpp ^
-  compiler\codegen\codegen.cpp ^
-  compiler\codegen\llvm\llvm_codegen.cpp ^
-  compiler\lexer\lexer.cpp ^
-  compiler\parser\parser.cpp ^
-  compiler\semantic\semantic.cpp ^
-  compiler\utils\utils.cpp ^
-  compiler\utils\module_resolver.cpp ^
-  compiler\utils\error.cpp ^
-  compiler\main.cpp ^
-  -o bin\aymc.exe ^
-  -lstdc++fs %LLVM_LDFLAGS%
+echo [build] Configurando proyecto...
+cmake -S . -B "%BUILD_DIR%"
+if errorlevel 1 exit /b %errorlevel%
+
+echo [build] Compilando %CONFIG%...
+cmake --build "%BUILD_DIR%" --config %CONFIG% -j
+if errorlevel 1 exit /b %errorlevel%
+
+if not exist bin mkdir bin
+
+set "AYMC_SRC=%BUILD_DIR%\bin\%CONFIG%\aymc.exe"
+set "AYM_SRC=%BUILD_DIR%\bin\%CONFIG%\aym.exe"
+if not exist "%AYMC_SRC%" set "AYMC_SRC=%BUILD_DIR%\bin\aymc.exe"
+if not exist "%AYM_SRC%" set "AYM_SRC=%BUILD_DIR%\bin\aym.exe"
+
+if exist "%AYMC_SRC%" (
+  copy /Y "%AYMC_SRC%" "bin\aymc.exe" >nul
+  copy /Y "%AYMC_SRC%" "aymc.exe" >nul
+) else (
+  echo [ERROR] No se encontro aymc.exe en la carpeta de build.
+  exit /b 1
+)
+
+if exist "%AYM_SRC%" (
+  copy /Y "%AYM_SRC%" "bin\aym.exe" >nul
+  copy /Y "%AYM_SRC%" "aym.exe" >nul
+)
+
+echo [OK] Build completado. Binarios actualizados en bin\ y raiz del repo.
+exit /b 0

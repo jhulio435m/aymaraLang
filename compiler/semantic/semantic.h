@@ -9,26 +9,39 @@
 
 namespace aym {
 
+class DiagnosticEngine;
+
 class SemanticAnalyzer : public ASTVisitor {
 public:
     void analyze(const std::vector<std::unique_ptr<Node>> &nodes);
+    void setDiagnosticEngine(DiagnosticEngine *engine) { diagnostics = engine; }
+    bool hasErrors() const { return hadErrors; }
     const std::unordered_set<std::string> &getGlobals() const { return globals; }
     const std::unordered_map<std::string, std::vector<std::string>> &getParamTypes() const { return paramTypes; }
     const std::unordered_map<std::string, std::string> &getGlobalTypes() const { return globalTypes; }
     const std::unordered_map<std::string, std::string> &getFunctionReturnTypes() const { return functionReturnTypes; }
 
 private:
+    struct FieldInfo {
+        std::string type;
+        bool isStatic = false;
+        bool isPrivate = false;
+        std::string ownerClass;
+    };
+
     struct MethodInfo {
         std::string returnType;
         std::vector<std::string> paramTypes;
         bool isStatic = false;
+        bool isPrivate = false;
+        std::string ownerClass;
     };
 
     struct ClassInfo {
         std::string name;
         std::string base;
-        std::unordered_map<std::string, std::string> fields;
-        std::unordered_map<std::string, std::string> staticFields;
+        std::unordered_map<std::string, FieldInfo> fields;
+        std::unordered_map<std::string, FieldInfo> staticFields;
         std::unordered_map<std::string, MethodInfo> methods;
         std::unordered_map<std::string, MethodInfo> staticMethods;
         std::unordered_map<size_t, std::vector<std::string>> constructors;
@@ -56,12 +69,21 @@ private:
     const ClassInfo *lookupClass(const std::string &name) const;
     const MethodInfo *lookupMethod(const std::string &className, const std::string &methodName) const;
     const MethodInfo *lookupStaticMethod(const std::string &className, const std::string &methodName) const;
-    std::string lookupFieldType(const std::string &className, const std::string &fieldName) const;
-    std::string lookupStaticFieldType(const std::string &className, const std::string &fieldName) const;
+    const FieldInfo *lookupField(const std::string &className, const std::string &fieldName) const;
+    const FieldInfo *lookupStaticField(const std::string &className, const std::string &fieldName) const;
+    bool isSubclassOf(const std::string &className, const std::string &baseName) const;
+    bool isTypeAssignable(const std::string &actualType, const std::string &expectedType) const;
     void collectClassInfo(const std::vector<std::unique_ptr<Node>> &nodes);
 
     std::string currentType;
     bool lastInputCall = false;
+    bool hadErrors = false;
+    size_t currentLine = 0;
+    size_t currentColumn = 0;
+    DiagnosticEngine *diagnostics = nullptr;
+
+    void markNode(const Node &node);
+    void reportError(const std::string &message, const std::string &code = "AYM3001");
 
     void visit(NumberExpr &) override;
     void visit(BoolExpr &) override;

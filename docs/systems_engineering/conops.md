@@ -38,7 +38,7 @@ sequenceDiagram
 - El usuario dispone de acceso de lectura/escritura al sistema de archivos.
 
 ## 5. Limitaciones operativas
-- El backend LLVM es opcional y puede no estar disponible.
+- El flujo de compilación depende de NASM y GCC/LD (o MinGW) instalados.
 - Soporte limitado a x86_64 en la generación nativa.
 
 ## 6. Criterios de éxito operacional

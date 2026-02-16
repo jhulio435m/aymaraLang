@@ -21,13 +21,13 @@ Definir las interfaces principales del sistema AymaraLang y sus contratos de uso
 \subsection{CLI del compilador}
 \begin{itemize}
     \item \textbf{Comando:} \texttt{aymc [opciones] archivo.aym ...}
-    \item \textbf{Opciones principales:} \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
+    \item \textbf{Opciones principales:} \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
 \end{itemize}
 
 \subsection{Sistema de archivos}
 \begin{itemize}
     \item \textbf{Entradas:} archivos \texttt{.aym}.
-    \item \textbf{Salidas:} \texttt{.asm}, \texttt{.ll} y binario nativo.
+    \item \textbf{Salidas:} \texttt{.asm} y binario nativo.
 \end{itemize}
 
 \subsection{Runtime}
@@ -42,7 +42,7 @@ Definir las interfaces principales del sistema AymaraLang y sus contratos de uso
 Lexer $\rightarrow$ Parser & Tokens con tipo/lexema/posición \\
 Parser $\rightarrow$ Semantic & AST de nodos \texttt{Expr}/\texttt{Stmt} \\
 Semantic $\rightarrow$ Codegen & AST validado + símbolos \\
-Codegen $\rightarrow$ Linker & \texttt{.asm} o \texttt{.ll} \\ \bottomrule
+Codegen $\rightarrow$ Linker & \texttt{.asm} \\ \bottomrule
 \end{longtable}
 
 \section{Reglas de interoperabilidad}

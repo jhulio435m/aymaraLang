@@ -10,14 +10,6 @@
     <?define UpgradeCode = "B8A2AE7B-41E3-4E64-9A5F-41E1D1D6C6F8" ?>
   <?endif?>
 
-  <?ifndef HasLlvmBackend ?>
-    <?define HasLlvmBackend = "0" ?>
-  <?endif?>
-
-  <?ifndef LlvmDir ?>
-    <?define LlvmDir = "" ?>
-  <?endif?>
-
   <?ifndef DistDir ?>
     <?error DistDir no fue definido. Pasa -d DistDir="...\dist" desde build_msi.ps1 ?>
   <?endif?>
@@ -119,12 +111,7 @@
       <ComponentGroupRef Id="CoreBinFiles" />
       <ComponentGroupRef Id="CoreShareFiles" />
       <ComponentRef Id="PathEnv" />
-    </Feature>
-
-    <Feature Id="LLVMFeature" Title="LLVM Backend" Level="2">
-      <?if $(var.HasLlvmBackend) = 1 ?>
-        <ComponentGroupRef Id="LlvmBackendFiles" />
-      <?endif?>
+      <ComponentRef Id="AymFileAssoc" />
     </Feature>
 
   </Package>
@@ -138,7 +125,6 @@
       <Directory Id="INSTALLDIR" Name="AymaraLang">
         <Directory Id="BINDIR" Name="bin" />
         <Directory Id="SHAREDIR" Name="share" />
-        <Directory Id="LLVMBACKENDDIR" Name="llvm-backend" />
       </Directory>
     </StandardDirectory>
   </Fragment>
@@ -177,11 +163,25 @@
   </Fragment>
 
   <Fragment>
-    <ComponentGroup Id="LlvmBackendFiles" Directory="LLVMBACKENDDIR" Source="$(var.LlvmDir)">
-      <?if $(var.HasLlvmBackend) = 1 ?>
-        <Files Include="**\*" />
-      <?endif?>
-    </ComponentGroup>
+    <Component Id="AymFileAssoc" Directory="INSTALLDIR" Guid="47191562-61EC-452C-B15C-F27DC513ED76">
+      <File Id="AymLogoIco" Source="$(sys.SOURCEFILEDIR)..\..\assets\logo.ico" KeyPath="yes" />
+      <RegistryValue Root="HKLM"
+                     Key="Software\Classes\.aym"
+                     Type="string"
+                     Value="AymaraLang.Source" />
+      <RegistryValue Root="HKLM"
+                     Key="Software\Classes\AymaraLang.Source"
+                     Type="string"
+                     Value="AymaraLang Source File" />
+      <RegistryValue Root="HKLM"
+                     Key="Software\Classes\AymaraLang.Source\DefaultIcon"
+                     Type="string"
+                     Value="[INSTALLDIR]logo.ico,0" />
+      <RegistryValue Root="HKLM"
+                     Key="Software\Classes\AymaraLang.Source\shell\open\command"
+                     Type="string"
+                     Value="&quot;[BINDIR]aymc.exe&quot; &quot;%1&quot;" />
+    </Component>
   </Fragment>
 
 </Wix>

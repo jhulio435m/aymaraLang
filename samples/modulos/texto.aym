@@ -1,0 +1,9 @@
+qallta
+lurawi aru_katu(aru a, aru b): aru {
+  kuttaya katu(a, b);
+}
+
+lurawi arsu(aru s): aru {
+  kuttaya mayachta(0, s);
+}
+tukuya

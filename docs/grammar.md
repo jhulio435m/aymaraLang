@@ -31,6 +31,10 @@ flowchart LR
 | `KeywordFunc` | `lurawi` | Definición de funciones |
 | `KeywordReturn` | `kuttaya` | Retorno |
 | `KeywordImport` | `apnaq` | Importación |
+| `KeywordEnum` | `siqicha`, `enum` | Enumeraciones |
+| `KeywordMatch` | `khiti`, `match` | Selección por patrón |
+| `KeywordCase` | `kuna`, `case` | Rama de `match` |
+| `KeywordDefault` | `yaqha`, `default` | Rama por defecto |
 | `KeywordTry` | `yant'aña` | Bloque `try` |
 | `KeywordCatch` | `katjaña` | Bloque `catch` |
 | `KeywordFinally` | `tukuyawi` | Bloque `finally` |
@@ -66,6 +70,7 @@ Los símbolos se mantienen sin cambios:
 - Operadores: `+ - * / % ^`
 - Comparación: `== != < <= > >=`
 - Lógicos: `&& || !`
+- Rango en `case`: `..` (solo en `khiti/match`)
 - Comentarios: `//` y `/* */`
 
 ### Literales
@@ -86,7 +91,7 @@ Los símbolos se mantienen sin cambios:
 programa      = [ "qallta" ] { sentencia } [ "tukuya" ] ;
 
 sentencia     = decl | asigna | if | while | for | func_def | class_def
-              | retorno | salida | continuar | imprimir | importar
+              | enum_def | match | retorno | salida | continuar | imprimir | importar
               | try | throw | bloque | ";" ;
 
 bloque        = "{" { sentencia } "}" ;
@@ -113,6 +118,16 @@ class_member  = { modificador } ( decl | metodo | ctor ) ;
 modificador   = "sapa" | "taqi" | "sapakasta" | "jikxata" ;
 metodo        = "lurawi" id "(" [ params ] ")" [ ":" tipo ] bloque ;
 ctor          = "qallta" "(" [ params ] ")" bloque ;
+
+enum_def      = ("siqicha" | "enum") id "{" enum_item { "," enum_item } "}" [ ";" ] ;
+enum_item     = id [ "=" expr ] ;
+
+match         = ("khiti" | "match") "(" expr ")" "{"
+                { ("kuna" | "case") case_valores ":" bloque }
+                [ ("yaqha" | "default") ":" bloque ]
+                "}" [ ";" ] ;
+case_valores  = case_valor { "," case_valor } ;
+case_valor    = expr [ ".." expr ] ;
 
 retorno       = "kuttaya" [ expr ] ";" ;
 salida        = "p'akhiña" ";" ;

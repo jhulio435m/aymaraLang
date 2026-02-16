@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Linux/WSL packaging scripts must keep LF endings.
+*.sh text eol=lf
+packaging/deb/control text eol=lf
+packaging/deb/*.desktop text eol=lf

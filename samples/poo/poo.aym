@@ -1,0 +1,61 @@
+kasta Persona {
+  yatiya aru nombre;
+  yatiya jakhüwi edad;
+
+  qallta(aru n, jakhüwi e) {
+    aka.nombre = n;
+    aka.edad = e;
+  }
+
+  lurawi saluda(): aru {
+    kuttaya "hola " + aka.nombre;
+  }
+}
+
+yatiya Persona p = machaqa Persona("Ana", 20);
+qillqa(p.saluda());
+
+kasta Contador {
+  yatiya jakhüwi n;
+
+  qallta() { aka.n = 0; }
+
+  lurawi inc() {
+    aka.n = aka.n + 1;
+    kuttaya;
+  }
+
+  lurawi ver(): jakhüwi { kuttaya aka.n; }
+}
+
+yatiya Contador c = machaqa Contador();
+c.inc();
+c.inc();
+qillqa(c.ver());
+
+kasta Base {
+  lurawi hi(): aru { kuttaya "base"; }
+}
+
+kasta Hijo jila Base {
+  jikxata lurawi hi(): aru {
+    kuttaya jilaaka.hi() + "+hijo";
+  }
+}
+
+qillqa(machaqa Hijo().hi());
+
+kasta Motor {
+  yatiya jakhüwi hp;
+  qallta(jakhüwi h) { aka.hp = h; }
+}
+
+kasta Auto {
+  yatiya Motor m;
+  qallta(Motor mm) { aka.m = mm; }
+  lurawi info(): aru { kuttaya "hp=" + aru(aka.m.hp); }
+}
+
+yatiya Motor m = machaqa Motor(150);
+yatiya Auto au = machaqa Auto(m);
+qillqa(au.info());

@@ -1,0 +1,54 @@
+qallta
+siqicha EstadoJuego {
+  MENU,
+  JUGANDO = 10,
+  PAUSA,
+  GAMEOVER
+}
+
+yatiya jakhüwi estado = EstadoJuego.MENU;
+
+khiti(estado) {
+  kuna EstadoJuego.MENU: {
+    qillqa("menu");
+  }
+  kuna EstadoJuego.JUGANDO: {
+    qillqa("jugando");
+  }
+  yaqha: {
+    qillqa("otro");
+  }
+}
+
+estado = EstadoJuego.JUGANDO;
+khiti(estado) {
+  kuna EstadoJuego.MENU: {
+    qillqa("menu");
+  }
+  kuna EstadoJuego.JUGANDO: {
+    qillqa("jugando");
+  }
+  yaqha: {
+    qillqa("otro");
+  }
+}
+
+estado = EstadoJuego.GAMEOVER;
+khiti(estado) {
+  kuna EstadoJuego.PAUSA: {
+    qillqa("pausa");
+  }
+  kuna EstadoJuego.JUGANDO: {
+    qillqa("jugando");
+  }
+  yaqha: {
+    qillqa("default");
+  }
+}
+
+afirma(EstadoJuego.MENU == 0, "enum MENU incorrecto");
+afirma(EstadoJuego.JUGANDO == 10, "enum JUGANDO incorrecto");
+afirma(EstadoJuego.PAUSA == 11, "enum PAUSA incorrecto");
+afirma(EstadoJuego.GAMEOVER == 12, "enum GAMEOVER incorrecto");
+qillqa("enum_match OK");
+tukuya

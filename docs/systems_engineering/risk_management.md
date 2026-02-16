@@ -20,7 +20,7 @@ flowchart LR
 | ID | Riesgo | Probabilidad | Impacto | Mitigación |
 |---|---|---|---|---|
 | R-01 | Dependencia de toolchain externo | Media | Alta | Documentar dependencias y validar en CI | 
-| R-02 | Backend LLVM incompleto | Media | Media | Mantener backend NASM como principal |
+| R-02 | NASM o GCC no disponibles en PATH | Media | Media | Scripts de instalación y validaciones previas al build |
 | R-03 | Compatibilidad limitada a x86_64 | Alta | Media | Definir roadmap multi-arquitectura |
 | R-04 | Curva de aprendizaje de sintaxis aymara | Media | Media | Crear guías y ejemplos accesibles |
 | R-05 | Falta de recursos para pruebas en Windows | Media | Media | Automatizar tests y usar runners multi-OS |

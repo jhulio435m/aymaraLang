@@ -1,0 +1,57 @@
+qallta
+kasta QullqiUta {
+  yatiya aru sutipa;
+  yatiya jakhüwi saldo;
+
+  qallta(aru n, jakhüwi q) {
+    aka.sutipa = n;
+    aka.saldo = q;
+  }
+
+  lurawi uchaña(jakhüwi q) {
+    jisa(q <= 0) {
+      pantja("MONTO", "monto debe ser mayor que cero");
+    }
+    aka.saldo = aka.saldo + q;
+    kuttaya;
+  }
+
+  lurawi apsuña(jakhüwi q) {
+    jisa(q <= 0) {
+      pantja("MONTO", "monto debe ser mayor que cero");
+    }
+    jisa(q > aka.saldo) {
+      pantja("SALDO", "saldo insuficiente en " + aka.sutipa);
+    }
+    aka.saldo = aka.saldo - q;
+    kuttaya;
+  }
+
+  lurawi resumen(): aru {
+    kuttaya aka.sutipa + ":" + aru(aka.saldo);
+  }
+}
+
+lurawi transferi(QullqiUta origen, QullqiUta destino, jakhüwi q) {
+  origen.apsuña(q);
+  destino.uchaña(q);
+  kuttaya;
+}
+
+yatiya QullqiUta ana = machaqa QullqiUta("Ana", 500);
+yatiya QullqiUta luis = machaqa QullqiUta("Luis", 250);
+
+yant'aña {
+  transferi(ana, luis, 120);
+  transferi(luis, ana, 50);
+  transferi(luis, ana, 1000);
+} katjaña("SALDO", e) {
+  qillqa("error capturado", e.suti, e.aru);
+}
+
+qillqa(ana.resumen());
+qillqa(luis.resumen());
+afirma(ana.saldo == 430, "saldo Ana inesperado");
+afirma(luis.saldo == 320, "saldo Luis inesperado");
+qillqa("banca_excepciones OK");
+tukuya

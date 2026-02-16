@@ -61,8 +61,7 @@ Cultural community & Language preservation and educational materials & Medium \\
 \textbf{Key external interfaces:}
 \begin{itemize}
     \item Compiler CLI (\texttt{aymc}).
-    \item File system (read \texttt{.aym}, write \texttt{.asm}/\texttt{.ll} and binaries).
-    \item LLVM backend (optional, enabled with \texttt{--llvm}).
+    \item File system (read \texttt{.aym}, write \texttt{.asm} and binaries).
 \end{itemize}
 
 \section{Functional architecture (summary)}
@@ -72,7 +71,7 @@ Cultural community & Language preservation and educational materials & Medium \\
 Lexical analysis & \texttt{.aym} code & Tokens \\
 Syntax analysis & Tokens & AST \\
 Semantic analysis & AST & Validated AST + symbols \\
-Code generation & Validated AST & \texttt{.asm}/\texttt{.ll} \\
+Code generation & Validated AST & \texttt{.asm} \\
 Assembly/linking & \texttt{.asm} & Native binary \\
 \bottomrule
 \end{longtable}
@@ -87,7 +86,7 @@ Assembly/linking & \texttt{.asm} & Native binary \\
     \item \textbf{FR-04} The system shall validate semantics (types, symbols, and calls) before code generation.
     \item \textbf{FR-05} The system shall generate NASM x86\_64 assembly and link a native executable.
     \item \textbf{FR-06} The system shall allow selecting a Linux or Windows target via CLI.
-    \item \textbf{FR-07} The system shall support an experimental LLVM backend that outputs \texttt{.ll}.
+    \item \textbf{FR-07} The system shall preserve an intermediate \texttt{.asm} artifact before linking.
     \item \textbf{FR-08} The system shall support imported modules from external files.
     \item \textbf{FR-09} The system shall include built-in functions (I/O, math, arrays, randomness).
 \end{itemize}
@@ -104,14 +103,13 @@ Assembly/linking & \texttt{.asm} & Native binary \\
 \subsection{Interface requirements (IR)}
 \begin{itemize}
     \item \textbf{IR-01} Primary CLI: \texttt{aymc [options] file.aym ...}.
-    \item \textbf{IR-02} Options: \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--llvm}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
-    \item \textbf{IR-03} Output files: \texttt{.asm} (NASM), \texttt{.ll} (LLVM), and native executable.
+    \item \textbf{IR-02} Options: \texttt{--debug}, \texttt{--dump-ast}, \texttt{--seed}, \texttt{--windows}, \texttt{--linux}, \texttt{-o}.
+    \item \textbf{IR-03} Output files: \texttt{.asm} (NASM) and native executable.
 \end{itemize}
 
 \section{Constraints and assumptions}
 \begin{itemize}
     \item The toolchain (NASM and GCC/LD or MinGW) must be available in PATH.
-    \item The LLVM backend is optional and depends on a build with support enabled.
     \item The language is designed for static typing and constructs defined in the grammar.
 \end{itemize}
 

@@ -1,0 +1,38 @@
+qallta
+yatiya mapa m = {"nombre": "Ana", "edad": 20};
+qillqa(m["nombre"]);
+m["ciudad"] = "Huancayo";
+apsusuti(m, "edad");
+qillqa(m);
+
+qillqa(utjisuti(m, "nombre") ? "Chiqa" : "K'ari");
+qillqa(utjisuti(m, "edad") ? "Chiqa" : "K'ari");
+
+qillqa(suyum({}));
+qillqa(suyum({"a": 1, "b": 2}));
+
+qillqa(sutinaka({"a": 1, "b": 2}));
+qillqa(chaninaka({"a": 1, "b": 2}));
+
+qillqa(chanim({"a": 1}, "a"));
+qillqa(chanim({"a": 1}, "x", 0));
+
+yatiya t'aqa xs = ["a", "b", "a"];
+yatiya mapa c = {};
+taki(yatiya jakhüwi i = 0; i < suyut(xs); i++) {
+  yatiya aru k = xs[i];
+  jisa(utjisuti(c, k)) {
+    c[k] = c[k] + 1;
+  } maysatxa {
+    c[k] = 1;
+  }
+}
+qillqa(c);
+
+yatiya mapa m3 = {"x": 10, "y": 20};
+yatiya t'aqa ks = sutinaka(m3);
+taki(yatiya jakhüwi i = 0; i < suyut(ks); i++) {
+  yatiya aru k = ks[i];
+  qillqa(aru(k) + "=" + aru(m3[k]));
+}
+tukuya

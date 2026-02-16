@@ -1,49 +1,47 @@
-# Guía del proyecto
+# Estructura del proyecto
 
-## Tecnologías y herramientas
+## Directorios principales
 
-- **Lenguaje:** C++17
-- **Assembler:** NASM
-- **Enlace:** GCC/LD (Linux) o MinGW (Windows)
-- **Build:** CMake (principal), `make`/`build.bat` (legacy)
-- **Extensión de VS Code:** `aymlang/`
-- **Tests:** carpeta `tests/`
+| Ruta | Contenido |
+| --- | --- |
+| `compiler/` | Implementación de `aymc` |
+| `runtime/` | Runtime del lenguaje |
+| `tools/aym/` | Gestor de proyectos `aym` |
+| `samples/` | Programas de ejemplo |
+| `tests/` | Pruebas automatizadas |
+| `scripts/` | Automatización de build/install/test |
+| `installer/` | Definiciones de instaladores Windows |
+| `packaging/` | Empaquetado Linux (`.deb`) |
+| `docs/` | Documentación técnica |
 
-## Extensión para Visual Studio Code
+## CLI de proyecto (`aym`)
 
-La extensión vive en `aymlang/` y ofrece resaltado y snippets. Para empaquetar
-un `.vsix`:
+Uso:
 
 ```bash
-cd aymlang
-npm install
-npx @vscode/vsce package
+aym <comando> [opciones]
 ```
 
-Luego instala el `.vsix` desde VS Code (**Extensions → Install from VSIX**).
+Comandos principales:
 
-## Documentación y materiales de investigación
+- `new`: crea estructura de proyecto.
+- `build`: compila el proyecto.
+- `run`: compila y ejecuta.
+- `test`: valida `tests/*.aym`.
+- `lock`: sincroniza o valida lockfile.
+- `cache`: inspecciona/sincroniza/limpia caché local.
+- `add`: agrega dependencia al manifest.
 
-- Sitio MkDocs en `docs/`.
-- Ingeniería de sistemas en `docs/systems_engineering/`.
-- Fuentes LaTeX/Overleaf en `docs/systems_engineering/overleaf/`.
+## Archivos de proyecto
 
-## Estructura del repositorio (resumen)
+- `aym.toml`: manifest.
+- `aym.lock`: lockfile reproducible.
+- `.aym/repo` y `.aym/cache`: almacenamiento local de dependencias.
 
-```
-compiler/   # compilador C++
-runtime/    # runtime estándar
-aymlang/    # extensión VS Code
-scripts/    # automatizaciones de build/packaging
-samples/    # ejemplos .aym
-tests/      # pruebas automatizadas
-```
+## Flujo recomendado
 
-```mermaid
-flowchart LR
-    Compiler[compiler/] --> Runtime[runtime/]
-    Compiler --> Scripts[scripts/]
-    Compiler --> Samples[samples/]
-    Compiler --> Tests[tests/]
-    Compiler --> VSCode[aymlang/]
-```
+1. `aym new <nombre>`
+2. `aym add <dep> <requirement>`
+3. `aym build`
+4. `aym run`
+5. `aym test`

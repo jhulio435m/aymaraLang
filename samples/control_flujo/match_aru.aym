@@ -1,0 +1,36 @@
+qallta
+yatiya aru base = "pa";
+yatiya aru estado = base + "ya";
+yatiya aru salida = "";
+
+khiti(estado) {
+  kuna "maya": {
+    salida = "uno";
+  }
+  kuna "paya": {
+    salida = "dos";
+  }
+  yaqha: {
+    salida = "otro";
+  }
+}
+
+qillqa("match_aru =", salida);
+afirma(salida == "dos", "match de texto dinamico fallo");
+
+estado = "kimsa";
+khiti(estado) {
+  kuna "maya": {
+    salida = "uno";
+  }
+  kuna "paya": {
+    salida = "dos";
+  }
+  yaqha: {
+    salida = "otro";
+  }
+}
+
+afirma(salida == "otro", "match default en texto fallo");
+qillqa("match_aru OK");
+tukuya

@@ -1,0 +1,41 @@
+name: Coverage
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  coverage-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc g++ nasm gcovr
+
+      - name: Configure (coverage)
+        run: |
+          cmake -S . -B build-coverage \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DBUILD_TESTING=ON \
+            -DAYM_ENABLE_UNIT_TESTS=ON \
+            -DAYM_ENABLE_COVERAGE=ON
+
+      - name: Build
+        run: cmake --build build-coverage -j
+
+      - name: Coverage report
+        run: cmake --build build-coverage --target coverage -j
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-linux
+          path: |
+            build-coverage/coverage/coverage.xml
+            build-coverage/coverage/coverage.html

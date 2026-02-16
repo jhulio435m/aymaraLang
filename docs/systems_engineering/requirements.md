@@ -37,8 +37,7 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 
 **Interfaces externas clave:**
 - CLI del compilador (`aymc`).
-- Sistema de archivos (lectura `.aym`, escritura `.asm`/`.ll` y binarios).
-- Backend LLVM (opcional, activado con `--llvm`).
+- Sistema de archivos (lectura `.aym`, escritura `.asm` y binarios).
 
 ## 6. Arquitectura funcional (resumen)
 | Función | Entrada | Salida |
@@ -46,7 +45,7 @@ Definir los requisitos del sistema **AymaraLang (aym)** y su compilador **aymc**
 | Análisis léxico | Código `.aym` | Tokens |
 | Análisis sintáctico | Tokens | AST |
 | Análisis semántico | AST | AST validado + símbolos |
-| Generación de código | AST validado | `.asm`/`.ll` |
+| Generación de código | AST validado | `.asm` |
 | Ensamblado/enlace | `.asm` | Binario nativo |
 
 ```mermaid
@@ -56,7 +55,7 @@ flowchart LR
     FR03[FR-03 Parser] --> Parser[compiler/parser]
     FR04[FR-04 Semántica] --> Semantic[compiler/semantic]
     FR05[FR-05 Codegen] --> Codegen[compiler/codegen]
-    FR07[FR-07 LLVM] --> LLVM[compiler/codegen/llvm]
+    FR07[FR-07 Artefacto ASM] --> Codegen
 ```
 
 ## 7. Requisitos del sistema
@@ -74,7 +73,7 @@ flowchart LR
 
 **FR-06** El sistema debe permitir seleccionar objetivo Linux o Windows desde la CLI.
 
-**FR-07** El sistema debe admitir un backend LLVM experimental que genere `.ll`.
+**FR-07** El sistema debe generar un archivo `.asm` intermedio previo al enlace.
 
 **FR-08** El sistema debe soportar módulos importados desde archivos externos.
 
@@ -94,13 +93,12 @@ flowchart LR
 ### 7.3 Requisitos de interfaz (IR)
 **IR-01** CLI principal: `aymc [opciones] archivo.aym ...`.
 
-**IR-02** Opciones: `--debug`, `--dump-ast`, `--seed`, `--llvm`, `--windows`, `--linux`, `-o`.
+**IR-02** Opciones: `--debug`, `--dump-ast`, `--seed`, `--windows`, `--linux`, `-o`.
 
-**IR-03** Archivos de salida: `.asm` (NASM), `.ll` (LLVM), y ejecutable nativo.
+**IR-03** Archivos de salida: `.asm` (NASM) y ejecutable nativo.
 
 ## 8. Restricciones y supuestos
 - Se requiere toolchain (NASM y GCC/LD o MinGW) disponible en PATH.
-- El backend LLVM es opcional y depende de compilación con soporte.
 - El lenguaje está orientado a tipado estático y a constructs definidos en la gramática.
 
 ## 9. Verificación y validación (V&V)
@@ -108,7 +106,7 @@ flowchart LR
 |---|---|---|
 | FR-01 | Inspección/Prueba | `aymc archivo.aym` compila sin errores |
 | FR-05 | Prueba | Se genera `.asm` y binario ejecutable |
-| FR-07 | Prueba | Se genera archivo `.ll` |
+| FR-07 | Prueba | Se conserva artefacto `.asm` intermedio |
 | NFR-05 | Inspección | Uso de `-std=c++17` en build |
 
 ## 10. Trazabilidad (resumen)
@@ -119,13 +117,12 @@ flowchart LR
 | FR-03 | `parser/` | Construcción de AST |
 | FR-04 | `semantic/` | Análisis de tipos |
 | FR-05 | `codegen/` | Generación NASM |
-| FR-07 | `codegen/llvm/` | LLVM IR |
+| FR-07 | `codegen/` | Artefacto NASM intermedio |
 | FR-08 | `module_resolver` | Resolución de módulos |
 | FR-09 | `builtins/` | Funciones integradas |
 
 ## 11. Riesgos técnicos (alto nivel)
 - Dependencia de toolchain externo para ensamblado/enlace.
-- Backend LLVM incompleto o experimental.
 - Compatibilidad limitada con arquitecturas distintas de x86_64.
 
 ## 12. Glosario

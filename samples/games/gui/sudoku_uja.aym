@@ -1,0 +1,230 @@
+yatiya jakhüwi UJA_ANCHU = 640;
+yatiya jakhüwi UJA_SAYA = 560;
+yatiya jakhüwi CELDA = 96;
+yatiya jakhüwi OX = 128;
+yatiya jakhüwi OY = 84;
+
+yatiya jakhüwi tabla = 0;
+yatiya jakhüwi chinu = 0;
+yatiya jakhüwi ajlli_f = 0;
+yatiya jakhüwi ajlli_c = 0;
+yatiya aru yatiyawi = "Qallta";
+yatiya chiqa atipi = janiutji;
+
+lurawi fila_machaqa(jakhüwi a, jakhüwi b, jakhüwi c, jakhüwi d): jakhüwi {
+  yatiya jakhüwi fila = array(4);
+  array_set(fila, 0, a);
+  array_set(fila, 1, b);
+  array_set(fila, 2, c);
+  array_set(fila, 3, d);
+  kuttaya fila;
+}
+
+lurawi celda_get(jakhüwi tb, jakhüwi f, jakhüwi c): jakhüwi {
+  yatiya jakhüwi fila = array_get(tb, f);
+  kuttaya array_get(fila, c);
+}
+
+lurawi celda_set(jakhüwi tb, jakhüwi f, jakhüwi c, jakhüwi v) {
+  yatiya jakhüwi fila = array_get(tb, f);
+  array_set(fila, c, v);
+  kuttaya;
+}
+
+lurawi waliwja(jakhüwi tb, jakhüwi f, jakhüwi c, jakhüwi v): chiqa {
+  jisa(v < 1 || v > 4) { kuttaya janiutji; }
+
+  taki(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    jisa(i != c && celda_get(tb, f, i) == v) { kuttaya janiutji; }
+    jisa(i != f && celda_get(tb, i, c) == v) { kuttaya janiutji; }
+  }
+
+  yatiya jakhüwi f0 = (f / 2) * 2;
+  yatiya jakhüwi c0 = (c / 2) * 2;
+  taki(yatiya jakhüwi df = 0; df < 2; df = df + 1) {
+    taki(yatiya jakhüwi dc = 0; dc < 2; dc = dc + 1) {
+      yatiya jakhüwi ff = f0 + df;
+      yatiya jakhüwi cc = c0 + dc;
+      jisa((ff != f || cc != c) && celda_get(tb, ff, cc) == v) {
+        kuttaya janiutji;
+      }
+    }
+  }
+  kuttaya utji;
+}
+
+lurawi phuqhatati(jakhüwi tb): chiqa {
+  taki(yatiya jakhüwi f = 0; f < 4; f = f + 1) {
+    taki(yatiya jakhüwi c = 0; c < 4; c = c + 1) {
+      yatiya jakhüwi v = celda_get(tb, f, c);
+      jisa(v == 0) { kuttaya janiutji; }
+      jisa(! waliwja(tb, f, c, v)) { kuttaya janiutji; }
+    }
+  }
+  kuttaya utji;
+}
+
+lurawi anatawi_wakicha() {
+  tabla = array(4);
+  array_set(tabla, 0, fila_machaqa(1, 0, 0, 4));
+  array_set(tabla, 1, fila_machaqa(0, 4, 1, 2));
+  array_set(tabla, 2, fila_machaqa(2, 1, 4, 0));
+  array_set(tabla, 3, fila_machaqa(4, 0, 2, 1));
+
+  chinu = array(4);
+  taki(yatiya jakhüwi f = 0; f < 4; f = f + 1) {
+    yatiya jakhüwi fm = array(4);
+    taki(yatiya jakhüwi c = 0; c < 4; c = c + 1) {
+      jisa(celda_get(tabla, f, c) == 0) {
+        array_set(fm, c, 0);
+      } maysatxa {
+        array_set(fm, c, 1);
+      }
+    }
+    array_set(chinu, f, fm);
+  }
+
+  ajlli_f = 0;
+  ajlli_c = 0;
+  yatiyawi = "Qallta";
+  atipi = janiutji;
+  kuttaya;
+}
+
+lurawi chimpu_mayjtaya(jakhüwi k) {
+  yatiya jakhüwi waka = celda_get(chinu, ajlli_f, ajlli_c);
+  jisa(waka == 1) {
+    yatiyawi = "Aka chiqaxa jan mayjtaykanti";
+    kuttaya;
+  }
+
+  jisa(k >= 49 && k <= 52) {
+    yatiya jakhüwi v = k - 48;
+    jisa(waliwja(tabla, ajlli_f, ajlli_c, v)) {
+      celda_set(tabla, ajlli_f, ajlli_c, v);
+      yatiyawi = "Waliwa";
+    } maysatxa {
+      yatiyawi = "Jan wali chimpu";
+    }
+    kuttaya;
+  }
+
+  jisa(k == 48 || k == 8) {
+    celda_set(tabla, ajlli_f, ajlli_c, 0);
+    yatiyawi = "Ch'usachata";
+  }
+  kuttaya;
+}
+
+lurawi pinta_celda(jakhüwi f, jakhüwi c) {
+  yatiya jakhüwi x = OX + c * CELDA;
+  yatiya jakhüwi y = OY + f * CELDA;
+  yatiya jakhüwi v = celda_get(tabla, f, c);
+  yatiya chiqa fija = (celda_get(chinu, f, c) == 1);
+  yatiya chiqa ajlli = (f == ajlli_f && c == ajlli_c);
+
+  jisa(ajlli) {
+    uja_suyu(x + 1, y + 1, CELDA - 2, CELDA - 2, 54, 80, 140);
+  } maysatxa jisa(fija) {
+    uja_suyu(x + 1, y + 1, CELDA - 2, CELDA - 2, 36, 50, 72);
+  } maysatxa {
+    uja_suyu(x + 1, y + 1, CELDA - 2, CELDA - 2, 24, 30, 44);
+  }
+
+  jisa(v != 0) {
+    yatiya aru s = aru(v);
+    jisa(fija) {
+      uja_qillqa(s, x + 38, y + 34, 248, 225, 138);
+    } maysatxa {
+      uja_qillqa(s, x + 38, y + 34, 220, 240, 255);
+    }
+  }
+  kuttaya;
+}
+
+lurawi dibuja() {
+  uja_pichha(14, 17, 24);
+
+  uja_qillqa("Sudoku 4x4 Uja", 16, 14, 240, 240, 240);
+  uja_qillqa("A/D/W/S jan ukaxa flecha | 1..4 uchanta | 0 pichha | R wasitata | Q mistuña", 16, 40, 178, 196, 216);
+
+  uja_suyu(OX - 4, OY - 4, CELDA * 4 + 8, CELDA * 4 + 8, 188, 198, 210);
+
+  taki(yatiya jakhüwi i = 1; i < 4; i = i + 1) {
+    yatiya jakhüwi px = OX + i * CELDA;
+    yatiya jakhüwi py = OY + i * CELDA;
+
+    jisa(i == 2) {
+      uja_suyu(px - 2, OY, 4, CELDA * 4, 188, 198, 210);
+      uja_suyu(OX, py - 2, CELDA * 4, 4, 188, 198, 210);
+    } maysatxa {
+      uja_suyu(px - 1, OY, 2, CELDA * 4, 108, 120, 140);
+      uja_suyu(OX, py - 1, CELDA * 4, 2, 108, 120, 140);
+    }
+  }
+
+  taki(yatiya jakhüwi f = 0; f < 4; f = f + 1) {
+    taki(yatiya jakhüwi c = 0; c < 4; c = c + 1) {
+      pinta_celda(f, c);
+    }
+  }
+
+  yatiya aru msj = "Yatiyawi: " + yatiyawi;
+  uja_qillqa(msj, 16, UJA_SAYA - 64, 230, 230, 230);
+
+  jisa(atipi) {
+    uja_suyu(138, 478, 364, 56, 20, 34, 58);
+    uja_qillqa("Atiptawa! R wasitata | Q mistuña", 156, 497, 170, 236, 170);
+  }
+
+  uja_ustaya();
+  kuttaya;
+}
+
+yatiya chiqa sarantawi = uja_qallta(UJA_ANCHU, UJA_SAYA, "Sudoku 4x4 Uja");
+
+jisa(sarantawi) {
+  anatawi_wakicha();
+
+  ukhakamaxa(sarantawi && uja_utji()) {
+    yatiya jakhüwi k = tecla();
+
+    yatiya chiqa ima_a = (k == 97 || k == 65 || k == 1003 || uja_tecla(97) || uja_tecla(65) || uja_tecla(1003));
+    yatiya chiqa ima_d = (k == 100 || k == 68 || k == 1004 || uja_tecla(100) || uja_tecla(68) || uja_tecla(1004));
+    yatiya chiqa ima_w = (k == 119 || k == 87 || k == 1001 || uja_tecla(119) || uja_tecla(87) || uja_tecla(1001));
+    yatiya chiqa ima_s = (k == 115 || k == 83 || k == 1002 || uja_tecla(115) || uja_tecla(83) || uja_tecla(1002));
+    yatiya chiqa ima_q = (k == 113 || k == 81 || k == 27 || uja_tecla(113) || uja_tecla(81) || uja_tecla(27));
+    yatiya chiqa ima_r = (k == 114 || k == 82 || uja_tecla(114) || uja_tecla(82));
+
+    jisa(ima_q) {
+      sarantawi = janiutji;
+    }
+
+    jisa(ima_r) {
+      anatawi_wakicha();
+    }
+
+    jisa(! atipi) {
+      jisa(ima_a && ajlli_c > 0) { ajlli_c = ajlli_c - 1; }
+      jisa(ima_d && ajlli_c < 3) { ajlli_c = ajlli_c + 1; }
+      jisa(ima_w && ajlli_f > 0) { ajlli_f = ajlli_f - 1; }
+      jisa(ima_s && ajlli_f < 3) { ajlli_f = ajlli_f + 1; }
+
+      jisa((k >= 48 && k <= 52) || k == 8) {
+        chimpu_mayjtaya(k);
+      }
+
+      jisa(phuqhatati(tabla)) {
+        atipi = utji;
+        yatiyawi = "Atiptawa";
+      }
+    }
+
+    dibuja();
+    sleep(16);
+  }
+
+  uja_tukuya();
+}
+
+qillqa("Jallalla!");
