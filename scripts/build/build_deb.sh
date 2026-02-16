@@ -94,6 +94,8 @@ CONTROL_TEMPLATE="${ROOT_DIR}/packaging/deb/control"
 sed "s/^Version:.*/Version: ${VERSION}/" "${CONTROL_TEMPLATE}" > "${DEBIAN_DIR}/control"
 cp "${ROOT_DIR}/packaging/deb/postinst" "${DEBIAN_DIR}/postinst"
 cp "${ROOT_DIR}/packaging/deb/postrm" "${DEBIAN_DIR}/postrm"
+# Force LF for maintainer scripts; CRLF breaks execution in dpkg.
+sed -i 's/\r$//' "${DEBIAN_DIR}/postinst" "${DEBIAN_DIR}/postrm"
 
 chmod 755 "${DEBIAN_DIR}/postinst" "${DEBIAN_DIR}/postrm"
 find "${PKG_DIR}" -type d -exec chmod 755 {} \;

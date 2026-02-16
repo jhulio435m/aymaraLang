@@ -5,3 +5,4 @@
 *.sh text eol=lf
 packaging/deb/control text eol=lf
 packaging/deb/*.desktop text eol=lf
+packaging/deb/* text eol=lf
