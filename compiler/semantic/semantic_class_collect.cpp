@@ -129,7 +129,7 @@ void SemanticAnalyzer::collectClassInfo(const std::vector<std::unique_ptr<Node>>
         }
     }
 
-    // Validate override rules.
+    // Validate inherited method compatibility. Redefining a base method is an implicit override.
     for (const auto &n : nodes) {
         auto *cls = dynamic_cast<const ClassStmt*>(n.get());
         if (!cls) continue;
@@ -138,32 +138,26 @@ void SemanticAnalyzer::collectClassInfo(const std::vector<std::unique_ptr<Node>>
         const ClassInfo *own = lookupClass(cls->getName());
         if (!own) continue;
         for (const auto &method : cls->getMethods()) {
-            if (method.isStatic && method.isOverride) {
-                reportError("metodo estatico '" + method.name + "' no puede usar 'jikxata'", "AYM3009");
+            const MethodInfo *baseInfo = lookupMethod(cls->getBase(), method.name);
+            if (!baseInfo) continue;
+            if (method.isStatic) {
+                reportError("metodo estatico '" + method.name + "' no puede redefinir un metodo heredado", "AYM3009");
                 continue;
             }
-            if (method.isStatic) continue;
 
             auto ownIt = own->methods.find(method.name);
             if (ownIt == own->methods.end()) continue;
             const MethodInfo &ownInfo = ownIt->second;
-            const MethodInfo *baseInfo = lookupMethod(cls->getBase(), method.name);
 
-            if (method.isOverride) {
-                if (!baseInfo) {
-                    reportError("metodo '" + method.name + "' usa 'jikxata' pero no existe en la base", "AYM3009");
-                    continue;
-                }
-                if (baseInfo->isPrivate) {
-                    reportError("metodo '" + method.name + "' no puede sobrescribir un metodo privado", "AYM3009");
-                    continue;
-                }
-                if (ownInfo.paramTypes != baseInfo->paramTypes) {
-                    reportError("firma incompatible al sobrescribir metodo '" + method.name + "'", "AYM3009");
-                }
-                if (ownInfo.returnType != baseInfo->returnType) {
-                    reportError("tipo de retorno incompatible al sobrescribir metodo '" + method.name + "'", "AYM3009");
-                }
+            if (baseInfo->isPrivate) {
+                reportError("metodo '" + method.name + "' no puede redefinir un metodo privado heredado", "AYM3009");
+                continue;
+            }
+            if (ownInfo.paramTypes != baseInfo->paramTypes) {
+                reportError("firma incompatible al redefinir metodo heredado '" + method.name + "'", "AYM3009");
+            }
+            if (ownInfo.returnType != baseInfo->returnType) {
+                reportError("tipo de retorno incompatible al redefinir metodo heredado '" + method.name + "'", "AYM3009");
             }
         }
     }

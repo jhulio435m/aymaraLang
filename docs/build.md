@@ -8,6 +8,7 @@ Guía técnica para construir AymaraLang desde el repositorio.
 - Compilador C++17 (`g++`, `clang++` o MSVC)
 - NASM
 - GCC/LD o MinGW según plataforma
+- En Linux, headers y librería de X11 (`pkg-config --exists x11`)
 
 ## Compilación recomendada
 

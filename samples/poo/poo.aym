@@ -38,7 +38,7 @@ kasta Base {
 }
 
 kasta Hijo jila Base {
-  jikxata lurawi hi(): aru {
+  lurawi hi(): aru {
     kuttaya jilaaka.hi() + "+hijo";
   }
 }

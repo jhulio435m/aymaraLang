@@ -5,7 +5,7 @@ kasta Base {
 }
 
 kasta Hijo jila Base {
-  jikxata lurawi f(aru x): jakhüwi {
+  lurawi f(aru x): jakhüwi {
     kuttaya 0;
   }
 }

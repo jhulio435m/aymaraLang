@@ -13,16 +13,16 @@
     ],
     "description": "Estructura básica de programa"
   },
-  "Jisa / Maysatxa": {
-    "prefix": "jisa",
+  "Ukaxa / Maysatxa": {
+    "prefix": "ukaxa",
     "body": [
-      "jisa (${1:condicion}) {",
+      "ukaxa (${1:condicion}) {",
         "    ${2:// ...}",
       "} maysatxa {",
       "    ${3:// ...}",
       "}"
     ],
-    "description": "Condicional jisa/maysatxa"
+    "description": "Condicional ukaxa/maysatxa"
   },
   "Ukhakamaxa": {
     "prefix": "ukhakamaxa",
@@ -33,10 +33,10 @@
     ],
     "description": "Bucle mientras"
   },
-  "Taki clásico": {
-    "prefix": "taki",
+  "Kuti clásico": {
+    "prefix": "kuti",
     "body": [
-      "taki (yatiya ${1:jakhüwi} ${2:i} = 0; ${3:i < 10}; ${4:i++}) {",
+      "kuti (yatiya ${1:jakhüwi} ${2:i} = 0; ${3:i < 10}; ${4:i++}) {",
       "    ${5:// ...}",
       "}"
     ],

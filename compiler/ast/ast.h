@@ -493,7 +493,6 @@ public:
         std::string returnType;
         std::unique_ptr<BlockStmt> body;
         bool isStatic = false;
-        bool isOverride = false;
         bool isPrivate = false;
     };
 

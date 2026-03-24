@@ -20,7 +20,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake gcc g++ nasm
+          sudo apt-get install -y cmake gcc g++ nasm pkg-config libx11-dev xvfb
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'

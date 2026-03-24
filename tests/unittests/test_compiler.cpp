@@ -13,6 +13,7 @@
 #include "compiler/utils/project_tool.h"
 #include "compiler/utils/process.h"
 #include "compiler/utils/semver.h"
+#include "compiler/utils/utils.h"
 #include <fstream>
 #include <cstdio>
 #include <stdexcept>
@@ -34,6 +35,55 @@ std::string normalizeNewlines(std::string text) {
         out.push_back(text[i]);
     }
     return out;
+}
+
+class ScopedEnvVar {
+public:
+    ScopedEnvVar(const std::string &name, const std::string &value) : name_(name) {
+        const char *existing = std::getenv(name.c_str());
+        if (existing != nullptr) {
+            hadOriginal_ = true;
+            originalValue_ = existing;
+        }
+        set(value);
+    }
+
+    ~ScopedEnvVar() {
+        if (hadOriginal_) {
+            set(originalValue_);
+        } else {
+            unset();
+        }
+    }
+
+private:
+    void set(const std::string &value) {
+#ifdef _WIN32
+        _putenv_s(name_.c_str(), value.c_str());
+#else
+        setenv(name_.c_str(), value.c_str(), 1);
+#endif
+    }
+
+    void unset() {
+#ifdef _WIN32
+        _putenv_s(name_.c_str(), "");
+#else
+        unsetenv(name_.c_str());
+#endif
+    }
+
+    std::string name_;
+    bool hadOriginal_ = false;
+    std::string originalValue_;
+};
+
+std::string executableSuffix() {
+#ifdef _WIN32
+    return ".exe";
+#else
+    return "";
+#endif
 }
 } // namespace
 
@@ -211,7 +261,7 @@ TEST(ParserTest, ParseImportAliasesMap) {
 }
 
 TEST(LexerTest, EnumMatchKeywords) {
-    Lexer lexer("enum Estado { INICIO } match(1){ case 1: { } default: { } }");
+    Lexer lexer("siqicha Estado { INICIO } khiti(1){ kuna 1: { } yaqha: { } }");
     auto tokens = lexer.tokenize();
     bool hasEnum = false;
     bool hasMatch = false;
@@ -229,8 +279,8 @@ TEST(LexerTest, EnumMatchKeywords) {
     EXPECT_TRUE(hasDefault);
 }
 
-TEST(LexerTest, AsciiAymaraAliasesKeywords) {
-    Lexer lexer("qallta jakhuwi listana taqa kari sapuru pakhina sarantana yantana katjana tukuyawi untaya tukuya");
+TEST(LexerTest, CanonicalAymaraKeywords) {
+    Lexer lexer("qallta jakhuwi taqa kari kuti pakhina sarantana yantana katjana tukuyawi tukuya");
     auto tokens = lexer.tokenize();
 
     bool hasTypeNumber = false;
@@ -242,7 +292,6 @@ TEST(LexerTest, AsciiAymaraAliasesKeywords) {
     bool hasTry = false;
     bool hasCatch = false;
     bool hasFinally = false;
-    bool hasGetter = false;
 
     for (const auto &tok : tokens) {
         if (tok.type == TokenType::KeywordTypeNumber) hasTypeNumber = true;
@@ -254,7 +303,6 @@ TEST(LexerTest, AsciiAymaraAliasesKeywords) {
         if (tok.type == TokenType::KeywordTry) hasTry = true;
         if (tok.type == TokenType::KeywordCatch) hasCatch = true;
         if (tok.type == TokenType::KeywordFinally) hasFinally = true;
-        if (tok.type == TokenType::KeywordGetter) hasGetter = true;
     }
 
     EXPECT_TRUE(hasTypeNumber);
@@ -266,11 +314,10 @@ TEST(LexerTest, AsciiAymaraAliasesKeywords) {
     EXPECT_TRUE(hasTry);
     EXPECT_TRUE(hasCatch);
     EXPECT_TRUE(hasFinally);
-    EXPECT_TRUE(hasGetter);
 }
 
 TEST(ParserTest, ParseEnumAsMapDeclaration) {
-    Lexer lexer("qallta enum Estado { INICIO, JUGANDO = 5, FIN } tukuya");
+    Lexer lexer("qallta siqicha Estado { INICIO, JUGANDO = 5, FIN } tukuya");
     auto tokens = lexer.tokenize();
     Parser parser(tokens);
     auto nodes = parser.parse();
@@ -298,7 +345,7 @@ TEST(ParserTest, ParseEnumAsMapDeclaration) {
 }
 
 TEST(ParserTest, ParseMatchAsSwitchStatement) {
-    Lexer lexer("qallta match(2){ case 1: { qillqa(\"a\"); } case 2: { qillqa(\"b\"); } default: { qillqa(\"x\"); } } tukuya");
+    Lexer lexer("qallta khiti(2){ kuna 1: { qillqa(\"a\"); } kuna 2: { qillqa(\"b\"); } yaqha: { qillqa(\"x\"); } } tukuya");
     auto tokens = lexer.tokenize();
     Parser parser(tokens);
     auto nodes = parser.parse();
@@ -493,6 +540,35 @@ TEST(DriverTest, ParseToolTimeoutOption) {
     EXPECT_EQ(result, CliParseResult::Ok);
     EXPECT_TRUE(errorMsg.empty());
     EXPECT_EQ(options.toolTimeoutMs, 1500);
+}
+
+TEST(UtilsTest, ResolveToolExecutableUsesBundledToolchainRootOverride) {
+    const fs::path base = fs::path("build") / "tmp" / "test_toolchain_root_override";
+    fs::remove_all(base);
+    fs::create_directories(base / "toolchain" / "bin");
+    fs::create_directories(base / "toolchain" / "mingw64" / "bin");
+
+    const fs::path nasmPath = base / "toolchain" / "bin" / ("nasm" + executableSuffix());
+    const fs::path gccPath = base / "toolchain" / "mingw64" / "bin" / ("gcc" + executableSuffix());
+    {
+        std::ofstream nasm(nasmPath);
+        nasm << "stub";
+    }
+    {
+        std::ofstream gcc(gccPath);
+        gcc << "stub";
+    }
+
+    ScopedEnvVar toolchainRoot("AYM_TOOLCHAIN_ROOT", base.string());
+    ScopedEnvVar gccOverride("AYM_GCC_PATH", "");
+    ScopedEnvVar nasmOverride("AYM_NASM_PATH", "");
+
+    EXPECT_EQ(fs::absolute(resolveToolExecutable("nasm")).lexically_normal(),
+              fs::absolute(nasmPath).lexically_normal());
+    EXPECT_EQ(fs::absolute(resolveToolExecutable("gcc")).lexically_normal(),
+              fs::absolute(gccPath).lexically_normal());
+
+    fs::remove_all(base);
 }
 
 TEST(DriverTest, ParseToolTimeoutOptionRejectsNegativeValue) {
@@ -1536,7 +1612,8 @@ TEST(CodeGenTest, GeneratesAssembly) {
         ASSERT_TRUE(in.is_open());
         std::string contents((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
         in.close();
-        EXPECT_NE(contents.find("ok"), std::string::npos);
+        EXPECT_NE(contents.find("global main"), std::string::npos);
+        EXPECT_NE(contents.find("call printf"), std::string::npos);
     } else {
 #ifdef _WIN32
         EXPECT_TRUE(fs::exists(fs::path("build") / "test_output.exe"));
@@ -2033,6 +2110,31 @@ TEST(SemanticTest, ReportsDiagnosticsWithLocation) {
     EXPECT_GT(diagnostics.all()[0].line, 0u);
     EXPECT_GT(diagnostics.all()[0].column, 0u);
     EXPECT_FALSE(diagnostics.all()[0].suggestion.empty());
+}
+
+TEST(SemanticTest, RejectsWriteWithNumericArgument) {
+    Lexer lexer("qallta write(1); tukuya");
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+    auto nodes = parser.parse();
+    ASSERT_FALSE(parser.hasError());
+
+    DiagnosticEngine diagnostics;
+    SemanticAnalyzer sem;
+    sem.setDiagnosticEngine(&diagnostics);
+    sem.analyze(nodes);
+
+    EXPECT_TRUE(sem.hasErrors());
+    ASSERT_FALSE(diagnostics.empty());
+
+    bool foundTypeError = false;
+    for (const auto &diag : diagnostics.all()) {
+        if (diag.code == "AYM3003") {
+            foundTypeError = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(foundTypeError);
 }
 
 TEST(DiagnosticEngineTest, WritesDiagnosticsJsonFile) {

@@ -16,9 +16,9 @@ std::string normalizeTypeNameLocal(const Token &tok) {
 
 std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
     if (!match(TokenType::LParen)) {
-        parseError("se esperaba '(' despues de 'taki'");
+        parseError("se esperaba '(' despues de 'kuti'");
     }
-    // foreach desugaring: taki(yatiya tipo item: listaIdentificador) { ... }
+    // foreach desugaring: kuti(yatiya tipo item: listaIdentificador) { ... }
     if (peek().type == TokenType::KeywordDeclare) {
         size_t startPos = pos;
         get(); // consume yatiya
@@ -104,13 +104,13 @@ std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
                 match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
                 type = normalizeTypeNameLocal(tokens[pos-1]);
             } else {
-                parseError("se esperaba un tipo en el encabezado de 'sapüru'");
+                parseError("se esperaba un tipo en el encabezado de 'kuti'");
             }
             std::string name;
             if (peek().type == TokenType::Identifier) {
                 name = get().text;
             } else {
-                parseError("se esperaba un identificador en el encabezado de 'sapüru'");
+                parseError("se esperaba un identificador en el encabezado de 'kuti'");
             }
             std::unique_ptr<Expr> initExpr;
             if (match(TokenType::Equal)) initExpr = parseExpression();
@@ -165,13 +165,13 @@ std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
     if (!post) post = std::make_unique<ExprStmt>(nullptr);
 
     if (!match(TokenType::RParen)) {
-        parseError("se esperaba ')' al cerrar encabezado de 'taki'");
+        parseError("se esperaba ')' al cerrar encabezado de 'kuti'");
     }
     Token braceTok = forTok;
     if (match(TokenType::LBrace)) {
         braceTok = tokens[pos - 1];
     } else {
-        parseError("se esperaba '{' en bloque de 'taki'");
+        parseError("se esperaba '{' en bloque de 'kuti'");
     }
     auto body = std::make_unique<BlockStmt>();
     body->setLocation(braceTok.line, braceTok.column);

@@ -35,7 +35,12 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         arg->accept(*this);
         std::string t = currentType;
         if (pit != paramTypes.end() && idx < pit->second.size()) {
-            if (t == "aru") pit->second[idx] = "aru";
+            const std::string &expectedType = pit->second[idx];
+            if (!expectedType.empty() && !t.empty() && !isTypeAssignable(t, expectedType)) {
+                reportError("tipo incompatible en argumento " + std::to_string(idx + 1) +
+                                " en llamada a '" + c.getName() + "'",
+                            "AYM3003");
+            }
         }
         ++idx;
     }

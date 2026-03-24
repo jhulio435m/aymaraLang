@@ -12,9 +12,20 @@ $installerPath = Join-Path $root "installer"
 $outputPath = Join-Path $root $OutputDir
 $nsisScript = Join-Path $installerPath "aymaralang.nsi"
 $vcRedist = Join-Path $installerPath "VC_redist.x64.exe"
+$versionFile = Join-Path $root "VERSION.txt"
+$bundledNasm = Join-Path $distPath "toolchain\bin\nasm.exe"
+$bundledGcc = Join-Path $distPath "toolchain\mingw64\bin\gcc.exe"
+$version = "0.1.0"
 
 if (-not (Test-Path $distPath)) {
     throw "No se encontró $distPath. Ejecuta build_dist.ps1 primero."
+}
+if (-not (Test-Path $bundledNasm) -or -not (Test-Path $bundledGcc)) {
+    throw "dist no contiene toolchain embebida completa. Ejecuta build_dist.ps1 o bundle_windows_toolchain.ps1 antes de empaquetar."
+}
+
+if (Test-Path $versionFile) {
+    $version = (Get-Content $versionFile -Raw).Trim()
 }
 
 $makensis = Get-Command "makensis" -ErrorAction SilentlyContinue
@@ -36,7 +47,8 @@ $outFile = Join-Path $outputPath "AymaraLang-Setup.exe"
 
 Push-Location $root
 try {
-    & $makensis.Source "/DOUTPUT_FILE=$outFile" $nsisScript
+    Write-Host "Compilando NSIS... Version=$version"
+    & $makensis.Source "/DOUTPUT_FILE=$outFile" "/DPRODUCT_VERSION=$version" "/DDIST_ROOT=$distPath" "/DVC_REDIST_SOURCE=$vcRedist" $nsisScript
 } finally {
     Pop-Location
 }

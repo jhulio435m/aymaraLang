@@ -158,7 +158,10 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
         if (t->getFinallyBlock()) {
             out << "    jmp " << end << "\n";
             out << finallyLabel << ":\n";
+            int finallySpillPad = this->windows ? 40 : 8;
+            out << "    sub rsp, " << finallySpillPad << "\n";
             emitStmt(t->getFinallyBlock(), locals, endLabel);
+            out << "    add rsp, " << finallySpillPad << "\n";
             out << "    ret\n";
         }
         out << end << ":\n";

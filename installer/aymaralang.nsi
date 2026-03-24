@@ -10,7 +10,17 @@
 !define PRODUCT_NAME "AymaraLang"
 !define PRODUCT_PUBLISHER "AymaraLang"
 !define PRODUCT_WEB_SITE "https://aymaralang.local"
-!define PRODUCT_VERSION "0.1.0"
+!ifndef PRODUCT_VERSION
+  !define PRODUCT_VERSION "0.1.0"
+!endif
+
+!ifndef VC_REDIST_SOURCE
+  !define VC_REDIST_SOURCE "..\installer\VC_redist.x64.exe"
+!endif
+
+!ifndef DIST_ROOT
+  !define DIST_ROOT "..\dist"
+!endif
 
 !ifdef OUTPUT_FILE
   OutFile "${OUTPUT_FILE}"
@@ -56,16 +66,23 @@ Section "Core (required)" SEC_CORE
   SectionIn RO
   SetRegView 64
 
+  InitPluginsDir
+  SetOutPath "$PLUGINSDIR"
+  File /oname=VC_redist.x64.exe "${VC_REDIST_SOURCE}"
+
   SetOutPath "$INSTDIR"
-  File "..\dist\README.md"
-  File "..\dist\LICENSE"
+  File "${DIST_ROOT}\README.md"
+  File "${DIST_ROOT}\LICENSE"
   File "..\assets\logo.ico"
 
   SetOutPath "$INSTDIR\bin"
-  File /r "..\dist\bin\*"
+  File /r "${DIST_ROOT}\bin\*"
 
   SetOutPath "$INSTDIR\share"
-  File /r "..\dist\share\*"
+  File /r "${DIST_ROOT}\share\*"
+
+  SetOutPath "$INSTDIR\toolchain"
+  File /r "${DIST_ROOT}\toolchain\*"
 
   WriteRegStr HKLM "Software\${PRODUCT_NAME}" "InstallDir" "$INSTDIR"
 
@@ -104,6 +121,7 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\include"
   RMDir /r "$INSTDIR\lib"
   RMDir /r "$INSTDIR\share"
+  RMDir /r "$INSTDIR\toolchain"
   Delete "$INSTDIR\aym.exe"
   Delete "$INSTDIR\aymc.exe"
 
@@ -120,8 +138,6 @@ SectionEnd
 ; ----------------------------
 
 Function .onInit
-  Call EnsureNasm
-  Call EnsureGcc
 FunctionEnd
 
 Function EnsureVCRedist
@@ -151,41 +167,12 @@ FunctionEnd
 Function InstallVCRedist
   SetRegView 64
 
-  IfFileExists "..\installer\VC_redist.x64.exe" 0 +3
-  ExecWait '"..\installer\VC_redist.x64.exe" /install /quiet /norestart'
+  IfFileExists "$PLUGINSDIR\VC_redist.x64.exe" 0 +3
+  ExecWait '"$PLUGINSDIR\VC_redist.x64.exe" /install /quiet /norestart'
   Return
 
-  MessageBox MB_ICONSTOP "No se encontró VC_redist.x64.exe en installer."
+  MessageBox MB_ICONSTOP "No se encontró la copia embebida de VC_redist.x64.exe."
   Abort
-FunctionEnd
-
-Function EnsureNasm
-  Push "nasm.exe"
-  Push "nasm (MSYS2)"
-  Call RequireToolInPath
-FunctionEnd
-
-Function EnsureGcc
-  Push "gcc.exe"
-  Push "gcc (MSYS2)"
-  Call RequireToolInPath
-FunctionEnd
-
-Function RequireToolInPath
-  Exch $1 ; etiqueta visible
-  Exch
-  Exch $0 ; ejecutable
-  Push $2
-
-  ExecWait '"$SYSDIR\where.exe" $0' $2
-  ${If} $2 != 0
-    MessageBox MB_ICONSTOP "$1 no está en PATH. Instala MSYS2 (con nasm y gcc) y agrega su binario a PATH antes de continuar."
-    Abort
-  ${EndIf}
-
-  Pop $2
-  Pop $0
-  Pop $1
 FunctionEnd
 
 Function AddToPath

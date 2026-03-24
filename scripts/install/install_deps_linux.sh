@@ -208,7 +208,18 @@ check_required_tools() {
     return 1
   fi
 
-  log "Dependencias requeridas disponibles: cmake, nasm, gcc, g++"
+  if ! command -v pkg-config >/dev/null 2>&1; then
+    missing+=("pkg-config")
+  elif ! pkg-config --exists x11; then
+    missing+=("x11-dev")
+  fi
+
+  if [ "${#missing[@]}" -gt 0 ]; then
+    error "Faltan dependencias requeridas en PATH/sistema: ${missing[*]}"
+    return 1
+  fi
+
+  log "Dependencias requeridas disponibles: cmake, nasm, gcc, g++, pkg-config, X11"
   return 0
 }
 
@@ -237,6 +248,7 @@ install_for_pm() {
       install_any "CMake" cmake
       install_any "NASM" nasm
       install_any "pkg-config" pkg-config
+      install_any "X11 headers" libx11-dev
       install_any "curl" curl
       install_any "ca-certificates" ca-certificates
       if [ "$WITH_DEB_TOOLS" -eq 1 ]; then
@@ -250,6 +262,7 @@ install_for_pm() {
       install_any "CMake" cmake
       install_any "NASM" nasm
       install_any "pkg-config" pkgconf-pkg-config pkgconf
+      install_any "X11 headers" libX11-devel
       install_any "curl" curl
       install_any "ca-certificates" ca-certificates
       if [ "$WITH_DEB_TOOLS" -eq 1 ]; then
@@ -263,6 +276,7 @@ install_for_pm() {
       install_any "CMake" cmake cmake3
       install_any "NASM" nasm
       install_any "pkg-config" pkgconfig pkgconf-pkg-config pkgconf
+      install_any "X11 headers" libX11-devel
       install_any "curl" curl
       install_any "ca-certificates" ca-certificates
       if [ "$WITH_DEB_TOOLS" -eq 1 ]; then
@@ -275,6 +289,7 @@ install_for_pm() {
       install_any "CMake" cmake
       install_any "NASM" nasm
       install_any "pkg-config" pkgconf
+      install_any "X11 headers" libx11
       install_any "curl" curl
       install_any "ca-certificates" ca-certificates
       if [ "$WITH_DEB_TOOLS" -eq 1 ]; then
@@ -288,6 +303,7 @@ install_for_pm() {
       install_any "CMake" cmake
       install_any "NASM" nasm
       install_any "pkg-config" pkg-config pkgconf-pkg-config
+      install_any "X11 headers" libX11-devel
       install_any "curl" curl
       install_any "ca-certificates" ca-certificates
       if [ "$WITH_DEB_TOOLS" -eq 1 ]; then
@@ -300,6 +316,7 @@ install_for_pm() {
       install_any "CMake" cmake
       install_any "NASM" nasm
       install_any "pkg-config" pkgconf
+      install_any "X11 headers" libx11-dev
       install_any "curl" curl
       install_any "ca-certificates" ca-certificates
       if [ "$WITH_DEB_TOOLS" -eq 1 ]; then
@@ -317,7 +334,7 @@ install_for_pm() {
 PM="$(detect_package_manager)"
 if [ "$PM" = "unknown" ]; then
   error "No se detecto un gestor soportado (apt/dnf/yum/pacman/zypper/apk)."
-  error "Instala manualmente: cmake, nasm, gcc, g++."
+  error "Instala manualmente: cmake, nasm, gcc, g++, pkg-config, headers/lib de X11."
   exit 1
 fi
 

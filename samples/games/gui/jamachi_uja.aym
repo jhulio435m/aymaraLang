@@ -3,33 +3,61 @@ yatiya jakhüwi UJA_SAYA = 432;
 yatiya jakhüwi CELDA = 24;
 
 yatiya jakhüwi ANCHU = 34;
-yatiya jakhüwi SAYA = 18;
+yatiya jakhüwi SAYA = 15;
 yatiya jakhüwi JAMAX = 8;
 yatiya jakhüwi JARKA_JAKHA = 3;
 yatiya jakhüwi JARKA_ANCHU = 3;
 yatiya jakhüwi CHUSA_JAYA = 5;
+yatiya jakhüwi CHUSA_MIN = 3;
 
 yatiya jakhüwi jarka_x = array(JARKA_JAKHA);
 yatiya jakhüwi jarka_chusa = array(JARKA_JAKHA);
+yatiya jakhüwi jarka_chusa_jaya = array(JARKA_JAKHA);
 
 yatiya jakhüwi jamachi_y = 0;
 yatiya jakhüwi chamancha = 0;
 yatiya jakhüwi puntaje = 0;
 yatiya jakhüwi mejor = 0;
 yatiya jakhüwi jutiri = 0;
-yatiya chiqa tukusi = janiutji;
+yatiya chiqa tukusi = k'ari;
+yatiya chiqa thaqta_listo = chiqa;
+yatiya chiqa pausa = k'ari;
+yatiya chiqa pausa_listo = chiqa;
 
 lurawi jarkana_jachax(): jakhüwi {
   yatiya jakhüwi jacha = array_get(jarka_x, 0);
-  taki(yatiya jakhüwi i = 1; i < JARKA_JAKHA; i = i + 1) {
-    jisa(array_get(jarka_x, i) > jacha) { jacha = array_get(jarka_x, i); }
+  kuti(yatiya jakhüwi i = 1; i < JARKA_JAKHA; i = i + 1) {
+    ukaxa(array_get(jarka_x, i) > jacha) { jacha = array_get(jarka_x, i); }
   }
   kuttaya jacha;
 }
 
+lurawi chusa_jichha(): jakhüwi {
+  yatiya jakhüwi g = CHUSA_JAYA;
+  ukaxa(puntaje >= 10) { g = 4; }
+  ukaxa(puntaje >= 22) { g = CHUSA_MIN; }
+  kuttaya g;
+}
+
+lurawi ritmo_jichha(): jakhüwi {
+  yatiya jakhüwi r = 90 - (puntaje / 4) * 3;
+  ukaxa(r < 58) { r = 58; }
+  kuttaya r;
+}
+
+lurawi nivel_jichha(): jakhüwi {
+  yatiya jakhüwi n = 1 + puntaje / 8;
+  ukaxa(n > 9) { n = 9; }
+  kuttaya n;
+}
+
 lurawi jarkana_wakicha(jakhüwi i, jakhüwi qx) {
+  yatiya jakhüwi chusa = chusa_jichha();
+  yatiya jakhüwi max0 = SAYA - chusa - 3;
+  ukaxa(max0 < 1) { max0 = 1; }
   array_set(jarka_x, i, qx);
-  array_set(jarka_chusa, i, 2 + random(SAYA - CHUSA_JAYA - 3));
+  array_set(jarka_chusa, i, 2 + random(max0));
+  array_set(jarka_chusa_jaya, i, chusa);
   kuttaya;
 }
 
@@ -37,23 +65,26 @@ lurawi anatawi_qallta() {
   jamachi_y = SAYA / 2;
   chamancha = 0;
   puntaje = 0;
-  tukusi = janiutji;
+  tukusi = k'ari;
+  thaqta_listo = chiqa;
+  pausa = k'ari;
+  pausa_listo = chiqa;
 
-  taki(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
     jarkana_wakicha(i, ANCHU + i * 12);
   }
-  jutiri = tiempo_ms() + 90;
+  jutiri = tiempo_ms() + ritmo_jichha();
   kuttaya;
 }
 
 lurawi jarkana_muyu() {
-  taki(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
     yatiya jakhüwi x = array_get(jarka_x, i) - 1;
-    jisa(x + JARKA_ANCHU < 0) {
-      x = jarkana_jachax() + 10;
-      array_set(jarka_chusa, i, 2 + random(SAYA - CHUSA_JAYA - 3));
+    ukaxa(x + JARKA_ANCHU < 0) {
+      jarkana_wakicha(i, jarkana_jachax() + 10);
+      x = array_get(jarka_x, i);
       puntaje = puntaje + 1;
-      jisa(puntaje > mejor) { mejor = puntaje; }
+      ukaxa(puntaje > mejor) { mejor = puntaje; }
     }
     array_set(jarka_x, i, x);
   }
@@ -61,18 +92,19 @@ lurawi jarkana_muyu() {
 }
 
 lurawi tukuriti(): chiqa {
-  jisa(jamachi_y < 0 || jamachi_y >= SAYA) { kuttaya utji; }
+  ukaxa(jamachi_y < 0 || jamachi_y >= SAYA) { kuttaya chiqa; }
 
-  taki(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
     yatiya jakhüwi x = array_get(jarka_x, i);
     yatiya jakhüwi chusa0 = array_get(jarka_chusa, i);
-    jisa(JAMAX >= x && JAMAX < x + JARKA_ANCHU) {
-      jisa(jamachi_y < chusa0 || jamachi_y >= chusa0 + CHUSA_JAYA) {
-        kuttaya utji;
+    yatiya jakhüwi chusa = array_get(jarka_chusa_jaya, i);
+    ukaxa(JAMAX >= x && JAMAX < x + JARKA_ANCHU) {
+      ukaxa(jamachi_y < chusa0 || jamachi_y >= chusa0 + chusa) {
+        kuttaya chiqa;
       }
     }
   }
-  kuttaya janiutji;
+  kuttaya k'ari;
 }
 
 lurawi pinta_fondo() {
@@ -84,16 +116,17 @@ lurawi pinta_fondo() {
 lurawi dibuja() {
   pinta_fondo();
 
-  taki(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < JARKA_JAKHA; i = i + 1) {
     yatiya jakhüwi xg = array_get(jarka_x, i) * CELDA;
     yatiya jakhüwi ch0 = array_get(jarka_chusa, i);
+    yatiya jakhüwi chusa = array_get(jarka_chusa_jaya, i);
 
     yatiya jakhüwi top_h = ch0 * CELDA;
-    yatiya jakhüwi bot_y = (ch0 + CHUSA_JAYA) * CELDA;
+    yatiya jakhüwi bot_y = (ch0 + chusa) * CELDA;
     yatiya jakhüwi bot_h = UJA_SAYA - 72 - bot_y;
 
     uja_suyu(xg, 0, JARKA_ANCHU * CELDA, top_h, 74, 160, 92);
-    jisa(bot_h > 0) {
+    ukaxa(bot_h > 0) {
       uja_suyu(xg, bot_y, JARKA_ANCHU * CELDA, bot_h, 74, 160, 92);
     }
   }
@@ -106,14 +139,22 @@ lurawi dibuja() {
   uja_qillqa("Jamachi Uja", 12, 10, 248, 248, 248);
   yatiya aru s1 = "Jakhuwi: " + aru(puntaje);
   yatiya aru s2 = "Mejor: " + aru(mejor);
+  yatiya aru s3 = "Nivel: " + aru(nivel_jichha());
+  yatiya aru s4 = "Ritmo: " + aru(ritmo_jichha()) + "ms";
   uja_qillqa(s1, 12, 34, 238, 247, 222);
   uja_qillqa(s2, 166, 34, 222, 236, 255);
-  uja_qillqa("W/UP/SPACE thaqta | R wasitata | Q/Esc mistuña", 12, UJA_SAYA - 28, 236, 244, 252);
+  uja_qillqa(s3, 314, 34, 254, 226, 168);
+  uja_qillqa(s4, 442, 34, 202, 238, 212);
+  uja_qillqa("W/UP/SPACE thaqta | P samart'aya | R wasitata | Q/Esc mistuña", 12, UJA_SAYA - 28, 236, 244, 252);
 
-  jisa(tukusi) {
+  ukaxa(tukusi) {
     uja_suyu(236, 162, 350, 108, 18, 26, 38);
     uja_qillqa("Tukusiwayi", 350, 192, 255, 98, 98);
     uja_qillqa("R wasitata | Q mistuña", 292, 222, 222, 228, 235);
+  } maysatxa ukaxa(pausa) {
+    uja_suyu(252, 162, 324, 108, 18, 26, 38);
+    uja_qillqa("SAMART'ATA", 342, 192, 248, 236, 132);
+    uja_qillqa("P wasitata sarantaya", 298, 222, 220, 228, 235);
   }
 
   uja_ustaya();
@@ -122,7 +163,7 @@ lurawi dibuja() {
 
 yatiya chiqa sarantawi = uja_qallta(UJA_ANCHU, UJA_SAYA, "Jamachi Uja");
 
-jisa(sarantawi) {
+ukaxa(sarantawi) {
   anatawi_qallta();
 
   ukhakamaxa(sarantawi && uja_utji()) {
@@ -131,28 +172,43 @@ jisa(sarantawi) {
     yatiya chiqa ima_q = (k == 113 || k == 81 || k == 27 || uja_tecla(113) || uja_tecla(81) || uja_tecla(27));
     yatiya chiqa ima_r = (k == 114 || k == 82 || uja_tecla(114) || uja_tecla(82));
     yatiya chiqa ima_w = (k == 119 || k == 87 || k == 1001 || k == 32 || uja_tecla(119) || uja_tecla(87) || uja_tecla(1001) || uja_tecla(32));
+    yatiya chiqa ima_p = (k == 112 || k == 80 || uja_tecla(112) || uja_tecla(80));
 
-    jisa(ima_q) {
-      sarantawi = janiutji;
+    ukaxa(ima_q) {
+      sarantawi = k'ari;
     }
 
-    jisa(ima_r) {
+    ukaxa(ima_r) {
       anatawi_qallta();
     }
 
-    jisa(! tukusi) {
-      jisa(ima_w) {
-        chamancha = -3;
+    ukaxa(! tukusi) {
+      ukaxa(ima_p && pausa_listo) {
+        ukaxa(pausa) {
+          pausa = k'ari;
+        } maysatxa {
+          pausa = chiqa;
+        }
+        pausa_listo = k'ari;
       }
+      ukaxa(! ima_p) { pausa_listo = chiqa; }
+
+      ukaxa(! pausa) {
+        ukaxa(ima_w && thaqta_listo) {
+          chamancha = -3;
+          thaqta_listo = k'ari;
+        }
+      }
+      ukaxa(! ima_w) { thaqta_listo = chiqa; }
 
       yatiya jakhüwi jichha = tiempo_ms();
-      jisa(jichha >= jutiri) {
+      ukaxa(! pausa && jichha >= jutiri) {
         chamancha = chamancha + 1;
-        jisa(chamancha > 3) { chamancha = 3; }
+        ukaxa(chamancha > 3) { chamancha = 3; }
         jamachi_y = jamachi_y + chamancha;
         jarkana_muyu();
-        jisa(tukuriti()) { tukusi = utji; }
-        jutiri = jichha + 90;
+        ukaxa(tukuriti()) { tukusi = chiqa; }
+        jutiri = jichha + ritmo_jichha();
       }
     }
 

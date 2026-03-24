@@ -1,61 +1,69 @@
+#include <limits.h>
 #include <math.h>
 
-double aym_sin(double x) {
-    return sin(x);
+static long aym_math_to_long(double value) {
+    if (!isfinite(value)) return 0;
+    if (value > (double)LONG_MAX) return LONG_MAX;
+    if (value < (double)LONG_MIN) return LONG_MIN;
+    return (long)llround(value);
 }
 
-double aym_cos(double x) {
-    return cos(x);
+long aym_sin(long x) {
+    return aym_math_to_long(sin((double)x));
 }
 
-double aym_tan(double x) {
-    return tan(x);
+long aym_cos(long x) {
+    return aym_math_to_long(cos((double)x));
 }
 
-double aym_asin(double x) {
-    return asin(x);
+long aym_tan(long x) {
+    return aym_math_to_long(tan((double)x));
 }
 
-double aym_acos(double x) {
-    return acos(x);
+long aym_asin(long x) {
+    return aym_math_to_long(asin((double)x));
 }
 
-double aym_atan(double x) {
-    return atan(x);
+long aym_acos(long x) {
+    return aym_math_to_long(acos((double)x));
 }
 
-double aym_sqrt(double x) {
-    return sqrt(x);
+long aym_atan(long x) {
+    return aym_math_to_long(atan((double)x));
 }
 
-double aym_pow(double base, double exponent) {
-    return pow(base, exponent);
+long aym_sqrt(long x) {
+    return aym_math_to_long(sqrt((double)x));
 }
 
-double aym_exp(double x) {
-    return exp(x);
+long aym_pow(long base, long exponent) {
+    return aym_math_to_long(pow((double)base, (double)exponent));
 }
 
-double aym_log(double x) {
-    return log(x);
+long aym_exp(long x) {
+    return aym_math_to_long(exp((double)x));
 }
 
-double aym_log10(double x) {
-    return log10(x);
+long aym_log(long x) {
+    return aym_math_to_long(log((double)x));
 }
 
-double aym_floor(double x) {
-    return floor(x);
+long aym_log10(long x) {
+    return aym_math_to_long(log10((double)x));
 }
 
-double aym_ceil(double x) {
-    return ceil(x);
+long aym_floor(long x) {
+    return aym_math_to_long(floor((double)x));
 }
 
-double aym_round(double x) {
-    return round(x);
+long aym_ceil(long x) {
+    return aym_math_to_long(ceil((double)x));
 }
 
-double aym_fabs(double x) {
-    return fabs(x);
+long aym_round(long x) {
+    return aym_math_to_long(round((double)x));
+}
+
+long aym_fabs(long x) {
+    return aym_math_to_long(fabs((double)x));
 }

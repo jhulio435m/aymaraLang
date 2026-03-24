@@ -123,27 +123,19 @@ void Lexer::lexIdentifierOrKeyword(std::vector<Token> &tokens,
         tokens.push_back({TokenType::KeywordThis, word, startLine, startColumn});
     } else if (normalized == "jila") {
         tokens.push_back({TokenType::KeywordExtends, word, startLine, startColumn});
-    } else if (normalized == "jikxata") {
-        tokens.push_back({TokenType::KeywordOverride, word, startLine, startColumn});
     } else if (normalized == "sapa") {
         tokens.push_back({TokenType::KeywordPrivate, word, startLine, startColumn});
-    } else if (normalized == "taqi") {
-        tokens.push_back({TokenType::KeywordPublic, word, startLine, startColumn});
     } else if (normalized == "sapakasta") {
         tokens.push_back({TokenType::KeywordStatic, word, startLine, startColumn});
-    } else if (normalized == "untaya") {
-        tokens.push_back({TokenType::KeywordGetter, word, startLine, startColumn});
-    } else if (normalized == "chura") {
-        tokens.push_back({TokenType::KeywordSetter, word, startLine, startColumn});
     } else if (normalized == "jilaaka") {
         tokens.push_back({TokenType::KeywordSuper, word, startLine, startColumn});
-    } else if (normalized == "suti" || normalized == "jisa") {
+    } else if (normalized == "ukaxa") {
         tokens.push_back({TokenType::KeywordIf, word, startLine, startColumn});
-    } else if (normalized == "jani" || normalized == "maysatxa") {
+    } else if (normalized == "maysatxa") {
         tokens.push_back({TokenType::KeywordElse, word, startLine, startColumn});
-    } else if (normalized == "kunawsati" || normalized == "ukhakamaxa") {
+    } else if (normalized == "ukhakamaxa") {
         tokens.push_back({TokenType::KeywordWhile, word, startLine, startColumn});
-    } else if (normalized == "sapuru" || normalized == "taki") {
+    } else if (normalized == "kuti") {
         tokens.push_back({TokenType::KeywordFor, word, startLine, startColumn});
     } else if (normalized == "pakhina") {
         tokens.push_back({TokenType::KeywordBreak, word, startLine, startColumn});
@@ -155,13 +147,13 @@ void Lexer::lexIdentifierOrKeyword(std::vector<Token> &tokens,
         tokens.push_back({TokenType::KeywordReturn, word, startLine, startColumn});
     } else if (normalized == "apnaq") {
         tokens.push_back({TokenType::KeywordImport, word, startLine, startColumn});
-    } else if (normalized == "enum" || normalized == "siqicha") {
+    } else if (normalized == "siqicha") {
         tokens.push_back({TokenType::KeywordEnum, word, startLine, startColumn});
-    } else if (normalized == "match" || normalized == "khiti") {
+    } else if (normalized == "khiti") {
         tokens.push_back({TokenType::KeywordMatch, word, startLine, startColumn});
-    } else if (normalized == "case" || normalized == "kuna") {
+    } else if (normalized == "kuna") {
         tokens.push_back({TokenType::KeywordCase, word, startLine, startColumn});
-    } else if (normalized == "default" || normalized == "yaqha") {
+    } else if (normalized == "yaqha") {
         tokens.push_back({TokenType::KeywordDefault, word, startLine, startColumn});
     } else if (normalized == "yantana") {
         tokens.push_back({TokenType::KeywordTry, word, startLine, startColumn});
@@ -175,26 +167,13 @@ void Lexer::lexIdentifierOrKeyword(std::vector<Token> &tokens,
         tokens.push_back({TokenType::KeywordTypeNumber, word, startLine, startColumn});
     } else if (normalized == "aru") {
         tokens.push_back({TokenType::KeywordTypeString, word, startLine, startColumn});
-    } else if (normalized == "listana" || normalized == "taqa") {
+    } else if (normalized == "taqa") {
         tokens.push_back({TokenType::KeywordTypeList, word, startLine, startColumn});
     } else if (normalized == "mapa") {
         tokens.push_back({TokenType::KeywordTypeMap, word, startLine, startColumn});
-    } else if (normalized == "utji" || normalized == "chiqa") {
-        if (normalized == "utji") {
-            size_t lookahead = pos;
-            while (lookahead < src.size() &&
-                   std::isspace(static_cast<unsigned char>(src[lookahead]))) {
-                ++lookahead;
-            }
-            if (lookahead < src.size() && src[lookahead] == '(') {
-                tokens.push_back({TokenType::Identifier, word, startLine, startColumn});
-            } else {
-                tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
-            }
-        } else {
-            tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
-        }
-    } else if (normalized == "janiutji" || normalized == "kari") {
+    } else if (normalized == "chiqa") {
+        tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
+    } else if (normalized == "kari") {
         tokens.push_back({TokenType::KeywordFalse, word, startLine, startColumn});
     } else {
         tokens.push_back({TokenType::Identifier, word, startLine, startColumn});

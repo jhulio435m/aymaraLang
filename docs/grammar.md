@@ -22,19 +22,19 @@ flowchart LR
 | `KeywordEnd` | `tukuya` | Fin del programa |
 | `KeywordDeclare` | `yatiya` | Declaración de variables |
 | `KeywordPrint` | `qillqa` | Sentencia de impresión |
-| `KeywordIf` | `suti`, `jisa` | Condicional |
-| `KeywordElse` | `jani`, `maysatxa` | Rama alternativa |
-| `KeywordWhile` | `kunawsati`, `ukhakamaxa` | Bucle `while` |
-| `KeywordFor` | `sapüru`, `taki` | Bucle `for` |
+| `KeywordIf` | `ukaxa` | Condicional |
+| `KeywordElse` | `maysatxa` | Rama alternativa |
+| `KeywordWhile` | `ukhakamaxa` | Bucle `while` |
+| `KeywordFor` | `kuti` | Bucle `for` |
 | `KeywordBreak` | `p'akhiña` | Salir de un bucle |
 | `KeywordContinue` | `sarantaña` | Continuar bucle |
 | `KeywordFunc` | `lurawi` | Definición de funciones |
 | `KeywordReturn` | `kuttaya` | Retorno |
 | `KeywordImport` | `apnaq` | Importación |
-| `KeywordEnum` | `siqicha`, `enum` | Enumeraciones |
-| `KeywordMatch` | `khiti`, `match` | Selección por patrón |
-| `KeywordCase` | `kuna`, `case` | Rama de `match` |
-| `KeywordDefault` | `yaqha`, `default` | Rama por defecto |
+| `KeywordEnum` | `siqicha` | Enumeraciones |
+| `KeywordMatch` | `khiti` | Selección por patrón |
+| `KeywordCase` | `kuna` | Rama de `khiti` |
+| `KeywordDefault` | `yaqha` | Rama por defecto |
 | `KeywordTry` | `yant'aña` | Bloque `try` |
 | `KeywordCatch` | `katjaña` | Bloque `catch` |
 | `KeywordFinally` | `tukuyawi` | Bloque `finally` |
@@ -43,20 +43,16 @@ flowchart LR
 | `KeywordNew` | `machaqa` | Crear instancia |
 | `KeywordThis` | `aka` | Referencia al objeto actual |
 | `KeywordExtends` | `jila` | Herencia |
-| `KeywordOverride` | `jikxata` | Sobrescribir método |
 | `KeywordPrivate` | `sapa` | Modificador privado |
-| `KeywordPublic` | `taqi` | Modificador público |
 | `KeywordStatic` | `sapakasta` | Modificador estático |
-| `KeywordGetter` | `uñt'aya` | Nombre reservado para getter |
-| `KeywordSetter` | `chura` | Nombre reservado para setter |
 | `KeywordSuper` | `jilaaka` | Referencia al padre |
 | `KeywordTypeNumber` | `jakhüwi` | Tipo numérico |
 | `KeywordTypeString` | `aru` | Tipo cadena |
 | `KeywordTypeBool` | `chiqa` | Tipo booleano |
-| `KeywordTypeList` | `listaña`, `t'aqa` | Tipo lista |
+| `KeywordTypeList` | `t'aqa` | Tipo lista |
 | `KeywordTypeMap` | `mapa` | Tipo mapa (Español) |
-| `KeywordTrue` | `utji`, `chiqa` | Literal verdadero |
-| `KeywordFalse` | `janiutji`, `k'ari` | Literal falso |
+| `KeywordTrue` | `chiqa` | Literal verdadero |
+| `KeywordFalse` | `k'ari` | Literal falso |
 
 ### Operadores y delimitadores
 
@@ -70,7 +66,7 @@ Los símbolos se mantienen sin cambios:
 - Operadores: `+ - * / % ^`
 - Comparación: `== != < <= > >=`
 - Lógicos: `&& || !`
-- Rango en `case`: `..` (solo en `khiti/match`)
+- Rango en `kuna`: `..` (solo en `khiti`)
 - Comentarios: `//` y `/* */`
 
 ### Literales
@@ -91,22 +87,22 @@ Los símbolos se mantienen sin cambios:
 programa      = [ "qallta" ] { sentencia } [ "tukuya" ] ;
 
 sentencia     = decl | asigna | if | while | for | func_def | class_def
-              | enum_def | match | retorno | salida | continuar | imprimir | importar
+              | siqicha_def | khiti_stmt | retorno | salida | continuar | imprimir | importar
               | try | throw | bloque | ";" ;
 
 bloque        = "{" { sentencia } "}" ;
 
 decl          = "yatiya" tipo id [ "=" expr ] ";" ;
 
-tipo          = "jakhüwi" | "aru" | "chiqa" | "listaña" | "t'aqa" | "mapa" | id ;
+tipo          = "jakhüwi" | "aru" | "chiqa" | "t'aqa" | "mapa" | id ;
 
 asigna        = id "=" expr ";" ;
 
-if            = ("suti" | "jisa") "(" cond ")" bloque [ ("jani" | "maysatxa") bloque ] ;
+if            = "ukaxa" "(" cond ")" bloque [ "maysatxa" bloque ] ;
 
-while         = ("kunawsati" | "ukhakamaxa") "(" cond ")" bloque ;
+while         = "ukhakamaxa" "(" cond ")" bloque ;
 
-for           = ("sapüru" | "taki") "(" [decl|asigna] ";" [cond] ";" [asigna_np] ")" bloque ;
+for           = "kuti" "(" [decl|asigna] ";" [cond] ";" [asigna_np] ")" bloque ;
 asigna_np     = id "=" expr ;
 
 func_def      = "lurawi" id "(" [ params ] ")" [ ":" tipo ] bloque ;
@@ -115,16 +111,16 @@ param         = tipo id ;
 
 class_def     = "kasta" id [ "jila" id ] "{" { class_member } "}" ;
 class_member  = { modificador } ( decl | metodo | ctor ) ;
-modificador   = "sapa" | "taqi" | "sapakasta" | "jikxata" ;
+modificador   = "sapa" | "sapakasta" ;
 metodo        = "lurawi" id "(" [ params ] ")" [ ":" tipo ] bloque ;
 ctor          = "qallta" "(" [ params ] ")" bloque ;
 
-enum_def      = ("siqicha" | "enum") id "{" enum_item { "," enum_item } "}" [ ";" ] ;
+siqicha_def   = "siqicha" id "{" enum_item { "," enum_item } "}" [ ";" ] ;
 enum_item     = id [ "=" expr ] ;
 
-match         = ("khiti" | "match") "(" expr ")" "{"
-                { ("kuna" | "case") case_valores ":" bloque }
-                [ ("yaqha" | "default") ":" bloque ]
+khiti_stmt    = "khiti" "(" expr ")" "{"
+                { "kuna" case_valores ":" bloque }
+                [ "yaqha" ":" bloque ]
                 "}" [ ";" ] ;
 case_valores  = case_valor { "," case_valor } ;
 case_valor    = expr [ ".." expr ] ;
@@ -156,8 +152,8 @@ multi         = unario { ("*" | "/" | "%") unario } ;
 
 unario        = [ "!" | "-" ] primario ;
 
-primario      = num | str | ("utji" | "chiqa") | ("janiutji" | "k'ari")
-              | "machaqa" id "(" [ args ] ")" | "aka" | "jilaaka"
+primario      = num | str | "chiqa" | "k'ari"
+               | "machaqa" id "(" [ args ] ")" | "aka" | "jilaaka"
               | id | llamada | "(" expr ")" | lista ;
 
 llamada       = id "(" [ args ] ")" ;

@@ -8,27 +8,31 @@ gramática formal revisa [Gramática](grammar.md).
 - `jakhüwi` (numérico)
 - `aru` (texto)
 - `chiqa` (booleano)
-- `t'aqa` / `listaña` (listas)
+- `t'aqa` (listas)
 - `mapa` (mapas)
 
 ## Literales
 
-- Booleanos: `chiqa` / `k'ari` (compatibilidad: `utji` / `janiutji`).
+- Booleanos: `chiqa` / `k'ari`.
 - Números: decimales, `0x` (hex) y `0b` (binario).
 - Cadenas: comillas simples o dobles con escapes.
 
 ## Estructuras principales
 
-- Condicionales: `jisa` / `maysatxa`
-- Bucles: `ukhakamaxa`, `taki`
+- Condicionales: `ukaxa` / `maysatxa`
+- Bucles: `ukhakamaxa`, `kuti`
 - Funciones: `lurawi` / `kuttaya`
-- Enumeraciones: `siqicha` (compat: `enum`)
-- Selección por patrones simples: `khiti`, `kuna`, `yaqha` (compat: `match`, `case`, `default`) para `jakhüwi` y `aru`; `kuna` acepta múltiples valores separados por `,` y rangos `a..b` (en `jakhüwi`)
-- Clases: `kasta`, `machaqa`, `aka`, `jila`, `jikxata`, `sapa`, `taqi`, `sapakasta`, `uñt'aya`, `chura`, `jilaaka`
+- Enumeraciones: `siqicha`
+- Selección por patrones simples: `khiti`, `kuna`, `yaqha` para `jakhüwi` y `aru`; `kuna` acepta múltiples valores separados por `,` y rangos `a..b` (en `jakhüwi`)
+- Clases: `kasta`, `machaqa`, `aka`, `jila`, `sapa`, `sapakasta`, `jilaaka`
 - Excepciones: `yant'aña`, `katjaña`, `tukuyawi`, `pantja`
 - Módulos: `apnaq`
 
 ## POO (kasta)
+
+Nota: en esta área aún existen neologismos técnicos necesarios para modelar
+conceptos de POO moderna; el núcleo de control de flujo y tipos ya usa la
+variante canónica unificada del lenguaje.
 
 - Instancia: `yatiya MiClase x = machaqa MiClase(...)`
 - `aka`: referencia al objeto actual.
@@ -36,8 +40,8 @@ gramática formal revisa [Gramática](grammar.md).
 - `jilaaka`: llamada al método de la clase base (solo dentro de clases derivadas).
 - `sapakasta`: miembros estáticos (`MiClase.campo`, `MiClase.metodo()`).
 - `sapa`: miembro privado (solo accesible dentro de su clase dueña).
-- `jikxata`: sobrescritura de método.
-  - Reglas: debe existir método base, misma firma (tipos de parámetros) y mismo tipo de retorno.
+- Si una subclase redefine un método heredado, la sobrescritura es implícita.
+  - Reglas: debe existir método base visible, misma firma (tipos de parámetros) y mismo tipo de retorno.
 - Constructores:
   - Soporta sobrecarga por aridad.
   - Si no hay constructores declarados, solo se permite `machaqa Clase()` sin argumentos.

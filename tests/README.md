@@ -46,6 +46,14 @@ La suite CTest incluye:
   `.ir`, presencia de `tool_timeout_ms`, bloque `commands` (con `ir-gen`) en
   pipeline JSON, `phase_summary`, `exit_reason` y rechazo explícito de `--link-only`
   en esta fase).
+- `aym_linux_gui_smoke`: smoke Linux del runtime gráfico (`uja_*`) que abre una
+  ventana real en `DISPLAY` o `xvfb-run`, dibuja primitivas y confirma cierre
+  limpio.
+- `aym_windows_installer_smoke`: smoke de empaquetado Windows que prepara un
+  `dist` limpio desde el build actual, embebe toolchain privada
+  (`toolchain/bin/nasm.exe` + `toolchain/mingw64/bin/gcc.exe`), valida que
+  `aymc` compile un sample sin depender de `PATH` del sistema y verifica la
+  generación de instaladores NSIS (`.exe`) y WiX (`.msi`).
 
 En Windows, `make test` ejecuta `tests/test_modulos_auto.ps1` (si `pwsh` no
 esta disponible, intenta con `powershell`).
@@ -64,7 +72,8 @@ pwsh -File samples/bench/check_pipeline_thresholds.ps1 -SummaryPath build/bench/
 `docs/benchmarks/pipeline_thresholds.json`.
 
 El script `run_tests.sh` compila el compilador, genera los ejemplos principales
-en `samples/` y comprueba la salida exacta de `samples/aymara_flow.aym`. Además,
+en `build/tmp/run_tests/` y comprueba la salida exacta de
+`samples/aymara_flow.aym`. Además,
 valida la ejecución de los ejemplos `samples/fundamentos/basicos.aym`
 y `samples/fundamentos/funciones_listas.aym` con entradas de prueba.
 
@@ -84,6 +93,12 @@ ejecuta:
 
 ```powershell
 pwsh -File tests/test_modulos_auto.ps1
+```
+
+Para validar artefactos de instalador Windows a partir del build actual, ejecuta:
+
+```powershell
+pwsh -File tests/installer_windows_smoke.ps1 -BuildDir build -Config Release
 ```
 
 Este script también valida que los ejemplos interactivos (`tetris`) en

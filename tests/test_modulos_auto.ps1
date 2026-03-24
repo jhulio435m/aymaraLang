@@ -184,7 +184,11 @@ $expectedCompileFail = @(
 )
 $compileDeps = @(
   (Join-Path $repo "runtime\runtime.c"),
-  (Join-Path $repo "runtime\math.c")
+  (Join-Path $repo "runtime\math.c"),
+  (Join-Path $repo "runtime\runtime_arrays.c"),
+  (Join-Path $repo "runtime\runtime_maps_strings.c"),
+  (Join-Path $repo "runtime\runtime_exceptions.c"),
+  (Join-Path $repo "runtime\runtime_gfx_linux.c")
 )
 $compiledCount = 0
 $skippedCount = 0
@@ -388,6 +392,26 @@ foreach ($case in $runCases) {
   Run-Example -ExePath $case.Exe -ProgramArgs $case.Args -Expected $case.Expected -Name $case.Name
 }
 
+function Probe-InteractiveStart {
+  param(
+    [string]$ExePath,
+    [string]$Name = "",
+    [int]$ProbeMs = 900
+  )
+  $proc = $null
+  try {
+    $proc = Start-Process -FilePath $ExePath -PassThru -ErrorAction Stop
+    Start-Sleep -Milliseconds $ProbeMs
+    if ($proc.HasExited -and $proc.ExitCode -ne 0) {
+      throw "Fallo iniciando interactivo '$Name' (exit=$($proc.ExitCode))"
+    }
+  } finally {
+    if ($null -ne $proc -and -not $proc.HasExited) {
+      Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+    }
+  }
+}
+
 Write-Output "[TEST] Juegos interactivos (compilacion valida, ejecucion manual interactiva)"
 if (-not (Test-Path (Join-Path $repo "samples\games\console\tetris.exe"))) {
   throw "No se genero tetris.exe"
@@ -404,6 +428,11 @@ if (-not (Test-Path (Join-Path $repo "samples\games\gui\jamachi_uja.exe"))) {
 if (-not (Test-Path (Join-Path $repo "samples\games\gui\katari_uja.exe"))) {
   throw "No se genero katari_uja.exe"
 }
+$sudokuAnatawiExe = Join-Path $repo "samples\games\console\sudoku_anatawi.exe"
+if (-not (Test-Path $sudokuAnatawiExe)) {
+  throw "No se genero sudoku_anatawi.exe"
+}
+Probe-InteractiveStart -ExePath $sudokuAnatawiExe -Name "sudoku_anatawi"
 
 foreach ($tmp in $arkataTmpPaths) {
   if (Test-Path $tmp) { Remove-Item $tmp -Force }

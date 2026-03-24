@@ -13,6 +13,8 @@ pwsh -File .\scripts\install\install_deps_windows.ps1
 pwsh -File .\scripts\build\build_dist.ps1 -Config Release
 pwsh -File .\scripts\build\build_msi.ps1
 pwsh -File .\scripts\build\build_nsis.ps1
+pwsh -File .\scripts\publish_extension.ps1 -Target package
+pwsh -File .\scripts\publish_extension.ps1 -Target all
 ```
 
 ```bash
@@ -22,3 +24,8 @@ bash scripts/test/test_deb.sh
 bash scripts/test/test_deb_e2e.sh
 bash scripts/test/test_samples.sh
 ```
+
+Extension publishing uses:
+
+- `VSCE_PAT` for VS Code Marketplace
+- `OVSX_PAT` for Open VSX

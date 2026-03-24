@@ -60,14 +60,14 @@ std::unique_ptr<Stmt> Parser::parsePrintStatement(const Token &printTok) {
 
 std::unique_ptr<Stmt> Parser::parseIfStatement(const Token &ifTok) {
     if (!match(TokenType::LParen)) {
-        parseError("se esperaba '(' despues de 'jisa'");
+        parseError("se esperaba '(' despues de 'ukaxa'");
     }
     auto cond = parseExpression();
     if (!match(TokenType::RParen)) {
-        parseError("se esperaba ')' despues de la condicion de 'jisa'");
+        parseError("se esperaba ')' despues de la condicion de 'ukaxa'");
     }
     if (!match(TokenType::LBrace)) {
-        parseError("se esperaba '{' en bloque de 'jisa'");
+        parseError("se esperaba '{' en bloque de 'ukaxa'");
     }
     Token thenTok = tokens[pos > 0 ? pos - 1 : pos];
     auto thenBlock = std::make_unique<BlockStmt>();
@@ -86,7 +86,7 @@ std::unique_ptr<Stmt> Parser::parseIfStatement(const Token &ifTok) {
             elseBlock->setLocation(elseBrace.line, elseBrace.column);
             parseStatements(elseBlock->statements, true);
         } else {
-            parseError("se esperaba '{' o 'jisa' despues de 'maysatxa'");
+            parseError("se esperaba '{' o 'ukaxa' despues de 'maysatxa'");
         }
     }
     auto node = std::make_unique<IfStmt>(std::move(cond), std::move(thenBlock), std::move(elseBlock));

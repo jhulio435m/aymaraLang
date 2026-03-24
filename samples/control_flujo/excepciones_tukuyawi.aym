@@ -1,0 +1,52 @@
+qallta
+// Caso 1: flujo normal -> try + finally.
+yatiya t'aqa pasos_ok = [];
+yant'aña {
+  push(pasos_ok, 1);
+} katjaña("DEMO", e) {
+  push(pasos_ok, 99);
+} tukuyawi {
+  push(pasos_ok, 3);
+}
+afirma(suyut(pasos_ok) == 2, "caso ok: cantidad de pasos");
+afirma(pasos_ok[0] == 1, "caso ok: falta try");
+afirma(pasos_ok[1] == 3, "caso ok: falta finally");
+
+// Caso 2: flujo con error tipado -> try + catch + finally.
+yatiya t'aqa pasos_error = [];
+yatiya aru tipo_error = "";
+yant'aña {
+  push(pasos_error, 1);
+  pantja("DEMO", "falla controlada");
+} katjaña("DEMO", e) {
+  tipo_error = e.suti;
+  push(pasos_error, 2);
+} tukuyawi {
+  push(pasos_error, 3);
+}
+afirma(suyut(pasos_error) == 3, "caso error: cantidad de pasos");
+afirma(pasos_error[0] == 1, "caso error: falta try");
+afirma(pasos_error[1] == 2, "caso error: falta catch");
+afirma(pasos_error[2] == 3, "caso error: falta finally");
+afirma(tipo_error == "DEMO", "caso error: tipo capturado");
+
+// Caso 3: catch generico + finally.
+yatiya t'aqa pasos_generico = [];
+yatiya aru tipo_generico = "";
+yant'aña {
+  push(pasos_generico, 1);
+  pantja("OTRO", "error generico");
+} katjaña(e) {
+  tipo_generico = e.suti;
+  push(pasos_generico, 2);
+} tukuyawi {
+  push(pasos_generico, 3);
+}
+afirma(suyut(pasos_generico) == 3, "caso generico: cantidad de pasos");
+afirma(pasos_generico[0] == 1, "caso generico: falta try");
+afirma(pasos_generico[1] == 2, "caso generico: falta catch");
+afirma(pasos_generico[2] == 3, "caso generico: falta finally");
+afirma(tipo_generico == "OTRO", "caso generico: tipo capturado");
+
+qillqa("excepciones_tukuyawi OK");
+tukuya

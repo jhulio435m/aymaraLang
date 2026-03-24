@@ -129,6 +129,9 @@ private:
     bool emitBuiltinCollectionCall(const CallExpr *expr,
                                    const std::unordered_map<std::string,int> *locals,
                                    const std::string &nameLower);
+    bool emitBuiltinMathCall(const CallExpr *expr,
+                             const std::unordered_map<std::string,int> *locals,
+                             const std::string &nameLower);
     bool emitBuiltinSystemCall(const CallExpr *expr,
                                const std::unordered_map<std::string,int> *locals,
                                const std::string &nameLower);

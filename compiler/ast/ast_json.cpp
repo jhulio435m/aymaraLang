@@ -155,7 +155,6 @@ std::string serializeClassMethods(const std::vector<ClassStmt::MethodDecl> &meth
             {"params", serializeParams(method.params, level + 1)},
             {"returnType", quote(method.returnType)},
             {"isStatic", boolJson(method.isStatic)},
-            {"isOverride", boolJson(method.isOverride)},
             {"isPrivate", boolJson(method.isPrivate)},
             {"body", serializeOptionalNode(method.body.get(), level + 1)}
         }, level + 1));

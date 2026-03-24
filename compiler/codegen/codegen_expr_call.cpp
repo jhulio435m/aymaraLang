@@ -9,6 +9,7 @@ void CodeGenImpl::emitCallExpr(const CallExpr *c,
     if (emitBuiltinIoCall(c, locals, nameLower) ||
         emitBuiltinStringCall(c, locals, nameLower) ||
         emitBuiltinCollectionCall(c, locals, nameLower) ||
+        emitBuiltinMathCall(c, locals, nameLower) ||
         emitBuiltinSystemCall(c, locals, nameLower) ||
         emitBuiltinFunctionalCall(c, locals, nameLower) ||
         emitBuiltinFsCall(c, locals, nameLower) ||

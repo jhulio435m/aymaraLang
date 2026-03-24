@@ -168,10 +168,10 @@ void SemanticAnalyzer::visit(SwitchStmt &sw) {
             if (auto *call = dynamic_cast<CallExpr*>(expr)) {
                 if (call->getName() == "__rango_case__") {
                     if (switchType != "jakhüwi") {
-                        reportError("los rangos en match solo aplican a 'jakhüwi'");
+                        reportError("los rangos en 'khiti' solo aplican a 'jakhüwi'");
                     }
                     if (call->getArgs().size() != 2) {
-                        reportError("rango invalido en case");
+                        reportError("rango invalido en 'kuna'");
                         return;
                     }
                     call->getArgs()[0]->accept(*this);
@@ -188,12 +188,12 @@ void SemanticAnalyzer::visit(SwitchStmt &sw) {
             expr->accept(*this);
             std::string caseType = currentType;
             if (!switchType.empty() && !caseType.empty() && switchType != caseType) {
-                reportError("tipo incompatible en match: se esperaba '" + switchType + "' y se obtuvo '" + caseType + "'");
+                reportError("tipo incompatible en 'khiti': se esperaba '" + switchType + "' y se obtuvo '" + caseType + "'");
             }
         };
         if (auto *listCase = dynamic_cast<ListExpr*>(c.first.get())) {
             if (listCase->getElements().empty()) {
-                reportError("case vacio en match");
+                reportError("'kuna' vacio en 'khiti'");
             }
             for (const auto &option : listCase->getElements()) {
                 checkCaseType(option.get());

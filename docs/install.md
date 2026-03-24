@@ -4,26 +4,13 @@ Esta guía cubre instalación de binarios publicados en Releases.
 
 ## Windows
 
-### Dependencias requeridas
+### Instalación de AymaraLang
 
-`aymc` requiere toolchain en `PATH`:
+Los instaladores Windows publicados (`AymaraLang-Setup.msi` y
+`AymaraLang-Setup.exe`) ya incluyen la toolchain necesaria para compilar:
 
 - `nasm`
-- `gcc` (MSYS2/MinGW)
-
-Instalación/validación automática de dependencias:
-
-```powershell
-pwsh -File .\scripts\install\install_deps_windows.ps1
-```
-
-Solo validar (sin instalar):
-
-```powershell
-pwsh -File .\scripts\install\install_deps_windows.ps1 -CheckOnly
-```
-
-### Instalación de AymaraLang
+- `gcc` (MinGW embebido)
 
 Desde artefactos de release:
 
@@ -46,6 +33,22 @@ msiexec /i .\AymaraLang-Setup.msi /qn
 ```powershell
 aymc --help
 aym --help
+aymc .\samples\fundamentos\basicos.aym
+```
+
+### Construcción desde código fuente
+
+Para compilar AymaraLang desde el repo sí se necesita toolchain de build en el
+sistema. Instalación/validación automática:
+
+```powershell
+pwsh -File .\scripts\install\install_deps_windows.ps1
+```
+
+Solo validar:
+
+```powershell
+pwsh -File .\scripts\install\install_deps_windows.ps1 -CheckOnly
 ```
 
 ## Linux
@@ -55,12 +58,16 @@ aym --help
 - `nasm`
 - `gcc`
 - `g++`
+- headers/librería de X11 para soporte GUI (`pkg-config --exists x11`)
 
 Instalación/validación automática de dependencias:
 
 ```bash
 bash scripts/install/install_deps_linux.sh
 ```
+
+El script instala también el soporte X11 necesario para que `uja_qallta`,
+`uja_suyu`, `uja_qillqa` y los juegos GUI abran ventana en Linux.
 
 Solo validar (sin instalar):
 
@@ -81,11 +88,21 @@ Desinstalación:
 sudo dpkg --purge aymaralang
 ```
 
+### Uso desde bundle `.tar.gz`
+
+```bash
+tar -xzf AymaraLang-0.1.0-Linux.tar.gz
+cd AymaraLang-0.1.0-Linux/bin
+./aymc --help
+./aym --help
+```
+
 ### Verificación rápida
 
 ```bash
 aymc --help
 aym --help
+aymc ./samples/fundamentos/basicos.aym
 ```
 
 ## Notas operativas

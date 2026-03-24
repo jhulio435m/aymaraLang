@@ -13,15 +13,15 @@ yatiya jakhüwi colorp = 1;
 
 yatiya jakhüwi score = 0;
 yatiya jakhüwi record = 0;
-yatiya chiqa fin = janiutji;
+yatiya chiqa fin = k'ari;
 yatiya jakhüwi prox_caida = 0;
-yatiya chiqa giro_listo = utji;
+yatiya chiqa giro_listo = chiqa;
 
 lurawi nuevo_tablero(): jakhüwi {
   yatiya jakhüwi tb = array(ALTO);
-  taki(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
+  kuti(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
     yatiya jakhüwi fila = array(ANCHO);
-    taki(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
+    kuti(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
       array_set(fila, x, 0);
     }
     array_set(tb, y, fila);
@@ -42,79 +42,79 @@ lurawi celda_set(jakhüwi x, jakhüwi y, jakhüwi v) {
 
 // type: 0=I,1=O,2=T,3=L,4=S
 lurawi p_dx(jakhüwi t, jakhüwi r, jakhüwi i): jakhüwi {
-  jisa(t == 0) {
-    jisa(r == 0 || r == 2) { kuttaya i; }
+  ukaxa(t == 0) {
+    ukaxa(r == 0 || r == 2) { kuttaya i; }
     kuttaya 1;
   }
-  jisa(t == 1) {
-    jisa(i == 0 || i == 2) { kuttaya 0; }
+  ukaxa(t == 1) {
+    ukaxa(i == 0 || i == 2) { kuttaya 0; }
     kuttaya 1;
   }
-  jisa(t == 2) {
-    jisa(r == 0) { jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 0; } jisa(i == 2) { kuttaya 1; } kuttaya 2; }
-    jisa(r == 1) { jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 1; } kuttaya 2; }
-    jisa(r == 2) { jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 2; } kuttaya 1; }
-    jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 1; } kuttaya 1;
+  ukaxa(t == 2) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 1; }
+    ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1;
   }
-  jisa(t == 3) {
-    jisa(r == 0) { jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 0; } jisa(i == 2) { kuttaya 1; } kuttaya 2; }
-    jisa(r == 1) { jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 2; } jisa(i == 2) { kuttaya 1; } kuttaya 1; }
-    jisa(r == 2) { jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 2; } kuttaya 2; }
-    jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 0; } kuttaya 1;
+  ukaxa(t == 3) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 2; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 2; }
+    ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 0; } kuttaya 1;
   }
   // S
-  jisa(r == 0 || r == 2) {
-    jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 2; } jisa(i == 2) { kuttaya 0; } kuttaya 1;
+  ukaxa(r == 0 || r == 2) {
+    ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 2; } ukaxa(i == 2) { kuttaya 0; } kuttaya 1;
   }
-  jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 2; } kuttaya 2;
+  ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 2;
 }
 
 lurawi p_dy(jakhüwi t, jakhüwi r, jakhüwi i): jakhüwi {
-  jisa(t == 0) {
-    jisa(r == 0 || r == 2) { kuttaya 1; }
+  ukaxa(t == 0) {
+    ukaxa(r == 0 || r == 2) { kuttaya 1; }
     kuttaya i;
   }
-  jisa(t == 1) {
-    jisa(i < 2) { kuttaya 0; } kuttaya 1;
+  ukaxa(t == 1) {
+    ukaxa(i < 2) { kuttaya 0; } kuttaya 1;
   }
-  jisa(t == 2) {
-    jisa(r == 0) { jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 1; } kuttaya 1; }
-    jisa(r == 1) { jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 2; } kuttaya 1; }
-    jisa(r == 2) { jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 1; } kuttaya 2; }
-    jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 0; } jisa(i == 2) { kuttaya 1; } kuttaya 2;
+  ukaxa(t == 2) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 1; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2;
   }
-  jisa(t == 3) {
-    jisa(r == 0) { jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 1; } kuttaya 1; }
-    jisa(r == 1) { jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 0; } jisa(i == 2) { kuttaya 1; } kuttaya 2; }
-    jisa(r == 2) { jisa(i == 0) { kuttaya 1; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 1; } kuttaya 2; }
-    jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 2; } kuttaya 2;
+  ukaxa(t == 3) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 2;
   }
   // S
-  jisa(r == 0 || r == 2) {
-    jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 0; } jisa(i == 2) { kuttaya 1; } kuttaya 1;
+  ukaxa(r == 0 || r == 2) {
+    ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1;
   }
-  jisa(i == 0) { kuttaya 0; } jisa(i == 1) { kuttaya 1; } jisa(i == 2) { kuttaya 1; } kuttaya 2;
+  ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2;
 }
 
 lurawi colisiona(jakhüwi nx, jakhüwi ny, jakhüwi nr): chiqa {
-  taki(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
     yatiya jakhüwi x = nx + p_dx(tipo, nr, i);
     yatiya jakhüwi y = ny + p_dy(tipo, nr, i);
-    jisa(x < 0 || x >= ANCHO || y < 0 || y >= ALTO) { kuttaya utji; }
-    jisa(celda_get(x, y) != 0) { kuttaya utji; }
+    ukaxa(x < 0 || x >= ANCHO || y < 0 || y >= ALTO) { kuttaya chiqa; }
+    ukaxa(celda_get(x, y) != 0) { kuttaya chiqa; }
   }
-  kuttaya janiutji;
+  kuttaya k'ari;
 }
 
 lurawi celda_pieza(jakhüwi x, jakhüwi y): chiqa {
-  taki(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
-    jisa(x == px + p_dx(tipo, rot, i) && y == py + p_dy(tipo, rot, i)) { kuttaya utji; }
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    ukaxa(x == px + p_dx(tipo, rot, i) && y == py + p_dy(tipo, rot, i)) { kuttaya chiqa; }
   }
-  kuttaya janiutji;
+  kuttaya k'ari;
 }
 
 lurawi fijar_pieza() {
-  taki(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
     celda_set(px + p_dx(tipo, rot, i), py + p_dy(tipo, rot, i), colorp);
   }
   kuttaya;
@@ -122,19 +122,19 @@ lurawi fijar_pieza() {
 
 lurawi limpiar_lineas(): jakhüwi {
   yatiya jakhüwi pts = 0;
-  taki(yatiya jakhüwi y = ALTO - 1; y >= 0; y = y - 1) {
-    yatiya chiqa llena = utji;
-    taki(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
-      jisa(celda_get(x, y) == 0) { llena = janiutji; }
+  kuti(yatiya jakhüwi y = ALTO - 1; y >= 0; y = y - 1) {
+    yatiya chiqa llena = chiqa;
+    kuti(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
+      ukaxa(celda_get(x, y) == 0) { llena = k'ari; }
     }
-    jisa(llena) {
+    ukaxa(llena) {
       pts = pts + 100;
-      taki(yatiya jakhüwi yy = y; yy > 0; yy = yy - 1) {
-        taki(yatiya jakhüwi x2 = 0; x2 < ANCHO; x2 = x2 + 1) {
+      kuti(yatiya jakhüwi yy = y; yy > 0; yy = yy - 1) {
+        kuti(yatiya jakhüwi x2 = 0; x2 < ANCHO; x2 = x2 + 1) {
           celda_set(x2, yy, celda_get(x2, yy - 1));
         }
       }
-      taki(yatiya jakhüwi x3 = 0; x3 < ANCHO; x3 = x3 + 1) { celda_set(x3, 0, 0); }
+      kuti(yatiya jakhüwi x3 = 0; x3 < ANCHO; x3 = x3 + 1) { celda_set(x3, 0, 0); }
       y = y + 1;
     }
   }
@@ -147,7 +147,7 @@ lurawi nueva_pieza() {
   px = 3;
   py = 0;
   colorp = 1 + random(6);
-  jisa(colisiona(px, py, rot)) { fin = utji; }
+  ukaxa(colisiona(px, py, rot)) { fin = chiqa; }
   kuttaya;
 }
 
@@ -159,8 +159,8 @@ lurawi reinicia_partida() {
   rot = 0;
   colorp = 1;
   score = 0;
-  fin = janiutji;
-  giro_listo = utji;
+  fin = k'ari;
+  giro_listo = chiqa;
   nueva_pieza();
   prox_caida = tiempo_ms() + 420;
   pantalla_limpia();
@@ -171,12 +171,12 @@ lurawi dibuja() {
   cursor_mover(1, 1);
   qillqa("AymaraLang Tetris Full");
   qillqa("+--------------------+");
-  taki(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
+  kuti(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
     write("|");
-    taki(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
+    kuti(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
       yatiya jakhüwi v = celda_get(x, y);
-      jisa(celda_pieza(x, y)) { v = colorp; }
-      jisa(v == 0) {
+      ukaxa(celda_pieza(x, y)) { v = colorp; }
+      ukaxa(v == 0) {
         write("  ");
       } maysatxa {
         color(v, 0);
@@ -193,30 +193,30 @@ lurawi dibuja() {
 
 cursor_visible(0);
 record = 0;
-yatiya chiqa seguir = utji;
+yatiya chiqa seguir = chiqa;
 
 ukhakamaxa(seguir) {
   reinicia_partida();
 
   ukhakamaxa(! fin) {
     yatiya jakhüwi k = tecla();
-    jisa(k == 113 || k == 81) { fin = utji; }
+    ukaxa(k == 113 || k == 81) { fin = chiqa; }
 
-    jisa((k == 97 || k == 65 || k == 1003) && ! colisiona(px - 1, py, rot)) { px = px - 1; }
-    jisa((k == 100 || k == 68 || k == 1004) && ! colisiona(px + 1, py, rot)) { px = px + 1; }
-    jisa((k == 115 || k == 83 || k == 1002) && ! colisiona(px, py + 1, rot)) { py = py + 1; }
+    ukaxa((k == 97 || k == 65 || k == 1003) && ! colisiona(px - 1, py, rot)) { px = px - 1; }
+    ukaxa((k == 100 || k == 68 || k == 1004) && ! colisiona(px + 1, py, rot)) { px = px + 1; }
+    ukaxa((k == 115 || k == 83 || k == 1002) && ! colisiona(px, py + 1, rot)) { py = py + 1; }
     yatiya chiqa giro_tecla = (k == 119 || k == 87 || k == 1001);
-    jisa(giro_tecla && giro_listo) {
+    ukaxa(giro_tecla && giro_listo) {
       yatiya jakhüwi nr = rot + 1;
-      jisa(nr >= 4) { nr = 0; }
-      jisa(! colisiona(px, py, nr)) { rot = nr; }
-      giro_listo = janiutji;
+      ukaxa(nr >= 4) { nr = 0; }
+      ukaxa(! colisiona(px, py, nr)) { rot = nr; }
+      giro_listo = k'ari;
     }
-    jisa(! giro_tecla) { giro_listo = utji; }
+    ukaxa(! giro_tecla) { giro_listo = chiqa; }
 
     yatiya jakhüwi ahora = tiempo_ms();
-    jisa(ahora >= prox_caida) {
-      jisa(! colisiona(px, py + 1, rot)) {
+    ukaxa(ahora >= prox_caida) {
+      ukaxa(! colisiona(px, py + 1, rot)) {
         py = py + 1;
       } maysatxa {
         fijar_pieza();
@@ -229,7 +229,7 @@ ukhakamaxa(seguir) {
     sleep(16);
   }
 
-  jisa(score > record) { record = score; }
+  ukaxa(score > record) { record = score; }
 
   cursor_mover(1, ALTO + 8);
   color_restablecer();
@@ -237,19 +237,19 @@ ukhakamaxa(seguir) {
   qillqa("Score:", score, " Record:", record);
   qillqa("[R] jugar de nuevo  [Q] salir");
 
-  yatiya chiqa espera = utji;
-  yatiya chiqa opcion_lista = utji;
+  yatiya chiqa espera = chiqa;
+  yatiya chiqa opcion_lista = chiqa;
   ukhakamaxa(espera) {
     yatiya jakhüwi tecla_op = tecla();
     yatiya chiqa r_tecla = (tecla_op == 114 || tecla_op == 82);
     yatiya chiqa q_tecla = (tecla_op == 113 || tecla_op == 81);
 
-    jisa((r_tecla || q_tecla) && opcion_lista) {
-      jisa(q_tecla) { seguir = janiutji; }
-      espera = janiutji;
-      opcion_lista = janiutji;
+    ukaxa((r_tecla || q_tecla) && opcion_lista) {
+      ukaxa(q_tecla) { seguir = k'ari; }
+      espera = k'ari;
+      opcion_lista = k'ari;
     }
-    jisa(! (r_tecla || q_tecla)) { opcion_lista = utji; }
+    ukaxa(! (r_tecla || q_tecla)) { opcion_lista = chiqa; }
     sleep(16);
   }
 }

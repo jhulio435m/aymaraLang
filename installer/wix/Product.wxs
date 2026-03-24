@@ -33,83 +33,11 @@
     <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLDIR" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
-    <!-- PREREQS: AppSearch + Launch (WiX v4) -->
-
-    <!-- NASM: App Paths (Registro). Para valor default: sin atributo Name -->
-    <Property Id="NASM_APP_PATH">
-      <RegistrySearch Id="NasmAppPaths64"
-                      Root="HKLM"
-                      Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\nasm.exe"
-                      Type="raw" />
-    </Property>
-
-    <Property Id="NASM_APP_PATH_WOW">
-      <RegistrySearch Id="NasmAppPathsWow"
-                      Root="HKLM"
-                      Key="SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\nasm.exe"
-                      Type="raw" />
-    </Property>
-
-    <!-- NASM: rutas típicas -->
-    <Property Id="NASM_IN_PROGFILES64">
-      <DirectorySearch Id="NasmPf64Dir" Path="[ProgramFiles64Folder]NASM">
-        <FileSearch Id="NasmPf64Exe" Name="nasm.exe" />
-      </DirectorySearch>
-    </Property>
-
-    <Property Id="NASM_IN_PROGFILES32">
-      <DirectorySearch Id="NasmPf32Dir" Path="[ProgramFilesFolder]NASM">
-        <FileSearch Id="NasmPf32Exe" Name="nasm.exe" />
-      </DirectorySearch>
-    </Property>
-
-    <!-- GCC: App Paths (Registro). Para valor default: sin atributo Name -->
-    <Property Id="GCC_APP_PATH">
-      <RegistrySearch Id="GccAppPaths64"
-                      Root="HKLM"
-                      Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gcc.exe"
-                      Type="raw" />
-    </Property>
-
-    <Property Id="GCC_APP_PATH_WOW">
-      <RegistrySearch Id="GccAppPathsWow"
-                      Root="HKLM"
-                      Key="SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\gcc.exe"
-                      Type="raw" />
-    </Property>
-
-    <!-- GCC: rutas típicas (MSYS2 / MinGW) -->
-    <Property Id="GCC_IN_MSYS2_MINGW64">
-      <DirectorySearch Id="GccMsys2Mingw64Dir" Path="C:\msys64\mingw64\bin">
-        <FileSearch Id="GccMsys2Mingw64Exe" Name="gcc.exe" />
-      </DirectorySearch>
-    </Property>
-
-    <Property Id="GCC_IN_MSYS2_USR">
-      <DirectorySearch Id="GccMsys2UsrDir" Path="C:\msys64\usr\bin">
-        <FileSearch Id="GccMsys2UsrExe" Name="gcc.exe" />
-      </DirectorySearch>
-    </Property>
-
-    <Property Id="GCC_IN_MINGW">
-      <DirectorySearch Id="GccMingwDir" Path="C:\MinGW\bin">
-        <FileSearch Id="GccMingwExe" Name="gcc.exe" />
-      </DirectorySearch>
-    </Property>
-
-    <!-- Launch conditions (WiX v4): usar Launch -->
-    <Launch
-      Condition="NASM_APP_PATH OR NASM_APP_PATH_WOW OR NASM_IN_PROGFILES64 OR NASM_IN_PROGFILES32"
-      Message="No se encontró NASM (nasm.exe). Instálalo y vuelve a ejecutar el instalador." />
-
-    <Launch
-      Condition="GCC_APP_PATH OR GCC_APP_PATH_WOW OR GCC_IN_MSYS2_MINGW64 OR GCC_IN_MSYS2_USR OR GCC_IN_MINGW"
-      Message="No se encontró GCC (gcc.exe). Instálalo (por ejemplo MSYS2/MinGW) y vuelve a ejecutar el instalador." />
-
     <Feature Id="CoreFeature" Title="Core" Level="1">
       <ComponentGroupRef Id="CoreRootFiles" />
       <ComponentGroupRef Id="CoreBinFiles" />
       <ComponentGroupRef Id="CoreShareFiles" />
+      <ComponentGroupRef Id="CoreToolchainFiles" />
       <ComponentRef Id="PathEnv" />
       <ComponentRef Id="AymFileAssoc" />
     </Feature>
@@ -125,6 +53,7 @@
       <Directory Id="INSTALLDIR" Name="AymaraLang">
         <Directory Id="BINDIR" Name="bin" />
         <Directory Id="SHAREDIR" Name="share" />
+        <Directory Id="TOOLCHAINDIR" Name="toolchain" />
       </Directory>
     </StandardDirectory>
   </Fragment>
@@ -140,6 +69,10 @@
     </ComponentGroup>
 
     <ComponentGroup Id="CoreShareFiles" Directory="SHAREDIR" Source="$(var.DistDir)\share">
+      <Files Include="**\*" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="CoreToolchainFiles" Directory="TOOLCHAINDIR" Source="$(var.DistDir)\toolchain">
       <Files Include="**\*" />
     </ComponentGroup>
   </Fragment>

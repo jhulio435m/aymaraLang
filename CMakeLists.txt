@@ -154,6 +154,39 @@ if(BUILD_TESTING)
   set_tests_properties(aym_backend_ir_smoke PROPERTIES
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
   )
+
+  if(UNIX AND NOT WIN32)
+    find_program(AYM_BASH_EXECUTABLE NAMES bash)
+    if(AYM_BASH_EXECUTABLE)
+      add_test(
+        NAME aym_linux_gui_smoke
+        COMMAND
+          ${AYM_BASH_EXECUTABLE}
+          ${CMAKE_SOURCE_DIR}/tests/linux_gui_smoke.sh
+          $<TARGET_FILE:aymc>
+      )
+      set_tests_properties(aym_linux_gui_smoke PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+      )
+    endif()
+  endif()
+
+  if(WIN32)
+    find_program(AYM_PWSH_EXECUTABLE NAMES pwsh powershell)
+    if(AYM_PWSH_EXECUTABLE)
+      add_test(
+        NAME aym_windows_installer_smoke
+        COMMAND
+          ${AYM_PWSH_EXECUTABLE}
+          -File ${CMAKE_SOURCE_DIR}/tests/installer_windows_smoke.ps1
+          -BuildDir ${CMAKE_BINARY_DIR}
+          -Config $<CONFIG>
+      )
+      set_tests_properties(aym_windows_installer_smoke PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+      )
+    endif()
+  endif()
 endif()
 
 if(BUILD_TESTING AND AYM_ENABLE_COVERAGE)

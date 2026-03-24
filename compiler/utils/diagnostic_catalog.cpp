@@ -13,7 +13,7 @@ std::string diagnosticSuggestionForCode(const std::string &code) {
         {"AYM3003", "Asegura que ambos lados usen tipos compatibles o aplica conversion explicita."},
         {"AYM3004", "Verifica que la funcion exista en el alcance actual o importa el modulo correcto."},
         {"AYM3005", "Ajusta la cantidad de argumentos para coincidir con la firma de la funcion/metodo."},
-        {"AYM3006", "Usa 'break' solo dentro de 'taki', 'ukhakamaxa' o 'match'."},
+        {"AYM3006", "Usa 'break' solo dentro de 'kuti', 'ukhakamaxa' o 'khiti'."},
         {"AYM3007", "Usa 'continue' solo dentro de bucles."},
         {"AYM3008", "Usa 'kuttaya' solo dentro de funciones."},
         {"AYM3009", "Revisa que la clase base y la firma del metodo sean compatibles al sobrescribir."},

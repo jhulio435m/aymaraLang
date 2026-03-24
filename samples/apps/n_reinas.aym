@@ -10,11 +10,11 @@ lurawi reinicia_marcadores() {
   diag_prin = [];
   diag_sec = [];
 
-  taki(yatiya jakhüwi i = 0; i < N; i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < N; i = i + 1) {
     push(col, 0);
   }
 
-  taki(yatiya jakhüwi i = 0; i < (2 * N - 1); i = i + 1) {
+  kuti(yatiya jakhüwi i = 0; i < (2 * N - 1); i = i + 1) {
     push(diag_prin, 0);
     push(diag_sec, 0);
   }
@@ -30,10 +30,10 @@ lurawi idx_diag_sec(jakhüwi fila, jakhüwi columna): jakhüwi {
 }
 
 lurawi disponible(jakhüwi fila, jakhüwi columna): chiqa {
-  jisa(col[columna] == 1) { kuttaya janiutji; }
-  jisa(diag_prin[idx_diag_prin(fila, columna)] == 1) { kuttaya janiutji; }
-  jisa(diag_sec[idx_diag_sec(fila, columna)] == 1) { kuttaya janiutji; }
-  kuttaya utji;
+  ukaxa(col[columna] == 1) { kuttaya k'ari; }
+  ukaxa(diag_prin[idx_diag_prin(fila, columna)] == 1) { kuttaya k'ari; }
+  ukaxa(diag_sec[idx_diag_sec(fila, columna)] == 1) { kuttaya k'ari; }
+  kuttaya chiqa;
 }
 
 lurawi marca(jakhüwi fila, jakhüwi columna, jakhüwi valor) {
@@ -44,13 +44,13 @@ lurawi marca(jakhüwi fila, jakhüwi columna, jakhüwi valor) {
 }
 
 lurawi busca(jakhüwi fila) {
-  jisa(fila == N) {
+  ukaxa(fila == N) {
     soluciones = soluciones + 1;
     kuttaya;
   }
 
-  taki(yatiya jakhüwi c = 0; c < N; c = c + 1) {
-    jisa(! disponible(fila, c)) { sarantaña; }
+  kuti(yatiya jakhüwi c = 0; c < N; c = c + 1) {
+    ukaxa(! disponible(fila, c)) { sarantaña; }
     marca(fila, c, 1);
     busca(fila + 1);
     marca(fila, c, 0);

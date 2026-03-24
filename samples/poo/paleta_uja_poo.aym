@@ -12,11 +12,11 @@ kasta Actor {
   }
 
   lurawi tupu(Actor o): chiqa {
-    jisa(aka.x + aka.w < o.x) { kuttaya janiutji; }
-    jisa(o.x + o.w < aka.x) { kuttaya janiutji; }
-    jisa(aka.y + aka.h < o.y) { kuttaya janiutji; }
-    jisa(o.y + o.h < aka.y) { kuttaya janiutji; }
-    kuttaya utji;
+    ukaxa(aka.x + aka.w < o.x) { kuttaya k'ari; }
+    ukaxa(o.x + o.w < aka.x) { kuttaya k'ari; }
+    ukaxa(aka.y + aka.h < o.y) { kuttaya k'ari; }
+    ukaxa(o.y + o.h < aka.y) { kuttaya k'ari; }
+    kuttaya chiqa;
   }
 
   lurawi dibuja() {
@@ -38,19 +38,19 @@ kasta Paleta jila Actor {
 
   lurawi ir_chiqa(jakhüwi limite) {
     aka.x = aka.x - aka.v;
-    jisa(aka.x < 0) { aka.x = 0; }
+    ukaxa(aka.x < 0) { aka.x = 0; }
     kuttaya;
   }
 
   lurawi ir_kupi(jakhüwi limite) {
     aka.x = aka.x + aka.v;
-    jisa(aka.x + aka.w > limite) {
+    ukaxa(aka.x + aka.w > limite) {
       aka.x = limite - aka.w;
     }
     kuttaya;
   }
 
-  jikxata lurawi dibuja() {
+  lurawi dibuja() {
     uja_suyu(aka.x, aka.y, aka.w, aka.h, 58, 166, 255);
     uja_suyu(aka.x + 8, aka.y + 6, aka.w - 16, aka.h - 12, 195, 232, 255);
     kuttaya;
@@ -74,7 +74,7 @@ kasta Pelota jila Actor {
     aka.x = xx;
     aka.y = yy;
     aka.vy = -4;
-    jisa(random(2) == 0) {
+    ukaxa(random(2) == 0) {
       aka.vx = -4;
     } maysatxa {
       aka.vx = 4;
@@ -98,7 +98,7 @@ kasta Pelota jila Actor {
     kuttaya;
   }
 
-  jikxata lurawi dibuja() {
+  lurawi dibuja() {
     uja_suyu(aka.x, aka.y, aka.w, aka.h, 255, 204, 77);
     uja_suyu(aka.x + 4, aka.y + 4, aka.w - 8, aka.h - 8, 255, 240, 180);
     kuttaya;
@@ -116,9 +116,9 @@ kasta Juego {
 
   yatiya jakhüwi puntaje = 0;
   yatiya jakhüwi jan_waltawi = 3;
-  yatiya chiqa tukusi = janiutji;
+  yatiya chiqa tukusi = k'ari;
   yatiya jakhüwi jutiri_muyu = 0;
-  yatiya chiqa listo = utji;
+  yatiya chiqa listo = chiqa;
 
   qallta() {
     aka.jugador = machaqa Paleta((aka.ANCHU / 2) - 90, aka.SAYA - 56, 180, 24);
@@ -129,8 +129,8 @@ kasta Juego {
   lurawi qallta_machaqa() {
     aka.puntaje = 0;
     aka.jan_waltawi = 3;
-    aka.tukusi = janiutji;
-    aka.listo = utji;
+    aka.tukusi = k'ari;
+    aka.listo = chiqa;
     aka.jugador.x = (aka.ANCHU / 2) - 90;
     aka.jugador.y = aka.SAYA - 56;
     aka.pelota.wakicha((aka.ANCHU / 2) - 10, aka.SAYA - 88);
@@ -152,66 +152,66 @@ kasta Juego {
     yatiya chiqa chiqa_kupi = (k == 100 || k == 68 || k == 1004 || uja_tecla(100) || uja_tecla(68) || uja_tecla(1004));
     yatiya chiqa mistu = (k == 113 || k == 81 || k == 27 || uja_tecla(113) || uja_tecla(81) || uja_tecla(27));
 
-    jisa(mistu) {
-      aka.tukusi = utji;
+    ukaxa(mistu) {
+      aka.tukusi = chiqa;
       aka.jan_waltawi = 0;
     }
 
-    jisa(aka.tukusi) {
+    ukaxa(aka.tukusi) {
       yatiya chiqa r_tecla = (k == 114 || k == 82 || uja_tecla(114) || uja_tecla(82));
       yatiya chiqa q_tecla = mistu;
-      jisa((r_tecla || q_tecla) && aka.listo) {
-        jisa(r_tecla) { aka.qallta_machaqa(); }
-        jisa(q_tecla) { aka.jan_waltawi = 0; }
-        aka.listo = janiutji;
+      ukaxa((r_tecla || q_tecla) && aka.listo) {
+        ukaxa(r_tecla) { aka.qallta_machaqa(); }
+        ukaxa(q_tecla) { aka.jan_waltawi = 0; }
+        aka.listo = k'ari;
       }
-      jisa(! (r_tecla || q_tecla)) {
-        aka.listo = utji;
+      ukaxa(! (r_tecla || q_tecla)) {
+        aka.listo = chiqa;
       }
       kuttaya;
     }
 
-    jisa(chiqa_ichi) { aka.jugador.ir_chiqa(aka.ANCHU); }
-    jisa(chiqa_kupi) { aka.jugador.ir_kupi(aka.ANCHU); }
+    ukaxa(chiqa_ichi) { aka.jugador.ir_chiqa(aka.ANCHU); }
+    ukaxa(chiqa_kupi) { aka.jugador.ir_kupi(aka.ANCHU); }
     kuttaya;
   }
 
   lurawi muyu() {
-    jisa(aka.tukusi) { kuttaya; }
+    ukaxa(aka.tukusi) { kuttaya; }
 
     yatiya jakhüwi jichha = tiempo_ms();
-    jisa(jichha < aka.jutiri_muyu) { kuttaya; }
+    ukaxa(jichha < aka.jutiri_muyu) { kuttaya; }
     aka.jutiri_muyu = jichha + 16;
 
     aka.pelota.muyu();
 
-    jisa(aka.pelota.x <= 0) {
+    ukaxa(aka.pelota.x <= 0) {
       aka.pelota.x = 0;
       aka.pelota.rebota_x();
     }
-    jisa(aka.pelota.x + aka.pelota.w >= aka.ANCHU) {
+    ukaxa(aka.pelota.x + aka.pelota.w >= aka.ANCHU) {
       aka.pelota.x = aka.ANCHU - aka.pelota.w;
       aka.pelota.rebota_x();
     }
-    jisa(aka.pelota.y <= 0) {
+    ukaxa(aka.pelota.y <= 0) {
       aka.pelota.y = 0;
       aka.pelota.rebota_y();
     }
 
-    jisa(aka.pelota.tupu(aka.jugador) && aka.pelota.vy > 0) {
+    ukaxa(aka.pelota.tupu(aka.jugador) && aka.pelota.vy > 0) {
       aka.pelota.y = aka.jugador.y - aka.pelota.h - 1;
       aka.pelota.rebota_y();
       aka.puntaje = aka.puntaje + 1;
-      jisa(aka.puntaje > Juego.mejor) {
+      ukaxa(aka.puntaje > Juego.mejor) {
         Juego.mejor = aka.puntaje;
       }
     }
 
-    jisa(aka.pelota.y > aka.SAYA) {
+    ukaxa(aka.pelota.y > aka.SAYA) {
       aka.jan_waltawi = aka.jan_waltawi - 1;
-      jisa(aka.jan_waltawi <= 0) {
-        aka.tukusi = utji;
-        aka.listo = utji;
+      ukaxa(aka.jan_waltawi <= 0) {
+        aka.tukusi = chiqa;
+        aka.listo = chiqa;
       } maysatxa {
         aka.mayampi_ronda();
       }
@@ -233,7 +233,7 @@ kasta Juego {
     uja_qillqa("Mejor: " + aru(Juego.mejor), 420, 32, 180, 220, 255);
     uja_qillqa("A/D jan ukaxa flecha | Q/Esc mistuña", 14, aka.SAYA - 28, 170, 188, 214);
 
-    jisa(aka.tukusi) {
+    ukaxa(aka.tukusi) {
       uja_suyu(200, 180, 470, 170, 10, 12, 18);
       uja_qillqa("Tukusiwayi", 365, 220, 255, 110, 110);
       uja_qillqa("R wasitata qallta", 338, 255, 225, 225, 225);
@@ -246,7 +246,7 @@ kasta Juego {
 
   lurawi saraya() {
     yatiya chiqa ok = uja_qallta(aka.ANCHU, aka.SAYA, "Paleta POO");
-    jisa(! ok) {
+    ukaxa(! ok) {
       qillqa("Uja interfaz jan qalltkiti");
       kuttaya;
     }
@@ -255,7 +255,7 @@ kasta Juego {
       aka.katu_aru();
       aka.muyu();
       aka.dibuja();
-      jisa(aka.tukusi && aka.jan_waltawi == 0 && (uja_tecla(113) || uja_tecla(81) || uja_tecla(27))) {
+      ukaxa(aka.tukusi && aka.jan_waltawi == 0 && (uja_tecla(113) || uja_tecla(81) || uja_tecla(27))) {
         aka.jan_waltawi = -1;
       }
       sleep(8);

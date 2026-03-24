@@ -26,7 +26,7 @@ kasta BaseMensaje {
 }
 
 kasta SubMensaje jila BaseMensaje {
-  jikxata lurawi msj(): aru {
+  lurawi msj(): aru {
     kuttaya jilaaka.msj() + "+sub";
   }
 }
@@ -76,7 +76,7 @@ kasta Animal {
 }
 
 kasta Perro jila Animal {
-  jikxata lurawi tipo(): aru {
+  lurawi tipo(): aru {
     kuttaya "perro";
   }
 }

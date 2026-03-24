@@ -9,7 +9,7 @@ kasta QullqiUta {
   }
 
   lurawi uchaña(jakhüwi q) {
-    jisa(q <= 0) {
+    ukaxa(q <= 0) {
       pantja("MONTO", "monto debe ser mayor que cero");
     }
     aka.saldo = aka.saldo + q;
@@ -17,10 +17,10 @@ kasta QullqiUta {
   }
 
   lurawi apsuña(jakhüwi q) {
-    jisa(q <= 0) {
+    ukaxa(q <= 0) {
       pantja("MONTO", "monto debe ser mayor que cero");
     }
-    jisa(q > aka.saldo) {
+    ukaxa(q > aka.saldo) {
       pantja("SALDO", "saldo insuficiente en " + aka.sutipa);
     }
     aka.saldo = aka.saldo - q;

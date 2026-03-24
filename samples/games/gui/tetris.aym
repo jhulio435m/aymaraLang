@@ -1,6 +1,7 @@
 yatiya jakhüwi UJA_ANCHU = 520;
 yatiya jakhüwi UJA_SAYA = 620;
 yatiya jakhüwi CELDA = 24;
+yatiya jakhüwi CELDA_PREV = 16;
 yatiya jakhüwi ANCHO = 10;
 yatiya jakhüwi ALTO = 20;
 yatiya jakhüwi OX = 80;
@@ -9,18 +10,24 @@ yatiya jakhüwi OY = 70;
 yatiya jakhüwi tablero = 0;
 yatiya jakhüwi marcador = 0;
 yatiya jakhüwi mejor = 0;
-yatiya chiqa fin = janiutji;
+yatiya chiqa fin = k'ari;
 
 yatiya jakhüwi px = 4;
 yatiya jakhüwi py = 0;
+yatiya jakhüwi tipo = 0;
+yatiya jakhüwi rot = 0;
 yatiya jakhüwi color_pieza = 1;
 yatiya jakhüwi proximo = 0;
+yatiya chiqa giro_listo = chiqa;
+yatiya jakhüwi proximo_tipo = 0;
+yatiya jakhüwi proximo_rot = 0;
+yatiya jakhüwi proximo_color = 1;
 
 lurawi nuevo_tablero(): jakhüwi {
   yatiya jakhüwi tb = array(ALTO);
-  taki(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
+  kuti(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
     yatiya jakhüwi fila = array(ANCHO);
-    taki(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
+    kuti(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
       array_set(fila, x, 0);
     }
     array_set(tb, y, fila);
@@ -39,48 +46,103 @@ lurawi tablero_set(jakhüwi x, jakhüwi y, jakhüwi v) {
   kuttaya;
 }
 
-lurawi es_bloque(jakhüwi x, jakhüwi y, jakhüwi cx, jakhüwi cy): chiqa {
-  jisa(x == cx && y == cy) { kuttaya utji; }
-  jisa(x == cx + 1 && y == cy) { kuttaya utji; }
-  jisa(x == cx && y == cy + 1) { kuttaya utji; }
-  jisa(x == cx + 1 && y == cy + 1) { kuttaya utji; }
-  kuttaya janiutji;
+// tipo: 0=I, 1=O, 2=T, 3=L, 4=S
+lurawi p_dx(jakhüwi t, jakhüwi r, jakhüwi i): jakhüwi {
+  ukaxa(t == 0) {
+    ukaxa(r == 0 || r == 2) { kuttaya i; }
+    kuttaya 1;
+  }
+  ukaxa(t == 1) {
+    ukaxa(i == 0 || i == 2) { kuttaya 0; }
+    kuttaya 1;
+  }
+  ukaxa(t == 2) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 1; }
+    ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1;
+  }
+  ukaxa(t == 3) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 2; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 2; }
+    ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 0; } kuttaya 1;
+  }
+  // S
+  ukaxa(r == 0 || r == 2) {
+    ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 2; } ukaxa(i == 2) { kuttaya 0; } kuttaya 1;
+  }
+  ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 2;
 }
 
-lurawi colision(jakhüwi cx, jakhüwi cy): chiqa {
-  jisa(cx < 0 || cy < 0 || cx + 1 >= ANCHO || cy + 1 >= ALTO) { kuttaya utji; }
-  jisa(tablero_get(cx, cy) != 0) { kuttaya utji; }
-  jisa(tablero_get(cx + 1, cy) != 0) { kuttaya utji; }
-  jisa(tablero_get(cx, cy + 1) != 0) { kuttaya utji; }
-  jisa(tablero_get(cx + 1, cy + 1) != 0) { kuttaya utji; }
-  kuttaya janiutji;
+lurawi p_dy(jakhüwi t, jakhüwi r, jakhüwi i): jakhüwi {
+  ukaxa(t == 0) {
+    ukaxa(r == 0 || r == 2) { kuttaya 1; }
+    kuttaya i;
+  }
+  ukaxa(t == 1) {
+    ukaxa(i < 2) { kuttaya 0; } kuttaya 1;
+  }
+  ukaxa(t == 2) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 1; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2;
+  }
+  ukaxa(t == 3) {
+    ukaxa(r == 0) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1; }
+    ukaxa(r == 1) { ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(r == 2) { ukaxa(i == 0) { kuttaya 1; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2; }
+    ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 2; } kuttaya 2;
+  }
+  // S
+  ukaxa(r == 0 || r == 2) {
+    ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 0; } ukaxa(i == 2) { kuttaya 1; } kuttaya 1;
+  }
+  ukaxa(i == 0) { kuttaya 0; } ukaxa(i == 1) { kuttaya 1; } ukaxa(i == 2) { kuttaya 1; } kuttaya 2;
+}
+
+lurawi es_bloque(jakhüwi x, jakhüwi y, jakhüwi cx, jakhüwi cy): chiqa {
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    ukaxa(x == cx + p_dx(tipo, rot, i) && y == cy + p_dy(tipo, rot, i)) { kuttaya chiqa; }
+  }
+  kuttaya k'ari;
+}
+
+lurawi colision(jakhüwi cx, jakhüwi cy, jakhüwi cr): chiqa {
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    yatiya jakhüwi x = cx + p_dx(tipo, cr, i);
+    yatiya jakhüwi y = cy + p_dy(tipo, cr, i);
+    ukaxa(x < 0 || x >= ANCHO || y < 0 || y >= ALTO) { kuttaya chiqa; }
+    ukaxa(tablero_get(x, y) != 0) { kuttaya chiqa; }
+  }
+  kuttaya k'ari;
 }
 
 lurawi fijar_pieza() {
-  tablero_set(px, py, color_pieza);
-  tablero_set(px + 1, py, color_pieza);
-  tablero_set(px, py + 1, color_pieza);
-  tablero_set(px + 1, py + 1, color_pieza);
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    tablero_set(px + p_dx(tipo, rot, i), py + p_dy(tipo, rot, i), color_pieza);
+  }
   kuttaya;
 }
 
 lurawi limpiar_lineas(): jakhüwi {
   yatiya jakhüwi puntos = 0;
-  taki(yatiya jakhüwi y = ALTO - 1; y >= 0; y = y - 1) {
-    yatiya chiqa llena = utji;
-    taki(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
-      jisa(tablero_get(x, y) == 0) {
-        llena = janiutji;
+  kuti(yatiya jakhüwi y = ALTO - 1; y >= 0; y = y - 1) {
+    yatiya chiqa llena = chiqa;
+    kuti(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
+      ukaxa(tablero_get(x, y) == 0) {
+        llena = k'ari;
       }
     }
-    jisa(llena) {
+    ukaxa(llena) {
       puntos = puntos + 100;
-      taki(yatiya jakhüwi yy = y; yy > 0; yy = yy - 1) {
-        taki(yatiya jakhüwi x2 = 0; x2 < ANCHO; x2 = x2 + 1) {
+      kuti(yatiya jakhüwi yy = y; yy > 0; yy = yy - 1) {
+        kuti(yatiya jakhüwi x2 = 0; x2 < ANCHO; x2 = x2 + 1) {
           tablero_set(x2, yy, tablero_get(x2, yy - 1));
         }
       }
-      taki(yatiya jakhüwi x3 = 0; x3 < ANCHO; x3 = x3 + 1) {
+      kuti(yatiya jakhüwi x3 = 0; x3 < ANCHO; x3 = x3 + 1) {
         tablero_set(x3, 0, 0);
       }
       y = y + 1;
@@ -89,34 +151,39 @@ lurawi limpiar_lineas(): jakhüwi {
   kuttaya puntos;
 }
 
-lurawi pinta_bloque(jakhüwi sx, jakhüwi sy, jakhüwi v) {
+lurawi pinta_bloque_tam(jakhüwi sx, jakhüwi sy, jakhüwi tam, jakhüwi v) {
   yatiya jakhüwi rr = 255;
   yatiya jakhüwi gg = 202;
   yatiya jakhüwi bb = 58;
 
-  jisa(v == 2) {
+  ukaxa(v == 2) {
     rr = 90;
     gg = 180;
     bb = 255;
-  } maysatxa jisa(v == 3) {
+  } maysatxa ukaxa(v == 3) {
     rr = 239;
     gg = 108;
     bb = 146;
-  } maysatxa jisa(v == 4) {
+  } maysatxa ukaxa(v == 4) {
     rr = 136;
     gg = 220;
     bb = 118;
-  } maysatxa jisa(v == 5) {
+  } maysatxa ukaxa(v == 5) {
     rr = 255;
     gg = 150;
     bb = 86;
-  } maysatxa jisa(v == 6) {
+  } maysatxa ukaxa(v == 6) {
     rr = 186;
     gg = 150;
     bb = 255;
   }
 
-  uja_suyu(sx + 2, sy + 2, CELDA - 4, CELDA - 4, rr, gg, bb);
+  uja_suyu(sx + 2, sy + 2, tam - 4, tam - 4, rr, gg, bb);
+  kuttaya;
+}
+
+lurawi pinta_bloque(jakhüwi sx, jakhüwi sy, jakhüwi v) {
+  pinta_bloque_tam(sx, sy, CELDA, v);
   kuttaya;
 }
 
@@ -128,27 +195,52 @@ lurawi dibuja() {
   yatiya aru s2 = "Mejor: " + aru(mejor);
   uja_qillqa(s1, 18, 40, 215, 236, 196);
   uja_qillqa(s2, 180, 40, 189, 214, 255);
-  uja_qillqa("A/D saraya  S jalaqaya  Q/Esc mistuña  R wasitata", 18, 590, 173, 190, 212);
+  uja_qillqa("A/D saraya  W muytiya  S jalaqaya  Q/Esc mistuña  R wasitata", 18, 590, 173, 190, 212);
 
   uja_suyu(OX - 4, OY - 4, ANCHO * CELDA + 8, ALTO * CELDA + 8, 186, 198, 208);
 
-  taki(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
-    taki(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
+  kuti(yatiya jakhüwi y = 0; y < ALTO; y = y + 1) {
+    kuti(yatiya jakhüwi x = 0; x < ANCHO; x = x + 1) {
       yatiya jakhüwi sx = OX + x * CELDA;
       yatiya jakhüwi sy = OY + y * CELDA;
       yatiya jakhüwi v = tablero_get(x, y);
 
       uja_suyu(sx + 1, sy + 1, CELDA - 2, CELDA - 2, 26, 32, 45);
 
-      jisa(es_bloque(x, y, px, py) && ! fin) {
+      ukaxa(es_bloque(x, y, px, py) && ! fin) {
         pinta_bloque(sx, sy, color_pieza);
-      } maysatxa jisa(v != 0) {
+      } maysatxa ukaxa(v != 0) {
         pinta_bloque(sx, sy, v);
       }
     }
   }
 
-  jisa(fin) {
+  yatiya jakhüwi panel_x = OX + ANCHO * CELDA + 24;
+  yatiya jakhüwi panel_y = OY + 36;
+  yatiya jakhüwi panel_w = 146;
+  yatiya jakhüwi panel_h = 150;
+
+  uja_suyu(panel_x - 4, panel_y - 30, panel_w + 8, panel_h + 36, 186, 198, 208);
+  uja_suyu(panel_x, panel_y, panel_w, panel_h, 20, 27, 40);
+  uja_qillqa("Jutiri pieza", panel_x + 14, panel_y - 20, 225, 235, 248);
+
+  kuti(yatiya jakhüwi gy = 0; gy < 6; gy = gy + 1) {
+    kuti(yatiya jakhüwi gx = 0; gx < 6; gx = gx + 1) {
+      yatiya jakhüwi csx = panel_x + 10 + gx * CELDA_PREV;
+      yatiya jakhüwi csy = panel_y + 10 + gy * CELDA_PREV;
+      uja_suyu(csx + 1, csy + 1, CELDA_PREV - 2, CELDA_PREV - 2, 26, 32, 45);
+    }
+  }
+
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    yatiya jakhüwi dx = p_dx(proximo_tipo, proximo_rot, i);
+    yatiya jakhüwi dy = p_dy(proximo_tipo, proximo_rot, i);
+    yatiya jakhüwi psx = panel_x + 10 + (dx + 1) * CELDA_PREV;
+    yatiya jakhüwi psy = panel_y + 10 + (dy + 1) * CELDA_PREV;
+    pinta_bloque_tam(psx, psy, CELDA_PREV, proximo_color);
+  }
+
+  ukaxa(fin) {
     uja_suyu(114, 292, 292, 92, 10, 12, 18);
     uja_qillqa("Tukusiwayi", 210, 320, 255, 105, 105);
     uja_qillqa("R wasitata | Q mistuña", 168, 350, 220, 226, 232);
@@ -158,20 +250,48 @@ lurawi dibuja() {
   kuttaya;
 }
 
+lurawi prepara_siguiente() {
+  proximo_tipo = random(5);
+  proximo_rot = random(4);
+  proximo_color = 1 + random(6);
+  kuttaya;
+}
+
+lurawi nueva_pieza() {
+  tipo = proximo_tipo;
+  rot = proximo_rot;
+  px = 3;
+  py = 0;
+  color_pieza = proximo_color;
+  prepara_siguiente();
+  ukaxa(colision(px, py, rot)) {
+    fin = chiqa;
+  }
+  kuttaya;
+}
+
 lurawi reinicia() {
   tablero = nuevo_tablero();
   marcador = 0;
-  fin = janiutji;
+  fin = k'ari;
+  giro_listo = chiqa;
   px = 4;
   py = 0;
-  color_pieza = 1 + random(6);
+  tipo = 0;
+  rot = 0;
+  color_pieza = 1;
+  proximo_tipo = 0;
+  proximo_rot = 0;
+  proximo_color = 1;
+  prepara_siguiente();
+  nueva_pieza();
   proximo = tiempo_ms() + 420;
   kuttaya;
 }
 
 yatiya chiqa sarantawi = uja_qallta(UJA_ANCHU, UJA_SAYA, "Tetris Uja");
 
-jisa(sarantawi) {
+ukaxa(sarantawi) {
   reinicia();
 
   ukhakamaxa(sarantawi && uja_utji()) {
@@ -179,38 +299,42 @@ jisa(sarantawi) {
 
     yatiya chiqa ima_a = (k == 97 || k == 65 || k == 1003 || uja_tecla(97) || uja_tecla(65) || uja_tecla(1003));
     yatiya chiqa ima_d = (k == 100 || k == 68 || k == 1004 || uja_tecla(100) || uja_tecla(68) || uja_tecla(1004));
+    yatiya chiqa ima_w = (k == 119 || k == 87 || k == 1001 || uja_tecla(119) || uja_tecla(87) || uja_tecla(1001));
     yatiya chiqa ima_s = (k == 115 || k == 83 || k == 1002 || uja_tecla(115) || uja_tecla(83) || uja_tecla(1002));
     yatiya chiqa ima_q = (k == 113 || k == 81 || k == 27 || uja_tecla(113) || uja_tecla(81) || uja_tecla(27));
     yatiya chiqa ima_r = (k == 114 || k == 82 || uja_tecla(114) || uja_tecla(82));
 
-    jisa(ima_q) {
-      sarantawi = janiutji;
+    ukaxa(ima_q) {
+      sarantawi = k'ari;
     }
 
-    jisa(fin) {
-      jisa(ima_r) {
+    ukaxa(fin) {
+      ukaxa(ima_r) {
         reinicia();
       }
     } maysatxa {
-      jisa(ima_a && ! colision(px - 1, py)) { px = px - 1; }
-      jisa(ima_d && ! colision(px + 1, py)) { px = px + 1; }
-      jisa(ima_s && ! colision(px, py + 1)) { py = py + 1; }
+      ukaxa(ima_a && ! colision(px - 1, py, rot)) { px = px - 1; }
+      ukaxa(ima_d && ! colision(px + 1, py, rot)) { px = px + 1; }
+      ukaxa(ima_s && ! colision(px, py + 1, rot)) { py = py + 1; }
+
+      ukaxa(ima_w && giro_listo) {
+        yatiya jakhüwi nr = rot + 1;
+        ukaxa(nr >= 4) { nr = 0; }
+        ukaxa(! colision(px, py, nr)) { rot = nr; }
+        giro_listo = k'ari;
+      }
+      ukaxa(! ima_w) { giro_listo = chiqa; }
 
       yatiya jakhüwi ahora = tiempo_ms();
-      jisa(ahora >= proximo) {
-        jisa(! colision(px, py + 1)) {
+      ukaxa(ahora >= proximo) {
+        ukaxa(! colision(px, py + 1, rot)) {
           py = py + 1;
         } maysatxa {
           fijar_pieza();
           marcador = marcador + 10 + limpiar_lineas();
-          jisa(marcador > mejor) { mejor = marcador; }
+          ukaxa(marcador > mejor) { mejor = marcador; }
 
-          px = 4;
-          py = 0;
-          color_pieza = 1 + random(6);
-          jisa(colision(px, py)) {
-            fin = utji;
-          }
+          nueva_pieza();
         }
         proximo = ahora + 420;
       }

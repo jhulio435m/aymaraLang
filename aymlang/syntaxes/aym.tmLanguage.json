@@ -43,11 +43,11 @@
 			"patterns": [
 				{
 					"name": "keyword.control.aym",
-					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(qallta|tukuya|yatiya|suti|jisa|jani|maysatxa|kunawsati|ukhakamaxa|sapüru|taki|p'akhiña|sarantaña|yant'aña|katjaña|tukuyawi|pantja|kuttaya|lurawi|apnaq)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(qallta|tukuya|yatiya|ukaxa|maysatxa|ukhakamaxa|kuti|p'akhiña|sarantaña|yant'aña|katjaña|tukuyawi|pantja|kuttaya|lurawi|apnaq)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				},
 				{
 					"name": "keyword.other.aym",
-					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(kasta|machaqa|aka|jila|jikxata|sapa|taqi|sapakasta|uñt'aya|chura|jilaaka)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(kasta|machaqa|aka|jila|sapa|sapakasta|jilaaka)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				}
 			]
 		},
@@ -55,7 +55,7 @@
 			"patterns": [
 				{
 					"name": "storage.type.aym",
-					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(jakhüwi|aru|listaña|t'aqa|mapa)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(jakhüwi|aru|t'aqa|mapa)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				}
 			]
 		},
@@ -71,7 +71,7 @@
 			"patterns": [
 				{
 					"name": "constant.language.aym",
-					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(utji|janiutji|chiqa|k'ari)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
+					"match": "(?i)(?<![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])(chiqa|k'ari)(?![A-Za-z0-9_\\u00C0-\\u1FFF\\u2C00-\\uD7FF'])"
 				}
 			]
 		},

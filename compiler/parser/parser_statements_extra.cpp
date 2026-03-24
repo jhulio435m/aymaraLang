@@ -98,10 +98,10 @@ std::unique_ptr<Stmt> Parser::parseEnumStatement(const Token &enumTok) {
     if (peek().type == TokenType::Identifier) {
         enumName = get().text;
     } else {
-        parseError("se esperaba nombre del enum");
+        parseError("se esperaba nombre de 'siqicha'");
     }
     if (!match(TokenType::LBrace)) {
-        parseError("se esperaba '{' en enum");
+        parseError("se esperaba '{' en 'siqicha'");
     }
 
     std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<Expr>>> items;
@@ -109,13 +109,13 @@ std::unique_ptr<Stmt> Parser::parseEnumStatement(const Token &enumTok) {
     long long nextValue = 0;
     while (peek().type != TokenType::RBrace && peek().type != TokenType::EndOfFile) {
         if (peek().type != TokenType::Identifier) {
-            parseError("se esperaba nombre de miembro en enum");
+            parseError("se esperaba nombre de miembro en 'siqicha'");
             break;
         }
         Token memberTok = get();
         std::string memberName = memberTok.text;
         if (seenMembers.count(memberName)) {
-            parseError("miembro enum repetido: '" + memberName + "'");
+            parseError("miembro repetido en 'siqicha': '" + memberName + "'");
         }
         seenMembers.insert(memberName);
 
@@ -142,7 +142,7 @@ std::unique_ptr<Stmt> Parser::parseEnumStatement(const Token &enumTok) {
     }
 
     if (!match(TokenType::RBrace)) {
-        parseError("se esperaba '}' en enum");
+        parseError("se esperaba '}' en 'siqicha'");
     }
     match(TokenType::Semicolon);
 
@@ -155,14 +155,14 @@ std::unique_ptr<Stmt> Parser::parseEnumStatement(const Token &enumTok) {
 
 std::unique_ptr<Stmt> Parser::parseMatchStatement(const Token &matchTok) {
     if (!match(TokenType::LParen)) {
-        parseError("se esperaba '(' despues de 'match'");
+        parseError("se esperaba '(' despues de 'khiti'");
     }
     auto matchExpr = parseExpression();
     if (!match(TokenType::RParen)) {
-        parseError("se esperaba ')' en match");
+        parseError("se esperaba ')' en 'khiti'");
     }
     if (!match(TokenType::LBrace)) {
-        parseError("se esperaba '{' en match");
+        parseError("se esperaba '{' en 'khiti'");
     }
 
     std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<BlockStmt>>> cases;
@@ -202,7 +202,7 @@ std::unique_ptr<Stmt> Parser::parseMatchStatement(const Token &matchTok) {
                 caseExpr = std::move(listExpr);
             }
             if (!match(TokenType::Colon)) {
-                parseError("se esperaba ':' despues de case");
+                parseError("se esperaba ':' despues de 'kuna'");
             }
             auto caseBlock = std::make_unique<BlockStmt>();
             if (match(TokenType::LBrace)) {
@@ -210,7 +210,7 @@ std::unique_ptr<Stmt> Parser::parseMatchStatement(const Token &matchTok) {
                 caseBlock->setLocation(blockTok.line, blockTok.column);
                 parseStatements(caseBlock->statements, true);
             } else {
-                parseError("se esperaba '{' en bloque de case");
+                parseError("se esperaba '{' en bloque de 'kuna'");
             }
             auto breakNode = std::make_unique<BreakStmt>();
             breakNode->setLocation(caseTok.line, caseTok.column);
@@ -221,10 +221,10 @@ std::unique_ptr<Stmt> Parser::parseMatchStatement(const Token &matchTok) {
 
         if (match(TokenType::KeywordDefault)) {
             if (defaultCase) {
-                parseError("solo se permite un bloque default en match");
+                parseError("solo se permite un bloque 'yaqha' en 'khiti'");
             }
             if (!match(TokenType::Colon)) {
-                parseError("se esperaba ':' despues de default");
+                parseError("se esperaba ':' despues de 'yaqha'");
             }
             auto block = std::make_unique<BlockStmt>();
             if (match(TokenType::LBrace)) {
@@ -232,18 +232,18 @@ std::unique_ptr<Stmt> Parser::parseMatchStatement(const Token &matchTok) {
                 block->setLocation(blockTok.line, blockTok.column);
                 parseStatements(block->statements, true);
             } else {
-                parseError("se esperaba '{' en bloque default");
+                parseError("se esperaba '{' en bloque de 'yaqha'");
             }
             defaultCase = std::move(block);
             continue;
         }
 
-        parseError("se esperaba 'case' o 'default' en match");
+        parseError("se esperaba 'kuna' o 'yaqha' en 'khiti'");
         if (peek().type == TokenType::RBrace) break;
     }
 
     if (!match(TokenType::RBrace)) {
-        parseError("se esperaba '}' al cerrar match");
+        parseError("se esperaba '}' al cerrar 'khiti'");
     }
     match(TokenType::Semicolon);
 

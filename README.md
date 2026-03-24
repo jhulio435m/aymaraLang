@@ -1,16 +1,17 @@
 # AymaraLang (`aym`)
 
-**AymaraLang** es un lenguaje de programación moderno basado en la lengua originaria aymara. Su compilador, `aymc`, ha sido desarrollado desde cero en **C++17**, y permite generar ejecutables nativos. El proyecto busca promover la inclusión tecnológica, la educación y la preservación lingüística.
+**AymaraLang** es un lenguaje de programación moderno basado en la lengua originaria aymara. Su compilador, `aymc`, ha sido desarrollado desde cero en **C++17**, y permite generar ejecutables nativos. El proyecto busca promover inclusión tecnológica, educación y preservación lingüística con una sintaxis canónica ya consolidada.
 
 Palabras clave principales del lenguaje:
 
-- `jakhüwi`, `aru`, `chiqa`, `t'aqa` – tipos base (numérico, cadenas, booleanos/listas)
+- `jakhüwi`, `aru`, `chiqa`, `t'aqa`, `mapa` – tipos base
 - `yatiya` – declaración de variables
 - `qallta` / `tukuya` – inicio y fin del programa
 - `qillqa` – salida por pantalla
 - `katu` / `input` – lectura de consola
 - `lurawi` / `kuttaya` – definición de funciones y retorno
-- `jisa`/`maysatxa`, `ukhakamaxa`, `taki` (compatibles con `suti`, `jani`, `kunawsati`, `sapüru`)
+- `ukaxa` / `maysatxa`, `ukhakamaxa`, `kuti` – control de flujo
+- `siqicha`, `khiti`, `kuna`, `yaqha` – enumeraciones y selección
 - `apnaq` – importación de módulos desde otros archivos
 
 ## Documentación
@@ -32,16 +33,7 @@ Palabras clave principales del lenguaje:
 
 ### Windows (MSI o EXE NSIS)
 
-Dependencias requeridas para usar `aymc`:
-
-- `nasm` en `PATH`
-- `gcc` en `PATH` (MSYS2/MinGW)
-
-Instalación automática de dependencias:
-
-```powershell
-pwsh -File .\scripts\install\install_deps_windows.ps1
-```
+Los instaladores Windows ya incluyen `nasm` y `gcc` embebidos. No hace falta instalar dependencias adicionales para usar `aymc` desde un release.
 
 Formas de instalación:
 
@@ -63,6 +55,7 @@ Dependencias requeridas para usar `aymc`:
 - `nasm`
 - `gcc`
 - `g++`
+- soporte X11 si vas a ejecutar GUI
 
 Instalación automática de dependencias:
 
@@ -77,14 +70,22 @@ sudo dpkg -i aymaralang_<version>_amd64.deb
 sudo apt-get install -f -y
 ```
 
+Si publicas el bundle genérico Linux:
+
+```bash
+tar -xzf AymaraLang-0.1.0-Linux.tar.gz
+cd AymaraLang-0.1.0-Linux/bin
+./aymc --help
+```
+
 ## Inicio rápido (desde fuente)
 
 Compila y ejecuta un ejemplo sencillo:
 
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j
-./build/bin/aymc samples/aymara_flow.aym
+cmake -S . -B build-linux -DCMAKE_BUILD_TYPE=Release
+cmake --build build-linux -j
+./build-linux/bin/aymc samples/aymara_flow.aym
 ./samples/aymara_flow
 ```
 

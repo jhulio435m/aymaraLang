@@ -40,16 +40,11 @@ std::unique_ptr<ClassStmt> Parser::parseClassBody(const std::string &name,
         }
         bool isStatic = false;
         bool isPrivate = false;
-        bool isOverride = false;
         while (true) {
             if (match(TokenType::KeywordStatic)) {
                 isStatic = true;
             } else if (match(TokenType::KeywordPrivate)) {
                 isPrivate = true;
-            } else if (match(TokenType::KeywordPublic)) {
-                // no-op, default public
-            } else if (match(TokenType::KeywordOverride)) {
-                isOverride = true;
             } else {
                 break;
             }
@@ -82,9 +77,7 @@ std::unique_ptr<ClassStmt> Parser::parseClassBody(const std::string &name,
             ClassStmt::MethodDecl method;
             method.isStatic = isStatic;
             method.isPrivate = isPrivate;
-            method.isOverride = isOverride;
-            if (peek().type == TokenType::Identifier || peek().type == TokenType::KeywordGetter ||
-                peek().type == TokenType::KeywordSetter) {
+            if (peek().type == TokenType::Identifier) {
                 method.name = get().text;
             } else {
                 parseError("se esperaba nombre de metodo");

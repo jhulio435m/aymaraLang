@@ -1,0 +1,36 @@
+qallta
+lurawi suma_array(jakhüwi arr): jakhüwi {
+  yatiya jakhüwi total = 0;
+  kuti(yatiya jakhüwi i = 0; i < array_length(arr); i = i + 1) {
+    total = total + array_get(arr, i);
+  }
+  kuttaya total;
+}
+
+yatiya jakhüwi arr = array(5);
+afirma(array_length(arr) == 5, "largo inicial incorrecto");
+
+kuti(yatiya jakhüwi i = 0; i < array_length(arr); i = i + 1) {
+  array_set(arr, i, i * 10);
+}
+
+afirma(array_get(arr, 0) == 0, "valor indice 0 incorrecto");
+afirma(array_get(arr, 1) == 10, "valor indice 1 incorrecto");
+afirma(array_get(arr, 2) == 20, "valor indice 2 incorrecto");
+afirma(array_get(arr, 3) == 30, "valor indice 3 incorrecto");
+afirma(array_get(arr, 4) == 40, "valor indice 4 incorrecto");
+
+array_set(arr, 3, array_get(arr, 3) + 7);
+afirma(array_get(arr, 3) == 37, "actualizacion de indice 3 fallo");
+afirma(suma_array(arr) == 107, "suma total inesperada");
+
+array_free(arr);
+arr = 0;
+
+// Con referencia nula, runtime devuelve valores seguros.
+afirma(array_length(arr) == 0, "array null debe tener largo 0");
+afirma(array_get(arr, 2) == 0, "array null debe devolver 0");
+array_free(arr);
+
+qillqa("arrays_ciclo_vida OK");
+tukuya

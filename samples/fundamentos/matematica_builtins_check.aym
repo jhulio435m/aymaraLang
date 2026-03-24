@@ -1,0 +1,24 @@
+qallta
+// Validacion ejecutable de built-ins matematicos.
+
+afirma(sin(0) == 0, "sin(0) != 0");
+afirma(cos(0) == 1, "cos(0) != 1");
+afirma(tan(0) == 0, "tan(0) != 0");
+
+afirma(asin(0) == 0, "asin(0) != 0");
+afirma(acos(1) == 0, "acos(1) != 0");
+afirma(atan(0) == 0, "atan(0) != 0");
+
+afirma(sqrt(81) == 9, "sqrt(81) != 9");
+afirma(pow(2, 10) == 1024, "pow(2,10) != 1024");
+afirma(exp(0) == 1, "exp(0) != 1");
+afirma(log(1) == 0, "log(1) != 0");
+afirma(log10(1) == 0, "log10(1) != 0");
+
+afirma(floor(7) == 7, "floor(7) != 7");
+afirma(ceil(7) == 7, "ceil(7) != 7");
+afirma(round(7) == 7, "round(7) != 7");
+afirma(fabs(-9) == 9, "fabs(-9) != 9");
+
+qillqa("matematica_builtins_check OK");
+tukuya

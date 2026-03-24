@@ -8,10 +8,10 @@ apsusuti(stock, "oca");
 yatiya t'aqa claves = wakicha(sutinaka(stock));
 yatiya aru reporte = "";
 
-taki(yatiya jakhüwi i = 0; i < suyut(claves); i = i + 1) {
+kuti(yatiya jakhüwi i = 0; i < suyut(claves); i = i + 1) {
   yatiya aru k = claves[i];
   reporte = reporte + k + "=" + aru(stock[k]);
-  jisa(i + 1 < suyut(claves)) {
+  ukaxa(i + 1 < suyut(claves)) {
     reporte = reporte + ",";
   }
 }

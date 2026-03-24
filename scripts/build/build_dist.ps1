@@ -10,6 +10,7 @@ $ErrorActionPreference = "Stop"
 $root      = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $buildPath = Join-Path $root $BuildDir
 $distPath  = Join-Path $root "dist"
+$toolchainBundleScript = Join-Path $root "scripts\build\bundle_windows_toolchain.ps1"
 
 function Assert-ExitOk {
     param([string]$Step)
@@ -44,5 +45,9 @@ Assert-ExitOk "Build"
 Write-Host "Installing to dist... (Config=$Config)"
 & cmake --install $buildPath --config $Config --prefix $distPath
 Assert-ExitOk "Install"
+
+Write-Host "Bundling portable Windows toolchain into dist..."
+& $toolchainBundleScript -DistDir "dist"
+Assert-ExitOk "Bundle Windows toolchain"
 
 Write-Host "dist generado en: $distPath"

@@ -11,38 +11,38 @@ lurawi celda_set(jakhüwi tb, jakhüwi f, jakhüwi c, jakhüwi v) {
 }
 
 lurawi valido(jakhüwi tb, jakhüwi f, jakhüwi c, jakhüwi v): chiqa {
-  taki(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
-    jisa(celda_get(tb, f, i) == v) { kuttaya janiutji; }
-    jisa(celda_get(tb, i, c) == v) { kuttaya janiutji; }
+  kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+    ukaxa(celda_get(tb, f, i) == v) { kuttaya k'ari; }
+    ukaxa(celda_get(tb, i, c) == v) { kuttaya k'ari; }
   }
 
   yatiya jakhüwi f0 = (f / 2) * 2;
   yatiya jakhüwi c0 = (c / 2) * 2;
-  taki(yatiya jakhüwi df = 0; df < 2; df = df + 1) {
-    taki(yatiya jakhüwi dc = 0; dc < 2; dc = dc + 1) {
-      jisa(celda_get(tb, f0 + df, c0 + dc) == v) { kuttaya janiutji; }
+  kuti(yatiya jakhüwi df = 0; df < 2; df = df + 1) {
+    kuti(yatiya jakhüwi dc = 0; dc < 2; dc = dc + 1) {
+      ukaxa(celda_get(tb, f0 + df, c0 + dc) == v) { kuttaya k'ari; }
     }
   }
-  kuttaya utji;
+  kuttaya chiqa;
 }
 
 lurawi resolver(jakhüwi tb, jakhüwi pos): chiqa {
-  jisa(pos == 16) { kuttaya utji; }
+  ukaxa(pos == 16) { kuttaya chiqa; }
 
   yatiya jakhüwi f = pos / 4;
   yatiya jakhüwi c = pos % 4;
-  jisa(celda_get(tb, f, c) != 0) {
+  ukaxa(celda_get(tb, f, c) != 0) {
     kuttaya resolver(tb, pos + 1);
   }
 
-  taki(yatiya jakhüwi v = 1; v <= 4; v = v + 1) {
-    jisa(valido(tb, f, c, v)) {
+  kuti(yatiya jakhüwi v = 1; v <= 4; v = v + 1) {
+    ukaxa(valido(tb, f, c, v)) {
       celda_set(tb, f, c, v);
-      jisa(resolver(tb, pos + 1)) { kuttaya utji; }
+      ukaxa(resolver(tb, pos + 1)) { kuttaya chiqa; }
       celda_set(tb, f, c, 0);
     }
   }
-  kuttaya janiutji;
+  kuttaya k'ari;
 }
 
 lurawi imprime(jakhüwi tb) {

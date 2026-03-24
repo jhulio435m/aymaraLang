@@ -61,9 +61,7 @@ std::unique_ptr<Expr> Parser::parseFactor() {
             Token dotTok = tokens[pos-1];
             if (peek().type != TokenType::Identifier &&
                 peek().type != TokenType::KeywordIf &&
-                peek().type != TokenType::KeywordTypeString &&
-                peek().type != TokenType::KeywordGetter &&
-                peek().type != TokenType::KeywordSetter) {
+                peek().type != TokenType::KeywordTypeString) {
                 parseError("se esperaba nombre de miembro despues de '.'");
                 break;
             }

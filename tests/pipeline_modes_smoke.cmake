@@ -91,6 +91,10 @@ file(MAKE_DIRECTORY "${AYM_PIPELINE_ROOT}")
 file(MAKE_DIRECTORY "${AYM_PIPELINE_ROOT}/runtime")
 configure_file("${CMAKE_CURRENT_LIST_DIR}/../runtime/runtime.c" "${AYM_PIPELINE_ROOT}/runtime/runtime.c" COPYONLY)
 configure_file("${CMAKE_CURRENT_LIST_DIR}/../runtime/math.c" "${AYM_PIPELINE_ROOT}/runtime/math.c" COPYONLY)
+configure_file("${CMAKE_CURRENT_LIST_DIR}/../runtime/runtime_arrays.c" "${AYM_PIPELINE_ROOT}/runtime/runtime_arrays.c" COPYONLY)
+configure_file("${CMAKE_CURRENT_LIST_DIR}/../runtime/runtime_maps_strings.c" "${AYM_PIPELINE_ROOT}/runtime/runtime_maps_strings.c" COPYONLY)
+configure_file("${CMAKE_CURRENT_LIST_DIR}/../runtime/runtime_exceptions.c" "${AYM_PIPELINE_ROOT}/runtime/runtime_exceptions.c" COPYONLY)
+configure_file("${CMAKE_CURRENT_LIST_DIR}/../runtime/runtime_gfx_linux.c" "${AYM_PIPELINE_ROOT}/runtime/runtime_gfx_linux.c" COPYONLY)
 
 set(source_file "${AYM_PIPELINE_ROOT}/pipeline_modes.aym")
 file(WRITE

@@ -1,6 +1,8 @@
 #include "codegen_impl.h"
+#include "../utils/driver.h"
 #include "../utils/fs.h"
 #include "../utils/process.h"
+#include "../utils/utils.h"
 #include <chrono>
 #include <fstream>
 #include <functional>
@@ -489,6 +491,21 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_str_contains\n";
     out << "extern aym_to_string\n";
     out << "extern aym_to_number\n";
+    out << "extern aym_sin\n";
+    out << "extern aym_cos\n";
+    out << "extern aym_tan\n";
+    out << "extern aym_asin\n";
+    out << "extern aym_acos\n";
+    out << "extern aym_atan\n";
+    out << "extern aym_sqrt\n";
+    out << "extern aym_pow\n";
+    out << "extern aym_exp\n";
+    out << "extern aym_log\n";
+    out << "extern aym_log10\n";
+    out << "extern aym_floor\n";
+    out << "extern aym_ceil\n";
+    out << "extern aym_round\n";
+    out << "extern aym_fabs\n";
     out << "extern aym_try_push\n";
     out << "extern aym_try_pop\n";
     out << "extern aym_try_env\n";
@@ -517,8 +534,8 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "map_sep: db \", \",0\n";
     out << "map_close: db \"}\",0\n";
     out << "map_colon: db \": \",0\n";
-    out << "bool_true: db \"utji\",0\n";
-    out << "bool_false: db \"janiutji\",0\n";
+    out << "bool_true: db \"chiqa\",0\n";
+    out << "bool_false: db \"k'ari\",0\n";
 
     for (size_t i = 0; i < strings.size(); ++i) {
         out << "str" << i << ": db " << toAsmBytes(strings[i]) << "\n";
@@ -676,10 +693,11 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
 
     if (modeIn != CodegenPipelineMode::LinkOnly) {
         std::vector<std::string> cmdAssemble;
+        const std::string nasmCommand = resolveToolExecutable("nasm");
         if (windows) {
-            cmdAssemble = {"nasm", "-f", "win64", asmPath.string(), "-o", obj.string()};
+            cmdAssemble = {nasmCommand, "-f", "win64", asmPath.string(), "-o", obj.string()};
         } else {
-            cmdAssemble = {"nasm", "-felf64", asmPath.string(), "-o", obj.string()};
+            cmdAssemble = {nasmCommand, "-felf64", asmPath.string(), "-o", obj.string()};
         }
         ProcessResult process;
         if (!runCommand(cmdAssemble,
@@ -759,13 +777,16 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
     }
 
     std::vector<std::string> cmd2;
-    fs::path runtimeDir = runtimeDirIn.empty() ? fs::path("runtime") : fs::path(runtimeDirIn);
+    fs::path runtimeDir = runtimeDirIn.empty() ? findRuntimeDirectory() : fs::path(runtimeDirIn);
     fs::path runtimeC = runtimeDir / "runtime.c";
     fs::path mathC = runtimeDir / "math.c";
+    fs::path linuxGfxC = runtimeDir / "runtime_gfx_linux.c";
     fs::path cacheDir = runtimeCacheDir(outputDir);
     std::string runtimeTag = runtimeCacheKey(runtimeDir, windows);
     fs::path runtimeObj = cacheDir / ("__aym_runtime_" + runtimeTag + (windows ? ".obj" : ".o"));
     fs::path mathObj = cacheDir / ("__aym_math_" + runtimeTag + (windows ? ".obj" : ".o"));
+    fs::path linuxGfxObj = cacheDir / ("__aym_runtime_gfx_linux_" + runtimeTag + ".o");
+    const std::string gccCommand = resolveToolExecutable("gcc");
     auto compileRuntimeObject = [&](const fs::path &source,
                                     const fs::path &targetObj,
                                     const std::string &label,
@@ -801,7 +822,7 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
             }
             return true;
         }
-        const std::vector<std::string> compileCmd = {"gcc", "-c", source.string(), "-o", targetObj.string()};
+        const std::vector<std::string> compileCmd = {gccCommand, "-c", source.string(), "-o", targetObj.string()};
         long long commandMs = 0;
         ProcessResult process;
         if (!runCommand(compileCmd,
@@ -846,10 +867,14 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
         !compileRuntimeObject(mathC, mathObj, "runtime-math", runtimeMathStatus)) {
         return finalizeFailure();
     }
+    std::string runtimeLinuxGfxStatus;
+    if (!windows && !compileRuntimeObject(linuxGfxC, linuxGfxObj, "runtime-linux-gfx", runtimeLinuxGfxStatus)) {
+        return finalizeFailure();
+    }
     if (windows)
-        cmd2 = {"gcc", obj.string(), runtimeObj.string(), mathObj.string(), "-o", bin.string(), "-lm", "-lgdi32", "-luser32"};
+        cmd2 = {gccCommand, obj.string(), runtimeObj.string(), mathObj.string(), "-o", bin.string(), "-lm", "-lgdi32", "-luser32"};
     else
-        cmd2 = {"gcc", "-no-pie", obj.string(), runtimeObj.string(), mathObj.string(), "-o", bin.string(), "-lm", "-lc"};
+        cmd2 = {gccCommand, "-no-pie", obj.string(), runtimeObj.string(), mathObj.string(), linuxGfxObj.string(), "-o", bin.string(), "-lm", "-lX11", "-lc"};
     ProcessResult linkProcess;
     if (!runCommand(cmd2,
                     "Error enlazando " + obj.string(),

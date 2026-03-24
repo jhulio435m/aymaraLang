@@ -11,13 +11,13 @@ if ! command -v cpack >/dev/null; then
   exit 0
 fi
 
-build_dir="build-cpack-test"
+build_dir="$(mktemp -d -t aym-cpack-XXXXXX)"
 out_dir="${build_dir}/cpack-out"
+trap 'rm -rf "${build_dir}"' EXIT
 
-cmake -S . -B "${build_dir}" -DCMAKE_BUILD_TYPE=Release >/dev/null
+cmake -S . -B "${build_dir}" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DAYM_ENABLE_UNIT_TESTS=OFF >/dev/null
 cpack -G TGZ -B "${out_dir}" --config "${build_dir}/CPackConfig.cmake" >/dev/null
 
 ls "${out_dir}"/*.tar.gz >/dev/null
-rm -rf "${build_dir}"
 
 echo "[test] packaging smoke test passed"

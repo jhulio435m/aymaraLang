@@ -1,9 +1,9 @@
 qallta
 yatiya aru thaki = "samples/_tmp_arkata.txt";
 
-qillqa("utji nayraqata =", utji_arkata(thaki));
+qillqa("chiqa nayraqata =", utji_arkata(thaki));
 qillqa("qillqana =", qillqana_aru(thaki, "kamisaraki aymara"));
-qillqa("utji qhiparu =", utji_arkata(thaki));
+qillqa("chiqa qhiparu =", utji_arkata(thaki));
 
 yatiya aru contenido = ullana_aru(thaki);
 qillqa("ullana =", contenido);

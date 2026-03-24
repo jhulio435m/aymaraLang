@@ -5,14 +5,10 @@ const keywordItems = [
   { label: 'tukuya', detail: 'Fin de programa' },
   { label: 'yatiya', detail: 'Declaración de variable' },
   { label: 'qillqa', detail: 'Imprimir salida' },
-  { label: 'suti', detail: 'Condicional (alias de jisa)' },
-  { label: 'jisa', detail: 'Condicional if' },
-  { label: 'jani', detail: 'Condicional else' },
-  { label: 'maysatxa', detail: 'Condicional else (alias)' },
-  { label: 'kunawsati', detail: 'Bucle while' },
-  { label: 'ukhakamaxa', detail: 'Bucle while (alias)' },
-  { label: "sapüru", detail: 'Bucle for' },
-  { label: 'taki', detail: 'Bucle for (alias)' },
+  { label: 'ukaxa', detail: 'Condicional if' },
+  { label: 'maysatxa', detail: 'Condicional else' },
+  { label: 'ukhakamaxa', detail: 'Bucle while' },
+  { label: 'kuti', detail: 'Bucle for' },
   { label: "p'akhiña", detail: 'Salir de bucle' },
   { label: 'sarantaña', detail: 'Continuar bucle' },
   { label: 'lurawi', detail: 'Definir función' },
@@ -26,28 +22,21 @@ const keywordItems = [
   { label: 'machaqa', detail: 'Crear instancia (new)' },
   { label: 'aka', detail: 'Referencia this' },
   { label: 'jila', detail: 'Herencia (extends)' },
-  { label: 'jikxata', detail: 'Sobrescribir método' },
   { label: 'sapa', detail: 'Modificador privado' },
-  { label: 'taqi', detail: 'Modificador público' },
   { label: 'sapakasta', detail: 'Modificador static' },
-  { label: "uñt'aya", detail: 'Getter' },
-  { label: 'chura', detail: 'Setter' },
   { label: 'jilaaka', detail: 'Referencia super' }
 ];
 
 const typeItems = [
   { label: 'jakhüwi', detail: 'Tipo número' },
   { label: 'aru', detail: 'Tipo cadena' },
-  { label: "listaña", detail: 'Tipo lista' },
-  { label: "t'aqa", detail: 'Tipo lista (alias)' },
+  { label: "t'aqa", detail: 'Tipo lista' },
   { label: 'mapa', detail: 'Tipo mapa' }
 ];
 
 const literalItems = [
-  { label: 'utji', detail: 'Literal verdadero (true)' },
-  { label: 'chiqa', detail: 'Literal verdadero (alias)' },
-  { label: 'janiutji', detail: 'Literal falso (false)' },
-  { label: "k'ari", detail: 'Literal falso (alias)' }
+  { label: 'chiqa', detail: 'Literal verdadero (true)' },
+  { label: "k'ari", detail: 'Literal falso (false)' }
 ];
 
 const snippetItems = [
@@ -57,14 +46,14 @@ const snippetItems = [
     body: 'qallta\n\t$0\ntukuya'
   },
   {
-    label: 'jisa',
+    label: 'ukaxa',
     detail: 'Condicional if',
-    body: 'jisa (${1:condicion}) {\n\t$0\n}'
+    body: 'ukaxa (${1:condicion}) {\n\t$0\n}'
   },
   {
-    label: 'jisa ... maysatxa',
+    label: 'ukaxa ... maysatxa',
     detail: 'Condicional if/else',
-    body: 'jisa (${1:condicion}) {\n\t$2\n} maysatxa {\n\t$0\n}'
+    body: 'ukaxa (${1:condicion}) {\n\t$2\n} maysatxa {\n\t$0\n}'
   },
   {
     label: 'ukhakamaxa',
@@ -72,9 +61,9 @@ const snippetItems = [
     body: 'ukhakamaxa (${1:condicion}) {\n\t$0\n}'
   },
   {
-    label: 'taki',
+    label: 'kuti',
     detail: 'Bucle for',
-    body: 'taki (${1:inicializacion}; ${2:condicion}; ${3:incremento}) {\n\t$0\n}'
+    body: 'kuti (${1:inicializacion}; ${2:condicion}; ${3:incremento}) {\n\t$0\n}'
   },
   {
     label: 'lurawi',

@@ -1,19 +1,40 @@
 # Ignore build artifacts
 /build/
+/build-*/
 /build-win/
 /build-linux/
 /build-coverage/
 /bin/
+/dist/
+/dist-*/
 *.o
+*.obj
 *.ayn
 *.exe
+*.out
+*.asm
+*.a
+*.lib
+*.dll
+*.exp
+*.pdb
 *.msi
+*.vsix
 *wixpdb
 /site
 /artifacts/
 samples/_tmp_*
 samples/apps/_tmp_*
 samples/**/*.exe
+samples/**/*.asm
+samples/**/*.o
+samples/**/*.obj
+samples/**/*.out
+samples/aymara_flow
+samples/colecciones/mapas
+samples/colecciones/stdlib_texto_listas
+samples/fundamentos/basicos
+samples/fundamentos/funciones_listas
 
 # Ignore system files
 .DS_Store
@@ -22,4 +43,3 @@ Thumbs.db
 # Ignore IDE files
 .vscode/
 .idea/
-/dist

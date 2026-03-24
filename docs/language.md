@@ -25,9 +25,9 @@ mindmap
       chiqa
       t'aqa
     Control
-      jisa/maysatxa
+      ukaxa/maysatxa
       ukhakamaxa
-      taki
+      kuti
     Funciones
       lurawi
       kuttaya
@@ -38,7 +38,7 @@ mindmap
 ## Control de flujo
 
 ```aymara
-jisa (contador > 0) {
+ukaxa (contador > 0) {
     qillqa(saludo);
 } maysatxa {
     qillqa("janiwa");
@@ -48,7 +48,7 @@ ukhakamaxa (contador > 0) {
     contador--;
 }
 
-taki (yatiya jakhüwi i = 0; i < 3; i++) {
+kuti (yatiya jakhüwi i = 0; i < 3; i++) {
     qillqa(i);
 }
 ```
@@ -82,10 +82,10 @@ qillqa("suma: " + suma(3, 4));
 /* comentario de bloque */
 ```
 
-## Compatibilidad de palabras clave
+## Variante actual
 
-Se mantiene compatibilidad con las formas `suti`/`jani`, `kunawsati`, `sapüru`
-y `utji`/`janiutji`.
+La sintaxis usa una sola variante canónica: `ukaxa`, `maysatxa`, `ukhakamaxa`,
+`kuti`, `chiqa` y `k'ari`.
 
 ---
 
