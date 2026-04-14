@@ -95,6 +95,27 @@ function Resolve-NasmExecutable {
     throw "No se encontró nasm.exe para embebido."
 }
 
+function Copy-RequiredRuntimeDlls {
+    param(
+        [string]$MingwBinDir,
+        [string]$BinDir
+    )
+
+    $requiredDlls = @(
+        "libstdc++-6.dll",
+        "libgcc_s_seh-1.dll",
+        "libwinpthread-1.dll"
+    )
+
+    foreach ($dllName in $requiredDlls) {
+        $source = Join-Path $MingwBinDir $dllName
+        if (-not (Test-Path $source)) {
+            throw "No se encontró la DLL requerida del runtime MinGW: $source"
+        }
+        Copy-Item -Path $source -Destination (Join-Path $BinDir $dllName) -Force
+    }
+}
+
 $root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $distPath = Join-Path $root $DistDir
 if (-not (Test-Path $distPath)) {
@@ -106,6 +127,7 @@ $nasmExe = Resolve-NasmExecutable -RequestedPath $NasmPath
 $toolchainPath = Join-Path $distPath "toolchain"
 $mingwDestRoot = Join-Path $toolchainPath "mingw64"
 $toolchainBin = Join-Path $toolchainPath "bin"
+$distBin = Join-Path $distPath "bin"
 
 Write-Log "Usando MinGW/MSYS2 root: $mingwRoot"
 Write-Log "Usando NASM: $nasmExe"
@@ -132,12 +154,20 @@ if (Test-Path $licensesDir) {
 
 Copy-Item -Path $nasmExe -Destination (Join-Path $toolchainBin "nasm.exe") -Force
 
+if (-not (Test-Path $distBin)) {
+    throw "No se encontró el directorio de binarios del compilador en dist: $distBin"
+}
+
+Write-Log "Copiando DLLs requeridas del runtime MinGW junto a aym/aymc..."
+Copy-RequiredRuntimeDlls -MingwBinDir (Join-Path $mingwRoot "bin") -BinDir $distBin
+
 $readmePath = Join-Path $toolchainPath "README.txt"
 @(
     "Bundled Windows toolchain for AymaraLang."
     "Contents:"
     "- toolchain\\bin\\nasm.exe"
     "- toolchain\\mingw64\\bin\\gcc.exe and related MinGW runtime files"
+    "- bin\\libstdc++-6.dll, bin\\libgcc_s_seh-1.dll, bin\\libwinpthread-1.dll"
     ""
     "This toolchain is intended to let aymc compile programs without requiring"
     "a separate system-wide installation of GCC or NASM."

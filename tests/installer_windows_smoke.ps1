@@ -61,6 +61,11 @@ if ($UseExistingDist) {
 if (-not (Test-Path (Join-Path $distPath "bin\\aymc.exe")) -or -not (Test-Path (Join-Path $distPath "bin\\aym.exe"))) {
   throw "El directorio dist no contiene binarios validos: $distPath"
 }
+foreach ($requiredDll in @("libstdc++-6.dll", "libgcc_s_seh-1.dll", "libwinpthread-1.dll")) {
+  if (-not (Test-Path (Join-Path $distPath "bin\\$requiredDll"))) {
+    throw "El directorio dist no contiene la DLL requerida junto al compilador: $requiredDll"
+  }
+}
 if (-not (Test-Path (Join-Path $distPath "toolchain\\bin\\nasm.exe")) -or -not (Test-Path (Join-Path $distPath "toolchain\\mingw64\\bin\\gcc.exe"))) {
   throw "El directorio dist no contiene toolchain embebida completa: $distPath"
 }
