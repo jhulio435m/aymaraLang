@@ -29,6 +29,7 @@
 
     <Icon Id="AppIcon" SourceFile="$(sys.SOURCEFILEDIR)..\..\assets\logo.ico" />
     <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)..\EULA.rtf" />
 
     <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLDIR" />
     <UIRef Id="WixUI_ErrorProgressText" />
@@ -62,6 +63,7 @@
     <ComponentGroup Id="CoreRootFiles" Directory="INSTALLDIR" Source="$(var.DistDir)">
       <Files Include="README.md" />
       <Files Include="LICENSE" />
+      <Files Include="EULA.txt" />
     </ComponentGroup>
 
     <ComponentGroup Id="CoreBinFiles" Directory="BINDIR" Source="$(var.DistDir)\bin">

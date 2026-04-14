@@ -217,7 +217,7 @@ include(GNUInstallDirs)
 install(TARGETS aymc aym
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-install(FILES README.md LICENSE
+install(FILES README.md LICENSE installer/EULA.txt
   DESTINATION .
   OPTIONAL)
 

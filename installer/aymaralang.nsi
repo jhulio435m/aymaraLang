@@ -42,8 +42,7 @@ UninstallIcon "..\assets\logo.ico"
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_WELCOME
 
-; If ..\LICENSE does not exist, comment the next line
-!insertmacro MUI_PAGE_LICENSE "..\LICENSE"
+!insertmacro MUI_PAGE_LICENSE "..\installer\EULA.txt"
 
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
@@ -73,6 +72,7 @@ Section "Core (required)" SEC_CORE
   SetOutPath "$INSTDIR"
   File "${DIST_ROOT}\README.md"
   File "${DIST_ROOT}\LICENSE"
+  File "${DIST_ROOT}\EULA.txt"
   File "..\assets\logo.ico"
 
   SetOutPath "$INSTDIR\bin"
@@ -127,6 +127,7 @@ Section "Uninstall"
 
   Delete "$INSTDIR\README.md"
   Delete "$INSTDIR\LICENSE"
+  Delete "$INSTDIR\EULA.txt"
   RMDir /r "$INSTDIR"
 
   DeleteRegKey HKLM "Software\${PRODUCT_NAME}"
