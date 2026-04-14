@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$DistDir = "dist",
-    [string]$OutputDir = "artifacts"
+    [string]$OutputDir = "artifacts",
+    [switch]$RequireSigning
 )
 
 $ErrorActionPreference = "Stop"
@@ -11,6 +12,7 @@ $distPath = Join-Path $root $DistDir
 $outputPath = Join-Path $root $OutputDir
 $productWxs = Join-Path $root "installer\wix\Product.wxs"
 $outFile = Join-Path $outputPath "AymaraLang-Setup.msi"
+$signScript = Join-Path $root "scripts\build\sign_windows_artifacts.ps1"
 $bundledNasm = Join-Path $distPath "toolchain\bin\nasm.exe"
 $bundledGcc = Join-Path $distPath "toolchain\mingw64\bin\gcc.exe"
 
@@ -76,6 +78,12 @@ Write-Host "Compilando MSI... Version=$version"
     -d ProductVersion="$version" `
     -o "$outFile" `
     -v
+
+Write-Host "Signing MSI installer (if configured)..."
+& $signScript -Files @($outFile) -RequireSigning:$RequireSigning
+if ($LASTEXITCODE -ne 0) {
+    throw "Firma de MSI falló con código $LASTEXITCODE."
+}
 
 Write-Host "MSI generado en: $outFile"
     

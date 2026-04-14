@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$DistDir = "dist",
-    [string]$OutputDir = "artifacts"
+    [string]$OutputDir = "artifacts",
+    [switch]$RequireSigning
 )
 
 $ErrorActionPreference = "Stop"
@@ -13,6 +14,7 @@ $outputPath = Join-Path $root $OutputDir
 $nsisScript = Join-Path $installerPath "aymaralang.nsi"
 $vcRedist = Join-Path $installerPath "VC_redist.x64.exe"
 $versionFile = Join-Path $root "VERSION.txt"
+$signScript = Join-Path $root "scripts\build\sign_windows_artifacts.ps1"
 $bundledNasm = Join-Path $distPath "toolchain\bin\nasm.exe"
 $bundledGcc = Join-Path $distPath "toolchain\mingw64\bin\gcc.exe"
 $version = "0.1.0"
@@ -51,6 +53,12 @@ try {
     & $makensis.Source "/DOUTPUT_FILE=$outFile" "/DPRODUCT_VERSION=$version" "/DDIST_ROOT=$distPath" "/DVC_REDIST_SOURCE=$vcRedist" $nsisScript
 } finally {
     Pop-Location
+}
+
+Write-Host "Signing NSIS installer (if configured)..."
+& $signScript -Files @($outFile) -RequireSigning:$RequireSigning
+if ($LASTEXITCODE -ne 0) {
+    throw "Firma de Setup NSIS falló con código $LASTEXITCODE."
 }
 
 Write-Host "Setup NSIS generado en: $outFile"
