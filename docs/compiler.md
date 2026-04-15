@@ -1,37 +1,29 @@
 # CLI del compilador (`aymc`)
 
-## Uso
+Esta página resume sólo lo necesario para usar `aymc`. Para un flujo completo,
+empieza por el [Tutorial rápido](language.md) o el [Manual de usuario](manual_usuario.md).
+
+## Forma básica
 
 ```bash
 aymc [opciones] archivo.aym ...
 ```
 
-Si se entregan varios archivos, se compilan como una unidad.
+Si entregas varios archivos, `aymc` los compila como una sola unidad.
 
-## Opciones
+## Opciones más usadas
 
 - `-h`, `--help`: muestra ayuda.
-- `-o <ruta>`: define salida del ejecutable.
-- `--backend <nombre>`: selecciona backend (`native` o `ir`).
-- `--debug`: imprime tokens.
-- `--dump-ast`: imprime resumen de nodos AST.
-- `--check`: valida sintaxis/semántica sin generar binario.
-- `--emit-asm`: conserva ASM intermedio.
-- `--compile-only`: genera ASM/objeto sin enlazar.
-- `--link-only`: enlaza objeto existente (requiere `-o`).
-- `--time-pipeline`: imprime tiempos por etapa.
-- `--time-pipeline-json[=ruta]`: exporta métricas de pipeline a JSON.
-- `--tool-timeout-ms <ms>`: timeout para comandos externos (`0` sin límite).
-- `--emit-ast-json[=ruta]`: exporta AST en JSON.
+- `-o <ruta>`: define el ejecutable de salida.
+- `--check`: valida sintaxis y semántica sin generar binario.
+- `--backend <nombre>`: selecciona `native` o `ir`.
+- `--emit-asm`: conserva el ASM intermedio.
+- `--compile-only`: genera ASM u objeto sin enlazar.
+- `--link-only`: enlaza un objeto existente.
+- `--windows`, `--linux`: fuerza la plataforma objetivo.
 - `--diagnostics-json[=ruta]`: exporta diagnósticos en JSON.
-- `--check-manifest[=ruta]`: valida `aym.toml`.
-- `--manifest <ruta>`: ruta explícita de manifest.
-- `--emit-lock[=ruta]`: genera `aym.lock`.
-- `--check-lock[=ruta]`: valida `aym.lock`.
-- `--lock <ruta>`: ruta explícita de lockfile.
-- `--windows`: fuerza objetivo Windows.
-- `--linux`: fuerza objetivo Linux.
-- `--seed <valor>`: fija semilla de PRNG.
+- `--emit-ast-json[=ruta]`: exporta AST en JSON.
+- `--time-pipeline-json[=ruta]`: exporta tiempos del pipeline.
 
 ## Artefactos de salida
 
@@ -64,6 +56,14 @@ aymc --check-manifest --emit-lock
 aymc --check-manifest --check-lock
 ```
 
+Opciones relacionadas:
+
+- `--check-manifest[=ruta]`
+- `--manifest <ruta>`
+- `--emit-lock[=ruta]`
+- `--check-lock[=ruta]`
+- `--lock <ruta>`
+
 ## Resolución de módulos
 
 `apnaq("ruta")` resuelve por:
@@ -77,7 +77,7 @@ Para imports por paquete (`apnaq("dep/mod")`) y `aym.lock` presente, usa:
 1. `.aym/cache/<dep>/<resolved>/modules/`
 2. `.aym/repo/<dep>/<resolved>/modules/`
 
-## Ejemplos
+## Ejemplos mínimos
 
 ```bash
 aymc programa.aym

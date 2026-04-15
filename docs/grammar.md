@@ -4,16 +4,6 @@ Este documento describe la gramática actual del lenguaje AymaraLang utilizando
 notación EBNF y resume los tokens reconocidos por el compilador. Las reglas de
 tokenización están implementadas en `compiler/lexer/lexer.cpp`.
 
-## Tokens léxicos
-
-```mermaid
-flowchart LR
-    A[Texto .aym] --> B[Lexer]
-    B --> C[Tokens]
-    C --> D[Parser]
-    D --> E[AST]
-```
-
 ### Palabras clave
 
 | Token | Lexema(s) aceptado(s) | Uso sintáctico |
@@ -165,6 +155,7 @@ num           = digito { digito } ;
 str           = '\"' { caracter } '\"' | \"'\" { caracter } \"'\" ;
 ```
 
+
 ---
 
-**Anterior:** [Referencia del lenguaje](aymaraLang.md) | **Siguiente:** [Arquitectura del compilador](arquitectura.md)
+**Anterior:** [Referencia del lenguaje](aymaraLang.md)

@@ -17,23 +17,37 @@ Palabras clave principales del lenguaje:
 ## Documentación
 
 - [Inicio](docs/index.md)
+- [Instalación](docs/install.md)
+- [Tutorial rápido](docs/language.md)
 - [Manual de usuario](docs/manual_usuario.md)
-- [Visión general](docs/overview.md)
-- [Instalación por sistema operativo](docs/install.md)
-- [Compilación e instalación desde fuente](docs/build.md)
 - [CLI del compilador](docs/compiler.md)
-- [Arquitectura del compilador](docs/arquitectura.md)
-- [Estado de modernización](docs/modernizacion.md)
-- [Primeros pasos](docs/language.md)
 - [Referencia rápida](docs/aymaraLang.md)
 - [Gramática formal](docs/grammar.md)
-- [Investigación y teoría](docs/research/investigacion.md)
+- [Compilación desde fuente](docs/build.md)
+
+Manual PDF local:
+
+```powershell
+pwsh -File .\scripts\build\generate_manual_pdf.ps1
+```
 
 ## Instalación desde releases
 
 ### Windows (MSI o EXE NSIS)
 
-Los instaladores Windows ya incluyen `nasm` y `gcc` embebidos. No hace falta instalar dependencias adicionales para usar `aymc` desde un release.
+Los instaladores Windows ya incluyen:
+
+- `nasm`
+- `gcc`/MinGW embebido
+- DLLs de runtime necesarias para ejecutar `aym.exe` y `aymc.exe`
+
+No hace falta instalar dependencias adicionales para usar `aymc` desde un
+release. El instalador agrega `bin` al `PATH` del sistema y registra la
+asociación de archivos `.aym`.
+
+Para usuario final, el artefacto recomendado es `AymaraLang-Setup.exe`
+(instalador NSIS). El MSI queda disponible como alternativa para despliegue
+administrado.
 
 Formas de instalación:
 
@@ -56,6 +70,9 @@ Dependencias requeridas para usar `aymc`:
 - `gcc`
 - `g++`
 - soporte X11 si vas a ejecutar GUI
+
+En Linux el paquete no embebe `gcc` ni `nasm`: esas dependencias siguen siendo
+provistas por el sistema operativo.
 
 Instalación automática de dependencias:
 

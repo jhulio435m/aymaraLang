@@ -1,92 +1,77 @@
-# Primeros pasos con AymaraLang
+# Tutorial rápido
 
-Ejemplos mínimos para escribir tus primeros programas.
+Esta página te lleva por el flujo mínimo: escribir, compilar y ejecutar un
+programa sin entrar todavía en detalles del compilador.
 
-## Hola mundo
+## 1. Hola mundo
 
-```aymara
-qillqa("Kamisaraki!");
+```aym
+qallta
+qillqa("Kamisaraki!")
+tukuya
 ```
 
-## Tipos y variables
+Guárdalo como `hola.aym` y compílalo así:
 
-```aymara
+```bash
+aymc hola.aym
+```
+
+## 2. Variables y tipos
+
+```aym
 yatiya jakhüwi contador = 3;
 yatiya aru saludo = "kamisaraki";
 yatiya chiqa activo = chiqa;
 ```
 
-```mermaid
-mindmap
-  root((AymaraLang))
-    Tipos
-      jakhüwi
-      aru
-      chiqa
-      t'aqa
-    Control
-      ukaxa/maysatxa
-      ukhakamaxa
-      kuti
-    Funciones
-      lurawi
-      kuttaya
-    Módulos
-      apnaq
-```
+- `jakhüwi`: número
+- `aru`: texto
+- `chiqa`: booleano
 
-## Control de flujo
+## 3. Control de flujo
 
-```aymara
+```aym
 ukaxa (contador > 0) {
-    qillqa(saludo);
+  qillqa(saludo);
 } maysatxa {
-    qillqa("janiwa");
+  qillqa("janiwa");
 }
 
-ukhakamaxa (contador > 0) {
-    contador--;
-}
-
-kuti (yatiya jakhüwi i = 0; i < 3; i++) {
-    qillqa(i);
+kuti (yatiya jakhüwi i = 0; i < 3; i = i + 1) {
+  qillqa(i);
 }
 ```
 
-## Funciones
+La variante actual usa una sola sintaxis canónica: `ukaxa`, `maysatxa`,
+`ukhakamaxa`, `kuti`, `chiqa` y `k'ari`.
 
-```aymara
-lurawi inc(jakhüwi n) : jakhüwi {
-    kuttaya n + 1;
+## 4. Funciones
+
+```aym
+lurawi inc(jakhüwi n): jakhüwi {
+  kuttaya n + 1;
 }
 
 qillqa(inc(5));
 ```
 
-## Notas matemáticas rápidas
+## 5. Módulos
 
-La longitud de una lista $L$ se expresa como $|L|$ y se obtiene con `largo` o
-`suyut`.
-
-## Módulos
-
-```aymara
+```aym
 apnaq("modules/aritmetica");
 qillqa("suma: " + suma(3, 4));
 ```
 
-## Comentarios
+## 6. Comentarios
 
-```aymara
+```aym
 // comentario de línea
 /* comentario de bloque */
 ```
 
-## Variante actual
+## 7. Siguiente paso
 
-La sintaxis usa una sola variante canónica: `ukaxa`, `maysatxa`, `ukhakamaxa`,
-`kuti`, `chiqa` y `k'ari`.
-
----
-
-**Siguiente:** [Referencia rápida](aymaraLang.md)
+- Si quieres trabajar de forma práctica: [Manual de usuario](manual_usuario.md)
+- Si quieres ver todas las palabras clave: [Referencia rápida](aymaraLang.md)
+- Si quieres detalle sintáctico: [Gramática formal](grammar.md)

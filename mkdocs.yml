@@ -7,61 +7,35 @@ theme:
   name: readthedocs
   language: es
   logo: img/logo_aymaralang.png
-  navigation_depth: 2
+  navigation_depth: 1
   collapse_navigation: true
   sticky_navigation: true
+exclude_docs: |
+  installer_improvement_plan.md
+  manual_pdf.md
+  arquitectura.md
+  exceptions.md
+  modernizacion.md
+  overview.md
+  project.md
+  benchmarks/*
+  research/*
+  systems_engineering/*
 nav:
-  - Manual técnico:
-    - Inicio: index.md
-    - Manual de usuario: manual_usuario.md
-    - Visión general: overview.md
-    - Instalación por sistema operativo: install.md
-    - Compilación e instalación desde fuente: build.md
-    - CLI del compilador: compiler.md
-    - Arquitectura del compilador: arquitectura.md
-    - Estructura del proyecto: project.md
-    - Estado de modernización: modernizacion.md
-  - Lenguaje:
-    - Primeros pasos: language.md
-    - Referencia rápida: aymaraLang.md
-    - Manejo de errores: exceptions.md
-    - Gramática formal: grammar.md
-  - Anexos:
-    - Benchmarks:
-      - Baseline (2026-02-15): benchmarks/baseline_2026_02_15.md
-      - Pipeline (2026-02-16): benchmarks/pipeline_2026_02_16.md
-    - Investigación y teoría:
-      - Índice de investigación: research/README.md
-      - Fundamentos: research/investigacion.md
-    - Ingeniería de Sistemas:
-      - Plan de Gestión (SEMP): systems_engineering/systems_engineering_management_plan.md
-      - Requisitos: systems_engineering/requirements.md
-      - Arquitectura de Sistemas: systems_engineering/architecture.md
-      - CONOPS: systems_engineering/conops.md
-      - Control de Interfaces (ICD): systems_engineering/interface_control_document.md
-      - Gestión de Riesgos: systems_engineering/risk_management.md
-      - Verificación y Validación: systems_engineering/verification_validation_plan.md
+  - Inicio: index.md
+  - Instalación: install.md
+  - Tutorial rápido: language.md
+  - Manual de usuario: manual_usuario.md
+  - CLI de `aymc`: compiler.md
+  - Referencia rápida: aymaraLang.md
+  - Gramática formal: grammar.md
+  - Compilación desde fuente: build.md
 markdown_extensions:
-  - admonition
   - attr_list
   - toc:
       permalink: true
   - tables
-  - pymdownx.arithmatex:
-      generic: true
-  - pymdownx.details
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_div_format
-
-  - pymdownx.tabbed:
-      alternate_style: true
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
   - javascripts/scroll-top.js
-  - https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js
-  - javascripts/mermaid-init.js
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

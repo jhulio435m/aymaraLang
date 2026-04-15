@@ -11,6 +11,17 @@ Los instaladores Windows publicados (`AymaraLang-Setup.msi` y
 
 - `nasm`
 - `gcc` (MinGW embebido)
+- DLLs de runtime requeridas por `aym.exe` y `aymc.exe`
+
+Además, el instalador:
+
+- agrega `bin` al `PATH` del sistema;
+- registra la asociación de archivos `.aym`;
+- instala un EULA/aviso legal junto con `README.md` y `LICENSE`.
+
+Para instalaciones manuales de usuario final, se recomienda publicar
+`AymaraLang-Setup.exe` como artefacto principal. El MSI sigue siendo útil para
+despliegue administrado o silencioso.
 
 Desde artefactos de release:
 
@@ -35,6 +46,10 @@ aymc --help
 aym --help
 aymc .\samples\fundamentos\basicos.aym
 ```
+
+Si Windows muestra una advertencia de reputación o antivirus en un build nuevo,
+revisa que el release haya sido firmado y distribuido desde el instalador
+oficial del proyecto.
 
 ### Construcción desde código fuente
 
@@ -82,6 +97,9 @@ sudo dpkg -i aymaralang_<version>_amd64.deb
 sudo apt-get install -f -y
 ```
 
+Nota: el `.deb` instala AymaraLang, pero `gcc`, `g++`, `nasm` y X11 siguen
+siendo dependencias del sistema.
+
 Desinstalación:
 
 ```bash
@@ -110,5 +128,8 @@ aymc ./samples/fundamentos/basicos.aym
 - Los instaladores registran asociación para archivos `.aym`.
 - En Windows, el icono de `.aym` se instala como `logo.ico` en el directorio de
   instalación.
+- En Windows, `aym.exe` y `aymc.exe` se distribuyen junto con las DLLs mínimas
+  del runtime de MinGW para evitar fallos por `libstdc++-6.dll` o
+  `libgcc_s_seh-1.dll` faltantes.
 - Tras actualizar instaladores, el refresco de iconos puede requerir reiniciar
   sesión o reiniciar `explorer.exe`.

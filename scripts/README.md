@@ -29,3 +29,20 @@ Extension publishing uses:
 
 - `VSCE_PAT` for VS Code Marketplace
 - `OVSX_PAT` for Open VSX
+
+Windows signing environment variables:
+
+- `AYM_SIGN_PFX_PATH`
+- `AYM_SIGN_PFX_PASSWORD`
+- `AYM_SIGN_CERT_THUMBPRINT`
+- `AYM_SIGN_TIMESTAMP_URL`
+- `AYM_SIGNTOOL_PATH`
+- `AYM_SIGN_CERT_MACHINE_STORE`
+
+To require signing during packaging:
+
+```powershell
+pwsh -File .\scripts\build\build_dist.ps1 -Config Release -RequireSigning
+pwsh -File .\scripts\build\build_nsis.ps1 -DistDir dist -OutputDir artifacts\release-windows -RequireSigning
+pwsh -File .\scripts\build\build_msi.ps1 -DistDir dist -OutputDir artifacts\release-windows -RequireSigning
+```
