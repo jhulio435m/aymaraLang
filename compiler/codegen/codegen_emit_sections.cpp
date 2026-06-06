@@ -681,6 +681,28 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
         if (failure.success) {
             setFailure(failure, "unknown", "Fallo de backend sin detalle.");
         }
+
+        // Brute-force: if we have process info, dump everything to cerr for CI visibility
+        std::cerr << "--- BACKEND FAILURE DUMP ---" << std::endl;
+        std::cerr << "Stage: " << failure.stage << std::endl;
+        std::cerr << "Command: " << failure.command << std::endl;
+        std::cerr << "Exit Code: " << failure.exitCode << std::endl;
+        std::cerr << "Detail: " << failure.detail << std::endl;
+        
+        // Search for the trace to get full output
+        for (const auto& trace : commandTraces) {
+            if (trace.stage == failure.stage) {
+                if (!trace.stdoutText.empty()) {
+                    std::cerr << "STDOUT:" << std::endl << trace.stdoutText << std::endl;
+                }
+                if (!trace.stderrText.empty()) {
+                    std::cerr << "STDERR:" << std::endl << trace.stderrText << std::endl;
+                }
+                break;
+            }
+        }
+        std::cerr << "--- END BACKEND FAILURE DUMP ---" << std::endl;
+
         const auto totalMs = currentTotalMs();
         if (timePipeline) {
             std::cout << "[aymc] pipeline(ms): ensamblado=" << asmMs
