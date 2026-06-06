@@ -137,7 +137,10 @@ std::string getEnvVar(const std::string &name) {
 
 bool setEnvVar(const std::string &name, const std::string &value) {
 #ifdef _WIN32
-    return _putenv_s(name.c_str(), value.c_str()) == 0;
+    // Use SetEnvironmentVariableA so CreateProcess (which we use in process.cpp) sees it.
+    // Also use _putenv_s to keep the CRT environment in sync.
+    _putenv_s(name.c_str(), value.c_str());
+    return SetEnvironmentVariableA(name.c_str(), value.c_str()) != 0;
 #else
     return setenv(name.c_str(), value.c_str(), 1) == 0;
 #endif

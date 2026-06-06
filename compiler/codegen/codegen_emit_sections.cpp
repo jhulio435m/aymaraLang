@@ -690,6 +690,25 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
         std::cerr << "Detail: " << failure.detail << std::endl;
 #ifdef _WIN32
         std::cerr << "PATH: " << getEnvVar("PATH") << std::endl;
+        // Diagnostic: list files near GCC if possible
+        fs::path gccExe(failure.command.substr(0, failure.command.find(' ')));
+        // Remove quotes if present
+        std::string gccStr = gccExe.string();
+        if (!gccStr.empty() && gccStr.front() == '"') {
+             gccStr = gccStr.substr(1, gccStr.size() - 2);
+             gccExe = fs::path(gccStr);
+        }
+        if (fs::exists(gccExe)) {
+            fs::path gccBin = gccExe.parent_path();
+            fs::path gccRoot = gccBin.parent_path();
+            fs::path gccLibexec = gccRoot / "libexec";
+            std::cerr << "GCC Bin exists: " << gccBin.string() << std::endl;
+            if (fs::exists(gccLibexec)) {
+                std::cerr << "GCC Libexec exists: " << gccLibexec.string() << std::endl;
+            } else {
+                std::cerr << "GCC Libexec MISSING at: " << gccLibexec.string() << std::endl;
+            }
+        }
 #endif
         
         // Search for the trace to get full output
