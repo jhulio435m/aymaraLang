@@ -904,7 +904,7 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
     if (windows)
         cmd2 = {gccCommand, obj.string(), runtimeObj.string(), mathObj.string(), "-o", bin.string(), "-lm", "-lgdi32", "-luser32"};
     else
-        cmd2 = {gccCommand, obj.string(), runtimeObj.string(), mathObj.string(), linuxGfxObj.string(), "-o", bin.string(), "-lm", "-lX11", "-lc"};
+        cmd2 = {gccCommand, "-no-pie", obj.string(), runtimeObj.string(), mathObj.string(), linuxGfxObj.string(), "-o", bin.string(), "-lm", "-lX11", "-lc"};
     ProcessResult linkProcess;
     if (!runCommand(cmd2,
                     "Error enlazando " + obj.string(),
