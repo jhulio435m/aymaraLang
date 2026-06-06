@@ -68,7 +68,10 @@ try {
 foreach ($ext in $requiredExts) {
     if ($installedText -notmatch [regex]::Escape($ext)) {
         Write-Host "Instalando extensión WiX: $ext"
-        & wix extension add -g $ext | Out-Null
+        & wix extension add -g $ext
+        if ($LASTEXITCODE -ne 0) {
+            throw "Fallo al instalar la extensión WiX: $ext"
+        }
     }
 }
 
