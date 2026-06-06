@@ -3,8 +3,8 @@ param(
   [string]$BuildDir = "build",
   [ValidateSet("Debug", "Release", "RelWithDebInfo", "MinSizeRel")]
   [string]$Config = "Release",
-  [string]$DistDir = "build\\tmp\\installer_dist_smoke",
-  [string]$OutputDir = "artifacts\\installer-smoke",
+  [string]$DistDir = "build/tmp/installer_dist_smoke",
+  [string]$OutputDir = "artifacts/installer-smoke",
   [switch]$UseExistingDist
 )
 
@@ -17,19 +17,19 @@ function Assert-ExitOk {
   }
 }
 
-$root = Resolve-Path (Join-Path $PSScriptRoot "..")
-$buildPath = if ([System.IO.Path]::IsPathRooted($BuildDir)) { $BuildDir } else { Join-Path $root $BuildDir }
-$distPath = Join-Path $root $DistDir
-$outputPath = Join-Path $root $OutputDir
-$bundleToolchainScript = Join-Path $root "scripts\\build\\bundle_windows_toolchain.ps1"
+$root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$buildPath = if ([System.IO.Path]::IsPathRooted($BuildDir)) { $BuildDir } else { (Join-Path $root $BuildDir) }
+$distPath = (Join-Path $root $DistDir)
+$outputPath = (Join-Path $root $OutputDir)
+$bundleToolchainScript = (Join-Path $root "scripts/build/bundle_windows_toolchain.ps1")
 $compilerCandidates = @(
-  (Join-Path $buildPath "bin\\$Config\\aymc.exe"),
-  (Join-Path $buildPath "bin\\aymc.exe")
+  (Join-Path $buildPath "bin/$Config/aymc.exe"),
+  (Join-Path $buildPath "bin/aymc.exe")
 )
 $builtCompiler = $null
 foreach ($candidate in $compilerCandidates) {
   if (Test-Path $candidate) {
-    $builtCompiler = $candidate
+    $builtCompiler = (Resolve-Path $candidate).Path
     break
   }
 }
@@ -58,25 +58,27 @@ if ($UseExistingDist) {
   Assert-ExitOk "bundle_windows_toolchain.ps1"
 }
 
-if (-not (Test-Path (Join-Path $distPath "bin\\aymc.exe")) -or -not (Test-Path (Join-Path $distPath "bin\\aym.exe"))) {
-  throw "El directorio dist no contiene binarios validos: $distPath"
+$distPathAbs = (Resolve-Path $distPath).Path
+
+if (-not (Test-Path (Join-Path $distPathAbs "bin/aymc.exe")) -or -not (Test-Path (Join-Path $distPathAbs "bin/aym.exe"))) {
+  throw "El directorio dist no contiene binarios validos: $distPathAbs"
 }
 foreach ($requiredDll in @("libstdc++-6.dll", "libgcc_s_seh-1.dll", "libwinpthread-1.dll")) {
-  if (-not (Test-Path (Join-Path $distPath "bin\\$requiredDll"))) {
+  if (-not (Test-Path (Join-Path $distPathAbs "bin/$requiredDll"))) {
     throw "El directorio dist no contiene la DLL requerida junto al compilador: $requiredDll"
   }
 }
-if (-not (Test-Path (Join-Path $distPath "toolchain\\bin\\nasm.exe")) -or -not (Test-Path (Join-Path $distPath "toolchain\\mingw64\\bin\\gcc.exe"))) {
-  throw "El directorio dist no contiene toolchain embebida completa: $distPath"
+if (-not (Test-Path (Join-Path $distPathAbs "toolchain/bin/nasm.exe")) -or -not (Test-Path (Join-Path $distPathAbs "toolchain/mingw64/bin/gcc.exe"))) {
+  throw "El directorio dist no contiene toolchain embebida completa: $distPathAbs"
 }
 
 Write-Output "[test] validando compilacion con toolchain embebida"
-$bundledCompiler = Join-Path $distPath "bin\\aymc.exe"
-$samplePath = Join-Path $root "samples\\fundamentos\\basicos.aym"
-$smokeDir = Join-Path $root "build\\tmp\\bundled_toolchain_smoke"
-$smokeOutputBase = Join-Path $smokeDir "basicos"
+$bundledCompiler = (Join-Path $distPathAbs "bin/aymc.exe")
+$samplePath = (Join-Path $root "samples/fundamentos/basicos.aym")
+$smokeDir = (Join-Path $root "build/tmp/bundled_toolchain_smoke")
+$smokeOutputBase = (Join-Path $smokeDir "basicos")
 $smokeExe = "$smokeOutputBase.exe"
-$pipelineJson = Join-Path $smokeDir "pipeline.json"
+$pipelineJson = (Join-Path $smokeDir "pipeline.json")
 if (Test-Path $smokeDir) {
   Remove-Item -Path $smokeDir -Recurse -Force
 }
@@ -85,13 +87,13 @@ New-Item -ItemType Directory -Path $smokeDir -Force | Out-Null
 $originalPath = $env:Path
 try {
   # Prepend bundled toolchain to PATH so GCC/NASM find their internal components and DLLs
-  $env:Path = "$(Join-Path $distPath 'bin');$(Join-Path $distPath 'toolchain\bin');$(Join-Path $distPath 'toolchain\mingw64\bin');$originalPath"
+  $env:Path = "$(Join-Path $distPathAbs 'bin');$(Join-Path $distPathAbs 'toolchain/bin');$(Join-Path $distPathAbs 'toolchain/mingw64/bin');$originalPath"
   
   & $bundledCompiler $samplePath -o $smokeOutputBase "--time-pipeline-json=$pipelineJson"
   if ($LASTEXITCODE -ne 0) {
       Write-Output "--- DIAGNOSTIC: TOOLCHAIN FILES ---"
-      Write-Output "Listing $distPath"
-      Get-ChildItem -Path $distPath -Recurse | Select-Object FullName
+      Write-Output "Listing $distPathAbs"
+      Get-ChildItem -Path $distPathAbs -Recurse | Select-Object FullName
       throw "aymc bundled toolchain smoke compile fallo con codigo de salida $LASTEXITCODE."
   }
 
@@ -111,13 +113,19 @@ try {
   }
 
   $pipeline = Get-Content $pipelineJson -Raw | ConvertFrom-Json
-  $expectedNasm = Join-Path (Join-Path (Join-Path $distPath "toolchain") "bin") "nasm.exe"
-  $expectedGcc = Join-Path (Join-Path (Join-Path (Join-Path $distPath "toolchain") "mingw64") "bin") "gcc.exe"
+  $expectedNasm = (Join-Path $distPathAbs "toolchain/bin/nasm.exe")
+  $expectedGcc = (Join-Path $distPathAbs "toolchain/mingw64/bin/gcc.exe")
+  
   $commands = @($pipeline.commands | ForEach-Object { $_.command })
-  if (-not ($commands | Where-Object { $_ -like "$expectedNasm *" })) {
+  
+  # More robust matching: check if any command contains the expected tool path (ignoring separator differences)
+  $nasmPattern = $expectedNasm.Replace("\", "\\").Replace("/", "\\")
+  $gccPattern = $expectedGcc.Replace("\", "\\").Replace("/", "\\")
+  
+  if (-not ($commands | Where-Object { $_.Replace("/", "\") -like "*$expectedNasm*" })) {
     throw "El pipeline no usó nasm embebido: $expectedNasm"
   }
-  if (-not ($commands | Where-Object { $_ -like "$expectedGcc *" })) {
+  if (-not ($commands | Where-Object { $_.Replace("/", "\") -like "*$expectedGcc*" })) {
     throw "El pipeline no usó gcc embebido: $expectedGcc"
   }
 } finally {
@@ -125,16 +133,17 @@ try {
 }
 
 Write-Output "[test] construyendo instalador NSIS"
-& (Join-Path $root "scripts\\build\\build_nsis.ps1") -DistDir $DistDir -OutputDir $OutputDir
+& (Join-Path $root "scripts/build/build_nsis.ps1") -DistDir $DistDir -OutputDir $OutputDir
 Assert-ExitOk "build_nsis.ps1"
 
 Write-Output "[test] construyendo instalador MSI"
-& (Join-Path $root "scripts\\build\\build_msi.ps1") -DistDir $DistDir -OutputDir $OutputDir
+& (Join-Path $root "scripts/build/build_msi.ps1") -DistDir $DistDir -OutputDir $OutputDir
 Assert-ExitOk "build_msi.ps1"
 
+$outputPathAbs = (Resolve-Path $outputPath).Path
 $expectedArtifacts = @(
-  (Join-Path $outputPath "AymaraLang-Setup.exe"),
-  (Join-Path $outputPath "AymaraLang-Setup.msi")
+  (Join-Path $outputPathAbs "AymaraLang-Setup.exe"),
+  (Join-Path $outputPathAbs "AymaraLang-Setup.msi")
 )
 
 foreach ($artifact in $expectedArtifacts) {
