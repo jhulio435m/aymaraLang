@@ -7,23 +7,28 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$distPath = Join-Path $root $DistDir
-$outputPath = Join-Path $root $OutputDir
-$productWxs = Join-Path $root "installer\wix\Product.wxs"
-$outFile = Join-Path $outputPath "AymaraLang-Setup.msi"
-$signScript = Join-Path $root "scripts\build\sign_windows_artifacts.ps1"
-$bundledNasm = Join-Path $distPath "toolchain\bin\nasm.exe"
-$bundledGcc = Join-Path $distPath "toolchain\mingw64\bin\gcc.exe"
+$root = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+$distPath = (Resolve-Path (Join-Path $root $DistDir)).Path
+$outputPath = (Join-Path $root $OutputDir)
+$productWxs = (Join-Path $root "installer/wix/Product.wxs")
+$outFile = (Join-Path $outputPath "AymaraLang-Setup.msi")
+$signScript = (Join-Path $root "scripts/build/sign_windows_artifacts.ps1")
+
+Write-Host "--- DIAGNOSTIC: DIST CONTENTS ---"
+Get-ChildItem -Path $distPath -Recurse | Select-Object FullName
 
 if (-not (Test-Path $productWxs)) {
-    throw "No se encontró $productWxs. Verifica installer\wix\Product.wxs."
+    throw "No se encontró $productWxs. Verifica installer/wix/Product.wxs."
 }
 if (-not (Test-Path $distPath)) {
     throw "No se encontró $distPath. Ejecuta build_dist.ps1 primero."
 }
+
+$bundledNasm = (Join-Path $distPath "toolchain/bin/nasm.exe")
+$bundledGcc = (Join-Path $distPath "toolchain/mingw64/bin/gcc.exe")
+
 if (-not (Test-Path $bundledNasm) -or -not (Test-Path $bundledGcc)) {
-    throw "dist no contiene toolchain embebida completa. Ejecuta build_dist.ps1 o bundle_windows_toolchain.ps1 antes de empaquetar."
+    throw "dist no contiene toolchain embebida completa en $distPath. Ejecuta build_dist.ps1 o bundle_windows_toolchain.ps1 antes de empaquetar."
 }
 
 $wixCmd = Get-Command "wix" -ErrorAction SilentlyContinue
