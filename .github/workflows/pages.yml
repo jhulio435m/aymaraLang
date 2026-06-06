@@ -37,7 +37,7 @@ jobs:
           pip install mkdocs mkdocs-readthedocs-theme pymdown-extensions
 
       - name: Build site
-        run: mkdocs build --site-dir site
+        run: mkdocs build --site-dir site --verbose --strict
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
