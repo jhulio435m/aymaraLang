@@ -88,7 +88,12 @@ try {
   $env:Path = "$(Join-Path $distPath 'bin');$(Join-Path $distPath 'toolchain\bin');$(Join-Path $distPath 'toolchain\mingw64\bin');$originalPath"
   
   & $bundledCompiler $samplePath -o $smokeOutputBase "--time-pipeline-json=$pipelineJson"
-  Assert-ExitOk "aymc bundled toolchain smoke compile"
+  if ($LASTEXITCODE -ne 0) {
+      Write-Output "--- DIAGNOSTIC: TOOLCHAIN FILES ---"
+      Write-Output "Listing $distPath"
+      Get-ChildItem -Path $distPath -Recurse | Select-Object FullName
+      throw "aymc bundled toolchain smoke compile fallo con codigo de salida $LASTEXITCODE."
+  }
 
   if (-not (Test-Path $smokeExe)) {
     throw "La compilacion con toolchain embebida no produjo ejecutable: $smokeExe"
