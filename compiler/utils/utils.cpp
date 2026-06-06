@@ -208,9 +208,23 @@ std::string resolveToolExecutable(const std::string &toolName) {
     const fs::path bundled = findBundledToolExecutable(toolName);
     if (!bundled.empty()) {
 #ifdef _WIN32
-        // On Windows, bundled tools (like GCC) often need their bin directory in PATH 
+        // On Windows, bundled tools often need their bin directories in PATH 
         // to find internal components (cc1) and DLLs.
-        prependToPath(bundled.parent_path().string());
+        // We prepend the immediate parent, and also try to find the toolchain root
+        // to add the other common bin directory.
+        fs::path toolDir = bundled.parent_path();
+        prependToPath(toolDir.string());
+        
+        // Try to find the 'toolchain' folder in the path to add both bin and mingw64/bin
+        fs::path p = toolDir;
+        while (!p.empty() && p.has_parent_path()) {
+            if (p.filename() == "toolchain") {
+                prependToPath((p / "bin").string());
+                prependToPath((p / "mingw64" / "bin").string());
+                break;
+            }
+            p = p.parent_path();
+        }
 #endif
         return bundled.string();
     }
