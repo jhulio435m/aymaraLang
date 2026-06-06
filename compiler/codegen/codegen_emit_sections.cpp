@@ -140,7 +140,15 @@ void setFailure(PipelineFailureInfo &failure,
     failure.message = message;
     failure.command = (process != nullptr) ? process->command : "";
     failure.exitCode = (process != nullptr) ? process->exitCode : -1;
-    failure.detail = detail.empty() ? ((process != nullptr) ? process->error : "") : detail;
+    if (!detail.empty()) {
+        failure.detail = detail;
+    } else if (process != nullptr) {
+        failure.detail = process->error;
+        if (!process->stderrText.empty()) {
+            if (!failure.detail.empty()) failure.detail += " | ";
+            failure.detail += "stderr: " + process->stderrText;
+        }
+    }
 }
 
 std::string composePipelineFailureMessage(const PipelineFailureInfo &failure) {
