@@ -688,6 +688,9 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
         std::cerr << "Command: " << failure.command << std::endl;
         std::cerr << "Exit Code: " << failure.exitCode << std::endl;
         std::cerr << "Detail: " << failure.detail << std::endl;
+#ifdef _WIN32
+        std::cerr << "PATH: " << getEnvVar("PATH") << std::endl;
+#endif
         
         // Search for the trace to get full output
         for (const auto& trace : commandTraces) {
