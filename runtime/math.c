@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+#define _ISOC99_SOURCE
 #include <limits.h>
 #include <math.h>
 
