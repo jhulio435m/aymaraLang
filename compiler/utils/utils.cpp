@@ -22,8 +22,17 @@ namespace aym {
 namespace {
 
 std::string getEnvVarImpl(const std::string &name) {
+#ifdef _WIN32
+    char buffer[32767];
+    DWORD size = GetEnvironmentVariableA(name.c_str(), buffer, sizeof(buffer));
+    if (size > 0 && size < sizeof(buffer)) {
+        return std::string(buffer, size);
+    }
+    return "";
+#else
     const char *value = std::getenv(name.c_str());
     return value ? std::string(value) : "";
+#endif
 }
 
 std::string toUpperAscii(std::string value) {
