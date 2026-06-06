@@ -75,10 +75,16 @@ jobs:
           qillqa(desde_repo());
           tukuya
           EOF
-          ../../../build/bin/aym build --check --doctor-fix
+          if ! ../../../build/bin/aym build --check --doctor-fix; then
+            cat pipeline.json || true
+            exit 1
+          fi
           mkdir -p tests
           cp src/main.aym tests/smoke.aym
-          ../../../build/bin/aym test --doctor-fix
+          if ! ../../../build/bin/aym test --doctor-fix; then
+            cat pipeline.json || true
+            exit 1
+          fi
           cat > aym.toml <<'EOF'
           [package]
           name = "ci_demo"
@@ -117,10 +123,16 @@ jobs:
           qillqa(suma(20, 22));
           tukuya
           EOF
-          ../../../build/bin/aym build --check --doctor
+          if ! ../../../build/bin/aym build --check --doctor; then
+            cat pipeline.json || true
+            exit 1
+          fi
           ../../../build/bin/aym lock sync
           ../../../build/bin/aym lock sync --frozen
           popd
+
+          deb_installer_e2e_log="pipeline.json"
+          # (no need to add here if we are inside pushd)
 
       - name: Wrapper smoke (Windows)
         if: runner.os == 'Windows'
@@ -149,9 +161,17 @@ jobs:
           tukuya
           '@ | Set-Content -Path "src\main.aym"
           & ..\..\..\build\bin\Release\aym.exe build --check --doctor-fix
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path "pipeline.json") { Get-Content "pipeline.json" }
+            throw "aym build --check --doctor-fix fallo en ci_demo"
+          }
           New-Item -ItemType Directory -Force -Path "tests" | Out-Null
           Copy-Item "src\main.aym" "tests\smoke.aym"
           & ..\..\..\build\bin\Release\aym.exe test --doctor-fix
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path "pipeline.json") { Get-Content "pipeline.json" }
+            throw "aym test --doctor-fix fallo en ci_demo"
+          }
           @'
           [package]
           name = "ci_demo"
