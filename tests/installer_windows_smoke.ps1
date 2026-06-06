@@ -84,6 +84,9 @@ New-Item -ItemType Directory -Path $smokeDir -Force | Out-Null
 
 $originalPath = $env:Path
 try {
+  # Prepend bundled toolchain to PATH so GCC/NASM find their internal components and DLLs
+  $env:Path = "$(Join-Path $distPath 'bin');$(Join-Path $distPath 'toolchain\bin');$(Join-Path $distPath 'toolchain\mingw64\bin');$originalPath"
+  
   & $bundledCompiler $samplePath -o $smokeOutputBase "--time-pipeline-json=$pipelineJson"
   Assert-ExitOk "aymc bundled toolchain smoke compile"
 

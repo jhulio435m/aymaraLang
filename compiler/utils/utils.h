@@ -11,6 +11,8 @@ fs::path executablePath();
 fs::path executableDirPath();
 std::string executableDir();
 std::string getEnvVar(const std::string &name);
+bool setEnvVar(const std::string &name, const std::string &value);
+void prependToPath(const std::string &directory);
 fs::path findBundledToolExecutable(const std::string &toolName);
 std::string resolveToolExecutable(const std::string &toolName);
 

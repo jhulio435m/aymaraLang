@@ -135,6 +135,28 @@ std::string getEnvVar(const std::string &name) {
     return getEnvVarImpl(name);
 }
 
+bool setEnvVar(const std::string &name, const std::string &value) {
+#ifdef _WIN32
+    return _putenv_s(name.c_str(), value.c_str()) == 0;
+#else
+    return setenv(name.c_str(), value.c_str(), 1) == 0;
+#endif
+}
+
+void prependToPath(const std::string &directory) {
+    if (directory.empty()) return;
+    std::string currentPath = getEnvVarImpl("PATH");
+    char sep = ';';
+#ifndef _WIN32
+    sep = ':';
+#endif
+    if (currentPath.empty()) {
+        setEnvVar("PATH", directory);
+    } else {
+        setEnvVar("PATH", directory + sep + currentPath);
+    }
+}
+
 fs::path findBundledToolExecutable(const std::string &toolName) {
     if (toolName.empty()) {
         return fs::path();
@@ -182,6 +204,11 @@ fs::path findBundledToolExecutable(const std::string &toolName) {
 std::string resolveToolExecutable(const std::string &toolName) {
     const fs::path bundled = findBundledToolExecutable(toolName);
     if (!bundled.empty()) {
+#ifdef _WIN32
+        // On Windows, bundled tools (like GCC) often need their bin directory in PATH 
+        // to find internal components (cc1) and DLLs.
+        prependToPath(bundled.parent_path().string());
+#endif
         return bundled.string();
     }
     return toolFileName(toolName);
