@@ -66,7 +66,7 @@ jobs:
           mkdir -p .aym/repo/math/1.2.3/modules
           cat > .aym/repo/math/1.2.3/modules/util.aym <<'EOF'
           qallta
-          lurawi desde_repo() : jakhuwi { kuttaya(42); }
+          lurawi desde_repo() : jakhüwi { kuttaya(42); }
           tukuya
           EOF
           cat > src/main.aym <<'EOF'
@@ -113,7 +113,7 @@ jobs:
           pushd build/tmp/ci_demo2
           cat > src/main.aym <<'EOF'
           qallta
-          lurawi suma(x: jakhuwi, y: jakhuwi) : jakhuwi { kuttaya(x + y); }
+          lurawi suma(jakhüwi x, jakhüwi y) : jakhüwi { kuttaya(x + y); }
           qillqa(suma(20, 22));
           tukuya
           EOF
@@ -139,7 +139,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path ".aym\repo\math\1.2.3\modules" | Out-Null
           @'
           qallta
-          lurawi desde_repo() : jakhuwi { kuttaya(42); }
+          lurawi desde_repo() : jakhüwi { kuttaya(42); }
           tukuya
           '@ | Set-Content -Path ".aym\repo\math\1.2.3\modules\util.aym"
           @'
@@ -181,7 +181,7 @@ jobs:
           Push-Location build\tmp\ci_demo2
           @'
           qallta
-          lurawi suma(x: jakhuwi, y: jakhuwi) : jakhuwi { kuttaya(x + y); }
+          lurawi suma(jakhüwi x, jakhüwi y) : jakhüwi { kuttaya(x + y); }
           qillqa(suma(20, 22));
           tukuya
           '@ | Set-Content -Path "src\main.aym"
