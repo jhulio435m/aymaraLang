@@ -79,9 +79,7 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
             }
             collectGlobal(c.block.get());
             if (!c.typeName.empty()) {
-                if (std::find(strings.begin(), strings.end(), c.typeName) == strings.end()) {
-                    strings.push_back(c.typeName);
-                }
+                registerString(c.typeName);
             }
         }
         if (t->getFinallyBlock()) collectGlobal(t->getFinallyBlock());
@@ -99,9 +97,7 @@ void CodeGenImpl::collectGlobal(const Stmt *stmt) {
         collectStrings(thr->getType());
         collectStrings(thr->getMessage());
         if (!thr->getType()) {
-            if (std::find(strings.begin(), strings.end(), "Error") == strings.end()) {
-                strings.push_back("Error");
-            }
+            registerString("Error");
         }
         return;
     }

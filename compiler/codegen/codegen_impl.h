@@ -18,12 +18,18 @@ public:
     std::ofstream out;
     std::unordered_set<std::string> globals;
     std::vector<std::string> strings;
+    std::unordered_map<std::string, size_t> stringMap;
     bool windows = false;
     size_t findString(const std::string &val) const {
-        for (size_t i = 0; i < strings.size(); ++i) {
-            if (strings[i] == val) return i;
-        }
+        auto it = stringMap.find(val);
+        if (it != stringMap.end()) return it->second;
         return strings.size();
+    }
+    void registerString(const std::string &val) {
+        if (stringMap.find(val) == stringMap.end()) {
+            stringMap[val] = strings.size();
+            strings.push_back(val);
+        }
     }
 
     struct FunctionInfo {
@@ -75,6 +81,7 @@ public:
               long long toolTimeoutMsIn,
               std::string *errorMessageOut = nullptr);
 private:
+    bool tryEvalConstant(const Expr *expr, const std::unordered_map<std::string,int> *locals, long long &outValue, bool &outIsBool) const;
     void collectStrings(const Expr *expr);
     void collectLocals(const Stmt *stmt,
                        std::vector<std::string> &locs,

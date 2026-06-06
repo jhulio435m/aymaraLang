@@ -18,6 +18,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake gcc g++ nasm gcovr pkg-config libx11-dev xvfb
 
+      - name: Cache GTest
+        uses: actions/cache@v4
+        with:
+          path: build-coverage/_deps
+          key: ${{ runner.os }}-gtest-coverage-v1.14.0
+          restore-keys: |
+            ${{ runner.os }}-gtest-coverage-
+
       - name: Configure (coverage)
         run: |
           cmake -S . -B build-coverage \

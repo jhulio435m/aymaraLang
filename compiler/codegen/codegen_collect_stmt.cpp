@@ -148,9 +148,7 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
                 }
             }
             if (!c.typeName.empty()) {
-                if (std::find(strings.begin(), strings.end(), c.typeName) == strings.end()) {
-                    strings.push_back(c.typeName);
-                }
+                registerString(c.typeName);
             }
             collectLocals(c.block.get(), locs, strs, types);
         }
@@ -169,9 +167,7 @@ void CodeGenImpl::collectLocals(const Stmt *stmt,
         collectStrings(thr->getType());
         collectStrings(thr->getMessage());
         if (!thr->getType()) {
-            if (std::find(strings.begin(), strings.end(), "Error") == strings.end()) {
-                strings.push_back("Error");
-            }
+            registerString("Error");
         }
         return;
     }

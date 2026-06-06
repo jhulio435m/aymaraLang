@@ -46,14 +46,10 @@ void CodeGenImpl::collectClassStrings() {
         const ClassStmt *cls = pair.second;
         for (const auto &field : cls->getFields()) {
             collectStrings(field.init.get());
-            if (std::find(strings.begin(), strings.end(), field.name) == strings.end()) {
-                strings.push_back(field.name);
-            }
+            registerString(field.name);
         }
         for (const auto &method : cls->getMethods()) {
-            if (std::find(strings.begin(), strings.end(), method.name) == strings.end()) {
-                strings.push_back(method.name);
-            }
+            registerString(method.name);
         }
         if (!cls->getBase().empty()) {
             auto baseIt = classes.find(cls->getBase());
@@ -61,9 +57,7 @@ void CodeGenImpl::collectClassStrings() {
                 const ClassStmt *base = baseIt->second;
                 for (const auto &method : base->getMethods()) {
                     std::string superKey = classSuperKey(method.name);
-                    if (std::find(strings.begin(), strings.end(), superKey) == strings.end()) {
-                        strings.push_back(superKey);
-                    }
+                    registerString(superKey);
                 }
             }
         }

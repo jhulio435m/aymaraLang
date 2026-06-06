@@ -8,8 +8,7 @@ namespace aym {
 void CodeGenImpl::collectStrings(const Expr *expr) {
     if (!expr) return;
     if (auto *s = dynamic_cast<const StringExpr*>(expr)) {
-        if (std::find(strings.begin(), strings.end(), s->getValue()) == strings.end())
-            strings.push_back(s->getValue());
+        registerString(s->getValue());
         return;
     }
     if (auto *b = dynamic_cast<const BinaryExpr*>(expr)) {
@@ -52,14 +51,10 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
     if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
         for (const auto &a : m->getArgs()) collectStrings(a.get());
         collectStrings(m->getBase());
-        if (std::find(strings.begin(), strings.end(), m->getMember()) == strings.end()) {
-            strings.push_back(m->getMember());
-        }
+        registerString(m->getMember());
         if (dynamic_cast<const SuperExpr*>(m->getBase())) {
             std::string superKey = classSuperKey(m->getMember());
-            if (std::find(strings.begin(), strings.end(), superKey) == strings.end()) {
-                strings.push_back(superKey);
-            }
+            registerString(superKey);
         }
         return;
     }
@@ -77,9 +72,7 @@ void CodeGenImpl::collectStrings(const Expr *expr) {
     }
     if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
         collectStrings(m->getBase());
-        if (std::find(strings.begin(), strings.end(), m->getMember()) == strings.end()) {
-            strings.push_back(m->getMember());
-        }
+        registerString(m->getMember());
         return;
     }
 }

@@ -52,6 +52,7 @@ bool CodeGenImpl::emit(const std::vector<std::unique_ptr<Node>> &nodes,
     mainStmts.clear();
     classes.clear();
     strings.clear();
+    stringMap.clear();
     tryTempCounter = 0;
 
     if (pipelineMode != CodegenPipelineMode::LinkOnly) {
