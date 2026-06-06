@@ -138,7 +138,7 @@ if (Test-Path $toolchainPath) {
 
 New-Item -ItemType Directory -Path $toolchainBin -Force | Out-Null
 
-foreach ($dirName in @("bin", "include", "lib", "x86_64-w64-mingw32")) {
+foreach ($dirName in @("bin", "include", "lib", "libexec", "x86_64-w64-mingw32")) {
     $sourceDir = Join-Path $mingwRoot $dirName
     if (Test-Path $sourceDir) {
         Write-Log "Copiando $dirName..."

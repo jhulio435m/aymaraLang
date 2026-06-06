@@ -64,14 +64,18 @@ if ! /opt/aymaralang/bin/aymc -o "${TMP_BASICOS}" "${ROOT_DIR}/samples/fundament
   echo "Fallo compilando basicos.aym con compilador instalado." >&2
   exit 1
 fi
-"${TMP_BASICOS}" > "${OUT_BASICOS}"
+xvfb-run "${TMP_BASICOS}" > "${OUT_BASICOS}"
 if ! grep -Fq "kamisaraki" "${OUT_BASICOS}"; then
   echo "Smoke test basicos.aym no produjo salida esperada." >&2
   exit 1
 fi
 
-/opt/aymaralang/bin/aymc -o "${TMP_FLOW}" "${ROOT_DIR}/samples/aymara_flow.aym"
-"${TMP_FLOW}" > "${OUT_FLOW}"
+if ! /opt/aymaralang/bin/aymc -o "${TMP_FLOW}" "${ROOT_DIR}/samples/aymara_flow.aym"; then
+  if [[ -f pipeline.json ]]; then cat pipeline.json; fi
+  echo "Fallo compilando aymara_flow.aym con compilador instalado." >&2
+  exit 1
+fi
+xvfb-run "${TMP_FLOW}" > "${OUT_FLOW}"
 if ! grep -Fq "jach'a" "${OUT_FLOW}"; then
   echo "Smoke test aymara_flow.aym no produjo salida esperada." >&2
   exit 1

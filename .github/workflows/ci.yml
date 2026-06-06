@@ -223,7 +223,7 @@ jobs:
       - name: Install dependencies (Linux + deb tools)
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake gcc g++ nasm dpkg-dev fakeroot
+          sudo apt-get install -y cmake gcc g++ nasm dpkg-dev fakeroot libx11-dev xvfb
 
       - name: Validate Linux installer end-to-end
         shell: bash
