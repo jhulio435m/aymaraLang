@@ -4,12 +4,31 @@ site_author: Comunidad AymaraLang
 repo_url: https://github.com/jhulio435m/aymaraLang
 edit_uri: edit/main/docs/
 theme:
-  name: readthedocs
+  name: material
   language: es
   logo: img/logo_aymaralang.png
-  navigation_depth: 1
-  collapse_navigation: true
-  sticky_navigation: true
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Cambiar a modo oscuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Cambiar a modo claro
 exclude_docs: |
   installer_improvement_plan.md
   manual_pdf.md
@@ -32,9 +51,21 @@ nav:
   - Compilación desde fuente: build.md
 markdown_extensions:
   - attr_list
+  - md_in_html
   - toc:
       permalink: true
   - tables
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.inlinehilite
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.keys
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
