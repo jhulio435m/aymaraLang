@@ -216,6 +216,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "aym lock sync --frozen no debio fallar en ci_demo2" }
           Pop-Location
 
+      - name: Upload Windows artifacts
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aymaralang-windows
+          path: artifacts/installer-smoke/*
+
   deb-installer-e2e:
     runs-on: ubuntu-latest
 
