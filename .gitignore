@@ -44,7 +44,5 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Impeccable: capturas y bocetos de trabajo
-.impeccable/review/
-.impeccable/mocks/
-.impeccable/questions/
+# Impeccable: archivos de trabajo del skill de diseño
+.impeccable/
