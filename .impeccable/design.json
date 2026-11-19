@@ -1,0 +1,15 @@
+{
+  "motion": {
+    "ease": "cubic-bezier(0.16, 1, 0.3, 1)",
+    "weave": { "property": "canvas rows", "duration": "240ms + 4ms por línea, máx. 900ms", "easing": "cubic ease-out" },
+    "fill": { "property": "box-shadow inset", "duration": "0.3s" },
+    "reducedMotion": "sin entrada del tejido; transiciones a 0.01ms"
+  },
+  "focus": { "outline": "3px solid currentColor", "offset": "3px" },
+  "selection": { "background": "#ffd21f", "color": "#22112a" },
+  "elevation": "none",
+  "threads": {
+    "k": "hilo-clave", "t": "hilo-tipo", "s": "hilo-texto", "n": "hilo-numero",
+    "i": "hilo-nombre", "c": "hilo-nota", "p": "hilo-signo"
+  }
+}

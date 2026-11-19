@@ -14,6 +14,8 @@ Palabras clave principales del lenguaje:
 - `siqicha`, `khiti`, `kuna`, `yaqha` – enumeraciones y selección
 - `apnaq` – importación de módulos desde otros archivos
 
+Sitio del proyecto: <https://aymaralang.soryntel.com> (código en [`web/`](web/README.md)).
+
 ## Documentación
 
 - [Inicio](docs/index.md)

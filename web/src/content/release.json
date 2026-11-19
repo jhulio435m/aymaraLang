@@ -1,0 +1,23 @@
+{
+  "repo": "jhulio435m/aymaraLang",
+  "tag": "v1.0.2",
+  "version": "1.0.2",
+  "publishedAt": "2026-06-07T00:27:17Z",
+  "assets": {
+    "win-exe": {
+      "name": "AymaraLang-Setup.exe",
+      "size": 173805503,
+      "url": "https://github.com/jhulio435m/aymaraLang/releases/download/v1.0.2/AymaraLang-Setup.exe"
+    },
+    "win-msi": {
+      "name": "AymaraLang-Setup.msi",
+      "size": 133661948,
+      "url": "https://github.com/jhulio435m/aymaraLang/releases/download/v1.0.2/AymaraLang-Setup.msi"
+    },
+    "linux-deb": {
+      "name": "aymaralang_0.1.0_amd64.deb",
+      "size": 947536,
+      "url": "https://github.com/jhulio435m/aymaraLang/releases/download/v1.0.2/aymaralang_0.1.0_amd64.deb"
+    }
+  }
+}

@@ -43,3 +43,8 @@ Thumbs.db
 # Ignore IDE files
 .vscode/
 .idea/
+
+# Impeccable: capturas y bocetos de trabajo
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/questions/
