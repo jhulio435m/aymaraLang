@@ -7,7 +7,8 @@
     "build": "next build",
     "sync-release": "node scripts/sync-release.mjs",
     "sync-samples": "node scripts/sync-samples.mjs",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy": "node scripts/sync-release.mjs --soft && next build && wrangler deploy"
   },
   "dependencies": {
     "@fontsource-variable/anybody": "^5.2.0",
@@ -26,6 +27,7 @@
     "eslint-config-next": "16.4.6",
     "postcss": "^8",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.165.0"
   }
 }
