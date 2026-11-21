@@ -266,7 +266,7 @@ bool CodeGenImpl::emitStmtControl(const Stmt *stmt,
                     out << "    mov " << reg1(this->windows) << ", rbx\n";
                     out << "    mov " << reg2(this->windows) << ", rax\n";
                     out << "    call strcmp\n";
-                    out << "    cmp rax,0\n";
+                    out << "    test eax, eax\n";
                     out << "    je " << tramp << "\n";
                 } else if (switchIsFloat) {
                     std::string noMatch = genLabel("case_f_no");
@@ -478,7 +478,7 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
                     size_t typeIdx = findString(c.typeName);
                     out << "    lea " << reg1(this->windows) << ", [rel str" << typeIdx << "]\n";
                     out << "    call strcmp\n";
-                    out << "    cmp rax,0\n";
+                    out << "    test eax, eax\n";
                     out << "    jne " << nextLabel << "\n";
                 }
                 if (locals && locals->count(c.varName)) {

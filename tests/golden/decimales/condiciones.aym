@@ -1,12 +1,10 @@
+// Las condiciones deben ser chiqa: con decimales se compara explicitamente.
 yatiya chikata z = -0.0;
-ukaxa (z) { qillqa("mal"); } maysatxa { qillqa("-0.0 es falso"); }
+ukaxa (z != 0) { qillqa("mal"); } maysatxa { qillqa("-0.0 == 0"); }
 yatiya chikata a = 0.25;
-ukaxa (a) { qillqa("0.25 es verdadero"); }
-ukaxa (!z) { qillqa("!z"); }
-ukaxa (a && !z) { qillqa("a && !z"); }
-ukaxa (z || a) { qillqa("z || a"); }
+ukaxa (a > 0 && !(z < 0)) { qillqa("a > 0"); }
 yatiya chikata c = 1.0;
-ukhakamaxa (c) { c = c - 0.5; qillqa(c); }
+ukhakamaxa (c > 0) { c = c - 0.5; qillqa(c); }
 yatiya chikata n = sqrt(-1);
-ukaxa (n) { qillqa("nan es verdadero"); }
-qillqa(!a);
+ukaxa (n != n) { qillqa("nan != nan"); }
+qillqa(a > 0.5 ? "grande" : "chico");

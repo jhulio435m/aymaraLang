@@ -20,6 +20,15 @@ public:
     std::vector<std::string> strings;
     std::unordered_map<std::string, size_t> stringMap;
     bool windows = false;
+    // Bytes de argumentos en pila reservados por emitCallArgs y aun no
+    // liberados. Los sitios de llamada a funciones de usuario los liberan con
+    // releaseStackArgs; para los builtins lo hace emitCallExpr automaticamente.
+    size_t pendingStackArgs = 0;
+    void releaseStackArgs(size_t bytes) {
+        if (!bytes) return;
+        out << "    add rsp, " << bytes << "\n";
+        pendingStackArgs -= bytes;
+    }
     size_t findString(const std::string &val) const {
         auto it = stringMap.find(val);
         if (it != stringMap.end()) return it->second;
@@ -131,7 +140,6 @@ private:
     // Valor decimal tras la conversion implicita (tipo propio o convertTo).
     static bool isFloatValue(const Expr *e) {
         if (!e) return false;
-        if (e->getConvertTo() == "chiqa") return false; // usado como condicion
         return e->getSemType() == "chikata" || e->getConvertTo() == "chikata";
     }
     void emitFloatBinary(char op);
@@ -163,8 +171,8 @@ private:
     bool emitBuiltinArrayPrimitiveCall(const CallExpr *expr,
                                        const std::unordered_map<std::string,int> *locals,
                                        const std::string &nameLower);
-    // Devuelve los bytes de argumentos en pila que el llamador debe liberar
-    // (con 'add rsp, N') despues del 'call'; 0 si todos caben en registros.
+    // Devuelve los bytes de argumentos en pila que quedan reservados hasta
+    // despues del 'call' (0 si todos caben en registros); ver pendingStackArgs.
     size_t emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
                       const std::unordered_map<std::string,int> *locals,
                       size_t regStart = 0);

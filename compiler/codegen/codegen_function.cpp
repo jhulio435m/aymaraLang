@@ -1,4 +1,5 @@
 #include "codegen_impl.h"
+#include <stdexcept>
 
 namespace aym {
 
@@ -65,6 +66,13 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     }
 
     emitStmt(info.body, &offsets, endLabel);
+
+    if (pendingStackArgs != 0) {
+        // Un sitio de llamada no libero sus argumentos en pila: el codigo
+        // generado tendria la pila desfasada.
+        throw std::runtime_error("error interno del compilador: argumentos en pila sin liberar en '" +
+                                 info.name + "'");
+    }
 
     // Si la ejecucion llega al final sin 'kuttaya', el valor devuelto es 0
     // (y no basura de rax). Los 'kuttaya' saltan directo a endLabel.

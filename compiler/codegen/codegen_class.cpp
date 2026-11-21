@@ -171,7 +171,7 @@ bool CodeGenImpl::emitNewExpr(const NewExpr *expr,
         size_t stackArgs = emitCallArgs(expr->getArgs(), locals, 1);
         out << "    mov " << regs[0] << ", [rsp+" << (stackArgs + spillPad) << "]\n";
         out << "    call " << ctorName << "\n";
-        if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
+        releaseStackArgs(stackArgs);
     }
     out << "    add rsp, " << spillPad << "\n";
     out << "    pop rax\n";
@@ -198,13 +198,13 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
             out << "    mov " << sregs[0] << ", [rel $Aka]\n";
         }
         out << "    call " << expr->getStaticCallee() << "\n";
-        if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
+        releaseStackArgs(stackArgs);
         return true;
     }
     if (!expr->getStaticCallee().empty()) {
         size_t stackArgs = emitCallArgs(expr->getArgs(), locals, 0);
         out << "    call " << expr->getStaticCallee() << "\n";
-        if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
+        releaseStackArgs(stackArgs);
         return true;
     }
     int spillPad = this->windows ? 40 : 8;
@@ -248,7 +248,8 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
         out << "    mov r11, [rsp+" << (stackArgs + spillPad) << "]\n";
         out << "    mov " << regs[0] << ", [rsp+" << (stackArgs + slot + spillPad) << "]\n";
         out << "    call r11\n";
-        out << "    add rsp, " << (stackArgs + 2 * slot) << "\n";
+        releaseStackArgs(stackArgs);
+        out << "    add rsp, " << (2 * slot) << "\n";
     }
     return true;
 }

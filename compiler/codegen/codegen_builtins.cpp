@@ -6,6 +6,10 @@ namespace aym {
 void CodeGenImpl::emitCallExpr(const CallExpr *c,
                                const std::unordered_map<std::string,int> *locals) {
     std::string nameLower = lowerName(c->getName());
+    // Cualquier builtin puede recibir argumentos en pila: se liberan aqui, tras
+    // su 'call', sin que cada emisor tenga que hacerlo.
+    size_t outerPending = pendingStackArgs;
+    pendingStackArgs = 0;
     if (emitBuiltinIoCall(c, locals, nameLower) ||
         emitBuiltinStringCall(c, locals, nameLower) ||
         emitBuiltinCollectionCall(c, locals, nameLower) ||
@@ -14,13 +18,18 @@ void CodeGenImpl::emitCallExpr(const CallExpr *c,
         emitBuiltinFunctionalCall(c, locals, nameLower) ||
         emitBuiltinFsCall(c, locals, nameLower) ||
         emitBuiltinArrayPrimitiveCall(c, locals, nameLower)) {
+        if (pendingStackArgs) {
+            out << "    add rsp, " << pendingStackArgs << "\n";
+        }
+        pendingStackArgs = outerPending;
         return;
     }
+    pendingStackArgs = outerPending;
 
     // user function call
     size_t stackArgs = emitCallArgs(c->getArgs(), locals, 0);
     out << "    call " << c->getName() << "\n";
-    if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
+    releaseStackArgs(stackArgs);
 }
 
 bool CodeGenImpl::emitBuiltinIoCall(const CallExpr *c,
@@ -579,10 +588,10 @@ bool CodeGenImpl::emitBuiltinSystemCall(const CallExpr *c,
             out << "    call aym_gfx_rect4\n";
             out << "    add rsp, 64\n";
         } else {
-            // 7 argumentos: el ultimo (b) va en la pila segun SysV.
-            size_t stackArgs = emitCallArgs(c->getArgs(), locals, 0);
+            // 7 argumentos: el ultimo (b) va en la pila segun SysV; emitCallExpr
+            // libera esa pila al volver.
+            emitCallArgs(c->getArgs(), locals, 0);
             out << "    call aym_gfx_rect\n";
-            if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
         }
         return true;
     }

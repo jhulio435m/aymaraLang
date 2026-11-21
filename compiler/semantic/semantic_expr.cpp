@@ -53,11 +53,9 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
     char op = b.getOp();
     if (op == '&' || op == '|') {
         // && y || evaluan cada lado como condicion.
-        if (l == "aru" || r == "aru") {
-            reportError("operacion invalida sobre textos", "AYM3003");
-        }
-        markCondition(b.getLeft());
-        markCondition(b.getRight());
+        const char *opName = (op == '&') ? "&&" : "||";
+        requireCondition(b.getLeft(), l, opName);
+        requireCondition(b.getRight(), r, opName);
         lastInputCall = false;
         currentType = "chiqa";
         return;
@@ -86,7 +84,8 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
             }
             reportError(msg, "AYM3003");
         }
-        if ((l == "aru" || r == "aru") && op != '+' && op != 's' && op != 'd') {
+        if ((l == "aru" || r == "aru") && op != '+' && op != 's' && op != 'd' &&
+            op != '<' && op != 'l' && op != '>' && op != 'g') {
             reportError("operacion invalida sobre textos", "AYM3003");
         }
         if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
@@ -101,7 +100,7 @@ void SemanticAnalyzer::visit(UnaryExpr &u) {
     markNode(u);
     u.getExpr()->accept(*this);
     if (u.getOp() == '!') {
-        markCondition(u.getExpr());
+        requireCondition(u.getExpr(), currentType, "!");
         currentType = "chiqa";
     } else if (u.getOp() == '~') {
         if (currentType != "jakhüwi") {
@@ -116,9 +115,7 @@ void SemanticAnalyzer::visit(TernaryExpr &t) {
     markNode(t);
     t.getCondition()->accept(*this);
     std::string condType = currentType;
-    if (condType != "chiqa") {
-        reportError("condicion del ternario debe ser booleana", "AYM3003");
-    }
+    requireCondition(t.getCondition(), condType, "? :");
     t.getThen()->accept(*this);
     std::string thenType = currentType;
     t.getElse()->accept(*this);

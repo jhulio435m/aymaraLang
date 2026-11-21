@@ -372,6 +372,18 @@ void SemanticAnalyzer::visit(VarDeclStmt &v) {
     }
 }
 
+void SemanticAnalyzer::requireCondition(Expr *e, const std::string &type, const std::string &where) {
+    if (type.empty() || type == "chiqa") return;
+    std::string msg = "la condicion de '" + where + "' debe ser chiqa y es '" + type + "'";
+    if (isNumericType(type)) {
+        msg += " (compara explicitamente, p. ej. 'x != 0')";
+    } else if (type == "aru") {
+        msg += " (compara explicitamente, p. ej. 'texto != \"\"')";
+    }
+    (void)e;
+    reportError(msg, "AYM3003");
+}
+
 void SemanticAnalyzer::visit(BlockStmt &b) {
     markNode(b);
     pushScope();
@@ -382,7 +394,7 @@ void SemanticAnalyzer::visit(BlockStmt &b) {
 void SemanticAnalyzer::visit(IfStmt &i) {
     markNode(i);
     i.getCondition()->accept(*this);
-    markCondition(i.getCondition());
+    requireCondition(i.getCondition(), currentType, "ukaxa");
     i.getThen()->accept(*this);
     if (i.getElse()) i.getElse()->accept(*this);
 }
@@ -391,7 +403,7 @@ void SemanticAnalyzer::visit(WhileStmt &w) {
     markNode(w);
     if (w.getCondition()) {
         w.getCondition()->accept(*this);
-        markCondition(w.getCondition());
+        requireCondition(w.getCondition(), currentType, "ukhakamaxa");
     }
     ++loopDepth;
     w.getBody()->accept(*this);
@@ -404,7 +416,7 @@ void SemanticAnalyzer::visit(DoWhileStmt &dw) {
     dw.getBody()->accept(*this);
     --loopDepth;
     dw.getCondition()->accept(*this);
-    markCondition(dw.getCondition());
+    requireCondition(dw.getCondition(), currentType, "ukhakamaxa");
 }
 
 void SemanticAnalyzer::visit(ForStmt &f) {
@@ -413,7 +425,7 @@ void SemanticAnalyzer::visit(ForStmt &f) {
     f.getInit()->accept(*this);
     if (f.getCondition()) {
         f.getCondition()->accept(*this);
-        markCondition(f.getCondition());
+        requireCondition(f.getCondition(), currentType, "kuti");
     }
     f.getPost()->accept(*this);
     ++loopDepth;

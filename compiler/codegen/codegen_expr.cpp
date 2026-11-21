@@ -165,15 +165,6 @@ void CodeGenImpl::emitExpr(const Expr *expr,
     if (expr->getConvertTo() == "chikata" && expr->getSemType() == "jakhüwi") {
         out << "    cvtsi2sd xmm0, rax\n";
         out << "    movq rax, xmm0\n";
-    } else if (expr->getConvertTo() == "chiqa" && expr->getSemType() == "chikata") {
-        // Verdad de un decimal: x != 0.0 (-0.0 es falso, nan es verdadero).
-        out << "    movq xmm0, rax\n";
-        out << "    xorpd xmm1, xmm1\n";
-        out << "    ucomisd xmm0, xmm1\n";
-        out << "    setne al\n";
-        out << "    setp cl\n";
-        out << "    or al, cl\n";
-        out << "    movzx rax, al\n";
     }
 }
 
@@ -412,6 +403,18 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
             emitFloatBinary(b->getOp());
             return true;
         }
+        if (leftIsString && rightIsString &&
+            (b->getOp() == '<' || b->getOp() == 'l' || b->getOp() == '>' || b->getOp() == 'g')) {
+            // Orden lexicografico por bytes (UTF-8 conserva el orden de codigo).
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    mov " << reg2(this->windows) << ", rbx\n";
+            out << "    call strcmp\n";
+            out << "    test eax, eax\n";
+            const char *setcc = b->getOp() == '<' ? "setl" : b->getOp() == 'l' ? "setle"
+                              : b->getOp() == '>' ? "setg" : "setge";
+            out << "    " << setcc << " al\n    movzx rax,al\n";
+            return true;
+        }
         switch (b->getOp()) {
             case '+':
                 if (leftIsString && rightIsString) {
@@ -486,7 +489,7 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
                     out << "    mov " << reg1(this->windows) << ", rax\n";
                     out << "    mov " << reg2(this->windows) << ", rbx\n";
                     out << "    call strcmp\n";
-                    out << "    cmp rax,0\n    sete al\n    movzx rax,al\n";
+                    out << "    test eax, eax\n    sete al\n    movzx rax,al\n";
                 } else {
                     out << "    cmp rax, rbx\n    sete al\n    movzx rax,al\n";
                 }
@@ -496,7 +499,7 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
                     out << "    mov " << reg1(this->windows) << ", rax\n";
                     out << "    mov " << reg2(this->windows) << ", rbx\n";
                     out << "    call strcmp\n";
-                    out << "    cmp rax,0\n    setne al\n    movzx rax,al\n";
+                    out << "    test eax, eax\n    setne al\n    movzx rax,al\n";
                 } else {
                     out << "    cmp rax, rbx\n    setne al\n    movzx rax,al\n";
                 }
@@ -599,6 +602,7 @@ size_t CodeGenImpl::emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
     if (frame > 0) {
         out << "    add rsp, " << frame << "\n";
     }
+    pendingStackArgs += stackArea;
     return stackArea;
 }
 

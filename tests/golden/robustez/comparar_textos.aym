@@ -1,0 +1,13 @@
+qillqa("abc" < "abd");
+qillqa("abc" <= "abc");
+qillqa("b" > "abc");
+qillqa("" >= "a");
+qillqa("Z" < "a");
+qillqa("ana" == "ana");
+qillqa("ana" != "anita");
+yatiya t'aqa<aru> xs = ["pera", "ajo", "uva"];
+yatiya aru menor = xs[0];
+kuti (yatiya jakhüwi i = 1; i < largo(xs); i++) {
+  ukaxa (xs[i] < menor) { menor = xs[i]; }
+}
+qillqa(menor);
