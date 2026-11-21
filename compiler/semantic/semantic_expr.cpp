@@ -51,6 +51,17 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
     b.getRight()->accept(*this);
     std::string r = currentType;
     char op = b.getOp();
+    if (op == '&' || op == '|') {
+        // && y || evaluan cada lado como condicion.
+        if (l == "aru" || r == "aru") {
+            reportError("operacion invalida sobre textos", "AYM3003");
+        }
+        markCondition(b.getLeft());
+        markCondition(b.getRight());
+        lastInputCall = false;
+        currentType = "chiqa";
+        return;
+    }
     if (op == 'A' || op == 'O' || op == 'X' || op == 'L' || op == 'R') {
         if (l != "jakhüwi" || r != "jakhüwi") {
             reportError("operacion bit a bit requiere jakhüwi", "AYM3003");
@@ -90,6 +101,7 @@ void SemanticAnalyzer::visit(UnaryExpr &u) {
     markNode(u);
     u.getExpr()->accept(*this);
     if (u.getOp() == '!') {
+        markCondition(u.getExpr());
         currentType = "chiqa";
     } else if (u.getOp() == '~') {
         if (currentType != "jakhüwi") {

@@ -1,0 +1,12 @@
+yatiya chikata z = -0.0;
+ukaxa (z) { qillqa("mal"); } maysatxa { qillqa("-0.0 es falso"); }
+yatiya chikata a = 0.25;
+ukaxa (a) { qillqa("0.25 es verdadero"); }
+ukaxa (!z) { qillqa("!z"); }
+ukaxa (a && !z) { qillqa("a && !z"); }
+ukaxa (z || a) { qillqa("z || a"); }
+yatiya chikata c = 1.0;
+ukhakamaxa (c) { c = c - 0.5; qillqa(c); }
+yatiya chikata n = sqrt(-1);
+ukaxa (n) { qillqa("nan es verdadero"); }
+qillqa(!a);

@@ -165,6 +165,15 @@ void CodeGenImpl::emitExpr(const Expr *expr,
     if (expr->getConvertTo() == "chikata" && expr->getSemType() == "jakhüwi") {
         out << "    cvtsi2sd xmm0, rax\n";
         out << "    movq rax, xmm0\n";
+    } else if (expr->getConvertTo() == "chiqa" && expr->getSemType() == "chikata") {
+        // Verdad de un decimal: x != 0.0 (-0.0 es falso, nan es verdadero).
+        out << "    movq xmm0, rax\n";
+        out << "    xorpd xmm1, xmm1\n";
+        out << "    ucomisd xmm0, xmm1\n";
+        out << "    setne al\n";
+        out << "    setp cl\n";
+        out << "    or al, cl\n";
+        out << "    movzx rax, al\n";
     }
 }
 

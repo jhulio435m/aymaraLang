@@ -1,0 +1,9 @@
+-0.0 es falso
+0.25 es verdadero
+!z
+a && !z
+z || a
+0.5
+0.0
+nan es verdadero
+k'ari

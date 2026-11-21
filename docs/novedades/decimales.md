@@ -35,6 +35,11 @@ qillqa("total: " + aru(1.25));     // total: 1.25
 | `thanta jiska_taqa jacha_taqa` sobre `t'aqa<chikata>` | `chikata` |
 | `wakicha wakicha_qhipa` sobre `t'aqa<chikata>` | ordenan numéricamente |
 
+`khiti` admite `chikata`, con valores y rangos decimales (`kuna 0.0..1:`); los
+`kuna` enteros se convierten. Un `chikata` usado como condición (`ukaxa (x)`,
+`ukhakamaxa`, `!`, `&&`, `||`) es verdadero si `x != 0.0` (`-0.0` es falso,
+`nan` verdadero).
+
 Listas, mapas, campos de clase, parámetros (incluidos más de 6), lambdas en
 `map`/`filter`/`reduce` y la interpolación `$"..."` funcionan con decimales.
 
@@ -47,8 +52,7 @@ Listas, mapas, campos de clase, parámetros (incluidos más de 6), lambdas en
 - Archivos: `compiler/lexer/*`, `compiler/ast/ast.h`, `compiler/parser/*`, `compiler/semantic/*`, `compiler/codegen/codegen_expr.cpp`, `codegen_type_print.cpp`, `codegen_builtins.cpp`, `runtime/math.c`, `runtime/runtime_arrays.c`, `runtime/runtime_maps_strings.c`.
 - Pruebas: `tests/golden/decimales/`.
 
-## Limitaciones
+## Windows
 
-- `khiti` sobre `chikata` compara los bits exactos (no recomendado).
-- Una condición `ukaxa (x)` con `x` de tipo `chikata` trata `-0.0` como verdadero.
-- No se probó todavía en Windows (el código generado es el mismo, con `cvtsi2sd`/`movq`).
+El código Win64 generado ensambla y enlaza con MinGW (`x86_64-w64-mingw32-gcc`)
+sin símbolos pendientes; falta ejecutarlo en Windows o Wine.

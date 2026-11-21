@@ -1,0 +1,35 @@
+yatiya jakhüwi n = 4;
+yatiya jakhüwi k = 3;
+khiti (n) {
+  kuna k + 1: { qillqa("k+1"); }
+  yaqha: { qillqa("otro"); }
+}
+khiti (n * 2) {
+  kuna 1..k: { qillqa("bajo"); }
+  kuna k * 2, k * 2 + 2: { qillqa("par"); }
+  yaqha: { qillqa("otro"); }
+}
+lurawi clasifica(chikata t): aru {
+  khiti (t) {
+    kuna 0: { kuttaya "cero"; }
+    kuna 0.5: { kuttaya "medio"; }
+    kuna 0.0..1: { kuttaya "fraccion"; }
+    kuna 1.5, 2.5: { kuttaya "lista"; }
+    yaqha: { kuttaya "fuera"; }
+  }
+  kuttaya "?";
+}
+qillqa(clasifica(0));
+qillqa(clasifica(0.5));
+qillqa(clasifica(0.75));
+qillqa(clasifica(1));
+qillqa(clasifica(2.5));
+qillqa(clasifica(-1));
+qillqa(clasifica(sqrt(-1)));
+kuti (yatiya jakhüwi i = 0; i < 3; i++) {
+  khiti (i) {
+    kuna 1: { p'akhiña; }
+    yaqha: { qillqa(i); }
+  }
+}
+qillqa("fin");

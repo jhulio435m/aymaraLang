@@ -46,3 +46,8 @@ Thumbs.db
 
 # Impeccable: archivos de trabajo del skill de diseño
 .impeccable/
+
+# Restos locales de depuracion
+/build_repro/
+/test_repro
+/test_repro.aym

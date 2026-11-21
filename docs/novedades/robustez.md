@@ -143,6 +143,14 @@ Errores corregidos en estas rondas, con sus pruebas de regresión en `tests/gold
 
 - El tutorial (`docs/language.md`) usaba `"suma: " + suma(3, 4)`, que el tipado estricto rechaza. Se corrigió a `aru(suma(3, 4))` y el error ahora indica los tipos y sugiere `aru(...)`.
 
+### `khiti` perdía su valor al evaluar un `kuna` con operaciones
+
+- **Síntoma:** `khiti (n) { kuna k + 1: ... }` con `n == k + 1` iba a `yaqha`.
+- **Causa:** el valor se guardaba en `rbx`, que la evaluación de `k + 1` reutiliza.
+- **Arreglo:** el valor se guarda en la pila y se recarga antes de cada comparación; cada coincidencia pasa por un trampolín que libera la pila.
+- **Archivos:** `compiler/codegen/codegen_stmt.cpp`.
+- **Prueba:** `tests/golden/decimales/khiti.aym`.
+
 ## Limitaciones conocidas (sin corregir)
 
 - La excepción no manejada por división por cero no indica la línea del programa fuente; solo imprime `Excepcion no manejada`.

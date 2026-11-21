@@ -130,7 +130,9 @@ private:
                        const std::unordered_map<std::string,int> *locals);
     // Valor decimal tras la conversion implicita (tipo propio o convertTo).
     static bool isFloatValue(const Expr *e) {
-        return e && (e->getSemType() == "chikata" || e->getConvertTo() == "chikata");
+        if (!e) return false;
+        if (e->getConvertTo() == "chiqa") return false; // usado como condicion
+        return e->getSemType() == "chikata" || e->getConvertTo() == "chikata";
     }
     void emitFloatBinary(char op);
     bool emitExprOperator(const Expr *expr,

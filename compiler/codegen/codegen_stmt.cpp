@@ -211,37 +211,74 @@ bool CodeGenImpl::emitStmtControl(const Stmt *stmt,
         return true;
     }
     if (auto *sw = dynamic_cast<const SwitchStmt *>(stmt)) {
+        // El valor del 'khiti' se guarda en la pila: evaluar un 'kuna' (p. ej.
+        // 'kuna n + 1') usa rbx y lo pisaria. Se recarga antes de comparar y
+        // cada coincidencia pasa por un trampolin que libera la pila.
+        int swPad = this->windows ? 40 : 8;
         emitExpr(sw->getExpr(), locals);
-        out << "    mov rbx, rax\n";
+        out << "    push rax\n";
+        out << "    sub rsp, " << swPad << "\n";
         bool switchIsString = isStringExpr(sw->getExpr(), locals);
+        bool switchIsFloat = isFloatValue(sw->getExpr());
+        std::vector<std::pair<std::string, std::string>> trampolines;
         auto emitSwitchCompare = [&](const Expr *caseExpr, const std::string &label) {
+            std::string tramp = genLabel("case_hit");
+            trampolines.push_back({tramp, label});
+            auto reload = [&](const char *reg) {
+                out << "    mov " << reg << ", [rsp+" << swPad << "]\n";
+            };
             auto emitCompareOne = [&](const Expr *valueExpr) {
                 if (auto *rangeCase = dynamic_cast<const CallExpr*>(valueExpr)) {
                     if (rangeCase->getName() == "__rango_case__" &&
                         rangeCase->getArgs().size() == 2) {
                         std::string rangeNoMatch = genLabel("case_rng_no");
                         emitExpr(rangeCase->getArgs()[0].get(), locals);
-                        out << "    mov rcx, rax\n";
+                        out << "    push rax\n";
+                        out << "    sub rsp, " << swPad << "\n";
                         emitExpr(rangeCase->getArgs()[1].get(), locals);
                         out << "    mov rdx, rax\n";
-                        out << "    cmp rbx, rcx\n";
-                        out << "    jl " << rangeNoMatch << "\n";
-                        out << "    cmp rbx, rdx\n";
-                        out << "    jle " << label << "\n";
+                        out << "    add rsp, " << swPad << "\n";
+                        out << "    pop rcx\n";
+                        reload("rbx");
+                        if (switchIsFloat) {
+                            out << "    movq xmm0, rbx\n";
+                            out << "    movq xmm1, rcx\n";
+                            out << "    movq xmm2, rdx\n";
+                            out << "    ucomisd xmm0, xmm1\n";
+                            out << "    jp " << rangeNoMatch << "\n";
+                            out << "    jb " << rangeNoMatch << "\n";
+                            out << "    ucomisd xmm0, xmm2\n";
+                            out << "    jp " << rangeNoMatch << "\n";
+                            out << "    jbe " << tramp << "\n";
+                        } else {
+                            out << "    cmp rbx, rcx\n";
+                            out << "    jl " << rangeNoMatch << "\n";
+                            out << "    cmp rbx, rdx\n";
+                            out << "    jle " << tramp << "\n";
+                        }
                         out << rangeNoMatch << ":\n";
                         return;
                     }
                 }
                 emitExpr(valueExpr, locals);
+                reload("rbx");
                 if (switchIsString) {
                     out << "    mov " << reg1(this->windows) << ", rbx\n";
                     out << "    mov " << reg2(this->windows) << ", rax\n";
                     out << "    call strcmp\n";
                     out << "    cmp rax,0\n";
-                    out << "    je " << label << "\n";
+                    out << "    je " << tramp << "\n";
+                } else if (switchIsFloat) {
+                    std::string noMatch = genLabel("case_f_no");
+                    out << "    movq xmm0, rbx\n";
+                    out << "    movq xmm1, rax\n";
+                    out << "    ucomisd xmm0, xmm1\n";
+                    out << "    jp " << noMatch << "\n";
+                    out << "    je " << tramp << "\n";
+                    out << noMatch << ":\n";
                 } else {
                     out << "    cmp rbx, rax\n";
-                    out << "    je " << label << "\n";
+                    out << "    je " << tramp << "\n";
                 }
             };
             if (auto *listCase = dynamic_cast<const ListExpr*>(caseExpr)) {
@@ -263,10 +300,17 @@ bool CodeGenImpl::emitStmtControl(const Stmt *stmt,
             emitSwitchCompare(c.first.get(), labels[idx]);
             ++idx;
         }
+        // Ninguna coincidencia: liberar la pila e ir a 'yaqha' o al final.
+        out << "    add rsp, " << (swPad + 8) << "\n";
         if (sw->getDefault())
             out << "    jmp " << defLabel << "\n";
         else
             out << "    jmp " << end << "\n";
+        for (const auto &t : trampolines) {
+            out << t.first << ":\n";
+            out << "    add rsp, " << (swPad + 8) << "\n";
+            out << "    jmp " << t.second << "\n";
+        }
         idx = 0;
         for (const auto &c : sw->getCases()) {
             out << labels[idx] << ":\n";

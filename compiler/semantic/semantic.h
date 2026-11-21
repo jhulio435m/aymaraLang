@@ -100,6 +100,8 @@ private:
     bool checkAssignable(Expr *e, const std::string &actualType, const std::string &expectedType);
     static bool isNumericType(const std::string &t) { return t == "jakhüwi" || t == "chikata"; }
     static void markToFloat(Expr *e) { if (e && e->getSemType() == "jakhüwi") e->setConvertTo("chikata"); }
+    // Un chikata usado como condicion se evalua como x != 0.0.
+    static void markCondition(Expr *e) { if (e && e->getSemType() == "chikata") e->setConvertTo("chiqa"); }
     void collectClassInfo(const std::vector<std::unique_ptr<Node>> &nodes);
 
     std::string currentType;

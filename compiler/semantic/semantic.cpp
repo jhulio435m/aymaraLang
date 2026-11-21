@@ -382,13 +382,17 @@ void SemanticAnalyzer::visit(BlockStmt &b) {
 void SemanticAnalyzer::visit(IfStmt &i) {
     markNode(i);
     i.getCondition()->accept(*this);
+    markCondition(i.getCondition());
     i.getThen()->accept(*this);
     if (i.getElse()) i.getElse()->accept(*this);
 }
 
 void SemanticAnalyzer::visit(WhileStmt &w) {
     markNode(w);
-    if (w.getCondition()) w.getCondition()->accept(*this);
+    if (w.getCondition()) {
+        w.getCondition()->accept(*this);
+        markCondition(w.getCondition());
+    }
     ++loopDepth;
     w.getBody()->accept(*this);
     --loopDepth;
@@ -400,13 +404,17 @@ void SemanticAnalyzer::visit(DoWhileStmt &dw) {
     dw.getBody()->accept(*this);
     --loopDepth;
     dw.getCondition()->accept(*this);
+    markCondition(dw.getCondition());
 }
 
 void SemanticAnalyzer::visit(ForStmt &f) {
     markNode(f);
     pushScope();
     f.getInit()->accept(*this);
-    if (f.getCondition()) f.getCondition()->accept(*this);
+    if (f.getCondition()) {
+        f.getCondition()->accept(*this);
+        markCondition(f.getCondition());
+    }
     f.getPost()->accept(*this);
     ++loopDepth;
     f.getBody()->accept(*this);
@@ -423,8 +431,8 @@ void SemanticAnalyzer::visit(SwitchStmt &sw) {
         auto checkCaseType = [&](Expr *expr) {
             if (auto *call = dynamic_cast<CallExpr*>(expr)) {
                 if (call->getName() == "__rango_case__") {
-                    if (switchType != "jakhüwi") {
-                        reportError("los rangos en 'khiti' solo aplican a 'jakhüwi'");
+                    if (!isNumericType(switchType)) {
+                        reportError("los rangos en 'khiti' solo aplican a 'jakhüwi' o 'chikata'");
                     }
                     if (call->getArgs().size() != 2) {
                         reportError("rango invalido en 'kuna'");
@@ -434,15 +442,22 @@ void SemanticAnalyzer::visit(SwitchStmt &sw) {
                     std::string startType = currentType;
                     call->getArgs()[1]->accept(*this);
                     std::string endType = currentType;
-                    if (startType != "jakhüwi" || endType != "jakhüwi") {
+                    if (switchType == "chikata" && isNumericType(startType) && isNumericType(endType)) {
+                        markToFloat(call->getArgs()[0].get());
+                        markToFloat(call->getArgs()[1].get());
+                    } else if (startType != "jakhüwi" || endType != "jakhüwi") {
                         reportError("los extremos del rango deben ser 'jakhüwi'");
                     }
-                    currentType = "jakhüwi";
+                    currentType = switchType;
                     return;
                 }
             }
             expr->accept(*this);
             std::string caseType = currentType;
+            if (switchType == "chikata" && caseType == "jakhüwi") {
+                markToFloat(expr);
+                caseType = "chikata";
+            }
             if (!switchType.empty() && !caseType.empty() && switchType != caseType) {
                 reportError("tipo incompatible en 'khiti': se esperaba '" + switchType + "' y se obtuvo '" + caseType + "'");
             }
