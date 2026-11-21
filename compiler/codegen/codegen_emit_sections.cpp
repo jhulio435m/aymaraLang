@@ -702,7 +702,7 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
     if (out.is_open()) {
         out.close();
     }
-    { void peepholeOptimizeAsmFile(const std::string &); if (modeIn != CodegenPipelineMode::LinkOnly) peepholeOptimizeAsmFile(path); }
+    if (modeIn != CodegenPipelineMode::LinkOnly) peepholeOptimizeAsmFile(path);
 
     fs::path asmPath = fs::path(path);
     fs::path outputDir = asmPath.has_parent_path() ? asmPath.parent_path() : fs::current_path();

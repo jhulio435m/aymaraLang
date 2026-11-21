@@ -13,6 +13,12 @@
 
 namespace aym {
 
+// Optimizador peephole sobre el ASM generado (codegen_peephole.cpp).
+// Declarada aqui y no en un bloque: MSVC resuelve las declaraciones de bloque
+// en el espacio de nombres global y no enlaza con aym::peepholeOptimizeAsmFile.
+void peepholeOptimizeAsmFile(const std::string &path);
+
+
 class CodeGenImpl {
 public:
     std::ofstream out;
