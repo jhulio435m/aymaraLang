@@ -151,7 +151,9 @@ private:
     bool emitBuiltinArrayPrimitiveCall(const CallExpr *expr,
                                        const std::unordered_map<std::string,int> *locals,
                                        const std::string &nameLower);
-    void emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
+    // Devuelve los bytes de argumentos en pila que el llamador debe liberar
+    // (con 'add rsp, N') despues del 'call'; 0 si todos caben en registros.
+    size_t emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
                       const std::unordered_map<std::string,int> *locals,
                       size_t regStart = 0);
     void emitFunction(const FunctionInfo &info);

@@ -1,0 +1,168 @@
+// Proyecto: tres_en_raya_ia
+// Juego determinista de Tres en Raya: IA Minimax con poda alfa-beta (X)
+// frente a oponentes heuristicos deterministas (O), con evaluacion de jugadas.
+qallta
+kasta Tablero {
+  yatiya t'aqa c;
+
+  qallta() { aka.c = [0, 0, 0, 0, 0, 0, 0, 0, 0]; }
+  lurawi ver(jakhüwi i): jakhüwi { yatiya t'aqa xs = aka.c; kuttaya xs[i]; }
+  lurawi poner(jakhüwi i, jakhüwi j) { yatiya t'aqa xs = aka.c; xs[i] = j; kuttaya; }
+
+  lurawi ganador(): jakhüwi {
+    yatiya t'aqa xs = aka.c;
+    yatiya t'aqa lins = [0,1,2, 3,4,5, 6,7,8, 0,3,6, 1,4,7, 2,5,8, 0,4,8, 2,4,6];
+    kuti(yatiya jakhüwi k = 0; k < 24; k = k + 3) {
+      yatiya jakhüwi a = xs[lins[k]];
+      ukaxa(a != 0 && a == xs[lins[k + 1]] && a == xs[lins[k + 2]]) { kuttaya a; }
+    }
+    kuttaya 0;
+  }
+
+  lurawi lleno(): chiqa {
+    yatiya t'aqa xs = aka.c;
+    kuti(yatiya jakhüwi i = 0; i < 9; i++) {
+      ukaxa(xs[i] == 0) { kuttaya k'ari; }
+    }
+    kuttaya chiqa;
+  }
+
+  lurawi simbolo(jakhüwi v): aru {
+    ukaxa(v == 1) { kuttaya "X"; }
+    ukaxa(v == 2) { kuttaya "O"; }
+    kuttaya ".";
+  }
+
+  lurawi mostrar() {
+    kuti(yatiya jakhüwi f = 0; f < 3; f++) {
+      yatiya jakhüwi b = f * 3;
+      yatiya jakhüwi v0 = aka.ver(b);
+      yatiya jakhüwi v1 = aka.ver(b + 1);
+      yatiya jakhüwi v2 = aka.ver(b + 2);
+      yatiya aru s0 = aka.simbolo(v0);
+      yatiya aru s1 = aka.simbolo(v1);
+      yatiya aru s2 = aka.simbolo(v2);
+      qillqa(s0 + " " + s1 + " " + s2);
+    }
+    kuttaya;
+  }
+}
+
+lurawi minimax(Tablero t, jakhüwi prof, chiqa max_x, jakhüwi alpha, jakhüwi beta): jakhüwi {
+  yatiya jakhüwi g = t.ganador();
+  ukaxa(g == 1) { kuttaya 10 - prof; }
+  ukaxa(g == 2) { kuttaya prof - 10; }
+  ukaxa(t.lleno()) { kuttaya 0; }
+  ukaxa(max_x) {
+    yatiya jakhüwi mejor = -100;
+    kuti(yatiya jakhüwi i = 0; i < 9; i++) {
+      ukaxa(t.ver(i) == 0) {
+        t.poner(i, 1);
+        yatiya jakhüwi v = minimax(t, prof + 1, k'ari, alpha, beta);
+        t.poner(i, 0);
+        ukaxa(v > mejor) { mejor = v; }
+        ukaxa(mejor > alpha) { alpha = mejor; }
+        ukaxa(alpha >= beta) { pakhina; }
+      }
+    }
+    kuttaya mejor;
+  }
+  yatiya jakhüwi peor = 100;
+  kuti(yatiya jakhüwi i = 0; i < 9; i++) {
+    ukaxa(t.ver(i) == 0) {
+      t.poner(i, 2);
+      yatiya jakhüwi v = minimax(t, prof + 1, chiqa, alpha, beta);
+      t.poner(i, 0);
+      ukaxa(v < peor) { peor = v; }
+      ukaxa(peor < beta) { beta = peor; }
+      ukaxa(alpha >= beta) { pakhina; }
+    }
+  }
+  kuttaya peor;
+}
+
+lurawi elegir_minimax(Tablero t, chiqa mostrar_eval): jakhüwi {
+  yatiya jakhüwi mejor_val = -100;
+  yatiya jakhüwi mejor_pos = -1;
+  yatiya aru detalle = "";
+  kuti(yatiya jakhüwi i = 0; i < 9; i++) {
+    ukaxa(t.ver(i) == 0) {
+      t.poner(i, 1);
+      yatiya jakhüwi v = minimax(t, 0, k'ari, -100, 100);
+      t.poner(i, 0);
+      ukaxa(suyu(detalle) > 0) { detalle = detalle + " "; }
+      detalle = detalle + aru(i) + ":" + aru(v);
+      ukaxa(v > mejor_val) { mejor_val = v; mejor_pos = i; }
+    }
+  }
+  ukaxa(mostrar_eval) {
+    qillqa("eval X -> " + detalle + " | elige=" + aru(mejor_pos) + " (val=" + aru(mejor_val) + ")");
+  }
+  kuttaya mejor_pos;
+}
+
+lurawi buscar_ganadora(Tablero t, jakhüwi jug): jakhüwi {
+  kuti(yatiya jakhüwi i = 0; i < 9; i++) {
+    ukaxa(t.ver(i) == 0) {
+      t.poner(i, jug);
+      yatiya jakhüwi g = t.ganador();
+      t.poner(i, 0);
+      ukaxa(g == jug) { kuttaya i; }
+    }
+  }
+  kuttaya -1;
+}
+
+lurawi elegir_heuristico(Tablero t, t'aqa prioridad): jakhüwi {
+  yatiya jakhüwi ganar = buscar_ganadora(t, 2);
+  ukaxa(ganar >= 0) { kuttaya ganar; }
+  yatiya jakhüwi bloq = buscar_ganadora(t, 1);
+  ukaxa(bloq >= 0) { kuttaya bloq; }
+  kuti(yatiya jakhüwi k = 0; k < 9; k++) {
+    yatiya jakhüwi c = prioridad[k];
+    ukaxa(t.ver(c) == 0) { kuttaya c; }
+  }
+  kuttaya -1;
+}
+
+lurawi jugar_partida(aru titulo, t'aqa prioridad_o, chiqa pasos): jakhüwi {
+  qillqa("=== " + titulo + " ===");
+  yatiya Tablero t = machaqa Tablero();
+  yatiya jakhüwi turno = 0;
+  ukhakamaxa(t.ganador() == 0 && !t.lleno()) {
+    ukaxa(turno % 2 == 0) {
+      yatiya jakhüwi mx = elegir_minimax(t, chiqa);
+      t.poner(mx, 1);
+    } maysatxa {
+      yatiya jakhüwi mo = elegir_heuristico(t, prioridad_o);
+      t.poner(mo, 2);
+      qillqa("O (heuristico) juega casilla " + aru(mo));
+      ukaxa(pasos) { t.mostrar(); }
+    }
+    turno = turno + 1;
+  }
+  qillqa("tablero final:");
+  t.mostrar();
+  yatiya jakhüwi g = t.ganador();
+  ukaxa(g == 1) { qillqa("resultado: GANA X"); }
+  maysatxa ukaxa(g == 2) { qillqa("resultado: GANA O"); }
+  maysatxa { qillqa("resultado: EMPATE"); }
+  kuttaya g;
+}
+
+yatiya Tablero prueba = machaqa Tablero();
+prueba.poner(0, 1);
+prueba.poner(4, 1);
+prueba.poner(2, 2);
+prueba.poner(5, 2);
+yatiya jakhüwi remate = elegir_minimax(prueba, k'ari);
+afirma(remate == 8, "victoria inmediata en 8");
+
+yatiya jakhüwi r1 = jugar_partida("Partida 1: Minimax vs Heuristica fuerte", [4,0,2,6,8,1,3,5,7], k'ari);
+afirma(r1 == 0, "partida 1 debe empatar");
+
+yatiya jakhüwi r2 = jugar_partida("Partida 2: Minimax vs Heuristica bordes", [1,3,5,7,4,0,2,6,8], chiqa);
+afirma(r2 == 1, "partida 2 debe ganar X");
+
+qillqa("tres_en_raya_ia OK");
+tukuya

@@ -1,0 +1,12 @@
+qillqa(jachanchaya("aymara Lang"));
+qillqa(jiskanchaya("AYMARA Lang"));
+qillqa(kutikipa("abc"));
+qillqa(kutikipa(""));
+qillqa(kuti_aru("ab", 3));
+qillqa(kuti_aru("ab", 0));
+qillqa(jikxata("kamisaki", "saki"));
+qillqa(jikxata("kamisaki", "xyz"));
+qillqa(qalltati("kamisaki", "kami"));
+qillqa(qalltati("ka", "kami"));
+qillqa(tukuyati("kamisaki", "saki"));
+qillqa(tukuyati("ki", "saki"));

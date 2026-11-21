@@ -1,0 +1,6 @@
+// Concatenacion de cadenas: s = s + "ab" repetido.
+yatiya aru s = "";
+kuti (yatiya jakhüwi i = 0; i < 20000; i = i + 1) {
+  s = s + "ab";
+}
+qillqa(suyu(s));

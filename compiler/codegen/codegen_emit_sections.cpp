@@ -48,7 +48,18 @@ bool needsRebuildObject(const fs::path &source, const fs::path &object) {
     if (ec) {
         return true;
     }
-    return objTime < srcTime;
+    if (objTime < srcTime) {
+        return true;
+    }
+    // runtime.c incluye runtime_*.c: un cambio en ellos tambien invalida el objeto.
+    for (const char *inc : {"runtime_arrays.c", "runtime_maps_strings.c", "runtime_exceptions.c"}) {
+        ec.clear();
+        const auto incTime = fs::last_write_time(source.parent_path() / inc, ec);
+        if (!ec && source.filename() == "runtime.c" && objTime < incTime) {
+            return true;
+        }
+    }
+    return false;
 }
 
 struct PipelineFailureInfo {
@@ -462,6 +473,11 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_fs_read_text\n";
     out << "extern aym_fs_write_text\n";
     out << "extern aym_fs_exists\n";
+    out << "extern aym_fs_append_text\n";
+    out << "extern aym_fs_read_lines\n";
+    out << "extern aym_fs_delete\n";
+    out << "extern aym_env_get\n";
+    out << "extern aym_exit\n";
     out << "extern aym_array_new\n";
     out << "extern aym_array_get\n";
     out << "extern aym_array_set\n";
@@ -476,8 +492,16 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_array_find_str\n";
     out << "extern aym_array_sort_int\n";
     out << "extern aym_array_sort_str\n";
+    out << "extern aym_array_sort_desc_int\n";
+    out << "extern aym_array_sort_desc_str\n";
     out << "extern aym_array_unique_int\n";
     out << "extern aym_array_unique_str\n";
+    out << "extern aym_array_reverse\n";
+    out << "extern aym_array_slice\n";
+    out << "extern aym_array_sum\n";
+    out << "extern aym_array_min\n";
+    out << "extern aym_array_max\n";
+    out << "extern aym_print_list_depth\n";
     out << "extern aym_map_new\n";
     out << "extern aym_map_set\n";
     out << "extern aym_map_get\n";
@@ -497,6 +521,17 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_str_join\n";
     out << "extern aym_str_replace\n";
     out << "extern aym_str_contains\n";
+    out << "extern aym_str_upper\n";
+    out << "extern aym_str_lower\n";
+    out << "extern aym_str_reverse\n";
+    out << "extern aym_str_repeat\n";
+    out << "extern aym_str_starts_with\n";
+    out << "extern aym_str_ends_with\n";
+    out << "extern aym_str_index_of\n";
+    out << "extern aym_str_char_at\n";
+    out << "extern aym_str_substr\n";
+    out << "extern aym_str_ord\n";
+    out << "extern aym_str_chr\n";
     out << "extern aym_to_string\n";
     out << "extern aym_to_number\n";
     out << "extern aym_sin\n";
@@ -514,11 +549,18 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_ceil\n";
     out << "extern aym_round\n";
     out << "extern aym_fabs\n";
+    out << "extern aym_math_abs\n";
+    out << "extern aym_math_min\n";
+    out << "extern aym_math_max\n";
+    out << "extern aym_math_gcd\n";
+    out << "extern aym_math_clamp\n";
     out << "extern aym_try_push\n";
     out << "extern aym_try_pop\n";
     out << "extern aym_try_env\n";
     out << "extern aym_try_get_exception\n";
     out << "extern aym_throw\n";
+    out << "extern aym_div_zero\n";
+    out << "extern aym_ipow\n";
     out << "extern aym_exception_new\n";
     out << "extern aym_exception_type\n";
     out << "extern aym_exception_message\n";
@@ -549,7 +591,7 @@ void CodeGenImpl::emitRuntimePrelude() {
         out << "str" << i << ": db " << toAsmBytes(strings[i]) << "\n";
     }
     for (const auto &g : globals) {
-        out << g << ": dq 0\n";
+        out << "$" << g << ": dq 0\n";
     }
 
     out << "section .text\n";
@@ -631,6 +673,7 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
     if (out.is_open()) {
         out.close();
     }
+    { void peepholeOptimizeAsmFile(const std::string &); if (modeIn != CodegenPipelineMode::LinkOnly) peepholeOptimizeAsmFile(path); }
 
     fs::path asmPath = fs::path(path);
     fs::path outputDir = asmPath.has_parent_path() ? asmPath.parent_path() : fs::current_path();

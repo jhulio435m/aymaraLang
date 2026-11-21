@@ -1,0 +1,14 @@
+// Ordenamiento por seleccion: busca el minimo del resto y lo coloca al frente.
+qallta
+yatiya t'aqa xs = [7, 3, 10, 1, 5, 2];
+kuti(yatiya jakhüwi i = 0; i < suyut(xs) - 1; i = i + 1) {
+  yatiya jakhüwi m = i;
+  kuti(yatiya jakhüwi j = i + 1; j < suyut(xs); j = j + 1) {
+    ukaxa(xs[j] < xs[m]) { m = j; }
+  }
+  yatiya jakhüwi t = xs[i];
+  xs[i] = xs[m];
+  xs[m] = t;
+}
+qillqa(xs);
+tukuya

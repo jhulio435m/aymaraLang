@@ -1,0 +1,13 @@
+// Llenado de lista con push y suma por indice (30 pasadas).
+yatiya jakhüwi n = 1000000;
+yatiya t'aqa xs = [];
+kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+  push(xs, i % 100);
+}
+yatiya jakhüwi s = 0;
+kuti (yatiya jakhüwi p = 0; p < 30; p = p + 1) {
+  kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+    s = s + xs[i];
+  }
+}
+qillqa(s);

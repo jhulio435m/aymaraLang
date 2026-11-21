@@ -1,7 +1,9 @@
 #include "parser.h"
-#include <memory>
-#include <string>
 #include <algorithm>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace aym {
@@ -11,11 +13,17 @@ namespace {
 long long parseNumberLiteral(const Token &tok) {
     const std::string &text = tok.text;
     if (text.size() > 2 && (text[0] == '0') && (text[1] == 'b' || text[1] == 'B')) {
-        long long value = 0;
-        for (size_t i = 2; i < text.size(); ++i) {
-            value = (value << 1) + (text[i] == '1' ? 1 : 0);
+        if (text.size() - 2 > 64) {
+            throw std::out_of_range("literal binario fuera de rango");
         }
-        return value;
+        unsigned long long value = 0;
+        for (size_t i = 2; i < text.size(); ++i) {
+            value = (value << 1) | (text[i] == '1' ? 1ULL : 0ULL);
+        }
+        if (value > static_cast<unsigned long long>(std::numeric_limits<long long>::max())) {
+            throw std::out_of_range("literal binario fuera de rango");
+        }
+        return static_cast<long long>(value);
     }
     return std::stoll(text, nullptr, 0);
 }
@@ -43,23 +51,59 @@ std::unique_ptr<Expr> Parser::parseTernary() {
 }
 
 std::unique_ptr<Expr> Parser::parseLogic() {
-    auto lhs = parseEquality();
+    auto lhs = parseBitOr();
     while (true) {
         if (match(TokenType::AmpAmp)) {
             Token op = tokens[pos-1];
-            auto rhs = parseEquality();
+            auto rhs = parseBitOr();
             auto node = std::make_unique<BinaryExpr>('&', std::move(lhs), std::move(rhs));
             node->setLocation(op.line, op.column);
             lhs = std::move(node);
         } else if (match(TokenType::PipePipe)) {
             Token op = tokens[pos-1];
-            auto rhs = parseEquality();
+            auto rhs = parseBitOr();
             auto node = std::make_unique<BinaryExpr>('|', std::move(lhs), std::move(rhs));
             node->setLocation(op.line, op.column);
             lhs = std::move(node);
         } else {
             break;
         }
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseBitOr() {
+    auto lhs = parseBitXor();
+    while (match(TokenType::Pipe)) {
+        Token op = tokens[pos-1];
+        auto rhs = parseBitXor();
+        auto node = std::make_unique<BinaryExpr>('O', std::move(lhs), std::move(rhs));
+        node->setLocation(op.line, op.column);
+        lhs = std::move(node);
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseBitXor() {
+    auto lhs = parseBitAnd();
+    while (match(TokenType::CaretCaret)) {
+        Token op = tokens[pos-1];
+        auto rhs = parseBitAnd();
+        auto node = std::make_unique<BinaryExpr>('X', std::move(lhs), std::move(rhs));
+        node->setLocation(op.line, op.column);
+        lhs = std::move(node);
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseBitAnd() {
+    auto lhs = parseEquality();
+    while (match(TokenType::Amp)) {
+        Token op = tokens[pos-1];
+        auto rhs = parseEquality();
+        auto node = std::make_unique<BinaryExpr>('A', std::move(lhs), std::move(rhs));
+        node->setLocation(op.line, op.column);
+        lhs = std::move(node);
     }
     return lhs;
 }
@@ -87,30 +131,52 @@ std::unique_ptr<Expr> Parser::parseEquality() {
 }
 
 std::unique_ptr<Expr> Parser::parseComparison() {
-    auto lhs = parseAdd();
+    auto lhs = parseShift();
     while (true) {
         if (match(TokenType::Less)) {
             Token op = tokens[pos-1];
-            auto rhs = parseAdd();
+            auto rhs = parseShift();
             auto node = std::make_unique<BinaryExpr>('<', std::move(lhs), std::move(rhs));
             node->setLocation(op.line, op.column);
             lhs = std::move(node);
         } else if (match(TokenType::LessEqual)) {
             Token op = tokens[pos-1];
-            auto rhs = parseAdd();
+            auto rhs = parseShift();
             auto node = std::make_unique<BinaryExpr>('l', std::move(lhs), std::move(rhs));
             node->setLocation(op.line, op.column);
             lhs = std::move(node);
         } else if (match(TokenType::Greater)) {
             Token op = tokens[pos-1];
-            auto rhs = parseAdd();
+            auto rhs = parseShift();
             auto node = std::make_unique<BinaryExpr>('>', std::move(lhs), std::move(rhs));
             node->setLocation(op.line, op.column);
             lhs = std::move(node);
         } else if (match(TokenType::GreaterEqual)) {
             Token op = tokens[pos-1];
-            auto rhs = parseAdd();
+            auto rhs = parseShift();
             auto node = std::make_unique<BinaryExpr>('g', std::move(lhs), std::move(rhs));
+            node->setLocation(op.line, op.column);
+            lhs = std::move(node);
+        } else {
+            break;
+        }
+    }
+    return lhs;
+}
+
+std::unique_ptr<Expr> Parser::parseShift() {
+    auto lhs = parseAdd();
+    while (true) {
+        if (match(TokenType::LessLess)) {
+            Token op = tokens[pos-1];
+            auto rhs = parseAdd();
+            auto node = std::make_unique<BinaryExpr>('L', std::move(lhs), std::move(rhs));
+            node->setLocation(op.line, op.column);
+            lhs = std::move(node);
+        } else if (match(TokenType::GreaterGreater)) {
+            Token op = tokens[pos-1];
+            auto rhs = parseAdd();
+            auto node = std::make_unique<BinaryExpr>('R', std::move(lhs), std::move(rhs));
             node->setLocation(op.line, op.column);
             lhs = std::move(node);
         } else {
@@ -232,6 +298,13 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         node->setLocation(tok.line, tok.column);
         return node;
     }
+    if (match(TokenType::Tilde)) {
+        Token tok = tokens[pos-1];
+        auto e = parseFactor();
+        auto node = std::make_unique<UnaryExpr>('~', std::move(e));
+        node->setLocation(tok.line, tok.column);
+        return node;
+    }
     auto node = parsePrimary();
     if (!node) return nullptr;
     while (true) {
@@ -255,7 +328,8 @@ std::unique_ptr<Expr> Parser::parseFactor() {
             Token dotTok = tokens[pos-1];
             if (peek().type != TokenType::Identifier &&
                 peek().type != TokenType::KeywordIf &&
-                peek().type != TokenType::KeywordTypeString) {
+                peek().type != TokenType::KeywordTypeString &&
+                peek().type != TokenType::KeywordStart) {
                 parseError("se esperaba nombre de miembro despues de '.'");
                 break;
             }
@@ -487,14 +561,57 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
         node->setLocation(ampTok.line, ampTok.column);
         return node;
     }
+    if (match(TokenType::KeywordFunc)) {
+        Token funcTok = tokens[pos-1];
+        std::string lambdaName = "__lambda_" + std::to_string(syntheticCounter++);
+        if (!match(TokenType::LParen)) {
+            parseError("se esperaba '(' en funcion anonima");
+            return nullptr;
+        }
+        std::vector<Param> params;
+        parseParamList(params);
+        if (!match(TokenType::RParen)) {
+            parseError("se esperaba ')' en funcion anonima");
+            return nullptr;
+        }
+        std::string returnType;
+        if (match(TokenType::Colon)) {
+            returnType = parseTypeName();
+            if (returnType.empty()) {
+                parseError("se esperaba un tipo de retorno");
+            }
+        }
+        if (!match(TokenType::LBrace)) {
+            parseError("se esperaba '{' en funcion anonima");
+            return nullptr;
+        }
+        Token bodyTok = tokens[pos-1];
+        auto body = std::make_unique<BlockStmt>();
+        body->setLocation(bodyTok.line, bodyTok.column);
+        parseStatements(body->statements, true);
+        auto fnStmt = std::make_unique<FunctionStmt>(
+            lambdaName, std::move(params), std::move(returnType), std::move(body));
+        fnStmt->setLocation(funcTok.line, funcTok.column);
+        syntheticFunctions.push_back(std::move(fnStmt));
+        auto ref = std::make_unique<FunctionRefExpr>(lambdaName);
+        ref->setLocation(funcTok.line, funcTok.column);
+        return ref;
+    }
     if (auto classExpr = parseClassPrimary()) {
         return classExpr;
     }
     if (match(TokenType::Number)) {
         Token tok = tokens[pos-1];
-        auto node = std::make_unique<NumberExpr>(parseNumberLiteral(tok));
-        node->setLocation(tok.line, tok.column);
-        return node;
+        try {
+            auto node = std::make_unique<NumberExpr>(parseNumberLiteral(tok));
+            node->setLocation(tok.line, tok.column);
+            return node;
+        } catch (const std::exception &) {
+            parseError("literal entero fuera de rango: " + tok.text);
+            auto node = std::make_unique<NumberExpr>(0);
+            node->setLocation(tok.line, tok.column);
+            return node;
+        }
     }
     if (match(TokenType::KeywordTrue)) {
         Token tok = tokens[pos-1];

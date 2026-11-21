@@ -1,0 +1,17 @@
+// Torres de Hanoi: imprime los movimientos para 3 discos y cuenta los de 10.
+qallta
+yatiya jakhüwi movs = 0;
+lurawi hanoi(jakhüwi n, aru de, aru a, aru aux, chiqa ver) {
+  ukaxa(n == 0) { kuttaya; }
+  hanoi(n - 1, de, aux, a, ver);
+  movs = movs + 1;
+  ukaxa(ver) { qillqa("disco " + aru(n) + ": " + de + " -> " + a); }
+  hanoi(n - 1, aux, a, de, ver);
+  kuttaya;
+}
+hanoi(3, "A", "C", "B", chiqa);
+qillqa(movs);
+movs = 0;
+hanoi(10, "A", "C", "B", k'ari);
+qillqa(movs);
+tukuya

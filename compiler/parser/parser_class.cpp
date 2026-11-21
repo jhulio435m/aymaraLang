@@ -85,32 +85,7 @@ std::unique_ptr<ClassStmt> Parser::parseClassBody(const std::string &name,
             if (!match(TokenType::LParen)) {
                 parseError("se esperaba '(' en metodo");
             }
-            if (peek().type != TokenType::RParen) {
-                Param param;
-                param.type = parseTypeName();
-                if (param.type.empty()) {
-                    parseError("se esperaba tipo de parametro");
-                }
-                if (peek().type == TokenType::Identifier) {
-                    param.name = get().text;
-                } else {
-                    parseError("se esperaba nombre de parametro");
-                }
-                method.params.push_back(param);
-                while (match(TokenType::Comma)) {
-                    Param next;
-                    next.type = parseTypeName();
-                    if (next.type.empty()) {
-                        parseError("se esperaba tipo de parametro");
-                    }
-                    if (peek().type == TokenType::Identifier) {
-                        next.name = get().text;
-                    } else {
-                        parseError("se esperaba nombre de parametro");
-                    }
-                    method.params.push_back(next);
-                }
-            }
+            parseParamList(method.params);
             match(TokenType::RParen);
             if (match(TokenType::Colon)) {
                 method.returnType = parseTypeName();
@@ -118,14 +93,21 @@ std::unique_ptr<ClassStmt> Parser::parseClassBody(const std::string &name,
                     parseError("se esperaba tipo de retorno");
                 }
             }
-            if (!match(TokenType::LBrace)) {
-                parseError("se esperaba '{' en metodo");
+            if (match(TokenType::Semicolon)) {
+                if (method.isStatic) {
+                    parseError("un metodo estatico no puede ser abstracto");
+                }
+                method.isAbstract = true;
+                method.body = nullptr;
+            } else if (match(TokenType::LBrace)) {
+                Token bodyTok = tokens[pos-1];
+                auto body = std::make_unique<BlockStmt>();
+                body->setLocation(bodyTok.line, bodyTok.column);
+                parseStatements(body->statements, true);
+                method.body = std::move(body);
+            } else {
+                parseError("se esperaba '{' o ';' en metodo");
             }
-            Token bodyTok = tokens[pos-1];
-            auto body = std::make_unique<BlockStmt>();
-            body->setLocation(bodyTok.line, bodyTok.column);
-            parseStatements(body->statements, true);
-            method.body = std::move(body);
             methods.push_back(std::move(method));
             continue;
         }
@@ -135,32 +117,7 @@ std::unique_ptr<ClassStmt> Parser::parseClassBody(const std::string &name,
             if (!match(TokenType::LParen)) {
                 parseError("se esperaba '(' en constructor");
             }
-            if (peek().type != TokenType::RParen) {
-                Param param;
-                param.type = parseTypeName();
-                if (param.type.empty()) {
-                    parseError("se esperaba tipo de parametro");
-                }
-                if (peek().type == TokenType::Identifier) {
-                    param.name = get().text;
-                } else {
-                    parseError("se esperaba nombre de parametro");
-                }
-                ctor.params.push_back(param);
-                while (match(TokenType::Comma)) {
-                    Param next;
-                    next.type = parseTypeName();
-                    if (next.type.empty()) {
-                        parseError("se esperaba tipo de parametro");
-                    }
-                    if (peek().type == TokenType::Identifier) {
-                        next.name = get().text;
-                    } else {
-                        parseError("se esperaba nombre de parametro");
-                    }
-                    ctor.params.push_back(next);
-                }
-            }
+            parseParamList(ctor.params);
             match(TokenType::RParen);
             if (!match(TokenType::LBrace)) {
                 parseError("se esperaba '{' en constructor");

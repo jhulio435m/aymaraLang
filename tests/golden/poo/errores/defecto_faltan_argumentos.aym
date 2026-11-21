@@ -1,0 +1,4 @@
+lurawi suma(jakhüwi a, jakhüwi b = 10): jakhüwi {
+  kuttaya a + b;
+}
+qillqa(suma());

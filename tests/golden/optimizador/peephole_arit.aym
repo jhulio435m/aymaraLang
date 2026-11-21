@@ -1,0 +1,12 @@
+lurawi f(jakhuwi a, jakhuwi b): jakhuwi { kuttaya a + b + 2; }
+lurawi g(jakhuwi a, jakhuwi b): jakhuwi { kuttaya (a - 10) * (b + 3) - 7; }
+lurawi h(jakhuwi a): jakhuwi { kuttaya a % 7 + a / 3 - 100; }
+lurawi fib(jakhuwi n): jakhuwi { kuttaya n < 2 ? n : fib(n - 1) + fib(n - 2); }
+qillqa(f(1, 2));
+qillqa(g(3, 4));
+qillqa(h(50));
+qillqa(h(0 - 50));
+qillqa(fib(20));
+qillqa(5 - 3 - 1);
+qillqa(2 * 3 + 4 * 5);
+qillqa(17 % 5 == 2 ? "par" : "impar");

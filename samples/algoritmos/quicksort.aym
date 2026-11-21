@@ -1,0 +1,25 @@
+// Quicksort recursivo (particion de Lomuto) sobre una lista global.
+qallta
+yatiya t'aqa xs = [9, 4, 7, 1, 8, 2, 6, 3, 5];
+lurawi qs(jakhüwi lo, jakhüwi hi) {
+  ukaxa(lo >= hi) { kuttaya; }
+  yatiya jakhüwi p = xs[hi];
+  yatiya jakhüwi i = lo;
+  kuti(yatiya jakhüwi j = lo; j < hi; j = j + 1) {
+    ukaxa(xs[j] < p) {
+      yatiya jakhüwi t = xs[i];
+      xs[i] = xs[j];
+      xs[j] = t;
+      i = i + 1;
+    }
+  }
+  yatiya jakhüwi u = xs[i];
+  xs[i] = xs[hi];
+  xs[hi] = u;
+  qs(lo, i - 1);
+  qs(i + 1, hi);
+  kuttaya;
+}
+qs(0, suyut(xs) - 1);
+qillqa(xs);
+tukuya

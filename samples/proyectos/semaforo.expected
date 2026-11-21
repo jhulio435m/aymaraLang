@@ -1,0 +1,10 @@
+t=0 ROJO
+t=30 VERDE
+t=55 AMARILLO
+t=60 ROJO
+t=90 VERDE
+t=115 AMARILLO
+t=120 ROJO
+tiempo total = 150
+rojo=3 verde=2 amarillo=2
+semaforo OK

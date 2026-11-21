@@ -1,0 +1,73 @@
+// Prueba integral de la biblioteca estandar (cadenas, listas, matematica, archivos y sistema)
+
+// Cadenas
+qillqa(aru_chimpu("kamisaki", 0));
+qillqa(aru_chimpu("kamisaki", 7));
+yant'aña {
+  qillqa(aru_chimpu("abc", 5));
+} katjaña("INDICE", e) {
+  qillqa("INDICE");
+}
+qillqa(jalja_aru("kamisaki", 4, 4));
+qillqa(jalja_aru("hola", -2, 2));
+qillqa(jalja_aru("hola", 10, 3));
+qillqa(jalja_aru("hola", 1, 100));
+qillqa(chimpu_jakhuwi("A"));
+qillqa(chimpu_jakhuwi(""));
+qillqa(jakhuwi_chimpu(65));
+yant'aña {
+  qillqa(jakhuwi_chimpu(300));
+} katjaña("ARG", e) {
+  qillqa("ARG");
+}
+
+// Listas
+yatiya t'aqa nums = [3, 1, 4, 1, 5];
+yatiya t'aqa strs = ["b", "c", "a"];
+qillqa(kutikipat(nums));
+qillqa(jaljat(nums, 1, 4));
+qillqa(jaljat(nums, -5, 2));
+qillqa(jaljat(nums, 3, 1));
+qillqa(thanta(nums));
+qillqa(jiska_taqa(nums));
+qillqa(jacha_taqa(nums));
+qillqa(wakicha_qhipa(nums));
+qillqa(wakicha_qhipa(strs));
+
+yatiya t'aqa vacia = [];
+yant'aña {
+  qillqa(jiska_taqa(vacia));
+} katjaña("VACIO", e) {
+  qillqa("VACIO_MIN");
+}
+yant'aña {
+  qillqa(jacha_taqa(vacia));
+} katjaña("VACIO", e) {
+  qillqa("VACIO_MAX");
+}
+
+// Matematica entera
+qillqa(jakhu_chani(-42));
+qillqa(jakhu_chani(42));
+qillqa(jakhu_jiska(10, 3));
+qillqa(jakhu_jacha(10, 3));
+qillqa(jakhu_mcd(48, 18));
+qillqa(jakhu_mcd(-24, 36));
+qillqa(jakhu_limita(5, 1, 10));
+qillqa(jakhu_limita(-3, 1, 10));
+qillqa(jakhu_limita(25, 1, 10));
+
+// Archivos y sistema
+yatiya aru ruta = "build/tmp/golden_fs_test.txt";
+qillqa(qillqana_aru(ruta, "uno\ndos\n"));
+qillqa(yapxata_aru(ruta, "tres\n"));
+qillqa(utji_arkata(ruta));
+qillqa(ullana_siqi(ruta));
+qillqa(pichha_arkata(ruta));
+qillqa(utji_arkata(ruta));
+qillqa(ullana_siqi(ruta));
+qillqa(suyu(pacha_aru("PATH")) > 0 ? 1 : 0);
+qillqa(pacha_aru("AYMARA_NO_EXISTE_ENV_TEST"));
+qillqa("ok");
+mistuna(0);
+qillqa("no debe imprimirse");

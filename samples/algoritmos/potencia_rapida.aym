@@ -1,0 +1,26 @@
+// Exponenciacion rapida (binaria) y exponenciacion modular.
+qallta
+lurawi pot(jakhüwi b, jakhüwi e): jakhüwi {
+  yatiya jakhüwi r = 1;
+  ukhakamaxa(e > 0) {
+    ukaxa(e % 2 == 1) { r = r * b; }
+    b = b * b;
+    e = e / 2;
+  }
+  kuttaya r;
+}
+lurawi potmod(jakhüwi b, jakhüwi e, jakhüwi m): jakhüwi {
+  yatiya jakhüwi r = 1;
+  b = b % m;
+  ukhakamaxa(e > 0) {
+    ukaxa(e % 2 == 1) { r = r * b % m; }
+    b = b * b % m;
+    e = e / 2;
+  }
+  kuttaya r;
+}
+qillqa(pot(2, 10));
+qillqa(pot(3, 13));
+qillqa(potmod(2, 100, 1000007));
+qillqa(potmod(7, 222, 1000));
+tukuya

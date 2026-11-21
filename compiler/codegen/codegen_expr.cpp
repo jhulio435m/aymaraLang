@@ -1,6 +1,7 @@
 #include "codegen_impl.h"
 #include "../builtins/builtins.h"
 #include <algorithm>
+#include <limits>
 
 namespace aym {
 
@@ -16,28 +17,105 @@ bool CodeGenImpl::tryEvalConstant(const Expr *expr, const std::unordered_map<std
         outIsBool = true;
         return true;
     }
+    if (auto *u = dynamic_cast<const UnaryExpr*>(expr)) {
+        long long val = 0;
+        bool valIsBool = false;
+        if (tryEvalConstant(u->getExpr(), locals, val, valIsBool)) {
+            switch (u->getOp()) {
+                case '-':
+                    outValue = static_cast<long long>(-static_cast<unsigned long long>(val));
+                    outIsBool = false;
+                    return true;
+                case '+':
+                    outValue = val;
+                    outIsBool = valIsBool;
+                    return true;
+                case '!':
+                    outValue = (val == 0) ? 1 : 0;
+                    outIsBool = true;
+                    return true;
+                case '~':
+                    outValue = static_cast<long long>(~static_cast<unsigned long long>(val));
+                    outIsBool = false;
+                    return true;
+                default:
+                    break;
+            }
+        }
+        return false;
+    }
+    if (auto *t = dynamic_cast<const TernaryExpr*>(expr)) {
+        long long condVal = 0;
+        bool condIsBool = false;
+        if (tryEvalConstant(t->getCondition(), locals, condVal, condIsBool)) {
+            const Expr *taken = (condVal != 0) ? t->getThen() : t->getElse();
+            return tryEvalConstant(taken, locals, outValue, outIsBool);
+        }
+        return false;
+    }
     if (auto *bin = dynamic_cast<const BinaryExpr*>(expr)) {
         long long lVal = 0, rVal = 0;
         bool lIsBool = false, rIsBool = false;
-        if (tryEvalConstant(bin->getLeft(), locals, lVal, lIsBool) &&
-            tryEvalConstant(bin->getRight(), locals, rVal, rIsBool)) {
+        if (!tryEvalConstant(bin->getLeft(), locals, lVal, lIsBool)) {
+            return false;
+        }
+        if (bin->getOp() == '&') {
+            if (lVal == 0) {
+                outValue = 0;
+                outIsBool = true;
+                return true;
+            }
+            if (tryEvalConstant(bin->getRight(), locals, rVal, rIsBool)) {
+                outValue = (rVal != 0) ? 1 : 0;
+                outIsBool = true;
+                return true;
+            }
+            return false;
+        }
+        if (bin->getOp() == '|') {
+            if (lVal != 0) {
+                outValue = 1;
+                outIsBool = true;
+                return true;
+            }
+            if (tryEvalConstant(bin->getRight(), locals, rVal, rIsBool)) {
+                outValue = (rVal != 0) ? 1 : 0;
+                outIsBool = true;
+                return true;
+            }
+            return false;
+        }
+        if (tryEvalConstant(bin->getRight(), locals, rVal, rIsBool)) {
             outIsBool = false;
+            const unsigned long long lu = static_cast<unsigned long long>(lVal);
+            const unsigned long long ru = static_cast<unsigned long long>(rVal);
+            const long long llMin = std::numeric_limits<long long>::min();
             switch (bin->getOp()) {
-                case '+': outValue = lVal + rVal; return true;
-                case '-': outValue = lVal - rVal; return true;
-                case '*': outValue = lVal * rVal; return true;
-                case '/': 
-                    if (rVal != 0) { outValue = lVal / rVal; return true; }
+                case '+': outValue = static_cast<long long>(lu + ru); return true;
+                case '-': outValue = static_cast<long long>(lu - ru); return true;
+                case '*': outValue = static_cast<long long>(lu * ru); return true;
+                case '/':
+                    if (rVal != 0 && !(lVal == llMin && rVal == -1)) {
+                        outValue = lVal / rVal;
+                        return true;
+                    }
                     break;
-                case '%': 
-                    if (rVal != 0) { outValue = lVal % rVal; return true; }
+                case '%':
+                    if (rVal != 0 && !(lVal == llMin && rVal == -1)) {
+                        outValue = lVal % rVal;
+                        return true;
+                    }
                     break;
                 case '^': {
-                    long long val = 1;
-                    long long base = lVal;
+                    unsigned long long val = 1;
+                    unsigned long long base = lu;
                     long long exp = rVal;
                     if (exp < 0) {
-                        val = 0;
+                        // Misma semantica que aym_ipow: 1/b^n truncado.
+                        if (lVal == 0) break; // division por cero: en ejecucion
+                        if (lVal == 1) val = 1;
+                        else if (lVal == -1) val = (exp & 1) ? static_cast<unsigned long long>(-1LL) : 1;
+                        else val = 0;
                     } else {
                         while (exp > 0) {
                             if (exp & 1) val *= base;
@@ -45,11 +123,24 @@ bool CodeGenImpl::tryEvalConstant(const Expr *expr, const std::unordered_map<std
                             exp >>= 1;
                         }
                     }
-                    outValue = val;
+                    outValue = static_cast<long long>(val);
                     return true;
                 }
-                case '&': outValue = (lVal && rVal) ? 1 : 0; outIsBool = true; return true;
-                case '|': outValue = (lVal || rVal) ? 1 : 0; outIsBool = true; return true;
+                case 'A': outValue = static_cast<long long>(lu & ru); return true;
+                case 'O': outValue = static_cast<long long>(lu | ru); return true;
+                case 'X': outValue = static_cast<long long>(lu ^ ru); return true;
+                case 'L':
+                    if (rVal >= 0 && rVal < 64) {
+                        outValue = static_cast<long long>(lu << rVal);
+                        return true;
+                    }
+                    break;
+                case 'R':
+                    if (rVal >= 0 && rVal < 64) {
+                        outValue = lVal >> rVal;
+                        return true;
+                    }
+                    break;
                 case 's': outValue = (lVal == rVal) ? 1 : 0; outIsBool = true; return true;
                 case 'd': outValue = (lVal != rVal) ? 1 : 0; outIsBool = true; return true;
                 case '<': outValue = (lVal < rVal) ? 1 : 0; outIsBool = true; return true;
@@ -78,48 +169,67 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         return;
     }
     if (auto *l = dynamic_cast<const ListExpr *>(expr)) {
-        out << "    mov " << reg1(this->windows) << ", " << l->getElements().size() << "\n";
+        std::vector<std::string> regs = paramRegs(this->windows);
+        out << "    mov " << regs[0] << ", " << l->getElements().size() << "\n";
         out << "    call aym_array_new\n";
-        out << "    mov rbx, rax\n";
+        if (l->getElements().empty()) {
+            return;
+        }
+        int spillPad = this->windows ? 40 : 8;
+        out << "    push rax\n";
+        out << "    sub rsp, " << spillPad << "\n";
         size_t idx = 0;
         for (const auto &elem : l->getElements()) {
             emitExpr(elem.get(), locals);
-            std::vector<std::string> regs = paramRegs(this->windows);
             out << "    mov " << regs[2] << ", rax\n";
             out << "    mov " << regs[1] << ", " << idx << "\n";
-            out << "    mov " << regs[0] << ", rbx\n";
+            out << "    mov " << regs[0] << ", [rsp+" << spillPad << "]\n";
             out << "    call aym_array_set\n";
             ++idx;
         }
-        out << "    mov rax, rbx\n";
+        out << "    add rsp, " << spillPad << "\n";
+        out << "    pop rax\n";
         return;
     }
     if (auto *m = dynamic_cast<const MapExpr *>(expr)) {
-        out << "    mov " << reg1(this->windows) << ", " << m->getItems().size() << "\n";
-        out << "    call aym_map_new\n";
-        out << "    mov rbx, rax\n";
         std::vector<std::string> regs = paramRegs(this->windows);
+        out << "    mov " << regs[0] << ", " << m->getItems().size() << "\n";
+        out << "    call aym_map_new\n";
+        if (m->getItems().empty()) {
+            return;
+        }
+        int spillPad = this->windows ? 40 : 8;
+        out << "    push rax\n";
+        out << "    sub rsp, " << spillPad << "\n";
         for (const auto &item : m->getItems()) {
             emitExpr(item.first.get(), locals);
-            out << "    mov r14, rax\n";
+            out << "    push rax\n";
+            out << "    sub rsp, " << spillPad << "\n";
             emitExpr(item.second.get(), locals);
-            out << "    mov r15, rax\n";
+            out << "    mov " << regs[2] << ", rax\n";
             out << "    mov " << regs[3] << ", " << (isStringExpr(item.second.get(), locals) ? 1 : 0) << "\n";
-            out << "    mov " << regs[2] << ", r15\n";
-            out << "    mov " << regs[1] << ", r14\n";
-            out << "    mov " << regs[0] << ", rbx\n";
+            out << "    add rsp, " << spillPad << "\n";
+            out << "    pop " << regs[1] << "\n";
+            out << "    mov " << regs[0] << ", [rsp+" << spillPad << "]\n";
             out << "    call aym_map_set\n";
         }
-        out << "    mov rax, rbx\n";
+        out << "    add rsp, " << spillPad << "\n";
+        out << "    pop rax\n";
         return;
     }
     if (auto *i = dynamic_cast<const IndexExpr *>(expr)) {
+        int spillPad = this->windows ? 40 : 8;
+        emitExpr(i->getBase(), locals);
+        out << "    push rax\n";
+        out << "    sub rsp, " << spillPad << "\n";
         emitExpr(i->getIndex(), locals);
         out << "    mov " << reg2(this->windows) << ", rax\n";
-        emitExpr(i->getBase(), locals);
-        out << "    mov " << reg1(this->windows) << ", rax\n";
+        out << "    add rsp, " << spillPad << "\n";
+        out << "    pop " << reg1(this->windows) << "\n";
         if (isMapExpr(i->getBase(), locals)) {
             out << "    call aym_map_get\n";
+        } else if (isStringExpr(i->getBase(), locals)) {
+            out << "    call aym_str_char_at\n";
         } else {
             out << "    call aym_array_get\n";
         }
@@ -127,7 +237,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
     }
     if (auto *m = dynamic_cast<const MemberExpr *>(expr)) {
         if (!m->getStaticField().empty()) {
-            out << "    mov rax, [rel " << m->getStaticField() << "]\n";
+            out << "    mov rax, [rel $" << m->getStaticField() << "]\n";
             return;
         }
         emitExpr(m->getBase(), locals);
@@ -151,7 +261,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         if (locals && locals->count(v->getName())) {
             out << "    mov rax, [rbp-" << locals->at(v->getName()) << "]\n";
         } else {
-            out << "    mov rax, [rel " << v->getName() << "]\n";
+            out << "    mov rax, [rel $" << v->getName() << "]\n";
         }
         return;
     }
@@ -160,7 +270,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         if (isLocal) {
             out << "    mov rax, [rbp-" << locals->at(inc->getName()) << "]\n";
         } else {
-            out << "    mov rax, [rel " << inc->getName() << "]\n";
+            out << "    mov rax, [rel $" << inc->getName() << "]\n";
         }
         if (inc->prefix()) {
             if (inc->increment()) out << "    add rax, 1\n";
@@ -168,7 +278,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             if (isLocal) {
                 out << "    mov [rbp-" << locals->at(inc->getName()) << "], rax\n";
             } else {
-                out << "    mov [rel " << inc->getName() << "], rax\n";
+                out << "    mov [rel $" << inc->getName() << "], rax\n";
             }
         } else {
             out << "    mov rbx, rax\n";
@@ -177,7 +287,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             if (isLocal) {
                 out << "    mov [rbp-" << locals->at(inc->getName()) << "], rax\n";
             } else {
-                out << "    mov [rel " << inc->getName() << "], rax\n";
+                out << "    mov [rel $" << inc->getName() << "], rax\n";
             }
             out << "    mov rax, rbx\n";
         }
@@ -268,23 +378,51 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
                 break;
             case '-': out << "    sub rax, rbx\n"; break;
             case '*': out << "    imul rax, rbx\n"; break;
-            case '/': out << "    cqo\n    idiv rbx\n"; break;
-            case '%': out << "    cqo\n    idiv rbx\n    mov rax, rdx\n"; break;
-            case '^': {
-                std::string loop = genLabel("pow");
-                std::string end = genLabel("powend");
-                out << "    mov rcx, rbx\n";
-                out << "    mov rbx, rax\n";
-                out << "    mov rax,1\n";
-                out << loop << ":\n";
-                out << "    cmp rcx,0\n";
-                out << "    je " << end << "\n";
-                out << "    imul rax, rbx\n";
-                out << "    dec rcx\n";
-                out << "    jmp " << loop << "\n";
-                out << end << ":\n";
+            case '/':
+            case '%': {
+                std::string okLbl = genLabel("div_ok");
+                out << "    test rbx, rbx\n    jnz " << okLbl << "\n";
+                out << "    call aym_div_zero\n";
+                out << okLbl << ":\n";
+                // INT_MIN / -1 desborda y 'idiv' lanza #DE (SIGFPE). Con
+                // divisor -1 el resultado es -a (con envoltura) y el resto 0.
+                std::string normLbl = genLabel("div_norm");
+                std::string endLbl = genLabel("div_end");
+                out << "    cmp rbx, -1\n    jne " << normLbl << "\n";
+                if (b->getOp() == '%') out << "    xor eax, eax\n";
+                else out << "    neg rax\n";
+                out << "    jmp " << endLbl << "\n";
+                out << normLbl << ":\n";
+                out << "    cqo\n    idiv rbx\n";
+                if (b->getOp() == '%') out << "    mov rax, rdx\n";
+                out << endLbl << ":\n";
                 break;
             }
+            case '^': {
+                // Potencia entera por cuadrados en el runtime: O(log n) y con
+                // semantica definida para exponentes negativos.
+                out << "    mov " << reg1(this->windows) << ", rax\n";
+                out << "    mov " << reg2(this->windows) << ", rbx\n";
+                out << "    call aym_ipow\n";
+                break;
+            }
+            case 'A':
+                out << "    and rax, rbx\n";
+                break;
+            case 'O':
+                out << "    or rax, rbx\n";
+                break;
+            case 'X':
+                out << "    xor rax, rbx\n";
+                break;
+            case 'L':
+                out << "    mov rcx, rbx\n";
+                out << "    shl rax, cl\n";
+                break;
+            case 'R':
+                out << "    mov rcx, rbx\n";
+                out << "    sar rax, cl\n";
+                break;
             case '<':
                 out << "    cmp rax, rbx\n    setl al\n    movzx rax,al\n";
                 break;
@@ -332,6 +470,9 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
             case '-':
                 out << "    neg rax\n";
                 break;
+            case '~':
+                out << "    not rax\n";
+                break;
             default:
                 break; // '+' is a no-op
         }
@@ -339,6 +480,12 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
     }
 
     if (auto *t = dynamic_cast<const TernaryExpr *>(expr)) {
+        long long condVal = 0;
+        bool condIsBool = false;
+        if (tryEvalConstant(t->getCondition(), locals, condVal, condIsBool)) {
+            emitExpr((condVal != 0) ? t->getThen() : t->getElse(), locals);
+            return true;
+        }
         std::string elseLbl = genLabel("tern_else");
         std::string endLbl = genLabel("tern_end");
         emitExpr(t->getCondition(), locals);
@@ -355,27 +502,44 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
     return false;
 }
 
-void CodeGenImpl::emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
-                               const std::unordered_map<std::string,int> *locals,
-                               size_t regStart) {
+size_t CodeGenImpl::emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
+                                 const std::unordered_map<std::string,int> *locals,
+                                 size_t regStart) {
     std::vector<std::string> regs = paramRegs(this->windows);
     if (regStart >= regs.size() || args.empty()) {
-        return;
+        return 0;
     }
 
     size_t count = std::min(args.size(), regs.size() - regStart);
+    size_t extra = args.size() - count;
     // On Win64, nested calls can use the 32-byte shadow space at [rsp..rsp+31].
     // Keep staged arguments above that area to avoid them being clobbered.
     size_t shadow = this->windows ? 32 : 0;
-    size_t bytes = count * 8;
+
+    // Argumentos que no caben en registros: van en la pila del llamador, en el
+    // orden del ABI ([rsp+shadow] = primero extra al momento del 'call').
+    // Se reserva un area alineada a 16 que queda viva hasta despues del call.
+    size_t stackArea = 0;
+    if (extra > 0) {
+        stackArea = (shadow + extra * 8 + 15) & ~static_cast<size_t>(15);
+        out << "    sub rsp, " << stackArea << "\n";
+    }
+
+    size_t total = count + extra;
+    size_t bytes = total * 8;
     size_t frame = (shadow + bytes + 15) & ~static_cast<size_t>(15);
     if (frame > 0) {
         out << "    sub rsp, " << frame << "\n";
     }
 
-    for (size_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < total; ++i) {
         emitExpr(args[i].get(), locals);
         out << "    mov [rsp+" << (shadow + i * 8) << "], rax\n";
+    }
+
+    for (size_t j = 0; j < extra; ++j) {
+        out << "    mov rax, [rsp+" << (shadow + (count + j) * 8) << "]\n";
+        out << "    mov [rsp+" << (frame + shadow + j * 8) << "], rax\n";
     }
 
     for (size_t i = 0; i < count; ++i) {
@@ -385,6 +549,7 @@ void CodeGenImpl::emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
     if (frame > 0) {
         out << "    add rsp, " << frame << "\n";
     }
+    return stackArea;
 }
 
 } // namespace aym

@@ -1,0 +1,62 @@
+// Algoritmos clasicos de texto: palindromos, inversion de palabras, conteo y reemplazo.
+qallta
+lurawi quitar_espacios(aru s): aru {
+  kuttaya mayachta(jaljta(s, " "), "");
+}
+
+lurawi es_palindromo(aru texto): chiqa {
+  yatiya aru norm = quitar_espacios(jiskanchaya(texto));
+  kuttaya norm == kutikipa(norm);
+}
+
+lurawi invertir_palabras(aru frase): aru {
+  yatiya t'aqa partes = jaljta(ch'usa(frase), " ");
+  yatiya t'aqa rev = [""];
+  apsu(rev);
+  kuti(yatiya jakhüwi i = suyut(partes) - 1; i >= 0; i = i - 1) {
+    yatiya aru p = partes[i];
+    ukaxa(suyu(p) > 0) {
+      push(rev, p);
+    }
+  }
+  kuttaya mayachta(rev, " ");
+}
+
+lurawi contar_subcadena(aru texto, aru sub): jakhüwi {
+  ukaxa(suyu(sub) == 0 || suyu(texto) == 0) { kuttaya 0; }
+  yatiya t'aqa partes = jaljta(texto, sub);
+  kuttaya suyut(partes) - 1;
+}
+
+lurawi contar_palabra(aru texto, aru palabra): jakhüwi {
+  yatiya t'aqa partes = jaljta(jiskanchaya(ch'usa(texto)), " ");
+  yatiya aru obj = jiskanchaya(palabra);
+  yatiya jakhüwi c = 0;
+  kuti(yatiya jakhüwi i = 0; i < suyut(partes); i = i + 1) {
+    yatiya aru p = partes[i];
+    ukaxa(p == obj) { c = c + 1; }
+  }
+  kuttaya c;
+}
+
+yatiya chiqa pal1 = es_palindromo("Reconocer");
+yatiya chiqa pal2 = es_palindromo("Anita lava la tina");
+yatiya chiqa pal3 = es_palindromo("Aymara");
+qillqa("pal1=" + aru(pal1) + " pal2=" + aru(pal2) + " pal3=" + aru(pal3));
+
+qillqa(invertir_palabras("  uno dos   tres cuatro  "));
+qillqa(jachanchaya("kamisaki") + " | " + jiskanchaya("AYMARA") + " | " + kutikipa("alpaqa"));
+
+yatiya aru verso = "El sol brilla bajo el sol del altiplano y el sol calienta";
+qillqa("sub_abra=" + aru(contar_subcadena("abracadabra", "abra")));
+qillqa("sub_xyz=" + aru(contar_subcadena("abracadabra", "xyz")));
+qillqa("pal_sol=" + aru(contar_palabra(verso, "SOL")));
+qillqa("idx_altiplano=" + aru(jikxata(verso, "altiplano")));
+
+yatiya chiqa pref = qalltati(verso, "El sol");
+yatiya chiqa suf = tukuyati(verso, "calienta");
+yatiya chiqa cont = utji(verso, "brilla");
+qillqa("pref=" + aru(pref) + " suf=" + aru(suf) + " cont=" + aru(cont));
+
+qillqa(sikta("el sol ilumina al sol", "sol", "inti"));
+tukuya

@@ -8,13 +8,16 @@ namespace aym {
 void CodeGenImpl::registerClass(const ClassStmt *cls) {
     classes[cls->getName()] = cls;
     for (const auto &method : cls->getMethods()) {
+        if (method.isAbstract || !method.body) {
+            continue;
+        }
         FunctionInfo info;
         info.name = method.isStatic
             ? classStaticMethodName(cls->getName(), method.name)
             : classMethodName(cls->getName(), method.name);
         info.params = method.params;
         if (!method.isStatic) {
-            info.params.insert(info.params.begin(), Param{"kasta:" + cls->getName(), "Aka"});
+            info.params.insert(info.params.begin(), Param{"kasta:" + cls->getName(), "Aka", nullptr});
         }
         info.body = method.body.get();
         assignTrySlots(method.body.get());
@@ -29,7 +32,7 @@ void CodeGenImpl::registerClass(const ClassStmt *cls) {
         FunctionInfo info;
         info.name = classCtorName(cls->getName(), ctor.params.size());
         info.params = ctor.params;
-        info.params.insert(info.params.begin(), Param{"kasta:" + cls->getName(), "Aka"});
+        info.params.insert(info.params.begin(), Param{"kasta:" + cls->getName(), "Aka", nullptr});
         info.body = ctor.body.get();
         assignTrySlots(ctor.body.get());
         for (const auto &param : info.params) {
@@ -90,7 +93,7 @@ bool CodeGenImpl::emitNewExpr(const NewExpr *expr,
             }
         }
         for (const auto &method : c->getMethods()) {
-            if (!method.isStatic) {
+            if (!method.isStatic && !method.isAbstract) {
                 methods[method.name] = classMethodName(c->getName(), method.name);
             }
         }
@@ -101,16 +104,18 @@ bool CodeGenImpl::emitNewExpr(const NewExpr *expr,
         if (baseIt != classes.end()) {
             const ClassStmt *base = baseIt->second;
             for (const auto &method : base->getMethods()) {
-                if (!method.isStatic) {
+                if (!method.isStatic && !method.isAbstract) {
                     superMethods[method.name] = classMethodName(base->getName(), method.name);
                 }
             }
         }
     }
     size_t mapSize = fields.size() + methods.size() + superMethods.size();
+    int spillPad = this->windows ? 40 : 8;
     out << "    mov " << reg1(this->windows) << ", " << mapSize << "\n";
     out << "    call aym_map_new\n";
-    out << "    mov r12, rax\n";
+    out << "    push rax\n";
+    out << "    sub rsp, " << spillPad << "\n";
     std::vector<std::string> regs = paramRegs(this->windows);
     for (const auto *field : fields) {
         if (field->init) {
@@ -118,13 +123,12 @@ bool CodeGenImpl::emitNewExpr(const NewExpr *expr,
         } else {
             out << "    mov rax, 0\n";
         }
-        out << "    mov r14, rax\n";
+        out << "    mov " << regs[2] << ", rax\n";
         size_t keyIdx = findString(field->name);
         out << "    lea " << regs[1] << ", [rel str" << keyIdx << "]\n";
-        out << "    mov " << regs[2] << ", r14\n";
         out << "    mov " << regs[3] << ", "
             << (field->init && isStringExpr(field->init.get(), locals) ? 1 : 0) << "\n";
-        out << "    mov " << regs[0] << ", r12\n";
+        out << "    mov " << regs[0] << ", [rsp+" << spillPad << "]\n";
         out << "    call aym_map_set\n";
     }
     for (const auto &method : methods) {
@@ -132,7 +136,7 @@ bool CodeGenImpl::emitNewExpr(const NewExpr *expr,
         out << "    lea " << regs[1] << ", [rel str" << keyIdx << "]\n";
         out << "    lea " << regs[2] << ", [rel " << method.second << "]\n";
         out << "    mov " << regs[3] << ", 0\n";
-        out << "    mov " << regs[0] << ", r12\n";
+        out << "    mov " << regs[0] << ", [rsp+" << spillPad << "]\n";
         out << "    call aym_map_set\n";
     }
     for (const auto &method : superMethods) {
@@ -141,26 +145,36 @@ bool CodeGenImpl::emitNewExpr(const NewExpr *expr,
         out << "    lea " << regs[1] << ", [rel str" << keyIdx << "]\n";
         out << "    lea " << regs[2] << ", [rel " << method.second << "]\n";
         out << "    mov " << regs[3] << ", 0\n";
-        out << "    mov " << regs[0] << ", r12\n";
+        out << "    mov " << regs[0] << ", [rsp+" << spillPad << "]\n";
         out << "    call aym_map_set\n";
     }
-    bool hasCtor = false;
-    for (const auto &ctor : cls->getConstructors()) {
-        if (ctor.params.size() == expr->getArgs().size()) {
-            hasCtor = true;
+    // Sin constructores propios se usa el del ancestro mas cercano que los
+    // defina (lineage va de la raiz a la clase instanciada).
+    const ClassStmt *ctorOwner = nullptr;
+    for (auto lit = lineage.rbegin(); lit != lineage.rend(); ++lit) {
+        if (!(*lit)->getConstructors().empty()) {
+            ctorOwner = *lit;
             break;
         }
     }
-    if (hasCtor) {
-        std::string ctorName = classCtorName(cls->getName(), expr->getArgs().size());
-        for (size_t i = 0; i < expr->getArgs().size() && i + 1 < regs.size(); ++i) {
-            emitExpr(expr->getArgs()[i].get(), locals);
-            out << "    mov " << regs[i + 1] << ", rax\n";
+    bool hasCtor = false;
+    if (ctorOwner) {
+        for (const auto &ctor : ctorOwner->getConstructors()) {
+            if (ctor.params.size() == expr->getArgs().size()) {
+                hasCtor = true;
+                break;
+            }
         }
-        out << "    mov " << regs[0] << ", r12\n";
-        out << "    call " << ctorName << "\n";
     }
-    out << "    mov rax, r12\n";
+    if (hasCtor) {
+        std::string ctorName = classCtorName(ctorOwner->getName(), expr->getArgs().size());
+        size_t stackArgs = emitCallArgs(expr->getArgs(), locals, 1);
+        out << "    mov " << regs[0] << ", [rsp+" << (stackArgs + spillPad) << "]\n";
+        out << "    call " << ctorName << "\n";
+        if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
+    }
+    out << "    add rsp, " << spillPad << "\n";
+    out << "    pop rax\n";
     return true;
 }
 
@@ -169,36 +183,73 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
     if (!expr) {
         return false;
     }
-    if (!expr->getStaticCallee().empty()) {
-        emitCallArgs(expr->getArgs(), locals, 0);
+    if (dynamic_cast<const SuperExpr*>(expr->getBase())) {
+        // jilaaka.m(...) / jilaaka.qallta(...): llamada directa (resuelta en el
+        // analisis semantico) con 'aka' como receptor.
+        if (expr->getStaticCallee().empty()) {
+            out << "    mov rax, 0\n";
+            return true;
+        }
+        std::vector<std::string> sregs = paramRegs(this->windows);
+        size_t stackArgs = emitCallArgs(expr->getArgs(), locals, 1);
+        if (locals && locals->count("Aka")) {
+            out << "    mov " << sregs[0] << ", [rbp-" << locals->at("Aka") << "]\n";
+        } else {
+            out << "    mov " << sregs[0] << ", [rel $Aka]\n";
+        }
         out << "    call " << expr->getStaticCallee() << "\n";
+        if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
         return true;
     }
+    if (!expr->getStaticCallee().empty()) {
+        size_t stackArgs = emitCallArgs(expr->getArgs(), locals, 0);
+        out << "    call " << expr->getStaticCallee() << "\n";
+        if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
+        return true;
+    }
+    int spillPad = this->windows ? 40 : 8;
     std::vector<std::string> regs = paramRegs(this->windows);
     if (dynamic_cast<const SuperExpr*>(expr->getBase())) {
         if (locals && locals->count("Aka")) {
-            out << "    mov rbx, [rbp-" << locals->at("Aka") << "]\n";
+            out << "    mov rax, [rbp-" << locals->at("Aka") << "]\n";
         } else {
-            out << "    mov rbx, [rel Aka]\n";
+            out << "    mov rax, [rel $Aka]\n";
         }
+        out << "    push rax\n";
+        out << "    sub rsp, " << spillPad << "\n";
         std::string superKey = classSuperKey(expr->getMember());
         size_t keyIdx = findString(superKey);
         out << "    lea " << regs[1] << ", [rel str" << keyIdx << "]\n";
-        out << "    mov " << regs[0] << ", rbx\n";
+        out << "    mov " << regs[0] << ", rax\n";
         out << "    call aym_map_get\n";
     } else {
         emitExpr(expr->getBase(), locals);
-        out << "    mov rbx, rax\n";
+        out << "    push rax\n";
+        out << "    sub rsp, " << spillPad << "\n";
         size_t keyIdx = findString(expr->getMember());
         out << "    lea " << regs[1] << ", [rel str" << keyIdx << "]\n";
-        out << "    mov " << regs[0] << ", rbx\n";
+        out << "    mov " << regs[0] << ", rax\n";
         out << "    call aym_map_get\n";
     }
-    out << "    mov r14, rax\n";
-    out << "    mov r12, rbx\n";
-    emitCallArgs(expr->getArgs(), locals, 1);
-    out << "    mov " << regs[0] << ", r12\n";
-    out << "    call r14\n";
+    out << "    push rax\n";
+    out << "    sub rsp, " << spillPad << "\n";
+    size_t stackArgs = emitCallArgs(expr->getArgs(), locals, 1);
+    if (stackArgs == 0) {
+        out << "    add rsp, " << spillPad << "\n";
+        out << "    pop r11\n";
+        out << "    add rsp, " << spillPad << "\n";
+        out << "    pop " << regs[0] << "\n";
+        out << "    call r11\n";
+    } else {
+        // Los argumentos extra ocupan el tope de la pila: el metodo y el
+        // receptor resguardados quedan por encima y se leen sin desapilar.
+        // (8 + spillPad) es multiplo de 16, asi que rsp sigue alineado.
+        size_t slot = 8 + static_cast<size_t>(spillPad);
+        out << "    mov r11, [rsp+" << (stackArgs + spillPad) << "]\n";
+        out << "    mov " << regs[0] << ", [rsp+" << (stackArgs + slot + spillPad) << "]\n";
+        out << "    call r11\n";
+        out << "    add rsp, " << (stackArgs + 2 * slot) << "\n";
+    }
     return true;
 }
 
@@ -207,7 +258,7 @@ bool CodeGenImpl::emitSuperExpr(const SuperExpr *,
     if (locals && locals->count("Aka")) {
         out << "    mov rax, [rbp-" << locals->at("Aka") << "]\n";
     } else {
-        out << "    mov rax, [rel Aka]\n";
+        out << "    mov rax, [rel $Aka]\n";
     }
     return true;
 }

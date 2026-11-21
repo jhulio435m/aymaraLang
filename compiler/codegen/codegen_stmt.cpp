@@ -52,7 +52,7 @@ bool CodeGenImpl::emitStmtBasic(const Stmt *stmt,
         if (locals && locals->count(a->getName())) {
             out << "    mov [rbp-" << locals->at(a->getName()) << "], rax\n";
         } else {
-            out << "    mov [rel " << a->getName() << "], rax\n";
+            out << "    mov [rel $" << a->getName() << "], rax\n";
         }
         return true;
     }
@@ -64,27 +64,28 @@ bool CodeGenImpl::emitStmtBasic(const Stmt *stmt,
                 if (auto *indexLit = dynamic_cast<const StringExpr*>(a->getIndex())) {
                     emitExpr(a->getValue(), locals);
                     std::string staticName = classStaticFieldName(baseVar->getName(), indexLit->getValue());
-                    out << "    mov [rel " << staticName << "], rax\n";
+                    out << "    mov [rel $" << staticName << "], rax\n";
                     return true;
                 }
             }
         }
-        emitExpr(a->getValue(), locals);
-        out << "    mov r14, rax\n";
-        emitExpr(a->getIndex(), locals);
-        out << "    mov r15, rax\n";
+        int spillPad = this->windows ? 40 : 8;
         emitExpr(a->getBase(), locals);
-        out << "    mov rbx, rax\n";
+        out << "    push rax\n";
+        out << "    sub rsp, " << spillPad << "\n";
+        emitExpr(a->getIndex(), locals);
+        out << "    push rax\n";
+        out << "    sub rsp, " << spillPad << "\n";
+        emitExpr(a->getValue(), locals);
+        out << "    mov " << regs[2] << ", rax\n";
+        out << "    add rsp, " << spillPad << "\n";
+        out << "    pop " << regs[1] << "\n";
+        out << "    add rsp, " << spillPad << "\n";
+        out << "    pop " << regs[0] << "\n";
         if (isMapExpr(a->getBase(), locals)) {
             out << "    mov " << regs[3] << ", " << (isStringExpr(a->getValue(), locals) ? 1 : 0) << "\n";
-            out << "    mov " << regs[2] << ", r14\n";
-            out << "    mov " << regs[1] << ", r15\n";
-            out << "    mov " << regs[0] << ", rbx\n";
             out << "    call aym_map_set\n";
         } else {
-            out << "    mov " << regs[2] << ", r14\n";
-            out << "    mov " << regs[1] << ", r15\n";
-            out << "    mov " << regs[0] << ", rbx\n";
             out << "    call aym_array_set\n";
         }
         return true;
@@ -100,7 +101,7 @@ bool CodeGenImpl::emitStmtBasic(const Stmt *stmt,
             if (locals && locals->count(v->getName())) {
                 out << "    mov [rbp-" << locals->at(v->getName()) << "], rax\n";
             } else {
-                out << "    mov [rel " << v->getName() << "], rax\n";
+                out << "    mov [rel $" << v->getName() << "], rax\n";
             }
         }
         return true;
@@ -117,6 +118,16 @@ bool CodeGenImpl::emitStmtControl(const Stmt *stmt,
                                  const std::unordered_map<std::string,int> *locals,
                                  const std::string &endLabel) {
     if (auto *i = dynamic_cast<const IfStmt *>(stmt)) {
+        long long condVal = 0;
+        bool condBool = false;
+        if (tryEvalConstant(i->getCondition(), locals, condVal, condBool)) {
+            if (condVal != 0) {
+                emitStmt(i->getThen(), locals, endLabel);
+            } else if (i->getElse()) {
+                emitStmt(i->getElse(), locals, endLabel);
+            }
+            return true;
+        }
         std::string elseLbl = genLabel("else");
         std::string end = genLabel("endif");
         emitExpr(i->getCondition(), locals);
@@ -358,7 +369,7 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
         if (locals && locals->count(t->getHandlerSlot())) {
             out << "    mov [rbp-" << locals->at(t->getHandlerSlot()) << "], rax\n";
         } else {
-            out << "    mov [rel " << t->getHandlerSlot() << "], rax\n";
+            out << "    mov [rel $" << t->getHandlerSlot() << "], rax\n";
         }
         out << "    mov " << reg1(this->windows) << ", rax\n";
         out << "    call aym_try_env\n";
@@ -374,7 +385,7 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
         if (locals && locals->count(t->getHandlerSlot())) {
             out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getHandlerSlot()) << "]\n";
         } else {
-            out << "    mov " << reg1(this->windows) << ", [rel " << t->getHandlerSlot() << "]\n";
+            out << "    mov " << reg1(this->windows) << ", [rel $" << t->getHandlerSlot() << "]\n";
         }
         out << "    call aym_try_pop\n";
         if (t->getFinallyBlock()) out << "    call " << finallyLabel << "\n";
@@ -384,18 +395,18 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
         if (locals && locals->count(t->getHandlerSlot())) {
             out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getHandlerSlot()) << "]\n";
         } else {
-            out << "    mov " << reg1(this->windows) << ", [rel " << t->getHandlerSlot() << "]\n";
+            out << "    mov " << reg1(this->windows) << ", [rel $" << t->getHandlerSlot() << "]\n";
         }
         out << "    call aym_try_get_exception\n";
         if (locals && locals->count(t->getExceptionSlot())) {
             out << "    mov [rbp-" << locals->at(t->getExceptionSlot()) << "], rax\n";
         } else {
-            out << "    mov [rel " << t->getExceptionSlot() << "], rax\n";
+            out << "    mov [rel $" << t->getExceptionSlot() << "], rax\n";
         }
         if (locals && locals->count(t->getHandlerSlot())) {
             out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getHandlerSlot()) << "]\n";
         } else {
-            out << "    mov " << reg1(this->windows) << ", [rel " << t->getHandlerSlot() << "]\n";
+            out << "    mov " << reg1(this->windows) << ", [rel $" << t->getHandlerSlot() << "]\n";
         }
         out << "    call aym_try_pop\n";
 
@@ -404,7 +415,7 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
             if (locals && locals->count(t->getExceptionSlot())) {
                 out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
             } else {
-                out << "    mov " << reg1(this->windows) << ", [rel " << t->getExceptionSlot() << "]\n";
+                out << "    mov " << reg1(this->windows) << ", [rel $" << t->getExceptionSlot() << "]\n";
             }
             out << "    call aym_throw\n";
         } else {
@@ -416,7 +427,7 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
                     if (locals && locals->count(t->getExceptionSlot())) {
                         out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
                     } else {
-                        out << "    mov " << reg1(this->windows) << ", [rel " << t->getExceptionSlot() << "]\n";
+                        out << "    mov " << reg1(this->windows) << ", [rel $" << t->getExceptionSlot() << "]\n";
                     }
                     out << "    call aym_exception_type\n";
                     out << "    mov " << reg2(this->windows) << ", rax\n";
@@ -430,16 +441,16 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
                     if (locals && locals->count(t->getExceptionSlot())) {
                         out << "    mov rax, [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
                     } else {
-                        out << "    mov rax, [rel " << t->getExceptionSlot() << "]\n";
+                        out << "    mov rax, [rel $" << t->getExceptionSlot() << "]\n";
                     }
                     out << "    mov [rbp-" << locals->at(c.varName) << "], rax\n";
                 } else {
                     if (locals && locals->count(t->getExceptionSlot())) {
                         out << "    mov rax, [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
                     } else {
-                        out << "    mov rax, [rel " << t->getExceptionSlot() << "]\n";
+                        out << "    mov rax, [rel $" << t->getExceptionSlot() << "]\n";
                     }
-                    out << "    mov [rel " << c.varName << "], rax\n";
+                    out << "    mov [rel $" << c.varName << "], rax\n";
                 }
                 if (t->getFinallyBlock()) finallyStack.push_back(finallyLabel);
                 if (t->getFinallyBlock()) {
@@ -459,7 +470,7 @@ bool CodeGenImpl::emitStmtException(const Stmt *stmt,
             if (locals && locals->count(t->getExceptionSlot())) {
                 out << "    mov " << reg1(this->windows) << ", [rbp-" << locals->at(t->getExceptionSlot()) << "]\n";
             } else {
-                out << "    mov " << reg1(this->windows) << ", [rel " << t->getExceptionSlot() << "]\n";
+                out << "    mov " << reg1(this->windows) << ", [rel $" << t->getExceptionSlot() << "]\n";
             }
             out << "    call aym_throw\n";
         }

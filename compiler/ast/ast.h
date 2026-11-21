@@ -110,6 +110,7 @@ class Stmt : public Node {
 struct Param {
     std::string type;
     std::string name;
+    std::shared_ptr<Expr> defaultValue;
 };
 
 class NumberExpr : public Expr {
@@ -213,6 +214,7 @@ public:
         : name(std::move(callee)), arguments(std::move(args)) {}
     const std::string &getName() const { return name; }
     const std::vector<std::unique_ptr<Expr>> &getArgs() const { return arguments; }
+    void appendArg(std::unique_ptr<Expr> arg) { arguments.push_back(std::move(arg)); }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::string name;
@@ -230,6 +232,7 @@ public:
     Expr *getBase() const { return base.get(); }
     const std::string &getMember() const { return member; }
     const std::vector<std::unique_ptr<Expr>> &getArgs() const { return arguments; }
+    void appendArg(std::unique_ptr<Expr> arg) { arguments.push_back(std::move(arg)); }
     void setStaticCallee(const std::string &name) { staticCallee = name; }
     const std::string &getStaticCallee() const { return staticCallee; }
     void setResolvedType(const std::string &type) { resolvedType = type; }
@@ -449,11 +452,14 @@ public:
     const std::string &getType() const { return type; }
     const std::string &getName() const { return name; }
     void setName(std::string n) { name = std::move(n); }
+    bool isConstDecl() const { return isConst; }
+    void setConst(bool c) { isConst = c; }
     Expr *getInit() const { return init.get(); }
     void accept(ASTVisitor &v) override { v.visit(*this); }
 private:
     std::string type;
     std::string name;
+    bool isConst = false;
     std::unique_ptr<Expr> init;
 };
 
@@ -494,6 +500,7 @@ public:
         std::unique_ptr<BlockStmt> body;
         bool isStatic = false;
         bool isPrivate = false;
+        bool isAbstract = false;
     };
 
     struct CtorDecl {

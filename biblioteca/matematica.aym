@@ -1,0 +1,92 @@
+// biblioteca/matematica.aym - utilidades numericas (enteros)
+// m_abs(x)            valor absoluto
+// m_min(a,b) m_max(a,b)  minimo / maximo
+// m_limita(x,lo,hi)   clamp de x al rango [lo,hi]
+// m_mcd(a,b) m_mcm(a,b)  maximo comun divisor / minimo comun multiplo
+// m_factorial(n)      n!
+// m_es_primo(n)       chiqa si n es primo
+// m_potencia(b,e)     potencia rapida (cuadrados sucesivos), e >= 0
+// m_raiz_entera(n)    piso de la raiz cuadrada
+// m_fibonacci(n)      n-esimo Fibonacci (F0=0, F1=1)
+// m_suma_lista(xs)    suma de una lista
+// m_promedio(xs)      promedio (division del lenguaje) ; 0 si vacia
+lurawi m_abs(jakhüwi x): jakhüwi {
+  ukaxa (x < 0) { kuttaya 0 - x; }
+  kuttaya x;
+}
+lurawi m_min(jakhüwi a, jakhüwi b): jakhüwi {
+  ukaxa (a < b) { kuttaya a; }
+  kuttaya b;
+}
+lurawi m_max(jakhüwi a, jakhüwi b): jakhüwi {
+  ukaxa (a > b) { kuttaya a; }
+  kuttaya b;
+}
+lurawi m_limita(jakhüwi x, jakhüwi lo, jakhüwi hi): jakhüwi {
+  ukaxa (x < lo) { kuttaya lo; }
+  ukaxa (x > hi) { kuttaya hi; }
+  kuttaya x;
+}
+lurawi m_mcd(jakhüwi a, jakhüwi b): jakhüwi {
+  yatiya jakhüwi x = m_abs(a);
+  yatiya jakhüwi y = m_abs(b);
+  ukhakamaxa (y != 0) {
+    yatiya jakhüwi t = x % y;
+    x = y;
+    y = t;
+  }
+  kuttaya x;
+}
+lurawi m_mcm(jakhüwi a, jakhüwi b): jakhüwi {
+  ukaxa (a == 0 || b == 0) { kuttaya 0; }
+  yatiya jakhüwi g = m_mcd(a, b);
+  yatiya jakhüwi q = (m_abs(a) - m_abs(a) % g) / g;
+  kuttaya q * m_abs(b);
+}
+lurawi m_factorial(jakhüwi n): jakhüwi {
+  yatiya jakhüwi r = 1;
+  kuti (yatiya jakhüwi i = 2; i <= n; i = i + 1) { r = r * i; }
+  kuttaya r;
+}
+lurawi m_es_primo(jakhüwi n): chiqa {
+  ukaxa (n < 2) { kuttaya k'ari; }
+  kuti (yatiya jakhüwi i = 2; i * i <= n; i = i + 1) {
+    ukaxa (n % i == 0) { kuttaya k'ari; }
+  }
+  kuttaya chiqa;
+}
+lurawi m_potencia(jakhüwi b, jakhüwi e): jakhüwi {
+  yatiya jakhüwi r = 1;
+  yatiya jakhüwi base = b;
+  yatiya jakhüwi ex = e;
+  ukhakamaxa (ex > 0) {
+    ukaxa (ex % 2 == 1) { r = r * base; ex = ex - 1; }
+    base = base * base;
+    ex = ex / 2;
+  }
+  kuttaya r;
+}
+lurawi m_raiz_entera(jakhüwi n): jakhüwi {
+  yatiya jakhüwi r = 0;
+  ukhakamaxa ((r + 1) * (r + 1) <= n) { r = r + 1; }
+  kuttaya r;
+}
+lurawi m_fibonacci(jakhüwi n): jakhüwi {
+  yatiya jakhüwi a = 0;
+  yatiya jakhüwi b = 1;
+  kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+    yatiya jakhüwi t = a + b;
+    a = b;
+    b = t;
+  }
+  kuttaya a;
+}
+lurawi m_suma_lista(t'aqa xs): jakhüwi {
+  yatiya jakhüwi s = 0;
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) { s = s + xs[i]; }
+  kuttaya s;
+}
+lurawi m_promedio(t'aqa xs): jakhüwi {
+  ukaxa (suyut(xs) == 0) { kuttaya 0; }
+  kuttaya m_suma_lista(xs) / suyut(xs);
+}

@@ -1,0 +1,16 @@
+// Multiplicacion de matrices 2x2 guardadas como listas planas (fila * 2 + columna).
+qallta
+yatiya t'aqa a = [1, 2, 3, 4];
+yatiya t'aqa b = [5, 6, 7, 8];
+yatiya t'aqa c = [0, 0, 0, 0];
+kuti(yatiya jakhüwi i = 0; i < 2; i = i + 1) {
+  kuti(yatiya jakhüwi j = 0; j < 2; j = j + 1) {
+    yatiya jakhüwi s = 0;
+    kuti(yatiya jakhüwi k = 0; k < 2; k = k + 1) {
+      s = s + a[i * 2 + k] * b[k * 2 + j];
+    }
+    c[i * 2 + j] = s;
+  }
+}
+qillqa(c);
+tukuya

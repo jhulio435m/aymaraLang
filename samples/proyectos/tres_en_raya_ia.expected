@@ -1,0 +1,38 @@
+=== Partida 1: Minimax vs Heuristica fuerte ===
+eval X -> 0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 | elige=0 (val=0)
+O (heuristico) juega casilla 4
+eval X -> 1:0 2:0 3:0 5:0 6:0 7:0 8:0 | elige=1 (val=0)
+O (heuristico) juega casilla 2
+eval X -> 3:-9 5:-9 6:0 7:-9 8:-9 | elige=6 (val=0)
+O (heuristico) juega casilla 3
+eval X -> 5:0 7:-9 8:-9 | elige=5 (val=0)
+O (heuristico) juega casilla 8
+eval X -> 7:0 | elige=7 (val=0)
+tablero final:
+X X O
+O O X
+X X O
+resultado: EMPATE
+=== Partida 2: Minimax vs Heuristica bordes ===
+eval X -> 0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 | elige=0 (val=0)
+O (heuristico) juega casilla 1
+X O .
+. . .
+. . .
+eval X -> 2:0 3:6 4:6 5:0 6:6 7:0 8:0 | elige=3 (val=6)
+O (heuristico) juega casilla 6
+X O .
+X . .
+O . .
+eval X -> 2:-7 4:8 5:-7 7:0 8:-7 | elige=4 (val=8)
+O (heuristico) juega casilla 5
+X O .
+X X O
+O . .
+eval X -> 2:0 7:0 8:10 | elige=8 (val=10)
+tablero final:
+X O .
+X X O
+O . X
+resultado: GANA X
+tres_en_raya_ia OK

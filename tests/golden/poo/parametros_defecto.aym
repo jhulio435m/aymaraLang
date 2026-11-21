@@ -1,0 +1,18 @@
+lurawi suma(jakhüwi a, jakhüwi b = 10): jakhüwi {
+  kuttaya a + b;
+}
+
+lurawi saludo(aru nombre = "mundo", aru signo = "!"): aru {
+  kuttaya "hola " + nombre + signo;
+}
+
+qillqa(suma(1));
+qillqa(suma(1, 2));
+qillqa(saludo());
+qillqa(saludo("Juan"));
+qillqa(saludo("Juan", "?"));
+qillqa(antes(5));
+
+lurawi antes(jakhüwi x, jakhüwi y = 3): jakhüwi {
+  kuttaya x * y;
+}

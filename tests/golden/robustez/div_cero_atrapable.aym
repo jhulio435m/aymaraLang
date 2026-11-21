@@ -1,0 +1,15 @@
+// Regresion: division/modulo entero por cero lanza ARITMETICA (antes SIGFPE).
+yatiya jakhüwi z = 0;
+qillqa(7 / 2);
+qillqa(7 % 3);
+yant'aña {
+  qillqa(10 / z);
+} katjaña("ARITMETICA", e) {
+  qillqa("div", e.suti, e.aru);
+}
+yant'aña {
+  qillqa(10 % z);
+} katjaña("ARITMETICA", e) {
+  qillqa("mod", e.suti);
+}
+qillqa("fin");

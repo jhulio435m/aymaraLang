@@ -66,9 +66,39 @@ intptr_t aym_try_env(intptr_t handler) {
 
 void aym_throw(intptr_t exception) {
     if (!current_handler) {
-        fprintf(stderr, "Excepcion no manejada\n");
+        AymException *exc = (AymException *)exception;
+        fflush(stdout);
+        fprintf(stderr, "Excepcion no manejada [%s]: %s\n",
+                (exc && exc->type && exc->type[0]) ? exc->type : "Error",
+                (exc && exc->message) ? exc->message : "");
+        fflush(stderr);
         exit(1);
     }
     current_handler->exception = (AymException*)exception;
     longjmp(current_handler->env, 1);
+}
+
+void aym_div_zero(void) {
+    fflush(stdout);
+    aym_throw(aym_exception_new("ARITMETICA", "division entera por cero"));
+}
+
+/* Potencia entera base^exp por cuadrados (envoltura en 64 bits).
+ * Exponente negativo: 1/base^n truncado (1 -> 1, -1 -> +-1, resto -> 0);
+ * 0 elevado a negativo es division por cero. */
+long long aym_ipow(long long base, long long exp) {
+    if (exp < 0) {
+        if (base == 0) aym_div_zero();
+        if (base == 1) return 1;
+        if (base == -1) return (exp & 1) ? -1 : 1;
+        return 0;
+    }
+    unsigned long long result = 1;
+    unsigned long long b = (unsigned long long)base;
+    while (exp > 0) {
+        if (exp & 1) result *= b;
+        b *= b;
+        exp >>= 1;
+    }
+    return (long long)result;
 }

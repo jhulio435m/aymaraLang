@@ -1,0 +1,56 @@
+wiñaya jakhüwi MASK = 0b1100;
+yatiya wiñaya jakhüwi SHIFT = 2;
+
+qillqa(MASK & 0b1010);
+qillqa(MASK | 0b0011);
+qillqa(MASK ^^ 0b1010);
+qillqa(3 << SHIFT);
+qillqa(24 >> SHIFT);
+qillqa(~0);
+qillqa(1 + 2 << 1);
+qillqa(8 | 4 & 0);
+qillqa(1 | 2 ^^ 3);
+qillqa(1 << 2 == 4);
+
+lurawi probarSombra(): jakhüwi {
+  yatiya jakhüwi MASK = 99;
+  MASK += 1;
+  kuttaya MASK;
+}
+qillqa(probarSombra());
+qillqa(MASK);
+
+yatiya jakhüwi dw = 10;
+luraña {
+  qillqa(dw);
+  dw += 1;
+} ukhakamaxa (dw < 10);
+
+yatiya jakhüwi sum = 0;
+yatiya jakhüwi k = 1;
+luraña {
+  ukaxa (k == 2) {
+    k += 1;
+    sarantaña;
+  }
+  sum += k;
+  k += 1;
+} ukhakamaxa (k <= 4);
+qillqa(sum);
+
+yatiya t'aqa<jakhüwi> nums = [10, 20, 30];
+nums[1] += 5;
+nums[2] -= 10;
+qillqa(nums);
+
+yatiya mapa<jakhüwi> pts = {"a": 4, "b": 9};
+pts["a"] *= 3;
+pts.b /= 3;
+qillqa(pts["a"]);
+qillqa(pts.b);
+
+yatiya jakhüwi tot = 0;
+kuti (yatiya jakhüwi i = 0; i < 10; i += 3) {
+  tot += i;
+}
+qillqa(tot);

@@ -1,0 +1,2 @@
+siqicha N { A = -1, B, C = 2 * 3, D, E = 1 << 4, F }
+qillqa(N.A); qillqa(N.B); qillqa(N.C); qillqa(N.D); qillqa(N.E); qillqa(N.F);

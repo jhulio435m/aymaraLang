@@ -1,0 +1,13 @@
+2 + 3 * 4 => (+ 2 (* 3 4)) = 14
+(2 + 3) * (4 - 1) => (* (+ 2 3) (- 4 1)) = 15
+2 ^ 3 ^ 2 => (^ 2 (^ 3 2)) = 512
+-2 ^ 2 + (-3) ^ 2 => (+ (- (^ 2 2)) (^ (- 3) 2)) = 5
+100 / (5 + 5) * 3 - 7 => (- (* (/ 100 (+ 5 5)) 3) 7) = 23
+((1+2)*(3+4))^2 - 400 => (- (^ (* (+ 1 2) (+ 3 4)) 2) 400) = 41
+error DIVCERO: division por cero
+error SINTAXIS: falta parentesis de cierre
+error SINTAXIS: token inesperado o parentesis sin abrir
+error LEXER: token invalido: foo
+error SINTAXIS: expresion vacia
+error EXP: exponente negativo
+calculadora_ast OK

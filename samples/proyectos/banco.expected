@@ -1,0 +1,8 @@
+corriente Ana saldo=700 mov=1
+ahorro Luis saldo=2300 mov=1
+error SALDO: saldo insuficiente de Ana
+error MONTO: monto invalido
+corriente Ana saldo=700 mov=1
+ahorro Luis saldo=2530 mov=1
+errores=2
+banco OK

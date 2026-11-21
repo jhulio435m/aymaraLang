@@ -1,0 +1,18 @@
+// Busqueda binaria en una lista ordenada; devuelve el indice o -1.
+qallta
+yatiya t'aqa xs = [1, 3, 5, 7, 9, 11, 13];
+lurawi busca(jakhüwi v): jakhüwi {
+  yatiya jakhüwi lo = 0;
+  yatiya jakhüwi hi = suyut(xs) - 1;
+  ukhakamaxa(lo <= hi) {
+    yatiya jakhüwi m = (lo + hi) / 2;
+    ukaxa(xs[m] == v) { kuttaya m; }
+    ukaxa(xs[m] < v) { lo = m + 1; } maysatxa { hi = m - 1; }
+  }
+  kuttaya 0 - 1;
+}
+qillqa(busca(7));
+qillqa(busca(1));
+qillqa(busca(13));
+qillqa(busca(4));
+tukuya

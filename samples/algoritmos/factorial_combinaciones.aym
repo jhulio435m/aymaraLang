@@ -1,0 +1,19 @@
+// Factorial recursivo y combinaciones C(n, k) con la formula multiplicativa.
+qallta
+lurawi fact(jakhüwi n): jakhüwi {
+  ukaxa(n <= 1) { kuttaya 1; }
+  kuttaya n * fact(n - 1);
+}
+lurawi comb(jakhüwi n, jakhüwi k): jakhüwi {
+  yatiya jakhüwi r = 1;
+  kuti(yatiya jakhüwi i = 1; i <= k; i = i + 1) {
+    r = r * (n - k + i) / i;
+  }
+  kuttaya r;
+}
+qillqa(fact(5));
+qillqa(fact(12));
+qillqa(comb(5, 2));
+qillqa(comb(10, 5));
+qillqa(comb(20, 10));
+tukuya

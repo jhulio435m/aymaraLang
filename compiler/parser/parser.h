@@ -23,6 +23,7 @@ private:
     size_t pos = 0;
     std::unordered_map<std::string, int> dummy; // reserved for future use
     size_t syntheticCounter = 0;
+    std::vector<std::unique_ptr<Stmt>> syntheticFunctions;
     bool hadError = false;
     DiagnosticEngine *diagnostics = nullptr;
 
@@ -40,12 +41,15 @@ private:
     std::unique_ptr<Stmt> parseMatchStatement(const Token &matchTok);
     std::unique_ptr<Stmt> parseThrowStatement(const Token &throwTok);
     std::unique_ptr<Stmt> parseTryStatement(const Token &tryTok);
-    std::unique_ptr<Stmt> parseVarDeclStatement(const Token &declTok);
+    std::unique_ptr<Stmt> parseVarDeclStatement(const Token &declTok, bool initialConst = false);
     std::unique_ptr<Stmt> parsePrintStatement(const Token &printTok);
     std::unique_ptr<Stmt> parseIfStatement(const Token &ifTok);
     std::unique_ptr<Stmt> parseWhileStatement(const Token &whileTok);
+    std::unique_ptr<Stmt> parseDoWhileStatement(const Token &doTok);
     std::unique_ptr<Stmt> parseForStatement(const Token &forTok);
+    void parseParamList(std::vector<Param> &params);
     std::unique_ptr<Stmt> parseFunctionStatement(const Token &funcTok);
+    std::unique_ptr<Stmt> parseAssignmentOrExprStatement(bool consumeSemicolon);
     std::unique_ptr<Stmt> parseExpressionOrAssignmentStatement();
     std::unique_ptr<Stmt> parseClassStatement();
     std::unique_ptr<ClassStmt> parseClassBody(const std::string &name, const std::string &baseName, const Token &startTok);
@@ -55,8 +59,12 @@ private:
     std::string parseTypeName();
     std::unique_ptr<Expr> parseTernary();
     std::unique_ptr<Expr> parseLogic();
+    std::unique_ptr<Expr> parseBitOr();
+    std::unique_ptr<Expr> parseBitXor();
+    std::unique_ptr<Expr> parseBitAnd();
     std::unique_ptr<Expr> parseEquality();
     std::unique_ptr<Expr> parseComparison();
+    std::unique_ptr<Expr> parseShift();
     std::unique_ptr<Expr> parseAdd();
     std::unique_ptr<Expr> parseTerm();
     std::unique_ptr<Expr> parsePower();

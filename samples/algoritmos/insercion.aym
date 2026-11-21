@@ -1,0 +1,14 @@
+// Ordenamiento por insercion: inserta cada elemento en su lugar dentro del prefijo ordenado.
+qallta
+yatiya t'aqa xs = [8, 4, 6, 1, 9, 2];
+kuti(yatiya jakhüwi i = 1; i < suyut(xs); i = i + 1) {
+  yatiya jakhüwi v = xs[i];
+  yatiya jakhüwi j = i - 1;
+  ukhakamaxa(j >= 0 && xs[j] > v) {
+    xs[j + 1] = xs[j];
+    j = j - 1;
+  }
+  xs[j + 1] = v;
+}
+qillqa(xs);
+tukuya

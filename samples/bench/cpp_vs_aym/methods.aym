@@ -1,0 +1,18 @@
+// Llamadas a metodos de objeto.
+kasta Contador {
+  yatiya jakhüwi n;
+
+  qallta() { aka.n = 0; }
+
+  lurawi suma(jakhüwi x) {
+    aka.n = (aka.n + x) % 1000003;
+    kuttaya;
+  }
+
+  lurawi ver(): jakhüwi { kuttaya aka.n; }
+}
+yatiya Contador c = machaqa Contador();
+kuti (yatiya jakhüwi i = 0; i < 2000000; i = i + 1) {
+  c.suma(i);
+}
+qillqa(c.ver());

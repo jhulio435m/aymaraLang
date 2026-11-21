@@ -1,0 +1,16 @@
+// Un bloque suelto '{ ... }' es una sentencia con ambito propio (antes se
+// parseaba como mapa) y una funcion que no ejecuta 'kuttaya' devuelve 0.
+yatiya jakhüwi x = 1;
+{
+  yatiya jakhüwi y = 3;
+  qillqa(x + y);
+}
+{
+  yatiya jakhüwi y = 4;
+  qillqa(y);
+}
+lurawi sinret(jakhüwi n): jakhüwi {
+  ukaxa (n > 0) { kuttaya 1; }
+}
+qillqa(sinret(5));
+qillqa(sinret(-1));

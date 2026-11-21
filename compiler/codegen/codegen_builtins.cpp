@@ -18,8 +18,9 @@ void CodeGenImpl::emitCallExpr(const CallExpr *c,
     }
 
     // user function call
-    emitCallArgs(c->getArgs(), locals, 0);
+    size_t stackArgs = emitCallArgs(c->getArgs(), locals, 0);
     out << "    call " << c->getName() << "\n";
+    if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
 }
 
 bool CodeGenImpl::emitBuiltinIoCall(const CallExpr *c,
@@ -166,6 +167,26 @@ bool CodeGenImpl::emitBuiltinStringCall(const CallExpr *c,
         return true;
     }
 
+    {
+        const char *strFn = nullptr;
+        if (nameLower == BUILTIN_JACHANCHAYA) strFn = "aym_str_upper";
+        else if (nameLower == BUILTIN_JISKANCHAYA) strFn = "aym_str_lower";
+        else if (nameLower == BUILTIN_KUTIKIPA) strFn = "aym_str_reverse";
+        else if (nameLower == BUILTIN_KUTI_ARU) strFn = "aym_str_repeat";
+        else if (nameLower == BUILTIN_QALLTATI) strFn = "aym_str_starts_with";
+        else if (nameLower == BUILTIN_TUKUYATI) strFn = "aym_str_ends_with";
+        else if (nameLower == BUILTIN_JIKXATA) strFn = "aym_str_index_of";
+        else if (nameLower == BUILTIN_ARU_CHIMPU) strFn = "aym_str_char_at";
+        else if (nameLower == BUILTIN_JALJA_ARU) strFn = "aym_str_substr";
+        else if (nameLower == BUILTIN_CHIMPU_JAKHUWI) strFn = "aym_str_ord";
+        else if (nameLower == BUILTIN_JAKHUWI_CHIMPU) strFn = "aym_str_chr";
+        if (strFn) {
+            emitCallArgs(c->getArgs(), locals, 0);
+            out << "    call " << strFn << "\n";
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -173,9 +194,16 @@ bool CodeGenImpl::emitBuiltinCollectionCall(const CallExpr *c,
                                             const std::unordered_map<std::string,int> *locals,
                                             const std::string &nameLower) {
     if (nameLower == BUILTIN_LARGO || nameLower == BUILTIN_SUYUT) {
-        emitExpr(c->getArgs()[0].get(), locals);
+        const Expr *arg = c->getArgs()[0].get();
+        emitExpr(arg, locals);
         out << "    mov " << reg1(this->windows) << ", rax\n";
-        out << "    call aym_array_length\n";
+        if (isStringExpr(arg, locals)) {
+            out << "    call strlen\n";
+        } else if (isMapExpr(arg, locals)) {
+            out << "    call aym_map_size\n";
+        } else {
+            out << "    call aym_array_length\n";
+        }
         return true;
     }
 
@@ -261,26 +289,43 @@ bool CodeGenImpl::emitBuiltinCollectionCall(const CallExpr *c,
         return true;
     }
 
-    if (nameLower == BUILTIN_WAKICHA) {
-        emitExpr(c->getArgs()[0].get(), locals);
-        out << "    mov " << reg1(this->windows) << ", rax\n";
-        if (listElementType(c->getArgs()[0].get(), locals) == "aru") {
-            out << "    call aym_array_sort_str\n";
-        } else {
-            out << "    call aym_array_sort_int\n";
+    {
+        const char *arrFn = nullptr;
+        if (nameLower == BUILTIN_KUTIKIPAT) arrFn = "aym_array_reverse";
+        else if (nameLower == BUILTIN_JALJAT) arrFn = "aym_array_slice";
+        else if (nameLower == BUILTIN_THANTA) arrFn = "aym_array_sum";
+        else if (nameLower == BUILTIN_JISKA_TAQA) arrFn = "aym_array_min";
+        else if (nameLower == BUILTIN_JACHA_TAQA) arrFn = "aym_array_max";
+        if (arrFn) {
+            emitCallArgs(c->getArgs(), locals, 0);
+            out << "    call " << arrFn << "\n";
+            return true;
         }
-        return true;
     }
 
-    if (nameLower == BUILTIN_SAPAKI) {
-        emitExpr(c->getArgs()[0].get(), locals);
-        out << "    mov " << reg1(this->windows) << ", rax\n";
-        if (listElementType(c->getArgs()[0].get(), locals) == "aru") {
-            out << "    call aym_array_unique_str\n";
-        } else {
-            out << "    call aym_array_unique_int\n";
+    {
+        const char *intFn = nullptr;
+        const char *strFn = nullptr;
+        if (nameLower == BUILTIN_WAKICHA) {
+            intFn = "aym_array_sort_int";
+            strFn = "aym_array_sort_str";
+        } else if (nameLower == BUILTIN_WAKICHA_QHIPA) {
+            intFn = "aym_array_sort_desc_int";
+            strFn = "aym_array_sort_desc_str";
+        } else if (nameLower == BUILTIN_SAPAKI) {
+            intFn = "aym_array_unique_int";
+            strFn = "aym_array_unique_str";
         }
-        return true;
+        if (intFn) {
+            emitExpr(c->getArgs()[0].get(), locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            if (listElementType(c->getArgs()[0].get(), locals) == "aru") {
+                out << "    call " << strFn << "\n";
+            } else {
+                out << "    call " << intFn << "\n";
+            }
+            return true;
+        }
     }
 
     return false;
@@ -377,6 +422,19 @@ bool CodeGenImpl::emitBuiltinMathCall(const CallExpr *c,
         out << "    mov " << reg1(this->windows) << ", rax\n";
         out << "    call aym_fabs\n";
         return true;
+    }
+    {
+        const char *intMathFn = nullptr;
+        if (nameLower == BUILTIN_JAKHU_CHANI) intMathFn = "aym_math_abs";
+        else if (nameLower == BUILTIN_JAKHU_JISKA) intMathFn = "aym_math_min";
+        else if (nameLower == BUILTIN_JAKHU_JACHA) intMathFn = "aym_math_max";
+        else if (nameLower == BUILTIN_JAKHU_MCD) intMathFn = "aym_math_gcd";
+        else if (nameLower == BUILTIN_JAKHU_LIMITA) intMathFn = "aym_math_clamp";
+        if (intMathFn) {
+            emitCallArgs(c->getArgs(), locals, 0);
+            out << "    call " << intMathFn << "\n";
+            return true;
+        }
     }
     return false;
 }
@@ -485,8 +543,10 @@ bool CodeGenImpl::emitBuiltinSystemCall(const CallExpr *c,
             out << "    call aym_gfx_rect4\n";
             out << "    add rsp, 64\n";
         } else {
-            emitCallArgs(c->getArgs(), locals, 0);
+            // 7 argumentos: el ultimo (b) va en la pila segun SysV.
+            size_t stackArgs = emitCallArgs(c->getArgs(), locals, 0);
             out << "    call aym_gfx_rect\n";
+            if (stackArgs) out << "    add rsp, " << stackArgs << "\n";
         }
         return true;
     }
@@ -560,6 +620,22 @@ bool CodeGenImpl::emitBuiltinSystemCall(const CallExpr *c,
         return true;
     }
 
+    if (nameLower == BUILTIN_PACHA_ARU) {
+        emitCallArgs(c->getArgs(), locals, 0);
+        out << "    call aym_env_get\n";
+        return true;
+    }
+
+    if (nameLower == BUILTIN_MISTUNA) {
+        if (c->getArgs().empty()) {
+            out << "    mov " << reg1(this->windows) << ", 0\n";
+        } else {
+            emitCallArgs(c->getArgs(), locals, 0);
+        }
+        out << "    call aym_exit\n";
+        return true;
+    }
+
     return false;
 }
 
@@ -590,23 +666,16 @@ bool CodeGenImpl::emitBuiltinFunctionalCall(const CallExpr *c,
 bool CodeGenImpl::emitBuiltinFsCall(const CallExpr *c,
                                     const std::unordered_map<std::string,int> *locals,
                                     const std::string &nameLower) {
-    if (nameLower == BUILTIN_ULLANA_ARU) {
-        emitExpr(c->getArgs()[0].get(), locals);
-        out << "    mov " << reg1(this->windows) << ", rax\n";
-        out << "    call aym_fs_read_text\n";
-        return true;
-    }
-
-    if (nameLower == BUILTIN_QILLQANA_ARU) {
+    const char *fsFn = nullptr;
+    if (nameLower == BUILTIN_ULLANA_ARU) fsFn = "aym_fs_read_text";
+    else if (nameLower == BUILTIN_QILLQANA_ARU) fsFn = "aym_fs_write_text";
+    else if (nameLower == BUILTIN_UTJI_ARKATA) fsFn = "aym_fs_exists";
+    else if (nameLower == BUILTIN_YAPXATA_ARU) fsFn = "aym_fs_append_text";
+    else if (nameLower == BUILTIN_ULLANA_SIQI) fsFn = "aym_fs_read_lines";
+    else if (nameLower == BUILTIN_PICHHA_ARKATA) fsFn = "aym_fs_delete";
+    if (fsFn) {
         emitCallArgs(c->getArgs(), locals, 0);
-        out << "    call aym_fs_write_text\n";
-        return true;
-    }
-
-    if (nameLower == BUILTIN_UTJI_ARKATA) {
-        emitExpr(c->getArgs()[0].get(), locals);
-        out << "    mov " << reg1(this->windows) << ", rax\n";
-        out << "    call aym_fs_exists\n";
+        out << "    call " << fsFn << "\n";
         return true;
     }
 

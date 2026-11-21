@@ -1,0 +1,9 @@
+// Regresion: largo() sobre cadenas (aru), listas (t'aqa) y mapas (mapa).
+yatiya aru s = "aymara";
+qillqa(largo(s));
+qillqa(largo(""));
+qillqa(largo("hola" + "!!"));
+yatiya t'aqa xs = [1, 2, 3, 4];
+qillqa(largo(xs));
+yatiya mapa m = {"a": 1, "b": 2};
+qillqa(largo(m));

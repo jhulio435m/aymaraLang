@@ -1,0 +1,228 @@
+// Proyecto: calculadora_ast
+// Tokenizador, analizador sintactico descendente recursivo (AST polimorfico)
+// y evaluador de expresiones aritmeticas enteras (+, -, *, /, ^, ()).
+qallta
+siqicha Tok { NUM, MAS, MENOS, POR, DIV, POT, LPAR, RPAR, FIN }
+
+lurawi pot_entera(jakhüwi base, jakhüwi exp): jakhüwi {
+  ukaxa(exp < 0) { pantja("EXP", "exponente negativo"); }
+  yatiya jakhüwi r = 1;
+  kuti(yatiya jakhüwi i = 0; i < exp; i++) { r = r * base; }
+  kuttaya r;
+}
+
+kasta Nodo {
+  lurawi evaluar(): jakhüwi { kuttaya 0; }
+  lurawi mostrar(): aru { kuttaya ""; }
+}
+
+kasta NumNodo jila Nodo {
+  yatiya jakhüwi valor;
+  qallta(jakhüwi v) { aka.valor = v; }
+  lurawi evaluar(): jakhüwi { kuttaya aka.valor; }
+  lurawi mostrar(): aru { kuttaya aru(aka.valor); }
+}
+
+kasta UnNodo jila Nodo {
+  yatiya Nodo hijo;
+  qallta(Nodo h) { aka.hijo = h; }
+  lurawi evaluar(): jakhüwi {
+    yatiya Nodo h = aka.hijo;
+    yatiya jakhüwi v = h.evaluar();
+    kuttaya -v;
+  }
+  lurawi mostrar(): aru {
+    yatiya Nodo h = aka.hijo;
+    yatiya aru s = h.mostrar();
+    kuttaya "(- " + s + ")";
+  }
+}
+
+kasta BinNodo jila Nodo {
+  yatiya jakhüwi op;
+  yatiya Nodo izq;
+  yatiya Nodo der;
+  qallta(jakhüwi o, Nodo i, Nodo d) { aka.op = o; aka.izq = i; aka.der = d; }
+
+  lurawi evaluar(): jakhüwi {
+    yatiya Nodo i = aka.izq;
+    yatiya Nodo d = aka.der;
+    yatiya jakhüwi a = i.evaluar();
+    yatiya jakhüwi b = d.evaluar();
+    khiti(aka.op) {
+      kuna Tok.MAS: { kuttaya a + b; }
+      kuna Tok.MENOS: { kuttaya a - b; }
+      kuna Tok.POR: { kuttaya a * b; }
+      kuna Tok.DIV: {
+        ukaxa(b == 0) { pantja("DIVCERO", "division por cero"); }
+        kuttaya a / b;
+      }
+      yaqha: { kuttaya pot_entera(a, b); }
+    }
+    kuttaya 0;
+  }
+
+  lurawi simbolo(): aru {
+    khiti(aka.op) {
+      kuna Tok.MAS: { kuttaya "+"; }
+      kuna Tok.MENOS: { kuttaya "-"; }
+      kuna Tok.POR: { kuttaya "*"; }
+      kuna Tok.DIV: { kuttaya "/"; }
+      yaqha: { kuttaya "^"; }
+    }
+    kuttaya "^";
+  }
+
+  lurawi mostrar(): aru {
+    yatiya Nodo i = aka.izq;
+    yatiya Nodo d = aka.der;
+    yatiya aru sop = aka.simbolo();
+    yatiya aru si = i.mostrar();
+    yatiya aru sd = d.mostrar();
+    kuttaya "(" + sop + " " + si + " " + sd + ")";
+  }
+}
+
+lurawi tokenizar(aru fuente, t'aqa tipos, t'aqa vals) {
+  yatiya t'aqa syms = ["(", ")", "+", "-", "*", "/", "^"];
+  yatiya mapa op_tok = {
+    "+": Tok.MAS, "-": Tok.MENOS, "*": Tok.POR, "/": Tok.DIV,
+    "^": Tok.POT, "(": Tok.LPAR, ")": Tok.RPAR
+  };
+  yatiya aru s = fuente;
+  kuti(yatiya jakhüwi k = 0; k < suyut(syms); k++) {
+    yatiya aru sym = syms[k];
+    s = mayachta(jaljta(s, sym), " " + sym + " ");
+  }
+  yatiya t'aqa piezas = jaljta(ch'usa(s), " ");
+  kuti(yatiya jakhüwi i = 0; i < suyut(piezas); i++) {
+    yatiya aru p = piezas[i];
+    ukaxa(suyu(p) == 0) { sarantana; }
+    ukaxa(utjisuti(op_tok, p)) {
+      push(tipos, op_tok[p]);
+      push(vals, 0);
+    } maysatxa {
+      yatiya jakhüwi num = 0;
+      yant'aña { num = jakhüwi(p); }
+      katjaña("CONVERSION", e) { pantja("LEXER", "token invalido: " + p); }
+      push(tipos, Tok.NUM);
+      push(vals, num);
+    }
+  }
+  push(tipos, Tok.FIN);
+  push(vals, 0);
+  kuttaya;
+}
+
+kasta Parser {
+  yatiya t'aqa tipos;
+  yatiya t'aqa vals;
+  yatiya jakhüwi pos;
+  qallta(t'aqa ts, t'aqa vs) { aka.tipos = ts; aka.vals = vs; aka.pos = 0; }
+  lurawi actual(): jakhüwi { yatiya t'aqa ts = aka.tipos; kuttaya ts[aka.pos]; }
+  lurawi valor_actual(): jakhüwi { yatiya t'aqa vs = aka.vals; kuttaya vs[aka.pos]; }
+
+  lurawi parse(): Nodo {
+    ukaxa(aka.actual() == Tok.FIN) { pantja("SINTAXIS", "expresion vacia"); }
+    yatiya Nodo ast = aka.parse_suma();
+    ukaxa(aka.actual() != Tok.FIN) { pantja("SINTAXIS", "token inesperado o parentesis sin abrir"); }
+    kuttaya ast;
+  }
+
+  lurawi parse_suma(): Nodo {
+    yatiya Nodo izq = aka.parse_prod();
+    ukhakamaxa(aka.actual() == Tok.MAS || aka.actual() == Tok.MENOS) {
+      yatiya jakhüwi op = aka.actual();
+      aka.pos = aka.pos + 1;
+      yatiya Nodo der = aka.parse_prod();
+      izq = machaqa BinNodo(op, izq, der);
+    }
+    kuttaya izq;
+  }
+
+  lurawi parse_prod(): Nodo {
+    yatiya Nodo izq = aka.parse_unario();
+    ukhakamaxa(aka.actual() == Tok.POR || aka.actual() == Tok.DIV) {
+      yatiya jakhüwi op = aka.actual();
+      aka.pos = aka.pos + 1;
+      yatiya Nodo der = aka.parse_unario();
+      izq = machaqa BinNodo(op, izq, der);
+    }
+    kuttaya izq;
+  }
+
+  lurawi parse_unario(): Nodo {
+    ukaxa(aka.actual() == Tok.MENOS) {
+      aka.pos = aka.pos + 1;
+      yatiya Nodo h = aka.parse_unario();
+      kuttaya machaqa UnNodo(h);
+    }
+    kuttaya aka.parse_pot();
+  }
+
+  lurawi parse_pot(): Nodo {
+    yatiya Nodo base = aka.parse_atom();
+    ukaxa(aka.actual() == Tok.POT) {
+      aka.pos = aka.pos + 1;
+      yatiya Nodo exp = aka.parse_unario();
+      kuttaya machaqa BinNodo(Tok.POT, base, exp);
+    }
+    kuttaya base;
+  }
+
+  lurawi parse_atom(): Nodo {
+    yatiya jakhüwi t = aka.actual();
+    ukaxa(t == Tok.NUM) {
+      yatiya jakhüwi v = aka.valor_actual();
+      aka.pos = aka.pos + 1;
+      kuttaya machaqa NumNodo(v);
+    }
+    ukaxa(t == Tok.LPAR) {
+      aka.pos = aka.pos + 1;
+      yatiya Nodo inner = aka.parse_suma();
+      ukaxa(aka.actual() != Tok.RPAR) { pantja("SINTAXIS", "falta parentesis de cierre"); }
+      aka.pos = aka.pos + 1;
+      kuttaya inner;
+    }
+    pantja("SINTAXIS", "se esperaba numero o '('");
+    kuttaya machaqa NumNodo(0);
+  }
+}
+
+lurawi evaluar_expr(aru fuente): jakhüwi {
+  yatiya t'aqa tipos = [];
+  yatiya t'aqa vals = [];
+  tokenizar(fuente, tipos, vals);
+  yatiya Parser p = machaqa Parser(tipos, vals);
+  yatiya Nodo ast = p.parse();
+  yatiya jakhüwi res = ast.evaluar();
+  yatiya aru rep = ast.mostrar();
+  qillqa(fuente + " => " + rep + " = " + aru(res));
+  kuttaya res;
+}
+
+yatiya t'aqa pruebas = [
+  "2 + 3 * 4", "(2 + 3) * (4 - 1)", "2 ^ 3 ^ 2",
+  "-2 ^ 2 + (-3) ^ 2", "100 / (5 + 5) * 3 - 7", "((1+2)*(3+4))^2 - 400"
+];
+yatiya t'aqa esperados = [14, 15, 512, 5, 23, 41];
+kuti(yatiya jakhüwi i = 0; i < suyut(pruebas); i++) {
+  yatiya aru expr = pruebas[i];
+  yatiya jakhüwi val = evaluar_expr(expr);
+  afirma(val == esperados[i], "expr " + aru(i));
+}
+
+yatiya t'aqa invalidas = ["10 / (3 - 3)", "(2 + 3 * 4", "2 + 3)", "3 + foo", "", "2 ^ -1"];
+yatiya jakhüwi errores = 0;
+kuti(yatiya jakhüwi i = 0; i < suyut(invalidas); i++) {
+  yatiya aru bad = invalidas[i];
+  yant'aña { evaluar_expr(bad); }
+  katjaña("DIVCERO", e) { errores = errores + 1; qillqa("error " + e.suti + ": " + e.aru); }
+  katjaña("SINTAXIS", e) { errores = errores + 1; qillqa("error " + e.suti + ": " + e.aru); }
+  katjaña("LEXER", e) { errores = errores + 1; qillqa("error " + e.suti + ": " + e.aru); }
+  katjaña("EXP", e) { errores = errores + 1; qillqa("error " + e.suti + ": " + e.aru); }
+}
+
+afirma(errores == 6, "errores esperados");
+qillqa("calculadora_ast OK");
+tukuya

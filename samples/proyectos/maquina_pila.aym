@@ -1,0 +1,89 @@
+// Proyecto: maquina_pila
+// Maquina virtual de pila: el programa es una lista de opcodes (enum)
+// con sus argumentos; se ejecuta con khiti y maneja errores con pantja.
+qallta
+siqicha Op {
+  PUSH,
+  ADD,
+  SUB,
+  MUL,
+  DIV,
+  PRINT,
+  HALT
+}
+
+lurawi sacar(t'aqa pila): jakhüwi {
+  ukaxa(suyut(pila) == 0) {
+    pantja("PILA", "pila vacia");
+  }
+  kuttaya apsu(pila);
+}
+
+lurawi ejecutar(t'aqa ops, t'aqa args): jakhüwi {
+  yatiya t'aqa pila = [];
+  yatiya jakhüwi ultimo = 0;
+  yatiya chiqa activo = chiqa;
+  kuti(yatiya jakhüwi pc = 0; pc < suyut(ops) && activo; pc++) {
+    yatiya jakhüwi op = ops[pc];
+    khiti(op) {
+      kuna Op.PUSH: {
+        push(pila, args[pc]);
+      }
+      kuna Op.ADD: {
+        yatiya jakhüwi b = sacar(pila);
+        yatiya jakhüwi a = sacar(pila);
+        push(pila, a + b);
+      }
+      kuna Op.SUB: {
+        yatiya jakhüwi b = sacar(pila);
+        yatiya jakhüwi a = sacar(pila);
+        push(pila, a - b);
+      }
+      kuna Op.MUL: {
+        yatiya jakhüwi b = sacar(pila);
+        yatiya jakhüwi a = sacar(pila);
+        push(pila, a * b);
+      }
+      kuna Op.DIV: {
+        yatiya jakhüwi b = sacar(pila);
+        yatiya jakhüwi a = sacar(pila);
+        ukaxa(b == 0) {
+          pantja("DIVCERO", "division por cero");
+        }
+        push(pila, a / b);
+      }
+      kuna Op.PRINT: {
+        ultimo = sacar(pila);
+        qillqa("salida: " + aru(ultimo));
+      }
+      yaqha: {
+        activo = k'ari;
+      }
+    }
+  }
+  kuttaya ultimo;
+}
+
+// (2 + 3) * 4 - 6 = 14
+yatiya t'aqa p1 = [Op.PUSH, Op.PUSH, Op.ADD, Op.PUSH, Op.MUL, Op.PUSH, Op.SUB, Op.PRINT, Op.HALT];
+yatiya t'aqa a1 = [2, 3, 0, 4, 0, 6, 0, 0, 0];
+yatiya jakhüwi r1 = ejecutar(p1, a1);
+afirma(r1 == 14, "programa 1");
+
+// 100 / (5 - 5) -> error
+yatiya t'aqa p2 = [Op.PUSH, Op.PUSH, Op.PUSH, Op.SUB, Op.DIV, Op.PRINT];
+yatiya t'aqa a2 = [100, 5, 5, 0, 0, 0];
+yant'aña {
+  ejecutar(p2, a2);
+} katjaña("DIVCERO", e) {
+  qillqa("error vm: " + e.aru);
+}
+
+// ADD sin operandos -> error de pila
+yant'aña {
+  ejecutar([Op.PUSH, Op.ADD], [1, 0]);
+} katjaña("PILA", e) {
+  qillqa("error vm: " + e.aru);
+}
+qillqa("maquina_pila OK");
+tukuya

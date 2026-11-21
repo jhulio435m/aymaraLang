@@ -1,0 +1,82 @@
+// Proyecto: tareas
+// Gestor de tareas pendientes dividido en dos archivos: importa
+// tareas_util.aym con apnaq. Usa clases, listas, mapas y excepciones.
+qallta
+apnaq("tareas_util");
+
+kasta Gestor {
+  yatiya mapa prio;
+  yatiya mapa hechas;
+  yatiya t'aqa prioridades;
+
+  qallta() {
+    aka.prio = {};
+    aka.hechas = {};
+    aka.prioridades = [];
+  }
+
+  lurawi agregar(aru titulo, jakhüwi p) {
+    ukaxa(p < 1 || p > 3) {
+      pantja("PRIORIDAD", "prioridad invalida para " + titulo);
+    }
+    yatiya mapa m = aka.prio;
+    m[titulo] = p;
+    push(aka.prioridades, p);
+    kuttaya;
+  }
+
+  lurawi completar(aru titulo) {
+    ukaxa(!utjisuti(aka.prio, titulo)) {
+      pantja("TAREA", "no existe la tarea " + titulo);
+    }
+    yatiya mapa h = aka.hechas;
+    h[titulo] = 1;
+    kuttaya;
+  }
+
+  lurawi pendientes(): jakhüwi {
+    kuttaya suyum(aka.prio) - suyum(aka.hechas);
+  }
+
+  lurawi linea(aru t): aru {
+    yatiya aru marca = utjisuti(aka.hechas, t) ? "[x] " : "[ ] ";
+    yatiya mapa m = aka.prio;
+    yatiya jakhüwi p = m[t];
+    kuttaya marca + t + " (" + etiqueta_prioridad(p) + ")";
+  }
+}
+
+yatiya Gestor g = machaqa Gestor();
+g.agregar("sembrar papa", 3);
+g.agregar("regar chacra", 2);
+g.agregar("tejer aguayo", 1);
+g.agregar("vender quinua", 3);
+
+yant'aña {
+  g.agregar("dormir", 7);
+} katjaña("PRIORIDAD", e) {
+  qillqa("error: " + e.aru);
+}
+
+g.completar("regar chacra");
+g.completar("sembrar papa");
+yant'aña {
+  g.completar("pescar");
+} katjaña("TAREA", e) {
+  qillqa("error: " + e.aru);
+}
+
+yatiya t'aqa orden = ["sembrar papa", "regar chacra", "tejer aguayo", "vender quinua"];
+kuti(yatiya jakhüwi i = 0; i < suyut(orden); i++) {
+  yatiya aru t = orden[i];
+  qillqa(g.linea(t));
+}
+yatiya t'aqa urgentes = ajlli(g.prioridades, &es_urgente);
+qillqa("pendientes = " + aru(g.pendientes()));
+qillqa("urgentes = " + aru(suyut(urgentes)));
+qillqa("suma prioridades = " + aru(thaqthapi(g.prioridades, &acumular, 0)));
+
+afirma(g.pendientes() == 2, "pendientes");
+afirma(suyut(urgentes) == 2, "urgentes");
+qillqa("tareas OK");
+tukuya

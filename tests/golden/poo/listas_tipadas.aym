@@ -1,0 +1,33 @@
+yatiya t'aqa<aru> palabras = ["uno", "dos"];
+yatiya t'aqa<aru> vacia = [];
+push(vacia, "tres");
+qillqa(palabras);
+qillqa(vacia);
+
+yatiya mapa<aru> dic = {"a": "alfa", "b": "beta"};
+qillqa(dic["a"]);
+
+yatiya mapa<aru> dicVacio = {};
+dicVacio["x"] = "equis";
+qillqa(dicVacio["x"]);
+
+lurawi contar(t'aqa xs): jakhüwi {
+  kuttaya suyut(xs);
+}
+qillqa(contar(palabras));
+qillqa(contar([10, 20, 30]));
+
+lurawi duplicar(t'aqa<aru> xs): t'aqa<aru> {
+  yatiya t'aqa<aru> res = [];
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i += 1) {
+    push(res, xs[i] + xs[i]);
+  }
+  kuttaya res;
+}
+
+yatiya t'aqa dup = duplicar(palabras);
+qillqa(dup);
+
+yatiya aru texto = "aymara";
+qillqa(texto[0]);
+qillqa(texto[5]);

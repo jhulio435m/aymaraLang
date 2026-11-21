@@ -1,0 +1,18 @@
+// Pila (LIFO) implementada con una clase y un contador de elementos.
+qallta
+kasta Pila {
+  yatiya t'aqa datos;
+  qallta() { aka.datos = []; }
+  lurawi mete(jakhüwi v) { push(aka.datos, v); kuttaya; }
+  lurawi saca(): jakhüwi { kuttaya apsu(aka.datos); }
+  lurawi tam(): jakhüwi { kuttaya suyut(aka.datos); }
+}
+yatiya Pila p = machaqa Pila();
+p.mete(1);
+p.mete(2);
+p.mete(3);
+qillqa(p.tam());
+qillqa(p.saca());
+qillqa(p.saca());
+qillqa(p.tam());
+tukuya

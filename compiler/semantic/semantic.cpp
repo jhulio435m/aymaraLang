@@ -28,10 +28,12 @@ void SemanticAnalyzer::reportError(const std::string &message, const std::string
 
 void SemanticAnalyzer::pushScope() {
     scopes.emplace_back();
+    constScopes.emplace_back();
 }
 
 void SemanticAnalyzer::popScope() {
     if (!scopes.empty()) scopes.pop_back();
+    if (!constScopes.empty()) constScopes.pop_back();
 }
 
 void SemanticAnalyzer::declare(const std::string &name, const std::string &type) {
@@ -46,6 +48,16 @@ bool SemanticAnalyzer::isDeclared(const std::string &name) const {
     return false;
 }
 
+bool SemanticAnalyzer::isConstVar(const std::string &name) const {
+    for (size_t i = scopes.size(); i > 0; --i) {
+        size_t idx = i - 1;
+        if (scopes[idx].count(name)) {
+            return idx < constScopes.size() && constScopes[idx].count(name) > 0;
+        }
+    }
+    return false;
+}
+
 std::string SemanticAnalyzer::lookup(const std::string &name) const {
     for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
         auto f = it->find(name);
@@ -54,13 +66,76 @@ std::string SemanticAnalyzer::lookup(const std::string &name) const {
     return "";
 }
 
+std::string SemanticAnalyzer::resolveTypeAnnotation(const std::string &type) const {
+    if (type.rfind("t'aqa:", 0) == 0) {
+        return "t'aqa:" + resolveTypeAnnotation(type.substr(6));
+    }
+    if (type.rfind("mapa:", 0) == 0) {
+        return "mapa:" + resolveTypeAnnotation(type.substr(5));
+    }
+    if (isClassName(type)) {
+        return "kasta:" + type;
+    }
+    return type;
+}
+
+std::unique_ptr<Expr> SemanticAnalyzer::cloneDefaultExpr(const Expr *def) {
+    if (!def) return nullptr;
+    if (auto *n = dynamic_cast<const NumberExpr *>(def)) {
+        auto node = std::make_unique<NumberExpr>(n->getValue());
+        node->setLocation(n->getLine(), n->getColumn());
+        return node;
+    }
+    if (auto *b = dynamic_cast<const BoolExpr *>(def)) {
+        auto node = std::make_unique<BoolExpr>(b->getValue());
+        node->setLocation(b->getLine(), b->getColumn());
+        return node;
+    }
+    if (auto *s = dynamic_cast<const StringExpr *>(def)) {
+        auto node = std::make_unique<StringExpr>(s->getValue());
+        node->setLocation(s->getLine(), s->getColumn());
+        return node;
+    }
+    if (auto *u = dynamic_cast<const UnaryExpr *>(def)) {
+        auto inner = cloneDefaultExpr(u->getExpr());
+        if (!inner) return nullptr;
+        auto node = std::make_unique<UnaryExpr>(u->getOp(), std::move(inner));
+        node->setLocation(u->getLine(), u->getColumn());
+        return node;
+    }
+    if (auto *bin = dynamic_cast<const BinaryExpr *>(def)) {
+        auto lhs = cloneDefaultExpr(bin->getLeft());
+        auto rhs = cloneDefaultExpr(bin->getRight());
+        if (!lhs || !rhs) return nullptr;
+        auto node = std::make_unique<BinaryExpr>(bin->getOp(), std::move(lhs), std::move(rhs));
+        node->setLocation(bin->getLine(), bin->getColumn());
+        return node;
+    }
+    if (auto *list = dynamic_cast<const ListExpr *>(def)) {
+        std::vector<std::unique_ptr<Expr>> elems;
+        elems.reserve(list->getElements().size());
+        for (const auto &elem : list->getElements()) {
+            auto cloned = cloneDefaultExpr(elem.get());
+            if (!cloned) return nullptr;
+            elems.push_back(std::move(cloned));
+        }
+        auto node = std::make_unique<ListExpr>(std::move(elems));
+        node->setLocation(list->getLine(), list->getColumn());
+        return node;
+    }
+    return nullptr;
+}
+
 void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) {
     hadErrors = false;
     scopes.clear();
+    constScopes.clear();
     globals.clear();
     globalTypes.clear();
     functions.clear();
     paramTypes.clear();
+    paramDefaults.clear();
+    methodDefaults.clear();
     functionReturnTypes.clear();
     classes.clear();
     currentClass.clear();
@@ -88,21 +163,22 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
         SemanticAnalyzer *self;
         void visit(FunctionStmt &fn) override {
             self->functions[fn.getName()] = fn.getParams().size();
+            {
+                std::vector<std::shared_ptr<Expr>> defaults;
+                bool anyDefault = false;
+                for (const auto &p : fn.getParams()) {
+                    defaults.push_back(p.defaultValue);
+                    if (p.defaultValue) anyDefault = true;
+                }
+                if (anyDefault) self->paramDefaults[fn.getName()] = std::move(defaults);
+            }
             std::vector<std::string> types;
             for (const auto &p : fn.getParams()) {
-                std::string t = p.type;
-                if (t == "t'aqa") t = "t'aqa:jakhüwi";
-                if (t == "mapa") t = "mapa:jakhüwi";
-                if (self->isClassName(t)) t = "kasta:" + t;
-                types.push_back(t);
+                types.push_back(self->resolveTypeAnnotation(p.type));
             }
             self->paramTypes[fn.getName()] = std::move(types);
             if (!fn.getReturnType().empty()) {
-                std::string ret = fn.getReturnType();
-                if (ret == "t'aqa") ret = "t'aqa:jakhüwi";
-                if (ret == "mapa") ret = "mapa:jakhüwi";
-                if (self->isClassName(ret)) ret = "kasta:" + ret;
-                self->functionReturnTypes[fn.getName()] = ret;
+                self->functionReturnTypes[fn.getName()] = self->resolveTypeAnnotation(fn.getReturnType());
             }
         }
         void visit(NumberExpr&) override {}
@@ -172,6 +248,9 @@ void SemanticAnalyzer::visit(ExprStmt &e) {
 
 void SemanticAnalyzer::visit(AssignStmt &a) {
     markNode(a);
+    if (isConstVar(a.getName())) {
+        reportError("no se puede modificar la constante '" + a.getName() + "'", "AYM3003");
+    }
     a.getValue()->accept(*this);
     std::string t = currentType;
     if (lastInputCall) t = lookup(a.getName());
@@ -221,13 +300,15 @@ void SemanticAnalyzer::visit(IndexAssignStmt &a) {
         currentType = valueType;
     } else if (baseType.rfind("t'aqa:", 0) == 0) {
         std::string elementType = baseType.substr(6);
-        if (!elementType.empty() && valueType != elementType) {
+        if (!valueType.empty() && !elementType.empty() && !isTypeAssignable(valueType, elementType)) {
             reportError("tipo incompatible en asignacion de lista");
         }
         currentType = elementType;
+    } else if (baseType == "t'aqa") {
+        currentType = valueType;
     } else if (baseType.rfind("mapa:", 0) == 0) {
         std::string elementType = baseType.substr(5);
-        if (!elementType.empty() && valueType != elementType) {
+        if (!valueType.empty() && !elementType.empty() && !isTypeAssignable(valueType, elementType)) {
             reportError("tipo incompatible en asignacion de mapa");
         }
         currentType = elementType;
@@ -246,10 +327,7 @@ void SemanticAnalyzer::visit(VarDeclStmt &v) {
         t = currentType;
         if (lastInputCall) t = v.getType();
     }
-    std::string declaredType = v.getType();
-    if (isClassName(declaredType)) {
-        declaredType = "kasta:" + declaredType;
-    }
+    std::string declaredType = resolveTypeAnnotation(v.getType());
     if (declaredType == "t'aqa") {
         if (t.rfind("t'aqa:", 0) == 0) {
             declaredType = t;
@@ -265,6 +343,16 @@ void SemanticAnalyzer::visit(VarDeclStmt &v) {
         }
     }
     declare(v.getName(), declaredType);
+    if (v.isConstDecl()) {
+        if (!v.getInit()) {
+            reportError("constante requiere inicializacion", "AYM3001");
+        }
+        if (!constScopes.empty()) {
+            constScopes.back().insert(v.getName());
+        }
+    } else if (!constScopes.empty()) {
+        constScopes.back().erase(v.getName());
+    }
     if (!t.empty() && !isTypeAssignable(t, declaredType) && !isTypeAssignable(t, v.getType())) {
         reportError("tipo incompatible en declaracion de '" + v.getName() + "'", "AYM3003");
     }
@@ -373,9 +461,8 @@ void SemanticAnalyzer::visit(FunctionStmt &fn) {
     auto it = paramTypes.find(fn.getName());
     size_t idx = 0;
     for (const auto &param : fn.getParams()) {
-        std::string t = "jakhüwi";
+        std::string t = resolveTypeAnnotation(param.type);
         if (it != paramTypes.end() && idx < it->second.size()) t = it->second[idx];
-        if (t == "t'aqa") t = "t'aqa:jakhüwi";
         declare(param.name, t);
         ++idx;
     }

@@ -1,0 +1,13 @@
+yatiya jakhüwi x = 10;
+x += 5;
+qillqa(x);
+x -= 3;
+qillqa(x);
+x *= 4;
+qillqa(x);
+x /= 6;
+qillqa(x);
+x %= 5;
+qillqa(x);
+x += x * 2 + 1;
+qillqa(x);

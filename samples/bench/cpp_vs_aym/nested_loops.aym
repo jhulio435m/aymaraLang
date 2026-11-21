@@ -1,0 +1,8 @@
+// Bucles anidados: acumulador modular sobre i*j.
+yatiya jakhüwi acc = 0;
+kuti (yatiya jakhüwi i = 0; i < 3000; i = i + 1) {
+  kuti (yatiya jakhüwi j = 0; j < 3000; j = j + 1) {
+    acc = (acc + i * j) % 1000003;
+  }
+}
+qillqa(acc);

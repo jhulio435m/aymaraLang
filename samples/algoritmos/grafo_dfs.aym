@@ -1,0 +1,36 @@
+// Busqueda en profundidad (DFS) y conteo de componentes conexas sobre un grafo no dirigido.
+qallta
+yatiya jakhüwi N = 7;
+yatiya t'aqa de = [0, 0, 1, 2, 4];
+yatiya t'aqa a = [1, 2, 3, 3, 5];
+yatiya t'aqa vis = [0, 0, 0, 0, 0, 0, 0];
+yatiya t'aqa comp = [0, 0, 0, 0, 0, 0, 0];
+yatiya t'aqa orden = [];
+
+lurawi dfs(jakhüwi u, jakhüwi cid) {
+  vis[u] = 1;
+  comp[u] = cid;
+  push(orden, u);
+  kuti(yatiya jakhüwi e = 0; e < suyut(de); e = e + 1) {
+    yatiya jakhüwi v = -1;
+    ukaxa(de[e] == u) { v = a[e]; }
+    ukaxa(a[e] == u) { v = de[e]; }
+    ukaxa(v >= 0 && vis[v] == 0) {
+      dfs(v, cid);
+    }
+  }
+  kuttaya;
+}
+
+yatiya jakhüwi componentes = 0;
+kuti(yatiya jakhüwi s = 0; s < N; s = s + 1) {
+  ukaxa(vis[s] == 0) {
+    componentes = componentes + 1;
+    dfs(s, componentes);
+  }
+}
+
+qillqa(orden);
+qillqa(comp);
+qillqa(componentes);
+tukuya

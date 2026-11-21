@@ -1,0 +1,54 @@
+lurawi calc(jakhüwi a, jakhüwi b = -5, jakhüwi c = 2 * 3): jakhüwi {
+  kuttaya a + b + c;
+}
+qillqa(calc(10));
+qillqa(calc(10, 1));
+
+kasta Figura {
+  lurawi area(): jakhüwi;
+  lurawi escalada(jakhüwi k = 1 + 1): jakhüwi {
+    kuttaya aka.area() * k;
+  }
+}
+
+kasta Rectangulo jila Figura {
+  yatiya jakhüwi ancho;
+  yatiya jakhüwi alto;
+  qallta(jakhüwi w, jakhüwi h) {
+    aka.ancho = w;
+    aka.alto = h;
+  }
+  lurawi area(): jakhüwi {
+    kuttaya aka.ancho * aka.alto;
+  }
+  lurawi crecer(jakhüwi dw = 1, jakhüwi dh = 2) {
+    aka.ancho += dw;
+    aka.alto += dh;
+  }
+}
+
+kasta Util {
+  sapakasta lurawi sumar(jakhüwi a, jakhüwi b = 100): jakhüwi {
+    kuttaya a + b;
+  }
+}
+
+yatiya Rectangulo r = machaqa Rectangulo(3, 4);
+qillqa(r.area());
+qillqa(r.escalada());
+qillqa(r.escalada(5));
+r.crecer();
+r.ancho += 1;
+qillqa(r.area());
+
+yatiya Figura f = machaqa Rectangulo(2, 5);
+qillqa(f.area());
+qillqa(Util.sumar(7));
+
+yatiya t'aqa<jakhüwi> base = [1, 2, 3, 4];
+yatiya t'aqa<jakhüwi> dobles = map(base, lurawi(jakhüwi x): jakhüwi { kuttaya x * 2; });
+yatiya t'aqa<jakhüwi> mayores = filter(dobles, lurawi(jakhüwi x): chiqa { kuttaya x > 4; });
+yatiya jakhüwi suma = reduce(mayores, lurawi(jakhüwi acc, jakhüwi x): jakhüwi { kuttaya acc + x; }, 0);
+qillqa(dobles);
+qillqa(mayores);
+qillqa(suma);

@@ -1,0 +1,60 @@
+// Regresion: plegado de constantes en AST, eliminacion de ramas constantes y peephole.
+yatiya jakhüwi z = 0;
+yatiya jakhüwi g = 7;
+yatiya jakhüwi h = 10;
+
+qillqa(-(-7));
+qillqa(+9);
+qillqa(!k'ari);
+qillqa(~0);
+qillqa(~5);
+qillqa(12 & 10);
+qillqa(12 | 10);
+qillqa(12 ^^ 10);
+qillqa(3 << 4);
+qillqa(64 >> 2);
+
+qillqa(k'ari && (10 / z == 1));
+qillqa(chiqa || (10 / z == 1));
+
+qillqa((2 + 3 == 5) ? 100 : (10 / z));
+qillqa((2 + 3 == 6) ? (10 / z) : 200);
+qillqa((1 < 2) ? "si" : "no");
+
+ukaxa (3 * 4 == 12) {
+  qillqa("rama_then");
+} maysatxa {
+  qillqa(10 / z);
+}
+
+ukaxa (3 * 4 == 99) {
+  qillqa(10 / z);
+} maysatxa {
+  qillqa("rama_else");
+}
+
+ukaxa (k'ari) {
+  qillqa(10 / z);
+}
+
+qillqa(g + h);
+ukaxa (g < h) { qillqa("lt"); }
+ukaxa (g <= 7) { qillqa("le"); }
+ukaxa (h > g) { qillqa("gt"); }
+ukaxa (h >= 10) { qillqa("ge"); }
+ukaxa (g == 7) { qillqa("eq"); }
+ukaxa (g != h) { qillqa("ne"); }
+
+yatiya jakhüwi acc = 0;
+kuti (yatiya jakhüwi i = 0; i < 5; i++) {
+  ukaxa (i >= 2 && i != 3) {
+    acc += i;
+  }
+}
+qillqa(acc);
+
+yatiya jakhüwi d = 0;
+luraña {
+  d += 1;
+} ukhakamaxa (d < 3);
+qillqa(d);

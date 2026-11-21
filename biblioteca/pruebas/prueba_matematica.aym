@@ -1,0 +1,15 @@
+apnaq("../matematica");
+qillqa(m_abs(0 - 7));
+qillqa(m_min(3, 9));
+qillqa(m_max(3, 9));
+qillqa(m_limita(15, 0, 10));
+qillqa(m_mcd(48, 18));
+qillqa(m_mcm(4, 6));
+qillqa(m_factorial(10));
+qillqa(m_es_primo(97) ? "primo" : "no primo");
+qillqa(m_es_primo(91) ? "primo" : "no primo");
+qillqa(m_potencia(2, 20));
+qillqa(m_raiz_entera(99));
+qillqa(m_fibonacci(30));
+qillqa(m_suma_lista([1, 2, 3, 4]));
+qillqa(m_promedio([2, 4, 6]));

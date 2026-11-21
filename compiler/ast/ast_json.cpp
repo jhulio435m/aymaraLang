@@ -123,10 +123,14 @@ std::string serializeParams(const std::vector<Param> &params, int level) {
     std::vector<std::string> items;
     items.reserve(params.size());
     for (const auto &param : params) {
-        items.push_back(makeObject({
+        std::vector<std::pair<std::string, std::string>> fields = {
             {"type", quote(param.type)},
             {"name", quote(param.name)}
-        }, level + 1));
+        };
+        if (param.defaultValue) {
+            fields.push_back({"defaultValue", serializeOptionalNode(param.defaultValue.get(), level + 1)});
+        }
+        items.push_back(makeObject(fields, level + 1));
     }
     return makeArray(items, level);
 }
@@ -156,6 +160,7 @@ std::string serializeClassMethods(const std::vector<ClassStmt::MethodDecl> &meth
             {"returnType", quote(method.returnType)},
             {"isStatic", boolJson(method.isStatic)},
             {"isPrivate", boolJson(method.isPrivate)},
+            {"isAbstract", boolJson(method.isAbstract)},
             {"body", serializeOptionalNode(method.body.get(), level + 1)}
         }, level + 1));
     }
@@ -401,6 +406,7 @@ std::string serializeNode(const Node *node, int level) {
         auto fields = baseFields("VarDeclStmt", n);
         fields.push_back({"type", quote(n->getType())});
         fields.push_back({"name", quote(n->getName())});
+        fields.push_back({"isConst", boolJson(n->isConstDecl())});
         fields.push_back({"init", serializeOptionalNode(n->getInit(), level + 1)});
         return makeObject(fields, level);
     }

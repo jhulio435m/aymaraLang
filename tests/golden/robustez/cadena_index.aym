@@ -1,0 +1,16 @@
+// Regresion: indexacion de cadenas y deteccion de tipo aru tras indexar.
+yatiya aru s = "aymara";
+qillqa(s[0]);
+qillqa(s[5]);
+qillqa(s[2]);
+qillqa("hola"[1]);
+qillqa(s[0] == "a");
+
+yatiya t'aqa xs = ["kamisaki", "waliki"];
+qillqa(xs[0][4]);
+
+yant'aña {
+  qillqa(s[99]);
+} katjaña("INDICE", e) {
+  qillqa(e.suti);
+}

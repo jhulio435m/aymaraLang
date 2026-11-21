@@ -1,0 +1,39 @@
+// Regresion: indexacion tras miembro/metodo, mapas anidados y asignacion por indice.
+kasta Caja {
+  yatiya t'aqa nums;
+  yatiya mapa precios;
+
+  qallta() {
+    aka.nums = [10, 20, 30];
+    aka.precios = {"papa": 5, "oca": 8};
+  }
+
+  lurawi darLista(): t'aqa {
+    kuttaya aka.nums;
+  }
+
+  lurawi darMapa(): mapa {
+    kuttaya aka.precios;
+  }
+
+  lurawi indice(): jakhüwi {
+    kuttaya 1;
+  }
+}
+
+lurawi clave(): aru {
+  kuttaya "s";
+}
+
+yatiya Caja c = machaqa Caja();
+qillqa(c.nums);
+qillqa(c.nums[0]);
+qillqa(c.nums[c.indice()]);
+c.nums[1] = 200;
+qillqa(c.nums[1]);
+qillqa(c.darLista()[2]);
+qillqa(c.darMapa()["oca"]);
+
+yatiya mapa m = {"k": 42, "s": "hola"};
+qillqa(m[clave()]);
+qillqa(m["k"]);

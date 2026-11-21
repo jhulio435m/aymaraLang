@@ -1,0 +1,88 @@
+// Proyecto: cola_banco
+// Simulacion determinista de una cola de atencion con una ventanilla:
+// clase Cola (FIFO sobre lista con indice de cabeza) y estadisticas.
+qallta
+kasta Cola {
+  yatiya t'aqa items;
+  yatiya jakhüwi cabeza;
+
+  qallta() {
+    aka.items = [];
+    aka.cabeza = 0;
+  }
+
+  lurawi encolar(jakhüwi v) {
+    push(aka.items, v);
+    kuttaya;
+  }
+
+  lurawi vacia(): chiqa {
+    kuttaya aka.cabeza >= suyut(aka.items);
+  }
+
+  lurawi desencolar(): jakhüwi {
+    ukaxa(aka.vacia()) {
+      pantja("COLA", "cola vacia");
+    }
+    yatiya jakhüwi i = aka.cabeza;
+    yatiya t'aqa xs = aka.items;
+    yatiya jakhüwi v = xs[i];
+    aka.cabeza = aka.cabeza + 1;
+    kuttaya v;
+  }
+
+  lurawi tamano(): jakhüwi {
+    kuttaya suyut(aka.items) - aka.cabeza;
+  }
+}
+
+// Cada cliente i llega en llegadas[i] y necesita servicios[i] minutos.
+yatiya t'aqa llegadas = [0, 1, 2, 8, 9, 20];
+yatiya t'aqa servicios = [4, 3, 5, 2, 6, 1];
+yatiya Cola cola = machaqa Cola();
+yatiya jakhüwi proximo = 0;
+yatiya jakhüwi libre_en = 0;
+yatiya jakhüwi espera_total = 0;
+yatiya jakhüwi espera_max = 0;
+yatiya jakhüwi atendidos = 0;
+yatiya jakhüwi cola_max = 0;
+
+kuti(yatiya jakhüwi t = 0; t < 40; t++) {
+  ukaxa(proximo < suyut(llegadas)) {
+    ukaxa(llegadas[proximo] == t) {
+      cola.encolar(proximo);
+      proximo = proximo + 1;
+    }
+  }
+  ukaxa(cola.tamano() > cola_max) {
+    cola_max = cola.tamano();
+  }
+  ukaxa(t >= libre_en && !cola.vacia()) {
+    yatiya jakhüwi id = cola.desencolar();
+    yatiya jakhüwi espera = t - llegadas[id];
+    espera_total = espera_total + espera;
+    ukaxa(espera > espera_max) {
+      espera_max = espera;
+    }
+    libre_en = t + servicios[id];
+    atendidos = atendidos + 1;
+    qillqa("t=" + aru(t) + " atiende cliente " + aru(id) + " espera=" + aru(espera));
+  }
+}
+
+qillqa("atendidos = " + aru(atendidos));
+qillqa("espera total = " + aru(espera_total));
+qillqa("espera maxima = " + aru(espera_max));
+qillqa("cola maxima = " + aru(cola_max));
+
+yant'aña {
+  cola.desencolar();
+} katjaña("COLA", e) {
+  qillqa("error: " + e.aru);
+}
+
+afirma(atendidos == 6, "atendidos");
+afirma(espera_total == 17, "espera total");
+afirma(espera_max == 5, "espera max");
+qillqa("cola_banco OK");
+tukuya

@@ -1,0 +1,103 @@
+// Proyecto: banco
+// Jerarquia de cuentas (corriente / ahorro) con excepciones propias,
+// transferencias y un reporte final.
+qallta
+kasta Cuenta {
+  yatiya aru titular;
+  yatiya jakhüwi saldo;
+  yatiya jakhüwi movimientos;
+
+  qallta(aru t, jakhüwi s) {
+    aka.titular = t;
+    aka.saldo = s;
+    aka.movimientos = 0;
+  }
+
+  lurawi depositar(jakhüwi q) {
+    ukaxa(q <= 0) {
+      pantja("MONTO", "monto invalido");
+    }
+    aka.saldo = aka.saldo + q;
+    aka.movimientos = aka.movimientos + 1;
+    kuttaya;
+  }
+
+  lurawi retirar(jakhüwi q) {
+    ukaxa(q <= 0) {
+      pantja("MONTO", "monto invalido");
+    }
+    ukaxa(q > aka.saldo) {
+      pantja("SALDO", "saldo insuficiente de " + aka.titular);
+    }
+    aka.saldo = aka.saldo - q;
+    aka.movimientos = aka.movimientos + 1;
+    kuttaya;
+  }
+
+  lurawi tipo(): aru {
+    kuttaya "corriente";
+  }
+
+  lurawi resumen(): aru {
+    kuttaya aka.tipo() + " " + aka.titular + " saldo=" + aru(aka.saldo) + " mov=" + aru(aka.movimientos);
+  }
+}
+
+kasta Ahorro jila Cuenta {
+  yatiya jakhüwi tasa;
+
+  qallta(aru t, jakhüwi s, jakhüwi ts) {
+    aka.titular = t;
+    aka.saldo = s;
+    aka.movimientos = 0;
+    aka.tasa = ts;
+  }
+
+  lurawi tipo(): aru {
+    kuttaya "ahorro";
+  }
+
+  lurawi interes() {
+    aka.saldo = aka.saldo + (aka.saldo * aka.tasa) / 100;
+    kuttaya;
+  }
+}
+
+lurawi transferir(Cuenta origen, Cuenta destino, jakhüwi q) {
+  origen.retirar(q);
+  destino.depositar(q);
+  kuttaya;
+}
+
+yatiya Cuenta ana = machaqa Cuenta("Ana", 1000);
+yatiya Ahorro luis = machaqa Ahorro("Luis", 2000, 10);
+yatiya jakhüwi errores = 0;
+
+transferir(ana, luis, 300);
+qillqa(ana.resumen());
+qillqa(luis.resumen());
+
+yant'aña {
+  transferir(ana, luis, 5000);
+} katjaña("SALDO", e) {
+  errores = errores + 1;
+  qillqa("error " + e.suti + ": " + e.aru);
+}
+
+yant'aña {
+  ana.depositar(0);
+} katjaña("MONTO", e) {
+  errores = errores + 1;
+  qillqa("error " + e.suti + ": " + e.aru);
+}
+
+luis.interes();
+qillqa(ana.resumen());
+qillqa(luis.resumen());
+qillqa("errores=" + aru(errores));
+
+afirma(ana.saldo == 700, "saldo Ana");
+afirma(luis.saldo == 2530, "saldo Luis");
+afirma(errores == 2, "errores");
+qillqa("banco OK");
+tukuya

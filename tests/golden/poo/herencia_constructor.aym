@@ -1,0 +1,28 @@
+kasta Animal {
+  yatiya aru nombre;
+  qallta(aru n) { aka.nombre = n; }
+  lurawi sonido(): aru { kuttaya "..."; }
+  lurawi presentar(): aru { kuttaya aka.nombre + " dice " + aka.sonido(); }
+}
+kasta Perro jila Animal {
+  lurawi sonido(): aru { kuttaya "guau"; }
+}
+kasta Cachorro jila Perro {
+  lurawi sonido(): aru { kuttaya "yip " + jilaaka.sonido(); }
+}
+yatiya t'aqa<Animal> zoo = [machaqa Animal("gato"), machaqa Perro("rex"), machaqa Cachorro("bob")];
+kuti (yatiya jakhüwi i = 0; i < largo(zoo); i++) {
+  yatiya Animal a = zoo[i];
+  qillqa(a.presentar());
+}
+kasta Contador {
+  sapakasta yatiya jakhüwi total = 0;
+  sapa yatiya jakhüwi oculto = 1;
+  lurawi inc() { Contador.total = Contador.total + 1; }
+  lurawi ver(): jakhüwi { kuttaya aka.oculto; }
+}
+yatiya Contador c1 = machaqa Contador();
+yatiya Contador c2 = machaqa Contador();
+c1.inc(); c2.inc(); c2.inc();
+qillqa(Contador.total);
+qillqa(c1.ver());

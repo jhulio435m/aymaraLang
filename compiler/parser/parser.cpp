@@ -27,11 +27,44 @@ std::string canonicalTypeName(const Token &tok) {
     }
 }
 
-std::string normalizeTypeNameLocal(const Token &tok) {
-    std::string value = tok.text;
-    std::transform(value.begin(), value.end(), value.begin(),
-                   [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
-    return value;
+std::unique_ptr<Expr> cloneSimpleExpr(const Expr *expr) {
+    if (!expr) return nullptr;
+    if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
+        auto node = std::make_unique<VariableExpr>(v->getName());
+        node->setLocation(v->getLine(), v->getColumn());
+        return node;
+    }
+    if (auto *n = dynamic_cast<const NumberExpr*>(expr)) {
+        auto node = std::make_unique<NumberExpr>(n->getValue());
+        node->setLocation(n->getLine(), n->getColumn());
+        return node;
+    }
+    if (auto *s = dynamic_cast<const StringExpr*>(expr)) {
+        auto node = std::make_unique<StringExpr>(s->getValue());
+        node->setLocation(s->getLine(), s->getColumn());
+        return node;
+    }
+    if (auto *b = dynamic_cast<const BoolExpr*>(expr)) {
+        auto node = std::make_unique<BoolExpr>(b->getValue());
+        node->setLocation(b->getLine(), b->getColumn());
+        return node;
+    }
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        auto base = cloneSimpleExpr(m->getBase());
+        if (!base) return nullptr;
+        auto node = std::make_unique<MemberExpr>(std::move(base), m->getMember());
+        node->setLocation(m->getLine(), m->getColumn());
+        return node;
+    }
+    if (auto *idx = dynamic_cast<const IndexExpr*>(expr)) {
+        auto base = cloneSimpleExpr(idx->getBase());
+        auto index = cloneSimpleExpr(idx->getIndex());
+        if (!base || !index) return nullptr;
+        auto node = std::make_unique<IndexExpr>(std::move(base), std::move(index));
+        node->setLocation(idx->getLine(), idx->getColumn());
+        return node;
+    }
+    return nullptr;
 }
 
 } // namespace
@@ -41,9 +74,22 @@ Parser::Parser(const std::vector<Token>& t, DiagnosticEngine *diag)
 
 std::string Parser::parseTypeName() {
     if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
-        match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-        match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
+        match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTrue)) {
         return canonicalTypeName(tokens[pos-1]);
+    }
+    if (match(TokenType::KeywordTypeList) || match(TokenType::KeywordTypeMap)) {
+        std::string base = canonicalTypeName(tokens[pos-1]);
+        if (match(TokenType::Less)) {
+            std::string elemType = parseTypeName();
+            if (elemType.empty()) {
+                parseError("se esperaba tipo de elemento en tipo generico");
+            }
+            if (!match(TokenType::Greater)) {
+                parseError("se esperaba '>' en tipo generico");
+            }
+            return (base == "t'aqa" ? "t'aqa:" : "mapa:") + elemType;
+        }
+        return base;
     }
     if (match(TokenType::Identifier)) {
         return tokens[pos-1].text;
@@ -52,6 +98,7 @@ std::string Parser::parseTypeName() {
 }
 
 std::vector<std::unique_ptr<Node>> Parser::parse() {
+    syntheticFunctions.clear();
     std::vector<std::unique_ptr<Stmt>> stmts;
     bool hasStart = match(TokenType::KeywordStart);
     parseStatements(stmts);
@@ -64,6 +111,8 @@ std::vector<std::unique_ptr<Node>> Parser::parse() {
     }
     std::vector<std::unique_ptr<Node>> nodes;
     for (auto &s : stmts) nodes.push_back(std::move(s));
+    for (auto &fn : syntheticFunctions) nodes.push_back(std::move(fn));
+    syntheticFunctions.clear();
     return nodes;
 }
 
@@ -160,6 +209,11 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
     if (match(TokenType::KeywordDeclare)) {
         return parseVarDeclStatement(tokens[pos-1]);
     }
+    if (match(TokenType::KeywordConst)) {
+        Token constTok = tokens[pos-1];
+        match(TokenType::KeywordDeclare);
+        return parseVarDeclStatement(constTok, true);
+    }
 
     if (match(TokenType::KeywordReturn)) {
         Token tok = tokens[pos-1];
@@ -196,11 +250,24 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
     if (match(TokenType::KeywordWhile)) {
         return parseWhileStatement(tokens[pos-1]);
     }
+    if (match(TokenType::KeywordDo)) {
+        return parseDoWhileStatement(tokens[pos-1]);
+    }
     if (match(TokenType::KeywordFor)) {
         return parseForStatement(tokens[pos-1]);
     }
     if (match(TokenType::KeywordFunc)) {
         return parseFunctionStatement(tokens[pos-1]);
+    }
+
+    // Bloque suelto '{ ... }' con su propio ambito (gramatica: sentencia = bloque).
+    // Un literal de mapa como sentencia no tendria efecto, asi que '{' al inicio
+    // de una sentencia siempre abre un bloque.
+    if (match(TokenType::LBrace)) {
+        auto block = std::make_unique<BlockStmt>();
+        block->setLocation(tokens[pos-1].line, tokens[pos-1].column);
+        parseStatements(block->statements, true);
+        return block;
     }
 
     if (match(TokenType::Semicolon)) {
@@ -212,7 +279,8 @@ std::unique_ptr<Stmt> Parser::parseSingleStatement() {
     return parseExpressionOrAssignmentStatement();
 }
 
-std::unique_ptr<Stmt> Parser::parseVarDeclStatement(const Token &declTok) {
+std::unique_ptr<Stmt> Parser::parseVarDeclStatement(const Token &declTok, bool initialConst) {
+    bool isConst = initialConst || match(TokenType::KeywordConst);
     std::string type = parseTypeName();
     if (type.empty()) {
         parseError("se esperaba un tipo despues de 'yatiya'");
@@ -229,6 +297,7 @@ std::unique_ptr<Stmt> Parser::parseVarDeclStatement(const Token &declTok) {
         parseError("se esperaba ';' despues de la declaracion");
     }
     auto node = std::make_unique<VarDeclStmt>(type, name, std::move(init));
+    node->setConst(isConst);
     node->setLocation(declTok.line, declTok.column);
     return node;
 }
@@ -325,6 +394,34 @@ std::unique_ptr<Stmt> Parser::parseWhileStatement(const Token &whileTok) {
     return node;
 }
 
+std::unique_ptr<Stmt> Parser::parseDoWhileStatement(const Token &doTok) {
+    Token braceTok = doTok;
+    if (match(TokenType::LBrace)) {
+        braceTok = tokens[pos - 1];
+    } else {
+        parseError("se esperaba '{' despues de 'luraña'");
+    }
+    auto block = std::make_unique<BlockStmt>();
+    block->setLocation(braceTok.line, braceTok.column);
+    parseStatements(block->statements, true);
+    if (!match(TokenType::KeywordWhile)) {
+        parseError("se esperaba 'ukhakamaxa' despues del bloque de 'luraña'");
+    }
+    if (!match(TokenType::LParen)) {
+        parseError("se esperaba '(' despues de 'ukhakamaxa'");
+    }
+    auto cond = parseExpression();
+    if (!match(TokenType::RParen)) {
+        parseError("se esperaba ')' despues de la condicion de 'ukhakamaxa'");
+    }
+    if (!match(TokenType::Semicolon)) {
+        parseError("se esperaba ';' despues de 'luraña ... ukhakamaxa (...)'");
+    }
+    auto node = std::make_unique<DoWhileStmt>(std::move(block), std::move(cond));
+    node->setLocation(doTok.line, doTok.column);
+    return node;
+}
+
 std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
     if (!match(TokenType::LParen)) {
         parseError("se esperaba '(' despues de 'kuti'");
@@ -409,12 +506,8 @@ std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
     if (!match(TokenType::Semicolon)) {
         if (match(TokenType::KeywordDeclare)) {
             Token declTok = tokens[pos-1];
-            std::string type;
-            if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
-                match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTypeList) ||
-                match(TokenType::KeywordTypeMap) || match(TokenType::KeywordTrue)) {
-                type = normalizeTypeNameLocal(tokens[pos-1]);
-            } else {
+            std::string type = parseTypeName();
+            if (type.empty()) {
                 parseError("se esperaba un tipo en el encabezado de 'kuti'");
             }
             std::string name;
@@ -427,21 +520,8 @@ std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
             if (match(TokenType::Equal)) initExpr = parseExpression();
             init = std::make_unique<VarDeclStmt>(type, name, std::move(initExpr));
             init->setLocation(declTok.line, declTok.column);
-        } else if (peek().type == TokenType::Identifier &&
-                   pos + 1 < tokens.size() &&
-                   tokens[pos + 1].type == TokenType::Equal) {
-            std::string name = get().text;
-            Token nameTok = tokens[pos-1];
-            match(TokenType::Equal);
-            auto value = parseExpression();
-            init = std::make_unique<AssignStmt>(name, std::move(value));
-            init->setLocation(nameTok.line, nameTok.column);
         } else {
-            auto expr = parseExpression();
-            size_t line = expr ? expr->getLine() : 0;
-            size_t column = expr ? expr->getColumn() : 0;
-            init = std::make_unique<ExprStmt>(std::move(expr));
-            init->setLocation(line, column);
+            init = parseAssignmentOrExprStatement(false);
         }
         match(TokenType::Semicolon);
     }
@@ -455,22 +535,7 @@ std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
 
     std::unique_ptr<Stmt> post = nullptr;
     if (peek().type != TokenType::RParen) {
-        if (peek().type == TokenType::Identifier &&
-            pos + 1 < tokens.size() &&
-            tokens[pos + 1].type == TokenType::Equal) {
-            std::string name = get().text;
-            Token nameTok = tokens[pos-1];
-            match(TokenType::Equal);
-            auto value = parseExpression();
-            post = std::make_unique<AssignStmt>(name, std::move(value));
-            post->setLocation(nameTok.line, nameTok.column);
-        } else {
-            auto expr = parseExpression();
-            size_t line = expr ? expr->getLine() : 0;
-            size_t column = expr ? expr->getColumn() : 0;
-            post = std::make_unique<ExprStmt>(std::move(expr));
-            post->setLocation(line, column);
-        }
+        post = parseAssignmentOrExprStatement(false);
         match(TokenType::Semicolon);
     }
     if (!post) post = std::make_unique<ExprStmt>(nullptr);
@@ -492,37 +557,43 @@ std::unique_ptr<Stmt> Parser::parseForStatement(const Token &forTok) {
     return node;
 }
 
-std::unique_ptr<Stmt> Parser::parseFunctionStatement(const Token &funcTok) {
-    std::string name = "";
-    if (peek().type == TokenType::Identifier) name = get().text;
-    match(TokenType::LParen);
-    std::vector<Param> params;
-    if (peek().type != TokenType::RParen) {
+void Parser::parseParamList(std::vector<Param> &params) {
+    if (peek().type == TokenType::RParen) {
+        return;
+    }
+    bool seenDefault = false;
+    while (true) {
         Param param;
         param.type = parseTypeName();
         if (param.type.empty()) {
             parseError("se esperaba un tipo de parametro");
+            break;
         }
         if (peek().type == TokenType::Identifier) {
             param.name = get().text;
         } else {
             parseError("se esperaba un nombre de parametro");
+            break;
         }
-        params.push_back(param);
-        while (match(TokenType::Comma)) {
-            Param next;
-            next.type = parseTypeName();
-            if (next.type.empty()) {
-                parseError("se esperaba un tipo de parametro");
-            }
-            if (peek().type == TokenType::Identifier) {
-                next.name = get().text;
-            } else {
-                parseError("se esperaba un nombre de parametro");
-            }
-            params.push_back(next);
+        if (match(TokenType::Equal)) {
+            param.defaultValue = std::shared_ptr<Expr>(parseExpression());
+            seenDefault = true;
+        } else if (seenDefault) {
+            parseError("un parametro sin valor por defecto no puede ir despues de uno con valor por defecto");
+        }
+        params.push_back(std::move(param));
+        if (!match(TokenType::Comma)) {
+            break;
         }
     }
+}
+
+std::unique_ptr<Stmt> Parser::parseFunctionStatement(const Token &funcTok) {
+    std::string name = "";
+    if (peek().type == TokenType::Identifier) name = get().text;
+    match(TokenType::LParen);
+    std::vector<Param> params;
+    parseParamList(params);
     match(TokenType::RParen);
     std::string returnType;
     if (match(TokenType::Colon)) {
@@ -541,11 +612,11 @@ std::unique_ptr<Stmt> Parser::parseFunctionStatement(const Token &funcTok) {
     return node;
 }
 
-std::unique_ptr<Stmt> Parser::parseExpressionOrAssignmentStatement() {
+std::unique_ptr<Stmt> Parser::parseAssignmentOrExprStatement(bool consumeSemicolon) {
     auto expr = parseExpression();
     if (match(TokenType::Equal)) {
         auto value = parseExpression();
-        match(TokenType::Semicolon);
+        if (consumeSemicolon) match(TokenType::Semicolon);
         if (auto *var = dynamic_cast<VariableExpr*>(expr.get())) {
             auto node = std::make_unique<AssignStmt>(var->getName(), std::move(value));
             node->setLocation(var->getLine(), var->getColumn());
@@ -560,6 +631,7 @@ std::unique_ptr<Stmt> Parser::parseExpressionOrAssignmentStatement() {
         }
         if (auto *mem = dynamic_cast<MemberExpr*>(expr.get())) {
             auto key = std::make_unique<StringExpr>(mem->getMember());
+            key->setLocation(mem->getLine(), mem->getColumn());
             auto node = std::make_unique<IndexAssignStmt>(mem->takeBase(),
                                                           std::move(key),
                                                           std::move(value));
@@ -567,13 +639,73 @@ std::unique_ptr<Stmt> Parser::parseExpressionOrAssignmentStatement() {
             return node;
         }
         parseError("asignacion invalida");
+        return nullptr;
+    }
+    {
+        char compoundOp = 0;
+        Token opTok = peek();
+        if (match(TokenType::PlusEqual)) compoundOp = '+';
+        else if (match(TokenType::MinusEqual)) compoundOp = '-';
+        else if (match(TokenType::StarEqual)) compoundOp = '*';
+        else if (match(TokenType::SlashEqual)) compoundOp = '/';
+        else if (match(TokenType::PercentEqual)) compoundOp = '%';
+        if (compoundOp) {
+            auto rhs = parseExpression();
+            if (consumeSemicolon) match(TokenType::Semicolon);
+            if (auto *var = dynamic_cast<VariableExpr*>(expr.get())) {
+                auto lhs = std::make_unique<VariableExpr>(var->getName());
+                lhs->setLocation(var->getLine(), var->getColumn());
+                auto value = std::make_unique<BinaryExpr>(compoundOp, std::move(lhs), std::move(rhs));
+                value->setLocation(opTok.line, opTok.column);
+                auto node = std::make_unique<AssignStmt>(var->getName(), std::move(value));
+                node->setLocation(var->getLine(), var->getColumn());
+                return node;
+            }
+            if (auto *idx = dynamic_cast<IndexExpr*>(expr.get())) {
+                auto clonedBase = cloneSimpleExpr(idx->getBase());
+                auto clonedIdx = cloneSimpleExpr(idx->getIndex());
+                if (clonedBase && clonedIdx) {
+                    auto lhs = std::make_unique<IndexExpr>(std::move(clonedBase), std::move(clonedIdx));
+                    lhs->setLocation(idx->getLine(), idx->getColumn());
+                    auto value = std::make_unique<BinaryExpr>(compoundOp, std::move(lhs), std::move(rhs));
+                    value->setLocation(opTok.line, opTok.column);
+                    auto node = std::make_unique<IndexAssignStmt>(idx->takeBase(),
+                                                                  idx->takeIndex(),
+                                                                  std::move(value));
+                    node->setLocation(idx->getLine(), idx->getColumn());
+                    return node;
+                }
+            }
+            if (auto *mem = dynamic_cast<MemberExpr*>(expr.get())) {
+                auto clonedBase = cloneSimpleExpr(mem->getBase());
+                if (clonedBase) {
+                    auto lhs = std::make_unique<MemberExpr>(std::move(clonedBase), mem->getMember());
+                    lhs->setLocation(mem->getLine(), mem->getColumn());
+                    auto value = std::make_unique<BinaryExpr>(compoundOp, std::move(lhs), std::move(rhs));
+                    value->setLocation(opTok.line, opTok.column);
+                    auto key = std::make_unique<StringExpr>(mem->getMember());
+                    key->setLocation(mem->getLine(), mem->getColumn());
+                    auto node = std::make_unique<IndexAssignStmt>(mem->takeBase(),
+                                                                  std::move(key),
+                                                                  std::move(value));
+                    node->setLocation(mem->getLine(), mem->getColumn());
+                    return node;
+                }
+            }
+            parseError("asignacion compuesta solo admite variables, indices o campos simples");
+            return nullptr;
+        }
     }
     size_t line = expr ? expr->getLine() : 0;
     size_t column = expr ? expr->getColumn() : 0;
-    match(TokenType::Semicolon);
+    if (consumeSemicolon) match(TokenType::Semicolon);
     auto node = std::make_unique<ExprStmt>(std::move(expr));
     node->setLocation(line, column);
     return node;
+}
+
+std::unique_ptr<Stmt> Parser::parseExpressionOrAssignmentStatement() {
+    return parseAssignmentOrExprStatement(true);
 }
 
 std::vector<std::string> Parser::parseImportSymbols() {
@@ -666,6 +798,43 @@ std::unique_ptr<Stmt> Parser::parseImportStatement(const Token &importTok) {
     return node;
 }
 
+namespace {
+// Evalua en tiempo de compilacion el valor de un miembro de 'siqicha' para
+// poder numerar correctamente los miembros siguientes (A = -1, B -> 0).
+bool evalEnumConstant(const aym::Expr *e, long long &out) {
+    using namespace aym;
+    if (auto *n = dynamic_cast<const NumberExpr*>(e)) { out = n->getValue(); return true; }
+    if (auto *u = dynamic_cast<const UnaryExpr*>(e)) {
+        long long v;
+        if (!evalEnumConstant(u->getExpr(), v)) return false;
+        switch (u->getOp()) {
+            case '-': out = -v; return true;
+            case '+': out = v; return true;
+            case '~': out = ~v; return true;
+            default: return false;
+        }
+    }
+    if (auto *b = dynamic_cast<const BinaryExpr*>(e)) {
+        long long l, r;
+        if (!evalEnumConstant(b->getLeft(), l) || !evalEnumConstant(b->getRight(), r)) return false;
+        switch (b->getOp()) {
+            case '+': out = l + r; return true;
+            case '-': out = l - r; return true;
+            case '*': out = l * r; return true;
+            case '/': if (r == 0) return false; out = l / r; return true;
+            case '%': if (r == 0) return false; out = l % r; return true;
+            case 'A': out = l & r; return true;
+            case 'O': out = l | r; return true;
+            case 'X': out = l ^ r; return true;
+            case 'L': if (r < 0 || r > 63) return false; out = l << r; return true;
+            case 'R': if (r < 0 || r > 63) return false; out = l >> r; return true;
+            default: return false;
+        }
+    }
+    return false;
+}
+} // namespace
+
 std::unique_ptr<Stmt> Parser::parseEnumStatement(const Token &enumTok) {
     std::string enumName;
     if (peek().type == TokenType::Identifier) {
@@ -695,9 +864,12 @@ std::unique_ptr<Stmt> Parser::parseEnumStatement(const Token &enumTok) {
         std::unique_ptr<Expr> valueExpr;
         if (match(TokenType::Equal)) {
             valueExpr = parseExpression();
-            if (auto *num = dynamic_cast<NumberExpr*>(valueExpr.get())) {
-                nextValue = num->getValue() + 1;
+            long long value = 0;
+            if (valueExpr && evalEnumConstant(valueExpr.get(), value)) {
+                nextValue = value + 1;
             } else {
+                parseError("el valor de '" + memberName +
+                           "' en 'siqicha' debe ser una constante entera");
                 nextValue += 1;
             }
         } else {

@@ -1,0 +1,2 @@
+kasta A { qallta(jakhüwi k) { } }
+kasta B jila A { qallta() { jilaaka.qallta("x"); } }

@@ -44,17 +44,28 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
     std::string l = currentType;
     b.getRight()->accept(*this);
     std::string r = currentType;
-    if (l != r) {
-        reportError("tipos incompatibles en operacion", "AYM3003");
-    }
     char op = b.getOp();
-    if ((l == "aru" || r == "aru") && op != '+' && op != 's' && op != 'd') {
-        reportError("operacion invalida sobre textos", "AYM3003");
+    if (op == 'A' || op == 'O' || op == 'X' || op == 'L' || op == 'R') {
+        if (l != "jakhüwi" || r != "jakhüwi") {
+            reportError("operacion bit a bit requiere jakhüwi", "AYM3003");
+        }
+        currentType = "jakhüwi";
+    } else {
+        if (l != r) {
+            std::string msg = "tipos incompatibles en operacion: '" + l + "' y '" + r + "'";
+            if (op == '+' && (l == "aru" || r == "aru")) {
+                msg += " (para concatenar convierte con aru(...))";
+            }
+            reportError(msg, "AYM3003");
+        }
+        if ((l == "aru" || r == "aru") && op != '+' && op != 's' && op != 'd') {
+            reportError("operacion invalida sobre textos", "AYM3003");
+        }
+        if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
+            currentType = "chiqa";
+        else
+            currentType = l;
     }
-    if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
-        currentType = "chiqa";
-    else
-        currentType = l;
     lastInputCall = false;
 }
 
@@ -63,6 +74,11 @@ void SemanticAnalyzer::visit(UnaryExpr &u) {
     u.getExpr()->accept(*this);
     if (u.getOp() == '!') {
         currentType = "chiqa";
+    } else if (u.getOp() == '~') {
+        if (currentType != "jakhüwi") {
+            reportError("operacion bit a bit requiere jakhüwi", "AYM3003");
+        }
+        currentType = "jakhüwi";
     }
     lastInputCall = false;
 }
@@ -91,6 +107,9 @@ void SemanticAnalyzer::visit(IncDecExpr &e) {
         reportError("variable '" + e.getName() + "' no declarada", "AYM3002");
         currentType = "";
     } else {
+        if (isConstVar(e.getName())) {
+            reportError("no se puede modificar la constante '" + e.getName() + "'", "AYM3003");
+        }
         std::string t = lookup(e.getName());
         if (t != "jakhüwi") {
             reportError("incremento/decremento requiere numero", "AYM3003");
@@ -108,13 +127,20 @@ void SemanticAnalyzer::visit(FunctionRefExpr &f) {
 
 void SemanticAnalyzer::visit(ListExpr &l) {
     markNode(l);
+    if (l.getElements().empty()) {
+        currentType = "t'aqa";
+        lastInputCall = false;
+        return;
+    }
     std::string elementType;
     for (const auto &elem : l.getElements()) {
         elem->accept(*this);
         std::string t = currentType;
         if (elementType.empty()) {
             elementType = t;
-        } else if (elementType != t) {
+        } else if (isTypeAssignable(elementType, t)) {
+            elementType = t;
+        } else if (!isTypeAssignable(t, elementType)) {
             reportError("tipos incompatibles en lista");
         }
     }
@@ -144,12 +170,10 @@ void SemanticAnalyzer::visit(MapExpr &m) {
             valueType.clear();
         }
     }
-    if (!sawValue) {
-        currentType = "mapa:jakhüwi";
-    } else if (!valueType.empty()) {
-        currentType = "mapa:" + valueType;
-    } else {
+    if (!sawValue || valueType.empty()) {
         currentType = "mapa";
+    } else {
+        currentType = "mapa:" + valueType;
     }
     lastInputCall = false;
 }
@@ -159,7 +183,15 @@ void SemanticAnalyzer::visit(IndexExpr &i) {
     i.getBase()->accept(*this);
     std::string baseType = currentType;
     i.getIndex()->accept(*this);
-    if (baseType.rfind("t'aqa:", 0) == 0) {
+    std::string indexType = currentType;
+    if (baseType == "aru") {
+        if (!indexType.empty() && indexType != "jakhüwi") {
+            reportError("indice de texto debe ser jakhüwi", "AYM3003");
+        }
+        currentType = "aru";
+    } else if (baseType == "t'aqa") {
+        currentType = "jakhüwi";
+    } else if (baseType.rfind("t'aqa:", 0) == 0) {
         currentType = baseType.substr(6);
     } else if (baseType.rfind("mapa", 0) == 0) {
         if (baseType.rfind("mapa:", 0) == 0) {
@@ -233,6 +265,12 @@ void SemanticAnalyzer::visit(CallExpr &c) {
     if (it == functions.end()) {
         it = functions.find(nameLower);
     }
+    if (it != functions.end() && c.getArgs().size() < it->second) {
+        auto dit = paramDefaults.find(it->first);
+        if (dit != paramDefaults.end()) {
+            fillDefaultArgs(c, dit->second);
+        }
+    }
     if (it == functions.end()) {
         reportError("funcion '" + c.getName() + "' no declarada", "AYM3004");
     } else if (nameLower == "katu") {
@@ -266,9 +304,18 @@ void SemanticAnalyzer::visit(CallExpr &c) {
     }
     if (nameLower == BUILTIN_TO_STRING || nameLower == BUILTIN_CHUSA ||
         nameLower == BUILTIN_MAYACHTA || nameLower == BUILTIN_SIKTA ||
-        nameLower == BUILTIN_ULLANA_ARU) {
+        nameLower == BUILTIN_JACHANCHAYA || nameLower == BUILTIN_JISKANCHAYA ||
+        nameLower == BUILTIN_KUTIKIPA || nameLower == BUILTIN_KUTI_ARU ||
+        nameLower == BUILTIN_ULLANA_ARU || nameLower == BUILTIN_ARU_CHIMPU ||
+        nameLower == BUILTIN_JALJA_ARU || nameLower == BUILTIN_JAKHUWI_CHIMPU ||
+        nameLower == BUILTIN_PACHA_ARU) {
         currentType = "aru";
-    } else if (nameLower == BUILTIN_TO_NUMBER) {
+    } else if (nameLower == BUILTIN_TO_NUMBER || nameLower == BUILTIN_CHIMPU_JAKHUWI ||
+               nameLower == BUILTIN_THANTA || nameLower == BUILTIN_JISKA_TAQA ||
+               nameLower == BUILTIN_JACHA_TAQA || nameLower == BUILTIN_JAKHU_CHANI ||
+               nameLower == BUILTIN_JAKHU_JISKA || nameLower == BUILTIN_JAKHU_JACHA ||
+               nameLower == BUILTIN_JAKHU_MCD || nameLower == BUILTIN_JAKHU_LIMITA ||
+               nameLower == BUILTIN_YAPXATA_ARU || nameLower == BUILTIN_MISTUNA) {
         currentType = "jakhüwi";
     } else if (nameLower == BUILTIN_ARG_OBTENER) {
         currentType = "aru";
@@ -286,17 +333,21 @@ void SemanticAnalyzer::visit(CallExpr &c) {
     } else if (nameLower == BUILTIN_ARG_CANTIDAD || nameLower == BUILTIN_AFIRMA ||
                nameLower == BUILTIN_QILLQANA_ARU || nameLower == BUILTIN_UTJI_ARKATA) {
         currentType = "jakhüwi";
-    } else if (nameLower == BUILTIN_THAQHA) {
+    } else if (nameLower == BUILTIN_THAQHA || nameLower == BUILTIN_JIKXATA) {
         currentType = "jakhüwi";
-    } else if (nameLower == BUILTIN_UTJI || nameLower == BUILTIN_UTJIT || nameLower == BUILTIN_UTJI_SUTI) {
+    } else if (nameLower == BUILTIN_UTJI || nameLower == BUILTIN_UTJIT || nameLower == BUILTIN_UTJI_SUTI ||
+               nameLower == BUILTIN_QALLTATI || nameLower == BUILTIN_TUKUYATI ||
+               nameLower == BUILTIN_PICHHA_ARKATA) {
         currentType = "chiqa";
     } else if (nameLower == BUILTIN_MAP || nameLower == BUILTIN_FILTER ||
                nameLower == BUILTIN_MAYJTAYA || nameLower == BUILTIN_AJLLI ||
-               nameLower == BUILTIN_WAKICHA || nameLower == BUILTIN_SAPAKI) {
+               nameLower == BUILTIN_WAKICHA || nameLower == BUILTIN_SAPAKI ||
+               nameLower == BUILTIN_KUTIKIPAT || nameLower == BUILTIN_JALJAT ||
+               nameLower == BUILTIN_WAKICHA_QHIPA) {
         if (!c.getArgs().empty()) {
             c.getArgs()[0]->accept(*this);
             std::string baseType = currentType;
-            if (baseType.rfind("t'aqa:", 0) == 0) {
+            if (baseType.rfind("t'aqa:", 0) == 0 || baseType == "t'aqa") {
                 currentType = baseType;
             } else {
                 currentType = "t'aqa:jakhüwi";
@@ -311,9 +362,8 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         } else {
             currentType = "jakhüwi";
         }
-    } else if (nameLower == BUILTIN_JALJTA) {
-        currentType = "t'aqa:aru";
-    } else if (nameLower == BUILTIN_SUTINAKA) {
+    } else if (nameLower == BUILTIN_JALJTA || nameLower == BUILTIN_SUTINAKA ||
+               nameLower == BUILTIN_ULLANA_SIQI) {
         currentType = "t'aqa:aru";
     } else if (nameLower == BUILTIN_CHANINAKA) {
         if (!c.getArgs().empty()) {
@@ -351,9 +401,12 @@ void SemanticAnalyzer::visit(CallExpr &c) {
                 std::string valueType = currentType;
                 if (baseType.rfind("t'aqa:", 0) == 0) {
                     std::string elementType = baseType.substr(6);
-                    if (!elementType.empty() && valueType != elementType) {
+                    if (!valueType.empty() && !elementType.empty() &&
+                        !isTypeAssignable(valueType, elementType)) {
                         reportError("tipo incompatible en push");
                     }
+                    currentType = baseType;
+                } else if (baseType == "t'aqa") {
                     currentType = baseType;
                 } else {
                     reportError("se esperaba una lista para push");
@@ -370,6 +423,8 @@ void SemanticAnalyzer::visit(CallExpr &c) {
             std::string baseType = currentType;
             if (baseType.rfind("t'aqa:", 0) == 0) {
                 currentType = baseType.substr(6);
+            } else if (baseType == "t'aqa") {
+                currentType = "jakhüwi";
             } else {
                 reportError("se esperaba una lista para " + c.getName());
                 currentType = "";

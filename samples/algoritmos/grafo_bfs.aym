@@ -1,0 +1,23 @@
+// BFS sobre un grafo de 6 nodos dado como lista de aristas; imprime distancias desde 0.
+qallta
+yatiya t'aqa de = [0, 0, 1, 2, 3, 4];
+yatiya t'aqa a = [1, 2, 3, 3, 4, 5];
+yatiya t'aqa dist = [0, 0 - 1, 0 - 1, 0 - 1, 0 - 1, 0 - 1];
+yatiya t'aqa cola = [0];
+yatiya jakhüwi ini = 0;
+ukhakamaxa(ini < suyut(cola)) {
+  yatiya jakhüwi u = cola[ini];
+  ini = ini + 1;
+  kuti(yatiya jakhüwi e = 0; e < suyut(de); e = e + 1) {
+    yatiya jakhüwi v = 0 - 1;
+    ukaxa(de[e] == u) { v = a[e]; }
+    ukaxa(a[e] == u) { v = de[e]; }
+    ukaxa(v >= 0 && dist[v] < 0) {
+      dist[v] = dist[u] + 1;
+      push(cola, v);
+    }
+  }
+}
+qillqa(cola);
+qillqa(dist);
+tukuya

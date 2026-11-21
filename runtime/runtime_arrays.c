@@ -27,22 +27,20 @@ intptr_t aym_array_new(long size) {
 intptr_t aym_array_get(intptr_t arr, long idx) {
     if (!arr) return 0;
     AymArray *a = (AymArray*)arr;
-    if (idx < 0) {
-        fprintf(stderr, "aym_array_get: negative index %ld\n", idx);
-        return 0; // default value on error
+    if (idx < 0 || idx >= a->len) {
+        aym_throw_typed("INDICE", "indice de lista fuera de rango");
+        return 0;
     }
-    if (idx >= a->len) return 0;
     return a->data[idx];
 }
 
 intptr_t aym_array_set(intptr_t arr, long idx, intptr_t val) {
     if (!arr) return 0;
     AymArray *a = (AymArray*)arr;
-    if (idx < 0) {
-        fprintf(stderr, "aym_array_set: negative index %ld\n", idx);
-        return 0; // indicate error
+    if (idx < 0 || idx >= a->len) {
+        aym_throw_typed("INDICE", "indice de lista fuera de rango");
+        return 0;
     }
-    if (idx >= a->len) return 0;
     a->data[idx] = (intptr_t)val;
     return val;
 }
@@ -169,7 +167,15 @@ static int aym_cmp_cstr_ptr(const void *left, const void *right) {
     return strcmp(a, b);
 }
 
-intptr_t aym_array_sort_int(intptr_t arr) {
+static int aym_cmp_intptr_desc(const void *left, const void *right) {
+    return aym_cmp_intptr(right, left);
+}
+
+static int aym_cmp_cstr_ptr_desc(const void *left, const void *right) {
+    return aym_cmp_cstr_ptr(right, left);
+}
+
+static intptr_t aym_array_sort_with(intptr_t arr, int (*cmp)(const void *, const void *)) {
     if (!arr) return aym_array_new(0);
     AymArray *a = (AymArray*)arr;
     intptr_t out = aym_array_new(a->len);
@@ -179,24 +185,118 @@ intptr_t aym_array_sort_int(intptr_t arr) {
         dst->data[i] = a->data[i];
     }
     if (dst->len > 1) {
-        qsort(dst->data, (size_t)dst->len, sizeof(intptr_t), aym_cmp_intptr);
+        qsort(dst->data, (size_t)dst->len, sizeof(intptr_t), cmp);
     }
     return out;
 }
 
+intptr_t aym_array_sort_int(intptr_t arr) {
+    return aym_array_sort_with(arr, aym_cmp_intptr);
+}
+
 intptr_t aym_array_sort_str(intptr_t arr) {
+    return aym_array_sort_with(arr, aym_cmp_cstr_ptr);
+}
+
+intptr_t aym_array_sort_desc_int(intptr_t arr) {
+    return aym_array_sort_with(arr, aym_cmp_intptr_desc);
+}
+
+intptr_t aym_array_sort_desc_str(intptr_t arr) {
+    return aym_array_sort_with(arr, aym_cmp_cstr_ptr_desc);
+}
+
+intptr_t aym_array_reverse(intptr_t arr) {
     if (!arr) return aym_array_new(0);
-    AymArray *a = (AymArray*)arr;
+    AymArray *a = (AymArray *)arr;
     intptr_t out = aym_array_new(a->len);
     if (!out) return 0;
-    AymArray *dst = (AymArray*)out;
+    AymArray *dst = (AymArray *)out;
     for (long i = 0; i < a->len; i++) {
-        dst->data[i] = a->data[i];
-    }
-    if (dst->len > 1) {
-        qsort(dst->data, (size_t)dst->len, sizeof(intptr_t), aym_cmp_cstr_ptr);
+        dst->data[i] = a->data[a->len - 1 - i];
     }
     return out;
+}
+
+intptr_t aym_array_slice(intptr_t arr, long start, long end) {
+    if (!arr) return aym_array_new(0);
+    AymArray *a = (AymArray *)arr;
+    if (start < 0) start = 0;
+    if (start > a->len) start = a->len;
+    if (end < 0) end = 0;
+    if (end > a->len) end = a->len;
+    if (end <= start) return aym_array_new(0);
+    long count = end - start;
+    intptr_t out = aym_array_new(count);
+    if (!out) return 0;
+    AymArray *dst = (AymArray *)out;
+    for (long i = 0; i < count; i++) {
+        dst->data[i] = a->data[start + i];
+    }
+    return out;
+}
+
+long aym_array_sum(intptr_t arr) {
+    if (!arr) return 0;
+    AymArray *a = (AymArray *)arr;
+    long total = 0;
+    for (long i = 0; i < a->len; i++) {
+        total += (long)a->data[i];
+    }
+    return total;
+}
+
+static long aym_array_extremum(intptr_t arr, int find_max) {
+    if (!arr) {
+        aym_throw_typed("VACIO", "lista vacia");
+        return 0;
+    }
+    AymArray *a = (AymArray *)arr;
+    if (a->len <= 0) {
+        aym_throw_typed("VACIO", "lista vacia");
+        return 0;
+    }
+    long best = (long)a->data[0];
+    for (long i = 1; i < a->len; i++) {
+        long val = (long)a->data[i];
+        if (find_max ? (val > best) : (val < best)) {
+            best = val;
+        }
+    }
+    return best;
+}
+
+long aym_array_min(intptr_t arr) {
+    return aym_array_extremum(arr, 0);
+}
+
+long aym_array_max(intptr_t arr) {
+    return aym_array_extremum(arr, 1);
+}
+
+void aym_print_list_depth(intptr_t arr, long depth, long elem_is_str) {
+    if (!arr) {
+        printf("[]");
+        return;
+    }
+    AymArray *a = (AymArray *)arr;
+    printf("[");
+    for (long i = 0; i < a->len; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        if (depth <= 1) {
+            if (elem_is_str) {
+                const char *s = (const char *)a->data[i];
+                printf("\"%s\"", s ? s : "");
+            } else {
+                printf("%ld", (long)a->data[i]);
+            }
+        } else {
+            aym_print_list_depth(a->data[i], depth - 1, elem_is_str);
+        }
+    }
+    printf("]");
 }
 
 intptr_t aym_array_unique_int(intptr_t arr) {

@@ -11,8 +11,12 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
         std::string nameLower = lowerName(c->getName());
         if (nameLower == BUILTIN_TO_STRING || nameLower == BUILTIN_KATU ||
             nameLower == BUILTIN_CHUSA || nameLower == BUILTIN_MAYACHTA ||
-            nameLower == BUILTIN_SIKTA || nameLower == BUILTIN_ARG_OBTENER ||
-            nameLower == BUILTIN_ULLANA_ARU) {
+            nameLower == BUILTIN_SIKTA || nameLower == BUILTIN_JACHANCHAYA ||
+            nameLower == BUILTIN_JISKANCHAYA || nameLower == BUILTIN_KUTIKIPA ||
+            nameLower == BUILTIN_KUTI_ARU || nameLower == BUILTIN_ARG_OBTENER ||
+            nameLower == BUILTIN_ULLANA_ARU || nameLower == BUILTIN_ARU_CHIMPU ||
+            nameLower == BUILTIN_JALJA_ARU || nameLower == BUILTIN_JAKHUWI_CHIMPU ||
+            nameLower == BUILTIN_PACHA_ARU) {
             return true;
         }
         if (nameLower == BUILTIN_CHANI_M) {
@@ -35,6 +39,9 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
     if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
         if (isMapExpr(i->getBase(), locals)) {
             return mapValueType(i->getBase(), locals) == "aru";
+        }
+        if (isStringExpr(i->getBase(), locals)) {
+            return true;
         }
         return listElementType(i->getBase(), locals) == "aru";
     }
@@ -69,7 +76,6 @@ bool CodeGenImpl::isStringExpr(const Expr *expr,
 
 bool CodeGenImpl::isListExpr(const Expr *expr,
                              const std::unordered_map<std::string,int> *locals) const {
-    (void)locals;
     if (!expr) return false;
     if (dynamic_cast<const ListExpr*>(expr)) return true;
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
@@ -81,21 +87,39 @@ bool CodeGenImpl::isListExpr(const Expr *expr,
             currentLocalTypes.at(v->getName()).rfind("t'aqa", 0) == 0)
             return true;
     }
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        return m->getResolvedType().rfind("t'aqa", 0) == 0;
+    }
+    if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
+        return m->getResolvedType().rfind("t'aqa", 0) == 0;
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        if (isMapExpr(i->getBase(), locals)) {
+            return mapValueType(i->getBase(), locals).rfind("t'aqa", 0) == 0;
+        }
+        return listElementType(i->getBase(), locals).rfind("t'aqa", 0) == 0;
+    }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
         if (name == BUILTIN_PUSH || name == BUILTIN_CHULLU || name == BUILTIN_JALJTA ||
             name == BUILTIN_SUTINAKA || name == BUILTIN_CHANINAKA ||
-            name == BUILTIN_WAKICHA || name == BUILTIN_SAPAKI) return true;
+            name == BUILTIN_WAKICHA || name == BUILTIN_WAKICHA_QHIPA ||
+            name == BUILTIN_SAPAKI || name == BUILTIN_KUTIKIPAT ||
+            name == BUILTIN_JALJAT || name == BUILTIN_ULLANA_SIQI ||
+            name == BUILTIN_MAP || name == BUILTIN_FILTER ||
+            name == BUILTIN_MAYJTAYA || name == BUILTIN_AJLLI) return true;
         auto it = functionReturnTypes.find(c->getName());
         if (it == functionReturnTypes.end()) it = functionReturnTypes.find(name);
         if (it != functionReturnTypes.end() && it->second.rfind("t'aqa", 0) == 0) return true;
+    }
+    if (auto *t = dynamic_cast<const TernaryExpr*>(expr)) {
+        return isListExpr(t->getThen(), locals) && isListExpr(t->getElse(), locals);
     }
     return false;
 }
 
 bool CodeGenImpl::isMapExpr(const Expr *expr,
                             const std::unordered_map<std::string,int> *locals) const {
-    (void)locals;
     if (!expr) return false;
     if (dynamic_cast<const MapExpr*>(expr)) return true;
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
@@ -118,11 +142,29 @@ bool CodeGenImpl::isMapExpr(const Expr *expr,
     if (dynamic_cast<const NewExpr*>(expr)) {
         return true;
     }
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        return m->getResolvedType().rfind("mapa", 0) == 0 ||
+               m->getResolvedType().rfind("kasta:", 0) == 0;
+    }
+    if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
+        return m->getResolvedType().rfind("mapa", 0) == 0 ||
+               m->getResolvedType().rfind("kasta:", 0) == 0;
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        std::string inner = isMapExpr(i->getBase(), locals)
+            ? mapValueType(i->getBase(), locals)
+            : listElementType(i->getBase(), locals);
+        return inner.rfind("mapa", 0) == 0 || inner.rfind("kasta:", 0) == 0;
+    }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
         auto it = functionReturnTypes.find(c->getName());
         if (it == functionReturnTypes.end()) it = functionReturnTypes.find(name);
-        if (it != functionReturnTypes.end() && it->second.rfind("mapa", 0) == 0) return true;
+        if (it != functionReturnTypes.end() &&
+            (it->second.rfind("mapa", 0) == 0 || it->second.rfind("kasta:", 0) == 0)) return true;
+    }
+    if (auto *t = dynamic_cast<const TernaryExpr*>(expr)) {
+        return isMapExpr(t->getThen(), locals) && isMapExpr(t->getElse(), locals);
     }
     return false;
 }
@@ -131,6 +173,27 @@ std::string CodeGenImpl::listElementType(const Expr *expr,
                                          const std::unordered_map<std::string,int> *locals) const {
     if (!expr) return "";
     if (auto *list = dynamic_cast<const ListExpr*>(expr)) {
+        if (!list->getElements().empty() && isListExpr(list->getElements()[0].get(), locals)) {
+            std::string elem;
+            for (const auto &el : list->getElements()) {
+                std::string candidate = listElementType(el.get(), locals);
+                if (auto *sub = dynamic_cast<const ListExpr*>(el.get())) {
+                    if (!sub->getElements().empty()) {
+                        elem = candidate;
+                        break;
+                    }
+                } else if (!candidate.empty()) {
+                    elem = candidate;
+                    break;
+                }
+                if (elem.empty()) elem = candidate;
+            }
+            return elem.empty() ? "t'aqa:jakhüwi" : "t'aqa:" + elem;
+        }
+        if (!list->getElements().empty() && isMapExpr(list->getElements()[0].get(), locals)) {
+            std::string val = mapValueType(list->getElements()[0].get(), locals);
+            return val.empty() ? "mapa" : "mapa:" + val;
+        }
         bool seenString = false;
         bool seenNumber = false;
         for (const auto &elem : list->getElements()) {
@@ -168,22 +231,58 @@ std::string CodeGenImpl::listElementType(const Expr *expr,
         t = checkType(globalTypes);
         if (!t.empty()) return t;
     }
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        if (m->getResolvedType().rfind("t'aqa:", 0) == 0) {
+            return m->getResolvedType().substr(6);
+        }
+        if (m->getResolvedType() == "t'aqa") {
+            return "jakhüwi";
+        }
+    }
+    if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
+        if (m->getResolvedType().rfind("t'aqa:", 0) == 0) {
+            return m->getResolvedType().substr(6);
+        }
+        if (m->getResolvedType() == "t'aqa") {
+            return "jakhüwi";
+        }
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        std::string inner = isMapExpr(i->getBase(), locals)
+            ? mapValueType(i->getBase(), locals)
+            : listElementType(i->getBase(), locals);
+        if (inner.rfind("t'aqa:", 0) == 0) {
+            return inner.substr(6);
+        }
+        if (inner == "t'aqa") {
+            return "jakhüwi";
+        }
+    }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
-        if (name == BUILTIN_JALJTA) {
-            return "aru";
-        }
-        if (name == BUILTIN_SUTINAKA) {
+        if (name == BUILTIN_JALJTA || name == BUILTIN_SUTINAKA || name == BUILTIN_ULLANA_SIQI) {
             return "aru";
         }
         if (name == BUILTIN_CHANINAKA && !c->getArgs().empty()) {
             return mapValueType(c->getArgs()[0].get(), locals);
         }
-        if ((name == BUILTIN_PUSH || name == BUILTIN_CHULLU) && !c->getArgs().empty()) {
+        if ((name == BUILTIN_PUSH || name == BUILTIN_CHULLU ||
+             name == BUILTIN_WAKICHA || name == BUILTIN_WAKICHA_QHIPA ||
+             name == BUILTIN_SAPAKI || name == BUILTIN_KUTIKIPAT ||
+             name == BUILTIN_JALJAT || name == BUILTIN_MAP ||
+             name == BUILTIN_FILTER || name == BUILTIN_MAYJTAYA ||
+             name == BUILTIN_AJLLI) && !c->getArgs().empty()) {
             return listElementType(c->getArgs()[0].get(), locals);
         }
-        if ((name == BUILTIN_WAKICHA || name == BUILTIN_SAPAKI) && !c->getArgs().empty()) {
-            return listElementType(c->getArgs()[0].get(), locals);
+        auto it = functionReturnTypes.find(c->getName());
+        if (it == functionReturnTypes.end()) it = functionReturnTypes.find(name);
+        if (it != functionReturnTypes.end()) {
+            if (it->second.rfind("t'aqa:", 0) == 0) {
+                return it->second.substr(6);
+            }
+            if (it->second == "t'aqa") {
+                return "jakhüwi";
+            }
         }
     }
     return "";
@@ -195,14 +294,23 @@ std::string CodeGenImpl::mapValueType(const Expr *expr,
     if (auto *map = dynamic_cast<const MapExpr*>(expr)) {
         bool seenString = false;
         bool seenNumber = false;
+        bool seenList = false;
+        std::string listValType;
         for (const auto &item : map->getItems()) {
-            if (isStringExpr(item.second.get(), locals)) {
+            if (isListExpr(item.second.get(), locals)) {
+                seenList = true;
+                if (listValType.empty()) {
+                    std::string el = listElementType(item.second.get(), locals);
+                    listValType = el.empty() ? "t'aqa:jakhüwi" : "t'aqa:" + el;
+                }
+            } else if (isStringExpr(item.second.get(), locals)) {
                 seenString = true;
             } else {
                 seenNumber = true;
             }
         }
-        if (seenString && !seenNumber) return "aru";
+        if (seenList && !seenString && !seenNumber) return listValType;
+        if (seenString && !seenNumber && !seenList) return "aru";
         return "jakhüwi";
     }
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
@@ -230,6 +338,33 @@ std::string CodeGenImpl::mapValueType(const Expr *expr,
         t = checkType(globalTypes);
         if (!t.empty()) return t;
     }
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        if (m->getResolvedType().rfind("mapa:", 0) == 0) {
+            return m->getResolvedType().substr(5);
+        }
+        if (m->getResolvedType() == "mapa") {
+            return "jakhüwi";
+        }
+    }
+    if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
+        if (m->getResolvedType().rfind("mapa:", 0) == 0) {
+            return m->getResolvedType().substr(5);
+        }
+        if (m->getResolvedType() == "mapa") {
+            return "jakhüwi";
+        }
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        std::string inner = isMapExpr(i->getBase(), locals)
+            ? mapValueType(i->getBase(), locals)
+            : listElementType(i->getBase(), locals);
+        if (inner.rfind("mapa:", 0) == 0) {
+            return inner.substr(5);
+        }
+        if (inner == "mapa") {
+            return "jakhüwi";
+        }
+    }
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string name = lowerName(c->getName());
         auto it = functionReturnTypes.find(c->getName());
@@ -248,15 +383,30 @@ bool CodeGenImpl::isBoolExpr(const Expr *expr,
     if (auto *c = dynamic_cast<const CallExpr*>(expr)) {
         std::string nameLower = lowerName(c->getName());
         if (nameLower == BUILTIN_UTJI || nameLower == BUILTIN_UTJIT ||
-            nameLower == BUILTIN_UTJI_SUTI) return true;
+            nameLower == BUILTIN_UTJI_SUTI || nameLower == BUILTIN_QALLTATI ||
+            nameLower == BUILTIN_TUKUYATI || nameLower == BUILTIN_PICHHA_ARKATA) return true;
         auto it = functionReturnTypes.find(c->getName());
         if (it == functionReturnTypes.end()) it = functionReturnTypes.find(nameLower);
         if (it != functionReturnTypes.end() && it->second == "chiqa") return true;
     }
+    if (auto *m = dynamic_cast<const MemberExpr*>(expr)) {
+        if (!m->getResolvedType().empty()) return m->getResolvedType() == "chiqa";
+    }
+    if (auto *m = dynamic_cast<const MemberCallExpr*>(expr)) {
+        if (!m->getResolvedType().empty()) return m->getResolvedType() == "chiqa";
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        if (isMapExpr(i->getBase(), locals)) {
+            return mapValueType(i->getBase(), locals) == "chiqa";
+        }
+        if (!isStringExpr(i->getBase(), locals)) {
+            return listElementType(i->getBase(), locals) == "chiqa";
+        }
+    }
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
         if (currentParamTypes.count(v->getName()) && currentParamTypes.at(v->getName()) == "chiqa")
             return true;
-        if (locals && currentLocalTypes.count(v->getName()) &&
+        if (currentLocalTypes.count(v->getName()) &&
             currentLocalTypes.at(v->getName()) == "chiqa")
             return true;
         if (globalTypes.count(v->getName()) && globalTypes.at(v->getName()) == "chiqa")

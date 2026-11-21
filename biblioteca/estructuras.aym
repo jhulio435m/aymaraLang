@@ -1,0 +1,119 @@
+// biblioteca/estructuras.aym - estructuras de datos basicas
+// Pila:          apilar(v), desapilar(), cima(), tamano(), vacia()
+// Cola:          encolar(v), desencolar(), frente(), tamano(), vacia()
+// Conjunto (de textos, sobre mapa): agregar(k), contiene(k), quitar(k), tamano()
+// ContadorMapa:  contar(k), cuenta(k), distintos()
+// ListaEnlazada: insertar_inicio(v), insertar_final(v), contiene(v), a_lista(), tamano()
+// Nota: los mapas-campo y listas-campo indexadas se acceden via alias local (aka.m[k] = v o aka.datos[i] directo no surte efecto).
+kasta Pila {
+  yatiya t'aqa datos;
+  qallta() { aka.datos = []; }
+  lurawi apilar(jakhüwi v) { ch'ullu(aka.datos, v); kuttaya; }
+  lurawi desapilar(): jakhüwi { kuttaya apsu(aka.datos); }
+  lurawi cima(): jakhüwi { yatiya t'aqa t = aka.datos; kuttaya t[suyut(t) - 1]; }
+  lurawi tamano(): jakhüwi { kuttaya suyut(aka.datos); }
+  lurawi vacia(): chiqa { kuttaya suyut(aka.datos) == 0; }
+}
+kasta Cola {
+  yatiya t'aqa datos;
+  yatiya jakhüwi inicio;
+  qallta() { aka.datos = []; aka.inicio = 0; }
+  lurawi encolar(jakhüwi v) { ch'ullu(aka.datos, v); kuttaya; }
+  lurawi desencolar(): jakhüwi {
+    yatiya t'aqa t = aka.datos;
+    yatiya jakhüwi v = t[aka.inicio];
+    aka.inicio = aka.inicio + 1;
+    kuttaya v;
+  }
+  lurawi frente(): jakhüwi { yatiya t'aqa t = aka.datos; kuttaya t[aka.inicio]; }
+  lurawi tamano(): jakhüwi { kuttaya suyut(aka.datos) - aka.inicio; }
+  lurawi vacia(): chiqa { kuttaya suyut(aka.datos) - aka.inicio == 0; }
+}
+kasta Conjunto {
+  yatiya mapa m;
+  qallta() { aka.m = {}; }
+  lurawi agregar(aru k) { yatiya mapa t = aka.m; t[k] = 1; aka.m = t; kuttaya; }
+  lurawi contiene(aru k): chiqa { kuttaya utjisuti(aka.m, k); }
+  lurawi quitar(aru k) { yatiya mapa t = aka.m; apsusuti(t, k); aka.m = t; kuttaya; }
+  lurawi tamano(): jakhüwi { kuttaya suyum(aka.m); }
+}
+kasta ContadorMapa {
+  yatiya mapa m;
+  qallta() { aka.m = {}; }
+  lurawi contar(aru k) {
+    yatiya mapa t = aka.m;
+    ukaxa (utjisuti(t, k)) { t[k] = t[k] + 1; } maysatxa { t[k] = 1; }
+    aka.m = t;
+    kuttaya;
+  }
+  lurawi cuenta(aru k): jakhüwi {
+    yatiya mapa t = aka.m;
+    ukaxa (utjisuti(t, k)) { kuttaya t[k]; }
+    kuttaya 0;
+  }
+  lurawi distintos(): jakhüwi { kuttaya suyum(aka.m); }
+}
+kasta ListaEnlazada {
+  yatiya t'aqa datos;
+  yatiya t'aqa sig;
+  yatiya jakhüwi cabeza;
+  yatiya jakhüwi tam;
+  qallta() {
+    aka.datos = [];
+    aka.sig = [];
+    aka.cabeza = 0 - 1;
+    aka.tam = 0;
+  }
+  lurawi insertar_inicio(jakhüwi v) {
+    yatiya t'aqa _le_d = aka.datos;
+    yatiya t'aqa _le_s = aka.sig;
+    yatiya jakhüwi _le_idx = suyut(_le_d);
+    ch'ullu(_le_d, v);
+    ch'ullu(_le_s, aka.cabeza);
+    aka.cabeza = _le_idx;
+    aka.tam = aka.tam + 1;
+    kuttaya;
+  }
+  lurawi insertar_final(jakhüwi v) {
+    yatiya t'aqa _le_d = aka.datos;
+    yatiya t'aqa _le_s = aka.sig;
+    yatiya jakhüwi _le_idx = suyut(_le_d);
+    ch'ullu(_le_d, v);
+    ch'ullu(_le_s, 0 - 1);
+    ukaxa (aka.cabeza < 0) {
+      aka.cabeza = _le_idx;
+    } maysatxa {
+      yatiya jakhüwi _le_cur = aka.cabeza;
+      ukhakamaxa (_le_s[_le_cur] >= 0) {
+        _le_cur = _le_s[_le_cur];
+      }
+      _le_s[_le_cur] = _le_idx;
+    }
+    aka.tam = aka.tam + 1;
+    kuttaya;
+  }
+  lurawi contiene(jakhüwi v): chiqa {
+    yatiya t'aqa _le_d = aka.datos;
+    yatiya t'aqa _le_s = aka.sig;
+    yatiya jakhüwi _le_cur = aka.cabeza;
+    ukhakamaxa (_le_cur >= 0) {
+      ukaxa (_le_d[_le_cur] == v) { kuttaya chiqa; }
+      _le_cur = _le_s[_le_cur];
+    }
+    kuttaya k'ari;
+  }
+  lurawi a_lista(): t'aqa {
+    yatiya t'aqa _le_d = aka.datos;
+    yatiya t'aqa _le_s = aka.sig;
+    yatiya t'aqa _le_r = [];
+    yatiya jakhüwi _le_cur = aka.cabeza;
+    ukhakamaxa (_le_cur >= 0) {
+      ch'ullu(_le_r, _le_d[_le_cur]);
+      _le_cur = _le_s[_le_cur];
+    }
+    kuttaya _le_r;
+  }
+  lurawi tamano(): jakhüwi {
+    kuttaya aka.tam;
+  }
+}

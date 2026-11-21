@@ -60,7 +60,7 @@ qillqa(inc(5));
 
 ```aym
 apnaq("modules/aritmetica");
-qillqa("suma: " + suma(3, 4));
+qillqa("suma: " + aru(suma(3, 4)));
 ```
 
 ## 6. Comentarios

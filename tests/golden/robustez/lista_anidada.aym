@@ -1,0 +1,20 @@
+// Regresion: listas anidadas 2D/3D (enteros y cadenas), indexacion y escritura.
+yatiya t'aqa mat = [[1, 2], [3, 4]];
+qillqa(mat);
+qillqa(mat[0]);
+qillqa(mat[1][1]);
+mat[0][1] = 99;
+qillqa(mat);
+
+yatiya t'aqa palabras = [["a", "b"], ["c", "d"]];
+qillqa(palabras);
+qillqa(palabras[1][0]);
+
+yatiya t'aqa cubo = [[[1, 2]], [[3]]];
+qillqa(cubo);
+
+lurawi doble(jakhüwi x): jakhüwi {
+  kuttaya x * 2;
+}
+yatiya t'aqa calc = [[doble(1), doble(2)], [doble(3), doble(4)]];
+qillqa(calc);

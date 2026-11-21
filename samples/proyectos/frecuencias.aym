@@ -1,0 +1,57 @@
+// Proyecto: frecuencias
+// Estadisticas de texto: cuenta frecuencia de palabras con mapas,
+// halla la mas repetida y filtra con funciones de orden superior.
+qallta
+yatiya t'aqa palabras = ["inti", "killa", "inti", "wara", "inti", "killa", "qullu", "uma", "uma", "inti"];
+
+lurawi repetida(jakhüwi n): chiqa {
+  kuttaya n > 1;
+}
+
+lurawi sumar(jakhüwi s, jakhüwi x): jakhüwi {
+  kuttaya s + x;
+}
+
+yatiya mapa frec = {};
+kuti(yatiya jakhüwi i = 0; i < suyut(palabras); i++) {
+  yatiya aru w = palabras[i];
+  ukaxa(utjisuti(frec, w)) {
+    frec[w] = frec[w] + 1;
+  } maysatxa {
+    frec[w] = 1;
+  }
+}
+yatiya t'aqa orden = sutinaka(frec);
+yatiya t'aqa cuentas = [];
+yatiya aru mejor = "";
+yatiya jakhüwi mejor_n = 0;
+
+kuti(yatiya jakhüwi i = 0; i < suyut(orden); i++) {
+  yatiya aru k = orden[i];
+  yatiya jakhüwi n = frec[k];
+  push(cuentas, n);
+  yatiya aru barra = "";
+  kuti(yatiya jakhüwi j = 0; j < n; j++) {
+    barra = barra + "#";
+  }
+  qillqa(k + " " + barra + " " + aru(n));
+  ukaxa(n > mejor_n) {
+    mejor_n = n;
+    mejor = k;
+  }
+}
+
+yatiya jakhüwi total = thaqthapi(cuentas, &sumar, 0);
+yatiya t'aqa reps = ajlli(cuentas, &repetida);
+qillqa("palabras = " + aru(total));
+qillqa("distintas = " + aru(suyum(frec)));
+qillqa("repetidas = " + aru(suyut(reps)));
+qillqa("mas frecuente = " + mejor + " (" + aru(mejor_n) + ")");
+
+afirma(total == 10, "total");
+afirma(suyum(frec) == 5, "distintas");
+afirma(suyut(reps) == 3, "repetidas");
+afirma(mejor == "inti", "mejor");
+afirma(mejor_n == 4, "mejor_n");
+qillqa("frecuencias OK");
+tukuya

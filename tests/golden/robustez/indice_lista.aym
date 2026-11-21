@@ -1,0 +1,8 @@
+// Indexar una lista fuera de rango lanza INDICE (antes devolvia 0 en silencio).
+yatiya t'aqa a = [10, 20, 30];
+qillqa(a[2]);
+yant'aña { qillqa(a[3]); } katjaña("INDICE", e) { qillqa("leer: " + e.aru); }
+yant'aña { qillqa(a[0 - 1]); } katjaña("INDICE", e) { qillqa("negativo: " + e.aru); }
+yant'aña { a[5] = 1; } katjaña("INDICE", e) { qillqa("escribir: " + e.aru); }
+a[0] = 99;
+qillqa(a);

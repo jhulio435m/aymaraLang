@@ -1,0 +1,26 @@
+// Fibonacci iterativo y recursivo con memoizacion en un mapa.
+qallta
+yatiya mapa memo = {};
+lurawi fibm(jakhüwi n): jakhüwi {
+  ukaxa(n < 2) { kuttaya n; }
+  yatiya aru k = aru(n);
+  ukaxa(utjisuti(memo, k)) { kuttaya memo[k]; }
+  yatiya jakhüwi r = fibm(n - 1) + fibm(n - 2);
+  memo[k] = r;
+  kuttaya r;
+}
+lurawi fibi(jakhüwi n): jakhüwi {
+  yatiya jakhüwi a = 0;
+  yatiya jakhüwi b = 1;
+  kuti(yatiya jakhüwi i = 0; i < n; i = i + 1) {
+    yatiya jakhüwi t = a + b;
+    a = b;
+    b = t;
+  }
+  kuttaya a;
+}
+qillqa(fibi(10));
+qillqa(fibi(40));
+qillqa(fibm(10));
+qillqa(fibm(40));
+tukuya

@@ -1,0 +1,3 @@
+// Benchmark CPU: fibonacci recursivo.
+lurawi fib(jakhuwi n): jakhuwi { kuttaya n < 2 ? n : fib(n - 1) + fib(n - 2); }
+qillqa(fib(35));

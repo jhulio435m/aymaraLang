@@ -1,0 +1,16 @@
+// Conversion de decimal a binario y a base 8 construyendo el texto digito a digito.
+qallta
+lurawi a_base(jakhüwi n, jakhüwi b): aru {
+  ukaxa(n == 0) { kuttaya "0"; }
+  yatiya aru s = "";
+  ukhakamaxa(n > 0) {
+    s = aru(n % b) + s;
+    n = n / b;
+  }
+  kuttaya s;
+}
+qillqa(a_base(10, 2));
+qillqa(a_base(255, 2));
+qillqa(a_base(64, 8));
+qillqa(a_base(0, 2));
+tukuya

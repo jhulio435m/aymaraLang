@@ -1,0 +1,58 @@
+// Ordenamiento por mezcla (Merge Sort) recursivo sobre una lista.
+qallta
+lurawi mezclar(t'aqa xs, t'aqa tmp, jakhüwi lo, jakhüwi mid, jakhüwi hi) {
+  yatiya jakhüwi i = lo;
+  yatiya jakhüwi j = mid + 1;
+  yatiya jakhüwi k = lo;
+  ukhakamaxa(i <= mid && j <= hi) {
+    ukaxa(xs[i] <= xs[j]) {
+      tmp[k] = xs[i];
+      i = i + 1;
+    } maysatxa {
+      tmp[k] = xs[j];
+      j = j + 1;
+    }
+    k = k + 1;
+  }
+  ukhakamaxa(i <= mid) {
+    tmp[k] = xs[i];
+    i = i + 1;
+    k = k + 1;
+  }
+  ukhakamaxa(j <= hi) {
+    tmp[k] = xs[j];
+    j = j + 1;
+    k = k + 1;
+  }
+  kuti(yatiya jakhüwi p = lo; p <= hi; p = p + 1) {
+    xs[p] = tmp[p];
+  }
+  kuttaya;
+}
+
+lurawi mergesort(t'aqa xs, t'aqa tmp, jakhüwi lo, jakhüwi hi) {
+  ukaxa(lo >= hi) { kuttaya; }
+  yatiya jakhüwi mid = (lo + hi) / 2;
+  mergesort(xs, tmp, lo, mid);
+  mergesort(xs, tmp, mid + 1, hi);
+  mezclar(xs, tmp, lo, mid, hi);
+  kuttaya;
+}
+
+lurawi ordenar(t'aqa xs) {
+  yatiya t'aqa tmp = [];
+  kuti(yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) {
+    push(tmp, 0);
+  }
+  mergesort(xs, tmp, 0, suyut(xs) - 1);
+  kuttaya;
+}
+
+yatiya t'aqa a = [38, 27, 43, 3, 9, 82, 10, 1];
+ordenar(a);
+qillqa(a);
+
+yatiya t'aqa b = [5, -2, 9, 5, 0, -7, 3];
+ordenar(b);
+qillqa(b);
+tukuya

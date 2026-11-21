@@ -1,0 +1,20 @@
+// INT_MIN / -1 no debe terminar con SIGFPE; la potencia es O(log n) y define
+// exponentes negativos.
+yatiya jakhüwi m = -9223372036854775807 - 1;
+yatiya jakhüwi menos = 0 - 1;
+qillqa(m / menos);
+qillqa(m % menos);
+qillqa(7 / menos);
+qillqa(-7 % 3);
+yatiya jakhüwi b = 3;
+qillqa(b ^ 4);
+qillqa(b ^ menos);
+qillqa(menos ^ menos);
+qillqa(menos ^ 2);
+yatiya jakhüwi uno = 1;
+qillqa(uno ^ 1000000000000);
+qillqa(2 ^ 62);
+yatiya jakhüwi cero = 0;
+yant'aña { qillqa(cero ^ menos); } katjaña("ARITMETICA", e) { qillqa(e.aru); }
+qillqa(2 ^ -1);
+qillqa(1 ^ -5);

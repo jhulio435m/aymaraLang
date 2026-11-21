@@ -34,12 +34,14 @@ private:
         std::vector<std::string> paramTypes;
         bool isStatic = false;
         bool isPrivate = false;
+        bool isAbstract = false;
         std::string ownerClass;
     };
 
     struct ClassInfo {
         std::string name;
         std::string base;
+        bool isAbstract = false;
         std::unordered_map<std::string, FieldInfo> fields;
         std::unordered_map<std::string, FieldInfo> staticFields;
         std::unordered_map<std::string, MethodInfo> methods;
@@ -48,8 +50,11 @@ private:
     };
 
     std::vector<std::unordered_map<std::string, std::string>> scopes;
+    std::vector<std::unordered_set<std::string>> constScopes;
     std::unordered_map<std::string, size_t> functions;
     std::unordered_map<std::string, std::vector<std::string>> paramTypes;
+    std::unordered_map<std::string, std::vector<std::shared_ptr<Expr>>> paramDefaults;
+    std::unordered_map<std::string, std::vector<std::shared_ptr<Expr>>> methodDefaults;
     std::unordered_map<std::string, std::string> functionReturnTypes;
     std::unordered_set<std::string> globals;
     std::unordered_map<std::string, std::string> globalTypes;
@@ -59,12 +64,27 @@ private:
     int functionDepth = 0;
     std::string currentClass;
     std::string currentBaseClass;
+    bool inConstructor = false;
 
     void pushScope();
     void popScope();
     void declare(const std::string &name, const std::string &type);
     bool isDeclared(const std::string &name) const;
+    bool isConstVar(const std::string &name) const;
     std::string lookup(const std::string &name) const;
+    std::string resolveTypeAnnotation(const std::string &type) const;
+    static std::unique_ptr<Expr> cloneDefaultExpr(const Expr *def);
+    template <typename CallNode>
+    static void fillDefaultArgs(CallNode &call,
+                                const std::vector<std::shared_ptr<Expr>> &defaults) {
+        for (size_t di = call.getArgs().size(); di < defaults.size(); ++di) {
+            auto cloned = cloneDefaultExpr(defaults[di].get());
+            if (!cloned) {
+                break;
+            }
+            call.appendArg(std::move(cloned));
+        }
+    }
     bool isClassName(const std::string &name) const;
     const ClassInfo *lookupClass(const std::string &name) const;
     const MethodInfo *lookupMethod(const std::string &className, const std::string &methodName) const;

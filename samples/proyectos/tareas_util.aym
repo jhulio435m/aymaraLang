@@ -1,0 +1,26 @@
+// Modulo de apoyo de tareas.aym: funciones puras sobre prioridades.
+qallta
+lurawi etiqueta_prioridad(jakhüwi p): aru {
+  yatiya aru s = "baja";
+  khiti(p) {
+    kuna 3: {
+      s = "alta";
+    }
+    kuna 2: {
+      s = "media";
+    }
+    yaqha: {
+      s = "baja";
+    }
+  }
+  kuttaya s;
+}
+
+lurawi es_urgente(jakhüwi p): chiqa {
+  kuttaya p >= 3;
+}
+
+lurawi acumular(jakhüwi s, jakhüwi x): jakhüwi {
+  kuttaya s + x;
+}
+tukuya

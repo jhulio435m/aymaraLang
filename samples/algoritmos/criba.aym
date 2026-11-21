@@ -1,0 +1,15 @@
+// Criba de Eratostenes: primos menores o iguales a 50.
+qallta
+yatiya jakhüwi N = 50;
+yatiya t'aqa comp = [];
+kuti(yatiya jakhüwi i = 0; i <= N; i = i + 1) { push(comp, 0); }
+yatiya t'aqa primos = [];
+kuti(yatiya jakhüwi i = 2; i <= N; i = i + 1) {
+  ukaxa(comp[i] == 0) {
+    push(primos, i);
+    kuti(yatiya jakhüwi j = i * i; j <= N; j = j + i) { comp[j] = 1; }
+  }
+}
+qillqa(primos);
+qillqa(suyut(primos));
+tukuya

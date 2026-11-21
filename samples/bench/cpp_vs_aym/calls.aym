@@ -1,0 +1,9 @@
+// Codigo dominado por llamadas a funcion.
+lurawi mezcla(jakhüwi a, jakhüwi b, jakhüwi c): jakhüwi {
+  kuttaya (a * 31 + b * 17 + c) % 1000003;
+}
+yatiya jakhüwi acc = 1;
+kuti (yatiya jakhüwi i = 0; i < 20000000; i = i + 1) {
+  acc = mezcla(acc, i, 7);
+}
+qillqa(acc);

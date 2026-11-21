@@ -1,0 +1,9 @@
+disco 1: A -> C
+disco 2: A -> B
+disco 1: C -> B
+disco 3: A -> C
+disco 1: B -> A
+disco 2: B -> C
+disco 1: A -> C
+7
+1023

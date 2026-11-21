@@ -1,0 +1,20 @@
+// Criba de Eratostenes sobre una lista.
+yatiya jakhüwi n = 2000000;
+yatiya t'aqa f = [];
+kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+  push(f, 1);
+}
+f[0] = 0;
+f[1] = 0;
+kuti (yatiya jakhüwi i = 2; i * i < n; i = i + 1) {
+  ukaxa (f[i] == 1) {
+    kuti (yatiya jakhüwi j = i * i; j < n; j = j + i) {
+      f[j] = 0;
+    }
+  }
+}
+yatiya jakhüwi c = 0;
+kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+  c = c + f[i];
+}
+qillqa(c);

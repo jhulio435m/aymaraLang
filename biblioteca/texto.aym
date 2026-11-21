@@ -1,0 +1,59 @@
+// biblioteca/texto.aym - utilidades de texto
+// t_repetir(s,n)          s repetido n veces
+// t_rellenar_izq(s,n,c)   rellena con c a la izquierda hasta largo n
+// t_rellenar_der(s,n,c)   rellena con c a la derecha hasta largo n
+// (unir: usar el builtin mayachta(lista, sep); una lista de textos no pasa como parametro t'aqa)
+// (partir: usar el builtin jaljta(s, sep); devolver lista de textos como t'aqa pierde el tipo)
+// t_contar(s,sub)         numero de apariciones de sub en s
+// t_invertir(s)           texto invertido (kutikipa, respeta UTF-8)
+// t_es_palindromo(s)      chiqa si s es palindromo ignorando mayusculas ASCII
+// t_empieza_con(s,pref)   chiqa si s empieza con pref (qalltati)
+// t_termina_con(s,suf)    chiqa si s termina con suf (tukuyati)
+// t_buscar(s,sub)         posicion en bytes de sub en s o -1 (jikxata)
+// t_mayusculas(s)         copia en mayusculas ASCII (jachanchaya)
+// t_minusculas(s)         copia en minusculas ASCII (jiskanchaya)
+// t_recortar(s)           recorta espacios al inicio y al final (ch'usa)
+// (t_capitalizar: no incluida; el lenguaje aun no tiene subcadena ni indexacion sobre aru)
+lurawi t_repetir(aru s, jakhüwi n): aru {
+  yatiya aru r = "";
+  kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) { r = r + s; }
+  kuttaya r;
+}
+lurawi t_rellenar_izq(aru s, jakhüwi n, aru c): aru {
+  yatiya aru r = s;
+  ukhakamaxa (suyu(r) < n) { r = c + r; }
+  kuttaya r;
+}
+lurawi t_rellenar_der(aru s, jakhüwi n, aru c): aru {
+  yatiya aru r = s;
+  ukhakamaxa (suyu(r) < n) { r = r + c; }
+  kuttaya r;
+}
+lurawi t_contar(aru s, aru sub): jakhüwi {
+  kuttaya suyut(jaljta(s, sub)) - 1;
+}
+lurawi t_invertir(aru s): aru {
+  kuttaya kutikipa(s);
+}
+lurawi t_es_palindromo(aru s): chiqa {
+  yatiya aru norm = jiskanchaya(s);
+  kuttaya norm == kutikipa(norm);
+}
+lurawi t_empieza_con(aru s, aru pref): chiqa {
+  kuttaya qalltati(s, pref);
+}
+lurawi t_termina_con(aru s, aru suf): chiqa {
+  kuttaya tukuyati(s, suf);
+}
+lurawi t_buscar(aru s, aru sub): jakhüwi {
+  kuttaya jikxata(s, sub);
+}
+lurawi t_mayusculas(aru s): aru {
+  kuttaya jachanchaya(s);
+}
+lurawi t_minusculas(aru s): aru {
+  kuttaya jiskanchaya(s);
+}
+lurawi t_recortar(aru s): aru {
+  kuttaya ch'usa(s);
+}

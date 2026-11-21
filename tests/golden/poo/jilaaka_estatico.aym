@@ -1,0 +1,25 @@
+kasta A {
+  yatiya aru id;
+  yatiya jakhüwi n;
+  qallta(aru i, jakhüwi k) { aka.id = i; aka.n = k; }
+  lurawi s(): aru { kuttaya "A"; }
+  lurawi solo_a(): aru { kuttaya "soloA:" + aka.id; }
+}
+kasta B jila A {
+  yatiya jakhüwi extra;
+  qallta(aru i) { jilaaka.qallta(i + "!", 7); aka.extra = 1; }
+  lurawi s(): aru { kuttaya "B>" + jilaaka.s(); }
+}
+kasta C jila B {
+  lurawi s(): aru { kuttaya "C>" + jilaaka.s(); }
+  lurawi t(): aru { kuttaya jilaaka.solo_a(); }
+}
+yatiya C c = machaqa C("x");
+qillqa(c.t());
+qillqa(c.s());
+qillqa(c.n);
+qillqa(c.extra);
+yatiya B b = machaqa B("y");
+qillqa(b.s());
+yatiya A a = machaqa A("z", 2);
+qillqa(a.s() + aru(a.n));

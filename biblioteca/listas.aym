@@ -1,0 +1,152 @@
+// biblioteca/listas.aym - utilidades de listas (t'aqa) de numeros
+// l_invertir(xs)            nueva lista invertida
+// l_indice(xs,v)            indice de v o -1
+// l_contiene(xs,v)          chiqa si v esta en xs
+// l_rebanada(xs,a,b)        elementos [a,b)
+// l_min(xs) l_max(xs)       minimo / maximo (lista no vacia)
+// l_suma(xs)                suma
+// l_unicos(xs)              sin duplicados, conserva orden
+// l_ordenar(xs)             nueva lista ordenada (insercion)
+// l_quicksort(xs)           nueva lista ordenada (quicksort, no muta xs)
+// l_busqueda_binaria(xs,v)  indice en lista ordenada o -1
+// l_rango(a,b)              [a, a+1, ..., b-1]
+// l_concatenar(xs,ys)       xs seguido de ys
+// l_producto_punto(a,b)     producto punto (lanza pantja "ARG" si largos difieren)
+// l_filtrar_positivos(xs)   nueva lista con elementos > 0
+// l_aplanar_pares(a,b)      intercala [a0, b0, a1, b1, ...] hasta min(suyut(a), suyut(b))
+lurawi l_invertir(t'aqa xs): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = suyut(xs) - 1; i >= 0; i = i - 1) { ch'ullu(r, xs[i]); }
+  kuttaya r;
+}
+lurawi l_indice(t'aqa xs, jakhüwi v): jakhüwi {
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) {
+    ukaxa (xs[i] == v) { kuttaya i; }
+  }
+  kuttaya 0 - 1;
+}
+lurawi l_contiene(t'aqa xs, jakhüwi v): chiqa {
+  kuttaya l_indice(xs, v) >= 0;
+}
+lurawi l_rebanada(t'aqa xs, jakhüwi a, jakhüwi b): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = a; i < b && i < suyut(xs); i = i + 1) { ch'ullu(r, xs[i]); }
+  kuttaya r;
+}
+lurawi l_min(t'aqa xs): jakhüwi {
+  yatiya jakhüwi m = xs[0];
+  kuti (yatiya jakhüwi i = 1; i < suyut(xs); i = i + 1) {
+    ukaxa (xs[i] < m) { m = xs[i]; }
+  }
+  kuttaya m;
+}
+lurawi l_max(t'aqa xs): jakhüwi {
+  yatiya jakhüwi m = xs[0];
+  kuti (yatiya jakhüwi i = 1; i < suyut(xs); i = i + 1) {
+    ukaxa (xs[i] > m) { m = xs[i]; }
+  }
+  kuttaya m;
+}
+lurawi l_suma(t'aqa xs): jakhüwi {
+  yatiya jakhüwi s = 0;
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) { s = s + xs[i]; }
+  kuttaya s;
+}
+lurawi l_unicos(t'aqa xs): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) {
+    ukaxa (l_indice(r, xs[i]) < 0) { ch'ullu(r, xs[i]); }
+  }
+  kuttaya r;
+}
+lurawi l_ordenar(t'aqa xs): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) { ch'ullu(r, xs[i]); }
+  kuti (yatiya jakhüwi i = 1; i < suyut(r); i = i + 1) {
+    yatiya jakhüwi v = r[i];
+    yatiya jakhüwi j = i - 1;
+    ukhakamaxa (j >= 0 && r[j] > v) {
+      r[j + 1] = r[j];
+      j = j - 1;
+    }
+    r[j + 1] = v;
+  }
+  kuttaya r;
+}
+lurawi l_busqueda_binaria(t'aqa xs, jakhüwi v): jakhüwi {
+  yatiya jakhüwi lo = 0;
+  yatiya jakhüwi hi = suyut(xs) - 1;
+  ukhakamaxa (lo <= hi) {
+    yatiya jakhüwi s = lo + hi;
+    yatiya jakhüwi mid = (s - s % 2) / 2;
+    ukaxa (xs[mid] == v) { kuttaya mid; }
+    ukaxa (xs[mid] < v) { lo = mid + 1; } maysatxa { hi = mid - 1; }
+  }
+  kuttaya 0 - 1;
+}
+lurawi l_rango(jakhüwi a, jakhüwi b): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = a; i < b; i = i + 1) { ch'ullu(r, i); }
+  kuttaya r;
+}
+lurawi l_concatenar(t'aqa xs, t'aqa ys): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) { ch'ullu(r, xs[i]); }
+  kuti (yatiya jakhüwi i = 0; i < suyut(ys); i = i + 1) { ch'ullu(r, ys[i]); }
+  kuttaya r;
+}
+lurawi l_quicksort_rango(t'aqa r, jakhüwi lo, jakhüwi hi) {
+  ukaxa (lo >= hi) { kuttaya; }
+  yatiya jakhüwi d = hi - lo;
+  yatiya jakhüwi mid = lo + (d - d % 2) / 2;
+  yatiya jakhüwi pivote = r[mid];
+  yatiya jakhüwi i = lo;
+  yatiya jakhüwi j = hi;
+  ukhakamaxa (i <= j) {
+    ukhakamaxa (r[i] < pivote) { i = i + 1; }
+    ukhakamaxa (r[j] > pivote) { j = j - 1; }
+    ukaxa (i <= j) {
+      yatiya jakhüwi t = r[i];
+      r[i] = r[j];
+      r[j] = t;
+      i = i + 1;
+      j = j - 1;
+    }
+  }
+  ukaxa (lo < j) { l_quicksort_rango(r, lo, j); }
+  ukaxa (i < hi) { l_quicksort_rango(r, i, hi); }
+  kuttaya;
+}
+lurawi l_quicksort(t'aqa xs): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) { ch'ullu(r, xs[i]); }
+  ukaxa (suyut(r) > 1) { l_quicksort_rango(r, 0, suyut(r) - 1); }
+  kuttaya r;
+}
+lurawi l_producto_punto(t'aqa a, t'aqa b): jakhüwi {
+  ukaxa (suyut(a) != suyut(b)) {
+    pantja("ARG", "listas de distinta longitud en l_producto_punto");
+  }
+  yatiya jakhüwi s = 0;
+  kuti (yatiya jakhüwi i = 0; i < suyut(a); i = i + 1) {
+    s = s + a[i] * b[i];
+  }
+  kuttaya s;
+}
+lurawi l_filtrar_positivos(t'aqa xs): t'aqa {
+  yatiya t'aqa r = [];
+  kuti (yatiya jakhüwi i = 0; i < suyut(xs); i = i + 1) {
+    ukaxa (xs[i] > 0) { ch'ullu(r, xs[i]); }
+  }
+  kuttaya r;
+}
+lurawi l_aplanar_pares(t'aqa a, t'aqa b): t'aqa {
+  yatiya t'aqa r = [];
+  yatiya jakhüwi n = suyut(a);
+  ukaxa (suyut(b) < n) { n = suyut(b); }
+  kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+    ch'ullu(r, a[i]);
+    ch'ullu(r, b[i]);
+  }
+  kuttaya r;
+}

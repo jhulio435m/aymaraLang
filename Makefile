@@ -36,7 +36,11 @@ $(BIN_DIR)/aymc: $(OBJS)
 # Pattern rule: compile any compiler/*.cpp to build/*.o
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
+
+# Dependencias de headers generadas por -MMD: al cambiar un .h se recompilan
+# todos los .cpp que lo incluyen (evita binarios con structs desfasados).
+-include $(OBJS:.o=.d)
 
 ifeq ($(OS),Windows_NT)
 test: all

@@ -15,6 +15,7 @@ void SemanticAnalyzer::collectClassInfo(const std::vector<std::unique_ptr<Node>>
             if (!classNames.insert(cls->getName()).second) {
                 reportError("clase '" + cls->getName() + "' declarada mas de una vez");
             }
+            classes[cls->getName()].name = cls->getName();
         }
     }
 
@@ -29,10 +30,7 @@ void SemanticAnalyzer::collectClassInfo(const std::vector<std::unique_ptr<Node>>
             reportError("clase base '" + info.base + "' no definida", "AYM3010");
         }
         for (const auto &field : cls->getFields()) {
-            std::string type = field.type;
-            if (type == "t'aqa") type = "t'aqa:jakhüwi";
-            if (type == "mapa") type = "mapa:jakhüwi";
-            if (classNames.count(type)) type = "kasta:" + type;
+            std::string type = resolveTypeAnnotation(field.type);
             FieldInfo fi;
             fi.type = type;
             fi.isStatic = field.isStatic;
@@ -52,20 +50,20 @@ void SemanticAnalyzer::collectClassInfo(const std::vector<std::unique_ptr<Node>>
         }
         for (const auto &method : cls->getMethods()) {
             MethodInfo mi;
-            mi.returnType = method.returnType;
-            if (mi.returnType.empty()) mi.returnType = "";
-            if (mi.returnType == "t'aqa") mi.returnType = "t'aqa:jakhüwi";
-            if (mi.returnType == "mapa") mi.returnType = "mapa:jakhüwi";
-            if (classNames.count(mi.returnType)) mi.returnType = "kasta:" + mi.returnType;
+            mi.returnType = resolveTypeAnnotation(method.returnType);
+            std::vector<std::shared_ptr<Expr>> defaults;
+            bool anyDefault = false;
             for (const auto &p : method.params) {
-                std::string t = p.type;
-                if (t == "t'aqa") t = "t'aqa:jakhüwi";
-                if (t == "mapa") t = "mapa:jakhüwi";
-                if (classNames.count(t)) t = "kasta:" + t;
-                mi.paramTypes.push_back(t);
+                mi.paramTypes.push_back(resolveTypeAnnotation(p.type));
+                defaults.push_back(p.defaultValue);
+                if (p.defaultValue) anyDefault = true;
+            }
+            if (anyDefault) {
+                methodDefaults[cls->getName() + "::" + method.name] = std::move(defaults);
             }
             mi.isStatic = method.isStatic;
             mi.isPrivate = method.isPrivate;
+            mi.isAbstract = method.isAbstract;
             mi.ownerClass = cls->getName();
             if (method.isStatic) {
                 if (info.staticMethods.count(method.name) || info.methods.count(method.name)) {
@@ -95,11 +93,7 @@ void SemanticAnalyzer::collectClassInfo(const std::vector<std::unique_ptr<Node>>
         for (const auto &ctor : cls->getConstructors()) {
             std::vector<std::string> ctorTypes;
             for (const auto &p : ctor.params) {
-                std::string t = p.type;
-                if (t == "t'aqa") t = "t'aqa:jakhüwi";
-                if (t == "mapa") t = "mapa:jakhüwi";
-                if (classNames.count(t)) t = "kasta:" + t;
-                ctorTypes.push_back(t);
+                ctorTypes.push_back(resolveTypeAnnotation(p.type));
             }
             if (info.constructors.count(ctor.params.size())) {
                 reportError("constructor duplicado con " + std::to_string(ctor.params.size()) +
@@ -127,6 +121,30 @@ void SemanticAnalyzer::collectClassInfo(const std::vector<std::unique_ptr<Node>>
             }
             info = lookupClass(info->base);
         }
+    }
+
+    // Compute abstract classes (any unimplemented abstract method in hierarchy).
+    for (auto &entry : classes) {
+        std::unordered_map<std::string, bool> effectiveAbstract;
+        std::unordered_set<std::string> visited;
+        const ClassInfo *cur = &entry.second;
+        while (cur && visited.insert(cur->name).second) {
+            for (const auto &m : cur->methods) {
+                if (effectiveAbstract.find(m.first) == effectiveAbstract.end()) {
+                    effectiveAbstract[m.first] = m.second.isAbstract;
+                }
+            }
+            if (cur->base.empty()) break;
+            cur = lookupClass(cur->base);
+        }
+        bool hasUnimplemented = false;
+        for (const auto &m : effectiveAbstract) {
+            if (m.second) {
+                hasUnimplemented = true;
+                break;
+            }
+        }
+        entry.second.isAbstract = hasUnimplemented;
     }
 
     // Validate inherited method compatibility. Redefining a base method is an implicit override.
@@ -244,6 +262,14 @@ bool SemanticAnalyzer::isTypeAssignable(const std::string &actualType,
                                         const std::string &expectedType) const {
     if (expectedType.empty() || actualType.empty()) return false;
     if (actualType == expectedType) return true;
+    if ((actualType == "t'aqa" && expectedType.rfind("t'aqa:", 0) == 0) ||
+        (expectedType == "t'aqa" && actualType.rfind("t'aqa:", 0) == 0)) {
+        return true;
+    }
+    if ((actualType == "mapa" && expectedType.rfind("mapa:", 0) == 0) ||
+        (expectedType == "mapa" && actualType.rfind("mapa:", 0) == 0)) {
+        return true;
+    }
     if (actualType.rfind("kasta:", 0) == 0 && expectedType.rfind("kasta:", 0) == 0) {
         return isSubclassOf(actualType.substr(6), expectedType.substr(6));
     }
@@ -275,10 +301,7 @@ void SemanticAnalyzer::visit(ClassStmt &cls) {
             : classMethodName(cls.getName(), method.name);
         auto it = paramTypes.find(fnName);
         for (const auto &param : method.params) {
-            std::string t = param.type;
-            if (t == "t'aqa") t = "t'aqa:jakhüwi";
-            if (t == "mapa") t = "mapa:jakhüwi";
-            if (isClassName(t)) t = "kasta:" + t;
+            std::string t = resolveTypeAnnotation(param.type);
             if (it != paramTypes.end()) {
                 size_t offset = method.isStatic ? idx : idx + 1;
                 if (offset < it->second.size()) {
@@ -288,7 +311,10 @@ void SemanticAnalyzer::visit(ClassStmt &cls) {
             declare(param.name, t);
             ++idx;
         }
+        bool prevInCtor = inConstructor;
+        inConstructor = false;
         if (method.body) method.body->accept(*this);
+        inConstructor = prevInCtor;
         --functionDepth;
         popScope();
     }
@@ -301,10 +327,7 @@ void SemanticAnalyzer::visit(ClassStmt &cls) {
         std::string fnName = classCtorName(cls.getName(), ctor.params.size());
         auto it = paramTypes.find(fnName);
         for (const auto &param : ctor.params) {
-            std::string t = param.type;
-            if (t == "t'aqa") t = "t'aqa:jakhüwi";
-            if (t == "mapa") t = "mapa:jakhüwi";
-            if (isClassName(t)) t = "kasta:" + t;
+            std::string t = resolveTypeAnnotation(param.type);
             if (it != paramTypes.end()) {
                 size_t offset = idx + 1;
                 if (offset < it->second.size()) {
@@ -314,7 +337,10 @@ void SemanticAnalyzer::visit(ClassStmt &cls) {
             declare(param.name, t);
             ++idx;
         }
+        bool prevInCtor = inConstructor;
+        inConstructor = true;
         if (ctor.body) ctor.body->accept(*this);
+        inConstructor = prevInCtor;
         --functionDepth;
         popScope();
     }
@@ -328,6 +354,12 @@ void SemanticAnalyzer::visit(MemberCallExpr &c) {
     c.getBase()->accept(*this);
     std::string baseType = currentType;
     auto validateArgs = [&](const MethodInfo *mi) {
+        if (c.getArgs().size() < mi->paramTypes.size()) {
+            auto dit = methodDefaults.find(mi->ownerClass + "::" + c.getMember());
+            if (dit != methodDefaults.end()) {
+                fillDefaultArgs(c, dit->second);
+            }
+        }
         size_t argc = c.getArgs().size();
         if (argc != mi->paramTypes.size()) {
             reportError("numero incorrecto de argumentos en '" + c.getMember() + "'", "AYM3005");
@@ -344,6 +376,42 @@ void SemanticAnalyzer::visit(MemberCallExpr &c) {
             c.getArgs()[i]->accept(*this);
         }
     };
+    if (dynamic_cast<SuperExpr*>(c.getBase()) && c.getMember() == "qallta") {
+        // jilaaka.qallta(args): constructor de la clase padre sobre 'aka'.
+        const ClassInfo *baseInfo = currentBaseClass.empty() ? nullptr : lookupClass(currentBaseClass);
+        size_t arity = c.getArgs().size();
+        if (!baseInfo) {
+            reportError("'jilaaka' fuera de clase");
+        } else if (!inConstructor) {
+            reportError("'jilaaka.qallta(...)' solo puede usarse dentro de un constructor");
+        } else {
+            // El padre puede heredar a su vez el constructor de un ancestro.
+            const ClassInfo *owner = baseInfo;
+            while (owner && owner->constructors.empty() && !owner->base.empty()) {
+                owner = lookupClass(owner->base);
+            }
+            auto it = owner ? owner->constructors.find(arity) : decltype(baseInfo->constructors.end()){};
+            if (owner && it != owner->constructors.end()) {
+                for (size_t i = 0; i < arity; ++i) {
+                    c.getArgs()[i]->accept(*this);
+                    if (!isTypeAssignable(currentType, it->second[i])) {
+                        reportError("tipo incompatible en argumento " + std::to_string(i + 1) +
+                                    " de constructor '" + owner->name + "'");
+                    }
+                }
+                c.setStaticCallee(classCtorName(owner->name, arity));
+            } else if (arity == 0 && (!owner || owner->constructors.empty())) {
+                // Padre sin constructor: no hay nada que invocar.
+            } else {
+                reportError("no hay constructor con " + std::to_string(arity) +
+                            " parametros en '" + currentBaseClass + "'");
+            }
+        }
+        currentType = "";
+        c.setResolvedType(currentType);
+        lastInputCall = false;
+        return;
+    }
     if (dynamic_cast<SuperExpr*>(c.getBase())) {
         if (currentBaseClass.empty()) {
             reportError("'jilaaka' fuera de clase");
@@ -356,8 +424,14 @@ void SemanticAnalyzer::visit(MemberCallExpr &c) {
             } else if (mi->isPrivate) {
                 reportError("metodo privado '" + c.getMember() + "' no accesible desde jilaaka");
                 currentType = "";
+            } else if (mi->isAbstract) {
+                reportError("no se puede invocar metodo abstracto '" + c.getMember() + "' mediante jilaaka", "AYM3009");
+                currentType = "";
             } else {
                 validateArgs(mi);
+                // Resolucion estatica: la clase padre es la del codigo donde
+                // aparece 'jilaaka', no la del objeto en ejecucion.
+                c.setStaticCallee(classMethodName(mi->ownerClass, c.getMember()));
                 currentType = mi->returnType;
             }
         }
@@ -372,7 +446,7 @@ void SemanticAnalyzer::visit(MemberCallExpr &c) {
             currentType = "";
         } else {
             validateArgs(mi);
-            c.setStaticCallee(classStaticMethodName(className, c.getMember()));
+            c.setStaticCallee(classStaticMethodName(mi->ownerClass, c.getMember()));
             currentType = mi->returnType;
         }
     } else if (baseType.rfind("kasta:", 0) == 0) {
@@ -404,7 +478,23 @@ void SemanticAnalyzer::visit(NewExpr &n) {
         return;
     }
     const ClassInfo *info = lookupClass(n.getName());
+    if (info && info->isAbstract) {
+        reportError("no se puede instanciar la clase abstracta '" + n.getName() + "'", "AYM3009");
+        for (const auto &arg : n.getArgs()) {
+            arg->accept(*this);
+        }
+        currentType = "";
+        lastInputCall = false;
+        return;
+    }
     bool ctorOk = false;
+    // Una clase sin constructores propios hereda los del ancestro mas cercano
+    // que los defina.
+    while (info && info->constructors.empty() && !info->base.empty()) {
+        const ClassInfo *parent = lookupClass(info->base);
+        if (!parent) break;
+        info = parent;
+    }
     if (info) {
         size_t arity = n.getArgs().size();
         if (info->constructors.empty() && arity != 0) {

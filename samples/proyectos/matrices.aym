@@ -1,0 +1,119 @@
+// Proyecto: matrices
+// Clase Matriz sobre una lista plana: producto, traspuesta, traza e
+// identidad, con error de dimensiones.
+qallta
+kasta Matriz {
+  yatiya jakhüwi filas;
+  yatiya jakhüwi cols;
+  yatiya t'aqa datos;
+
+  qallta(jakhüwi f, jakhüwi c) {
+    aka.filas = f;
+    aka.cols = c;
+    yatiya t'aqa d = [];
+    kuti(yatiya jakhüwi i = 0; i < f * c; i++) {
+      push(d, 0);
+    }
+    aka.datos = d;
+  }
+
+  lurawi ver(jakhüwi i, jakhüwi j): jakhüwi {
+    yatiya t'aqa d = aka.datos;
+    yatiya jakhüwi pos = i * aka.cols + j;
+    kuttaya d[pos];
+  }
+
+  lurawi poner(jakhüwi i, jakhüwi j, jakhüwi v) {
+    yatiya t'aqa d = aka.datos;
+    yatiya jakhüwi pos = i * aka.cols + j;
+    d[pos] = v;
+    kuttaya;
+  }
+
+  lurawi traza(): jakhüwi {
+    yatiya jakhüwi s = 0;
+    kuti(yatiya jakhüwi i = 0; i < aka.filas; i++) {
+      s = s + aka.ver(i, i);
+    }
+    kuttaya s;
+  }
+
+  lurawi mostrar() {
+    kuti(yatiya jakhüwi i = 0; i < aka.filas; i++) {
+      yatiya aru linea = "";
+      kuti(yatiya jakhüwi j = 0; j < aka.cols; j++) {
+        linea = linea + aru(aka.ver(i, j)) + " ";
+      }
+      qillqa(linea);
+    }
+    kuttaya;
+  }
+}
+
+lurawi llenar(Matriz m, t'aqa vals) {
+  kuti(yatiya jakhüwi i = 0; i < suyut(vals); i++) {
+    yatiya t'aqa d = m.datos;
+    d[i] = vals[i];
+  }
+  kuttaya;
+}
+
+lurawi producto(Matriz a, Matriz b): Matriz {
+  ukaxa(a.cols != b.filas) {
+    pantja("DIMENSION", "dimensiones incompatibles");
+  }
+  yatiya jakhüwi nf = a.filas;
+  yatiya jakhüwi nc = b.cols;
+  yatiya Matriz r = machaqa Matriz(nf, nc);
+  kuti(yatiya jakhüwi i = 0; i < a.filas; i++) {
+    kuti(yatiya jakhüwi j = 0; j < b.cols; j++) {
+      yatiya jakhüwi s = 0;
+      kuti(yatiya jakhüwi k = 0; k < a.cols; k++) {
+        yatiya jakhüwi x = a.ver(i, k);
+        yatiya jakhüwi y = b.ver(k, j);
+        s = s + x * y;
+      }
+      r.poner(i, j, s);
+    }
+  }
+  kuttaya r;
+}
+
+lurawi traspuesta(Matriz a): Matriz {
+  yatiya jakhüwi nf = a.cols;
+  yatiya jakhüwi nc = a.filas;
+  yatiya Matriz r = machaqa Matriz(nf, nc);
+  kuti(yatiya jakhüwi i = 0; i < a.filas; i++) {
+    kuti(yatiya jakhüwi j = 0; j < a.cols; j++) {
+      yatiya jakhüwi v = a.ver(i, j);
+      r.poner(j, i, v);
+    }
+  }
+  kuttaya r;
+}
+
+yatiya Matriz a = machaqa Matriz(2, 3);
+llenar(a, [1, 2, 3, 4, 5, 6]);
+yatiya Matriz tras = traspuesta(a);
+yatiya Matriz p = producto(a, tras);
+qillqa("A:");
+a.mostrar();
+qillqa("At:");
+tras.mostrar();
+qillqa("A x At:");
+p.mostrar();
+qillqa("traza = " + aru(p.traza()));
+
+yant'aña {
+  yatiya Matriz mal = producto(a, a);
+  qillqa("no deberia llegar");
+} katjaña("DIMENSION", e) {
+  qillqa("error: " + e.aru);
+}
+
+afirma(p.ver(0, 0) == 14, "p00");
+afirma(p.ver(0, 1) == 32, "p01");
+afirma(p.ver(1, 1) == 77, "p11");
+afirma(p.traza() == 91, "traza");
+qillqa("matrices OK");
+tukuya

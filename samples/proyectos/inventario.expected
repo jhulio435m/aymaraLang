@@ -1,0 +1,14 @@
+venta papa x10 = 30
+venta quinua x5 = 60
+venta chuno x4 = 32
+rechazado: no existe oca
+venta papa x25 = 75
+rechazado: stock insuficiente de chuno
+ingresos = 197
+ventas grandes = 2
+total con igv = 230
+fallidos = 2
+stock papa = 15
+stock quinua = 15
+stock chuno = 6
+inventario OK

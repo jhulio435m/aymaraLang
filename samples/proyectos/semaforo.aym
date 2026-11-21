@@ -1,0 +1,78 @@
+// Proyecto: semaforo
+// Maquina de estados finitos de un semaforo con enumeraciones y khiti.
+qallta
+siqicha Luz {
+  ROJO,
+  VERDE,
+  AMARILLO
+}
+
+lurawi siguiente(jakhüwi luz): jakhüwi {
+  yatiya jakhüwi r = Luz.ROJO;
+  khiti(luz) {
+    kuna Luz.ROJO: {
+      r = Luz.VERDE;
+    }
+    kuna Luz.VERDE: {
+      r = Luz.AMARILLO;
+    }
+    yaqha: {
+      r = Luz.ROJO;
+    }
+  }
+  kuttaya r;
+}
+
+lurawi nombre(jakhüwi luz): aru {
+  yatiya aru s = "?";
+  khiti(luz) {
+    kuna Luz.ROJO: {
+      s = "ROJO";
+    }
+    kuna Luz.VERDE: {
+      s = "VERDE";
+    }
+    kuna Luz.AMARILLO: {
+      s = "AMARILLO";
+    }
+    yaqha: {
+      s = "?";
+    }
+  }
+  kuttaya s;
+}
+
+lurawi duracion(jakhüwi luz): jakhüwi {
+  yatiya jakhüwi d = 0;
+  khiti(luz) {
+    kuna Luz.ROJO: {
+      d = 30;
+    }
+    kuna Luz.VERDE: {
+      d = 25;
+    }
+    yaqha: {
+      d = 5;
+    }
+  }
+  kuttaya d;
+}
+
+yatiya jakhüwi estado = Luz.ROJO;
+yatiya jakhüwi reloj = 0;
+yatiya mapa veces = {"ROJO": 0, "VERDE": 0, "AMARILLO": 0};
+
+kuti(yatiya jakhüwi paso = 0; paso < 7; paso++) {
+  yatiya aru n = nombre(estado);
+  qillqa("t=" + aru(reloj) + " " + n);
+  veces[n] = veces[n] + 1;
+  reloj = reloj + duracion(estado);
+  estado = siguiente(estado);
+}
+
+qillqa("tiempo total = " + aru(reloj));
+qillqa("rojo=" + aru(veces["ROJO"]) + " verde=" + aru(veces["VERDE"]) + " amarillo=" + aru(veces["AMARILLO"]));
+afirma(reloj == 150, "reloj");
+afirma(estado == Luz.VERDE, "estado final");
+qillqa("semaforo OK");
+tukuya

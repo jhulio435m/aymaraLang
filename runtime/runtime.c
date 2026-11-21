@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <setjmp.h>
 #include <ctype.h>
+#include <limits.h>
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <windows.h>
@@ -14,6 +15,7 @@
 #include <sys/time.h>
 #include <sys/select.h>
 #include <termios.h>
+#include <signal.h>
 #include <fcntl.h>
 #endif
 
@@ -95,9 +97,65 @@ void aym_sleep(int ms) {
 static long aym_cli_argc = 0;
 static const char **aym_cli_argv = NULL;
 
+/* Fallos fatales (desbordamiento de pila por recursion infinita, acceso
+ * invalido a memoria): sin manejador el proceso muere sin vaciar stdout y el
+ * usuario pierde la salida previa. Se vacia stdout y se explica el error. */
+#ifdef _WIN32
+static LONG WINAPI aym_fatal_filter(EXCEPTION_POINTERS *info) {
+    DWORD code = info && info->ExceptionRecord ? info->ExceptionRecord->ExceptionCode : 0;
+    fflush(stdout);
+    if (code == EXCEPTION_STACK_OVERFLOW) {
+        fputs("Error fatal: desbordamiento de pila (recursion demasiado profunda o infinita)\n", stderr);
+    } else {
+        fputs("Error fatal: acceso invalido a memoria\n", stderr);
+    }
+    fflush(stderr);
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+static void aym_install_fatal_handlers(void) {
+    ULONG guarantee = 16 * 1024;
+    SetThreadStackGuarantee(&guarantee);
+    SetUnhandledExceptionFilter(aym_fatal_filter);
+}
+#else
+static void aym_fatal_signal(int sig) {
+    static const char overflow[] =
+        "Error fatal: desbordamiento de pila o acceso invalido a memoria "
+        "(revisa recursion demasiado profunda o infinita)\n";
+    static const char other[] = "Error fatal: senal inesperada\n";
+    /* fflush no es async-signal-safe, pero el proceso va a terminar y
+     * perder la salida es peor; en la practica stdout no esta a medio usar. */
+    fflush(stdout);
+    if (sig == SIGSEGV || sig == SIGBUS) {
+        (void)!write(2, overflow, sizeof(overflow) - 1);
+    } else {
+        (void)!write(2, other, sizeof(other) - 1);
+    }
+    _exit(128 + sig);
+}
+
+static void aym_install_fatal_handlers(void) {
+    static char altstack[64 * 1024];
+    stack_t ss;
+    ss.ss_sp = altstack;
+    ss.ss_size = sizeof(altstack);
+    ss.ss_flags = 0;
+    sigaltstack(&ss, NULL);
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = aym_fatal_signal;
+    sa.sa_flags = SA_ONSTACK;
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIGSEGV, &sa, NULL);
+    sigaction(SIGBUS, &sa, NULL);
+}
+#endif
+
 void aym_set_args(long argc, const char **argv) {
     aym_cli_argc = argc;
     aym_cli_argv = argv;
+    aym_install_fatal_handlers();
 }
 
 long aym_argc(void) {
@@ -112,7 +170,46 @@ const char *aym_argv_get(long idx) {
 }
 
 void aym_exit(long code) {
+    fflush(stdout);
     exit((int)code);
+}
+
+long aym_math_abs(long x) {
+    if (x < 0) {
+        return (x == LONG_MIN) ? LONG_MAX : -x;
+    }
+    return x;
+}
+
+long aym_math_min(long a, long b) {
+    return (a < b) ? a : b;
+}
+
+long aym_math_max(long a, long b) {
+    return (a > b) ? a : b;
+}
+
+long aym_math_gcd(long a, long b) {
+    unsigned long ua = (a < 0) ? (0UL - (unsigned long)a) : (unsigned long)a;
+    unsigned long ub = (b < 0) ? (0UL - (unsigned long)b) : (unsigned long)b;
+    while (ub != 0UL) {
+        unsigned long r = ua % ub;
+        ua = ub;
+        ub = r;
+    }
+    if (ua > (unsigned long)LONG_MAX) return LONG_MAX;
+    return (long)ua;
+}
+
+long aym_math_clamp(long x, long lo, long hi) {
+    if (lo > hi) {
+        long tmp = lo;
+        lo = hi;
+        hi = tmp;
+    }
+    if (x < lo) return lo;
+    if (x > hi) return hi;
+    return x;
 }
 
 long aym_assert(long cond, const char *message) {
@@ -190,21 +287,89 @@ char *aym_fs_read_text(const char *path) {
     return buf;
 }
 
-long aym_fs_write_text(const char *path, const char *text) {
+static long aym_fs_write_mode(const char *path, const char *text, const char *mode) {
     if (!path || !path[0]) return 0;
-    FILE *f = fopen(path, "wb");
+    FILE *f = fopen(path, mode);
     if (!f) return 0;
     if (!text) text = "";
     size_t len = strlen(text);
     size_t written = fwrite(text, 1, len, f);
+    int closed = fclose(f);
+    return (written == len && closed == 0) ? 1 : 0;
+}
+
+long aym_fs_write_text(const char *path, const char *text) {
+    return aym_fs_write_mode(path, text, "wb");
+}
+
+long aym_fs_append_text(const char *path, const char *text) {
+    return aym_fs_write_mode(path, text, "ab");
+}
+
+intptr_t aym_fs_read_lines(const char *path) {
+    intptr_t arr = aym_array_new(0);
+    if (!arr || !path || !path[0]) return arr;
+    FILE *f = fopen(path, "rb");
+    if (!f) return arr;
+    size_t cap = 128;
+    size_t len = 0;
+    char *buf = (char *)malloc(cap);
+    if (!buf) {
+        fclose(f);
+        return arr;
+    }
+    int ch = 0;
+    while ((ch = fgetc(f)) != EOF) {
+        if (ch == '\n') {
+            while (len > 0 && buf[len - 1] == '\r') {
+                len--;
+            }
+            char *line = aym_str_copy(buf, len);
+            if (line) aym_array_push(arr, (intptr_t)line);
+            len = 0;
+            continue;
+        }
+        if (len + 1 >= cap) {
+            size_t next_cap = cap * 2;
+            char *next = (char *)realloc(buf, next_cap);
+            if (!next) {
+                free(buf);
+                fclose(f);
+                return arr;
+            }
+            buf = next;
+            cap = next_cap;
+        }
+        buf[len++] = (char)ch;
+    }
+    if (len > 0) {
+        while (len > 0 && buf[len - 1] == '\r') {
+            len--;
+        }
+        char *line = aym_str_copy(buf, len);
+        if (line) aym_array_push(arr, (intptr_t)line);
+    }
+    free(buf);
     fclose(f);
-    return (written == len) ? 1 : 0;
+    return arr;
+}
+
+long aym_fs_delete(const char *path) {
+    if (!path || !path[0]) return 0;
+    return remove(path) == 0 ? 1 : 0;
 }
 
 long aym_fs_exists(const char *path) {
     if (!path || !path[0]) return 0;
     struct stat st;
     return stat(path, &st) == 0 ? 1 : 0;
+}
+
+char *aym_env_get(const char *name) {
+    if (!name || !name[0]) return aym_str_copy("", 0);
+    const char *val = getenv(name);
+    if (!val) return aym_str_copy("", 0);
+    return aym_str_copy(val, strlen(val));
 }
 
 static int aym_term_initialized = 0;
@@ -353,13 +518,13 @@ long aym_time_ms(void) {
 #endif
 }
 
+#ifdef _WIN32
 static long aym_color_clip(long value) {
     if (value < 0) return 0;
     if (value > 255) return 255;
     return value;
 }
 
-#ifdef _WIN32
 static HWND aym_gfx_hwnd = NULL;
 static HDC aym_gfx_window_dc = NULL;
 static HDC aym_gfx_mem_dc = NULL;

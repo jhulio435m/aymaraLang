@@ -1,0 +1,10 @@
+error: prioridad invalida para dormir
+error: no existe la tarea pescar
+[x] sembrar papa (alta)
+[x] regar chacra (media)
+[ ] tejer aguayo (baja)
+[ ] vender quinua (alta)
+pendientes = 2
+urgentes = 2
+suma prioridades = 9
+tareas OK

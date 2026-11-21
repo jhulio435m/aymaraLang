@@ -1,0 +1,11 @@
+// Mapa: insercion y busqueda con claves de texto.
+yatiya jakhüwi n = 8000;
+yatiya mapa m = {};
+kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+  m["k" + aru(i)] = i;
+}
+yatiya jakhüwi s = 0;
+kuti (yatiya jakhüwi i = 0; i < n; i = i + 1) {
+  s = s + m["k" + aru(i)];
+}
+qillqa(s);

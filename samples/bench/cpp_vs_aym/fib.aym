@@ -1,0 +1,6 @@
+// Fibonacci recursivo ingenuo.
+lurawi fib(jakhüwi n): jakhüwi {
+  ukaxa (n < 2) { kuttaya n; }
+  kuttaya fib(n - 1) + fib(n - 2);
+}
+qillqa(fib(36));

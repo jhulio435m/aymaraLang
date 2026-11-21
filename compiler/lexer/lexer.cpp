@@ -196,6 +196,8 @@ void Lexer::lexIdentifierOrKeyword(std::vector<Token> &tokens,
         tokens.push_back({TokenType::KeywordEnd, word, startLine, startColumn});
     } else if (normalized == "yatiya") {
         tokens.push_back({TokenType::KeywordDeclare, word, startLine, startColumn});
+    } else if (normalized == "winaya") {
+        tokens.push_back({TokenType::KeywordConst, word, startLine, startColumn});
     } else if (normalized == "qillqa") {
         tokens.push_back({TokenType::KeywordPrint, word, startLine, startColumn});
     } else if (normalized == "kasta") {
@@ -218,6 +220,8 @@ void Lexer::lexIdentifierOrKeyword(std::vector<Token> &tokens,
         tokens.push_back({TokenType::KeywordElse, word, startLine, startColumn});
     } else if (normalized == "ukhakamaxa") {
         tokens.push_back({TokenType::KeywordWhile, word, startLine, startColumn});
+    } else if (normalized == "lurana") {
+        tokens.push_back({TokenType::KeywordDo, word, startLine, startColumn});
     } else if (normalized == "kuti") {
         tokens.push_back({TokenType::KeywordFor, word, startLine, startColumn});
     } else if (normalized == "pakhina") {
@@ -397,6 +401,9 @@ void Lexer::lexOperatorOrPunctuation(std::vector<Token> &tokens,
             if (pos + 1 < src.size() && src[pos + 1] == '+') {
                 tokens.push_back({TokenType::PlusPlus, "++", startLine, startColumn});
                 get(); get();
+            } else if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                tokens.push_back({TokenType::PlusEqual, "+=", startLine, startColumn});
+                get(); get();
             } else {
                 tokens.push_back({TokenType::Plus, "+", startLine, startColumn});
                 get();
@@ -406,16 +413,49 @@ void Lexer::lexOperatorOrPunctuation(std::vector<Token> &tokens,
             if (pos + 1 < src.size() && src[pos + 1] == '-') {
                 tokens.push_back({TokenType::MinusMinus, "--", startLine, startColumn});
                 get(); get();
+            } else if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                tokens.push_back({TokenType::MinusEqual, "-=", startLine, startColumn});
+                get(); get();
             } else {
                 tokens.push_back({TokenType::Minus, "-", startLine, startColumn});
                 get();
             }
             break;
-        case '*': tokens.push_back({TokenType::Star, "*", startLine, startColumn}); get(); break;
-        case '/': tokens.push_back({TokenType::Slash, "/", startLine, startColumn}); get(); break;
-        case '%': tokens.push_back({TokenType::Percent, "%", startLine, startColumn}); get(); break;
-        case '^': tokens.push_back({TokenType::Caret, "^", startLine, startColumn}); get(); break;
+        case '*':
+            if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                tokens.push_back({TokenType::StarEqual, "*=", startLine, startColumn});
+                get(); get();
+            } else {
+                tokens.push_back({TokenType::Star, "*", startLine, startColumn}); get();
+            }
+            break;
+        case '/':
+            if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                tokens.push_back({TokenType::SlashEqual, "/=", startLine, startColumn});
+                get(); get();
+            } else {
+                tokens.push_back({TokenType::Slash, "/", startLine, startColumn}); get();
+            }
+            break;
+        case '%':
+            if (pos + 1 < src.size() && src[pos + 1] == '=') {
+                tokens.push_back({TokenType::PercentEqual, "%=", startLine, startColumn});
+                get(); get();
+            } else {
+                tokens.push_back({TokenType::Percent, "%", startLine, startColumn}); get();
+            }
+            break;
+        case '^':
+            if (pos + 1 < src.size() && src[pos + 1] == '^') {
+                tokens.push_back({TokenType::CaretCaret, "^^", startLine, startColumn});
+                get(); get();
+            } else {
+                tokens.push_back({TokenType::Caret, "^", startLine, startColumn});
+                get();
+            }
+            break;
         case '?': tokens.push_back({TokenType::Question, "?", startLine, startColumn}); get(); break;
+        case '~': tokens.push_back({TokenType::Tilde, "~", startLine, startColumn}); get(); break;
         case '&':
             if (pos + 1 < src.size() && src[pos + 1] == '&') {
                 tokens.push_back({TokenType::AmpAmp, "&&", startLine, startColumn});
@@ -430,9 +470,8 @@ void Lexer::lexOperatorOrPunctuation(std::vector<Token> &tokens,
                 tokens.push_back({TokenType::PipePipe, "||", startLine, startColumn});
                 get(); get();
             } else {
-                throw std::runtime_error(
-                    "Operador '|' no soportado en linea " + std::to_string(startLine) +
-                    ", columna " + std::to_string(startColumn) + ". Usa '||'.");
+                tokens.push_back({TokenType::Pipe, "|", startLine, startColumn});
+                get();
             }
             break;
         case '!':
@@ -454,7 +493,10 @@ void Lexer::lexOperatorOrPunctuation(std::vector<Token> &tokens,
             }
             break;
         case '<':
-            if (pos + 1 < src.size() && src[pos + 1] == '=') {
+            if (pos + 1 < src.size() && src[pos + 1] == '<') {
+                tokens.push_back({TokenType::LessLess, "<<", startLine, startColumn});
+                get(); get();
+            } else if (pos + 1 < src.size() && src[pos + 1] == '=') {
                 tokens.push_back({TokenType::LessEqual, "<=", startLine, startColumn});
                 get(); get();
             } else {
@@ -463,7 +505,10 @@ void Lexer::lexOperatorOrPunctuation(std::vector<Token> &tokens,
             }
             break;
         case '>':
-            if (pos + 1 < src.size() && src[pos + 1] == '=') {
+            if (pos + 1 < src.size() && src[pos + 1] == '>') {
+                tokens.push_back({TokenType::GreaterGreater, ">>", startLine, startColumn});
+                get(); get();
+            } else if (pos + 1 < src.size() && src[pos + 1] == '=') {
                 tokens.push_back({TokenType::GreaterEqual, ">=", startLine, startColumn});
                 get(); get();
             } else {

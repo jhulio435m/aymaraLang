@@ -1,0 +1,18 @@
+// Maximo comun divisor (Euclides) y minimo comun multiplo.
+qallta
+lurawi mcd(jakhüwi a, jakhüwi b): jakhüwi {
+  ukhakamaxa(b != 0) {
+    yatiya jakhüwi t = a % b;
+    a = b;
+    b = t;
+  }
+  kuttaya a;
+}
+lurawi mcm(jakhüwi a, jakhüwi b): jakhüwi {
+  kuttaya a / mcd(a, b) * b;
+}
+qillqa(mcd(48, 18));
+qillqa(mcd(17, 5));
+qillqa(mcm(4, 6));
+qillqa(mcm(21, 6));
+tukuya

@@ -54,12 +54,21 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     for (const auto &p : info.params) {
         if (idx < regs.size()) {
             out << "    mov [rbp-" << offsets[p.name] << "], " << regs[idx] << "\n";
+        } else {
+            // Parametro pasado en la pila del llamador: [rbp+16] tras la
+            // direccion de retorno (+32 de shadow space en Win64).
+            int src = 16 + shadow + static_cast<int>((idx - regs.size()) * 8);
+            out << "    mov rax, [rbp+" << src << "]\n";
+            out << "    mov [rbp-" << offsets[p.name] << "], rax\n";
         }
         ++idx;
     }
 
     emitStmt(info.body, &offsets, endLabel);
 
+    // Si la ejecucion llega al final sin 'kuttaya', el valor devuelto es 0
+    // (y no basura de rax). Los 'kuttaya' saltan directo a endLabel.
+    out << "    xor eax, eax\n";
     out << endLabel << ":\n";
     if (stackSize) out << "    add rsp, " << stackSize << "\n";
     out << "    pop r15\n";

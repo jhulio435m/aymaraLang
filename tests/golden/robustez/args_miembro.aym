@@ -1,0 +1,32 @@
+// Regresion: llamadas a metodos como argumentos e inicializadores machaqa anidados.
+kasta Calc {
+  yatiya jakhüwi base;
+
+  qallta(jakhüwi b) {
+    aka.base = b;
+  }
+
+  lurawi doble(jakhüwi x): jakhüwi {
+    kuttaya aka.base + x * 2;
+  }
+
+  lurawi suma3(jakhüwi a, jakhüwi b, jakhüwi c): jakhüwi {
+    kuttaya aka.base + a + b + c;
+  }
+}
+
+kasta Par {
+  yatiya Calc primero = machaqa Calc(1);
+  yatiya Calc segundo = machaqa Calc(2);
+
+  lurawi total(): jakhüwi {
+    kuttaya aka.primero.doble(3) + aka.segundo.doble(4);
+  }
+}
+
+yatiya Calc c = machaqa Calc(10);
+qillqa(c.suma3(c.doble(1), c.doble(2), c.doble(3)));
+yatiya Calc c2 = machaqa Calc(c.doble(5));
+qillqa(c2.suma3(1, c2.doble(2), 3));
+yatiya Par p = machaqa Par();
+qillqa(p.total());

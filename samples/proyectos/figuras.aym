@@ -1,0 +1,89 @@
+// Proyecto: figuras
+// Jerarquia de figuras geometricas con polimorfismo (area y perimetro
+// enteros) y un reporte acumulado.
+qallta
+kasta Figura {
+  yatiya aru nombre;
+
+  lurawi area(): jakhüwi {
+    kuttaya 0;
+  }
+
+  lurawi perimetro(): jakhüwi {
+    kuttaya 0;
+  }
+
+  lurawi describe(): aru {
+    kuttaya aka.nombre + " area=" + aru(aka.area()) + " perimetro=" + aru(aka.perimetro());
+  }
+}
+
+kasta Rectangulo jila Figura {
+  yatiya jakhüwi ancho;
+  yatiya jakhüwi alto;
+
+  qallta(jakhüwi a, jakhüwi h) {
+    aka.nombre = "rectangulo";
+    aka.ancho = a;
+    aka.alto = h;
+  }
+
+  lurawi area(): jakhüwi {
+    kuttaya aka.ancho * aka.alto;
+  }
+
+  lurawi perimetro(): jakhüwi {
+    kuttaya 2 * (aka.ancho + aka.alto);
+  }
+}
+
+kasta Cuadrado jila Rectangulo {
+  qallta(jakhüwi l) {
+    aka.nombre = "cuadrado";
+    aka.ancho = l;
+    aka.alto = l;
+  }
+}
+
+kasta TrianguloRecto jila Figura {
+  yatiya jakhüwi base;
+  yatiya jakhüwi altura;
+  yatiya jakhüwi hipo;
+
+  qallta(jakhüwi b, jakhüwi h, jakhüwi hp) {
+    aka.nombre = "triangulo";
+    aka.base = b;
+    aka.altura = h;
+    aka.hipo = hp;
+  }
+
+  lurawi area(): jakhüwi {
+    kuttaya (aka.base * aka.altura) / 2;
+  }
+
+  lurawi perimetro(): jakhüwi {
+    kuttaya aka.base + aka.altura + aka.hipo;
+  }
+}
+
+lurawi informe(Figura f): jakhüwi {
+  qillqa(f.describe());
+  kuttaya f.area();
+}
+
+yatiya Rectangulo r = machaqa Rectangulo(4, 6);
+yatiya Cuadrado c = machaqa Cuadrado(5);
+yatiya TrianguloRecto t = machaqa TrianguloRecto(3, 4, 5);
+
+yatiya jakhüwi total = 0;
+total = total + informe(r);
+total = total + informe(c);
+total = total + informe(t);
+qillqa("area total = " + aru(total));
+
+afirma(r.area() == 24, "rectangulo");
+afirma(c.perimetro() == 20, "cuadrado");
+afirma(t.area() == 6, "triangulo");
+afirma(total == 55, "total");
+qillqa("figuras OK");
+tukuya

@@ -1,0 +1,29 @@
+// Programacion dinamica: minimo de monedas y mochila 0/1.
+qallta
+yatiya t'aqa monedas = [1, 5, 6, 9];
+yatiya jakhüwi M = 11;
+yatiya t'aqa dp = [0];
+kuti(yatiya jakhüwi x = 1; x <= M; x = x + 1) {
+  yatiya jakhüwi mejor = 9999;
+  kuti(yatiya jakhüwi i = 0; i < suyut(monedas); i = i + 1) {
+    ukaxa(monedas[i] <= x && dp[x - monedas[i]] + 1 < mejor) {
+      mejor = dp[x - monedas[i]] + 1;
+    }
+  }
+  push(dp, mejor);
+}
+qillqa(dp[M]);
+yatiya t'aqa peso = [1, 3, 4, 5];
+yatiya t'aqa valor = [1, 4, 5, 7];
+yatiya jakhüwi W = 7;
+yatiya t'aqa best = [];
+kuti(yatiya jakhüwi w = 0; w <= W; w = w + 1) { push(best, 0); }
+kuti(yatiya jakhüwi i = 0; i < 4; i = i + 1) {
+  kuti(yatiya jakhüwi w = W; w >= peso[i]; w = w - 1) {
+    ukaxa(best[w - peso[i]] + valor[i] > best[w]) {
+      best[w] = best[w - peso[i]] + valor[i];
+    }
+  }
+}
+qillqa(best[W]);
+tukuya

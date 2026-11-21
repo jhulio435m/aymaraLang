@@ -12,38 +12,6 @@ void CodeGenImpl::emitPrintDefault(const std::string &label) {
 void CodeGenImpl::emitPrintValue(const Expr *expr,
                                  const std::unordered_map<std::string,int> *locals) {
     if (!expr) return;
-    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
-        if (isMapExpr(i->getBase(), locals)) {
-            std::string valueIsNumber = genLabel("map_idx_num");
-            std::string valueDone = genLabel("map_idx_done");
-            emitExpr(i->getIndex(), locals);
-            out << "    mov r14, rax\n";
-            emitExpr(i->getBase(), locals);
-            out << "    mov rbx, rax\n";
-            out << "    mov " << reg2(this->windows) << ", r14\n";
-            out << "    mov " << reg1(this->windows) << ", rbx\n";
-            out << "    call aym_map_value_is_string_key\n";
-            out << "    mov r15, rax\n";
-            out << "    mov " << reg2(this->windows) << ", r14\n";
-            out << "    mov " << reg1(this->windows) << ", rbx\n";
-            out << "    call aym_map_get\n";
-            out << "    mov r14, rax\n";
-            out << "    cmp r15, 0\n";
-            out << "    je " << valueIsNumber << "\n";
-            out << "    mov " << reg2(this->windows) << ", r14\n";
-            out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
-            out << "    xor eax,eax\n";
-            out << "    call printf\n";
-            out << "    jmp " << valueDone << "\n";
-            out << valueIsNumber << ":\n";
-            out << "    mov " << reg2(this->windows) << ", r14\n";
-            out << "    lea " << reg1(this->windows) << ", [rel fmt_int_raw]\n";
-            out << "    xor eax,eax\n";
-            out << "    call printf\n";
-            out << valueDone << ":\n";
-            return;
-        }
-    }
     if (isListExpr(expr, locals)) {
         emitPrintList(expr, locals);
         return;
@@ -51,6 +19,44 @@ void CodeGenImpl::emitPrintValue(const Expr *expr,
     if (isMapExpr(expr, locals)) {
         emitPrintMap(expr, locals);
         return;
+    }
+    if (auto *i = dynamic_cast<const IndexExpr*>(expr)) {
+        if (isMapExpr(i->getBase(), locals)) {
+            int spillPad = this->windows ? 40 : 8;
+            std::string valueIsNumber = genLabel("map_idx_num");
+            std::string valueDone = genLabel("map_idx_done");
+            emitExpr(i->getBase(), locals);
+            out << "    push rax\n";
+            out << "    sub rsp, " << spillPad << "\n";
+            emitExpr(i->getIndex(), locals);
+            out << "    push rax\n";
+            out << "    sub rsp, " << spillPad << "\n";
+            out << "    mov " << reg2(this->windows) << ", rax\n";
+            out << "    mov " << reg1(this->windows) << ", [rsp+" << (2 * spillPad + 8) << "]\n";
+            out << "    call aym_map_value_is_string_key\n";
+            out << "    add rsp, " << spillPad << "\n";
+            out << "    pop " << reg2(this->windows) << "\n";
+            out << "    add rsp, " << spillPad << "\n";
+            out << "    pop " << reg1(this->windows) << "\n";
+            out << "    push rax\n";
+            out << "    sub rsp, " << spillPad << "\n";
+            out << "    call aym_map_get\n";
+            out << "    mov " << reg2(this->windows) << ", rax\n";
+            out << "    add rsp, " << spillPad << "\n";
+            out << "    pop rax\n";
+            out << "    cmp rax, 0\n";
+            out << "    je " << valueIsNumber << "\n";
+            out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
+            out << "    xor eax,eax\n";
+            out << "    call printf\n";
+            out << "    jmp " << valueDone << "\n";
+            out << valueIsNumber << ":\n";
+            out << "    lea " << reg1(this->windows) << ", [rel fmt_int_raw]\n";
+            out << "    xor eax,eax\n";
+            out << "    call printf\n";
+            out << valueDone << ":\n";
+            return;
+        }
     }
     if (isBoolExpr(expr, locals)) {
         std::string falseLbl = genLabel("bool_false");
@@ -79,9 +85,28 @@ void CodeGenImpl::emitPrintValue(const Expr *expr,
 
 void CodeGenImpl::emitPrintList(const Expr *expr,
                                 const std::unordered_map<std::string,int> *locals) {
+    std::string elemType = listElementType(expr, locals);
+    if (elemType.rfind("t'aqa", 0) == 0) {
+        std::string t = elemType;
+        long depth = 1;
+        while (t.rfind("t'aqa:", 0) == 0) {
+            t = t.substr(6);
+            ++depth;
+        }
+        if (t == "t'aqa") {
+            ++depth;
+        }
+        long elemIsStr = (t == "aru") ? 1 : 0;
+        std::vector<std::string> regs = paramRegs(this->windows);
+        emitExpr(expr, locals);
+        out << "    mov " << regs[0] << ", rax\n";
+        out << "    mov " << regs[1] << ", " << depth << "\n";
+        out << "    mov " << regs[2] << ", " << elemIsStr << "\n";
+        out << "    call aym_print_list_depth\n";
+        return;
+    }
     std::string loop = genLabel("list_loop");
     std::string end = genLabel("list_end");
-    std::string elemType = listElementType(expr, locals);
     emitExpr(expr, locals);
     out << "    mov rbx, rax\n";
     emitPrintDefault("list_open");

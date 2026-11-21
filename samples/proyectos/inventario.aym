@@ -1,0 +1,73 @@
+// Proyecto: inventario
+// Punto de venta con mapas (stock y precios), ventas, excepciones
+// por falta de stock y reporte con funciones de orden superior.
+qallta
+yatiya mapa stock = {"papa": 50, "quinua": 20, "chuno": 10};
+yatiya mapa precio = {"papa": 3, "quinua": 12, "chuno": 8};
+yatiya t'aqa ingresos = [];
+
+lurawi vender(mapa st, mapa pr, aru prod, jakhüwi cant): jakhüwi {
+  ukaxa(!utjisuti(st, prod)) {
+    pantja("PRODUCTO", "no existe " + prod);
+  }
+  ukaxa(st[prod] < cant) {
+    pantja("STOCK", "stock insuficiente de " + prod);
+  }
+  st[prod] = st[prod] - cant;
+  kuttaya pr[prod] * cant;
+}
+
+lurawi sumar(jakhüwi s, jakhüwi x): jakhüwi {
+  kuttaya s + x;
+}
+
+lurawi grande(jakhüwi x): chiqa {
+  kuttaya x >= 50;
+}
+
+lurawi con_igv(jakhüwi x): jakhüwi {
+  kuttaya x + (x * 18) / 100;
+}
+
+yatiya t'aqa pedidos_prod = ["papa", "quinua", "chuno", "oca", "papa", "chuno"];
+yatiya t'aqa pedidos_cant = [10, 5, 4, 1, 25, 9];
+yatiya jakhüwi fallidos = 0;
+
+kuti(yatiya jakhüwi i = 0; i < suyut(pedidos_prod); i++) {
+  yatiya aru p = pedidos_prod[i];
+  yatiya jakhüwi c = pedidos_cant[i];
+  yant'aña {
+    yatiya jakhüwi monto = vender(stock, precio, p, c);
+    push(ingresos, monto);
+    qillqa("venta " + p + " x" + aru(c) + " = " + aru(monto));
+  } katjaña("STOCK", e) {
+    fallidos = fallidos + 1;
+    qillqa("rechazado: " + e.aru);
+  } katjaña("PRODUCTO", e) {
+    fallidos = fallidos + 1;
+    qillqa("rechazado: " + e.aru);
+  }
+}
+
+yatiya jakhüwi total = thaqthapi(ingresos, &sumar, 0);
+yatiya t'aqa grandes = ajlli(ingresos, &grande);
+yatiya t'aqa brutos = mayjtaya(ingresos, &con_igv);
+
+qillqa("ingresos = " + aru(total));
+qillqa("ventas grandes = " + aru(suyut(grandes)));
+qillqa("total con igv = " + aru(thaqthapi(brutos, &sumar, 0)));
+qillqa("fallidos = " + aru(fallidos));
+
+yatiya t'aqa nombres = ["papa", "quinua", "chuno"];
+kuti(yatiya jakhüwi i = 0; i < suyut(nombres); i++) {
+  yatiya aru k = nombres[i];
+  qillqa("stock " + k + " = " + aru(stock[k]));
+}
+
+afirma(total == 197, "total");
+afirma(stock["papa"] == 15, "papa");
+afirma(stock["quinua"] == 15, "quinua");
+afirma(stock["chuno"] == 6, "chuno");
+afirma(fallidos == 2, "fallidos");
+qillqa("inventario OK");
+tukuya

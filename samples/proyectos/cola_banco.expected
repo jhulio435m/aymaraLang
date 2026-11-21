@@ -1,0 +1,12 @@
+t=0 atiende cliente 0 espera=0
+t=4 atiende cliente 1 espera=3
+t=7 atiende cliente 2 espera=5
+t=12 atiende cliente 3 espera=4
+t=14 atiende cliente 4 espera=5
+t=20 atiende cliente 5 espera=0
+atendidos = 6
+espera total = 17
+espera maxima = 5
+cola maxima = 2
+error: cola vacia
+cola_banco OK

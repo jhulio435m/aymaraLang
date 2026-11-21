@@ -1,0 +1,9 @@
+// Regresion: variables globales cuyos nombres coinciden con palabras reservadas de NASM.
+yatiya jakhüwi at = 10;
+yatiya jakhüwi in = 20;
+yatiya aru str = "ok";
+yatiya jakhüwi si = 5;
+
+at += 3;
+in++;
+qillqa(at, in, str, si);

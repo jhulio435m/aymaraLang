@@ -1,0 +1,67 @@
+// Subsecuencia comun mas larga (LCS) con programacion dinamica sobre dos secuencias enteras.
+qallta
+lurawi max2(jakhüwi a, jakhüwi b): jakhüwi {
+  ukaxa(a >= b) { kuttaya a; }
+  kuttaya b;
+}
+
+lurawi resolver_lcs(t'aqa a, t'aqa b, chiqa mostrar_tabla): jakhüwi {
+  yatiya jakhüwi m = suyut(a);
+  yatiya jakhüwi n = suyut(b);
+  yatiya jakhüwi cols = n + 1;
+  yatiya t'aqa dp = [];
+  kuti(yatiya jakhüwi k = 0; k < (m + 1) * cols; k = k + 1) {
+    push(dp, 0);
+  }
+  kuti(yatiya jakhüwi i = 1; i <= m; i = i + 1) {
+    kuti(yatiya jakhüwi j = 1; j <= n; j = j + 1) {
+      ukaxa(a[i - 1] == b[j - 1]) {
+        dp[i * cols + j] = dp[(i - 1) * cols + (j - 1)] + 1;
+      } maysatxa {
+        dp[i * cols + j] = max2(dp[(i - 1) * cols + j], dp[i * cols + (j - 1)]);
+      }
+    }
+  }
+  ukaxa(mostrar_tabla) {
+    qillqa("Tabla DP:");
+    kuti(yatiya jakhüwi i = 0; i <= m; i = i + 1) {
+      yatiya t'aqa fila = [];
+      kuti(yatiya jakhüwi j = 0; j <= n; j = j + 1) {
+        push(fila, dp[i * cols + j]);
+      }
+      qillqa(fila);
+    }
+    yatiya t'aqa rev = [];
+    yatiya jakhüwi i = m;
+    yatiya jakhüwi j = n;
+    ukhakamaxa(i > 0 && j > 0) {
+      ukaxa(a[i - 1] == b[j - 1]) {
+        push(rev, a[i - 1]);
+        i = i - 1;
+        j = j - 1;
+      } maysatxa {
+        ukaxa(dp[(i - 1) * cols + j] >= dp[i * cols + (j - 1)]) {
+          i = i - 1;
+        } maysatxa {
+          j = j - 1;
+        }
+      }
+    }
+    yatiya t'aqa lcs = [];
+    kuti(yatiya jakhüwi k = suyut(rev) - 1; k >= 0; k = k - 1) {
+      push(lcs, rev[k]);
+    }
+    qillqa("LCS = " + aru(dp[m * cols + n]));
+    qillqa(lcs);
+  }
+  kuttaya dp[m * cols + n];
+}
+
+yatiya t'aqa s1 = [1, 3, 4, 5, 2, 8];
+yatiya t'aqa s2 = [3, 4, 2, 8, 9];
+resolver_lcs(s1, s2, chiqa);
+
+yatiya t'aqa s3 = [5, 1, 4, 2, 8];
+yatiya t'aqa s4 = [1, 2, 3, 4, 5];
+qillqa("LCS2 = " + aru(resolver_lcs(s3, s4, k'ari)));
+tukuya

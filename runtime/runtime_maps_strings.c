@@ -4,34 +4,109 @@ typedef struct {
     char **keys;
     intptr_t *values;
     unsigned char *types;
+    long *buckets;
+    long bucket_cap;
 } AymMap;
 
+static uint64_t aym_map_hash(const char *s) {
+    uint64_t h = UINT64_C(14695981039346656037);
+    if (!s) return h;
+    for (const unsigned char *p = (const unsigned char *)s; *p; ++p) {
+        h ^= (uint64_t)(*p);
+        h *= UINT64_C(1099511628211);
+    }
+    return h;
+}
+
+static int aym_map_rehash(AymMap *m, long new_bcap) {
+    if (!m) return 0;
+    long bcap = 16;
+    while (bcap < new_bcap && bcap <= LONG_MAX / 2) {
+        bcap *= 2;
+    }
+    long *target = NULL;
+    int reused = 0;
+    if (m->buckets && m->bucket_cap == bcap) {
+        target = m->buckets;
+        reused = 1;
+    } else {
+        target = (long *)malloc(sizeof(long) * (size_t)bcap);
+        if (!target) {
+            fprintf(stderr, "aym_map_rehash: allocation failed\n");
+            return 0;
+        }
+    }
+    for (long i = 0; i < bcap; i++) {
+        target[i] = -1;
+    }
+    uint64_t mask = (uint64_t)(bcap - 1);
+    for (long i = 0; i < m->len; i++) {
+        if (!m->keys[i]) continue;
+        uint64_t h = aym_map_hash(m->keys[i]);
+        for (long step = 0; step < bcap; step++) {
+            long slot = (long)((h + (uint64_t)step) & mask);
+            if (target[slot] < 0) {
+                target[slot] = i;
+                break;
+            }
+        }
+    }
+    if (!reused) {
+        free(m->buckets);
+        m->buckets = target;
+        m->bucket_cap = bcap;
+    }
+    return 1;
+}
+
 static long aym_map_find(AymMap *map, const char *key) {
-    if (!map || !key) return -1;
-    for (long i = 0; i < map->len; i++) {
-        if (map->keys[i] && strcmp(map->keys[i], key) == 0) return i;
+    if (!map || !key || !map->buckets || map->bucket_cap <= 0 || map->len <= 0) return -1;
+    uint64_t h = aym_map_hash(key);
+    uint64_t mask = (uint64_t)(map->bucket_cap - 1);
+    for (long step = 0; step < map->bucket_cap; step++) {
+        long slot = (long)((h + (uint64_t)step) & mask);
+        long idx = map->buckets[slot];
+        if (idx < 0) return -1;
+        if (idx < map->len && map->keys[idx] && strcmp(map->keys[idx], key) == 0) {
+            return idx;
+        }
     }
     return -1;
 }
 
 intptr_t aym_map_new(long size) {
     if (size < 0) return 0;
-    AymMap *map = calloc(1, sizeof(AymMap));
+    AymMap *map = (AymMap *)calloc(1, sizeof(AymMap));
     if (!map) {
         fprintf(stderr, "aym_map_new: allocation failed\n");
         return 0;
     }
     map->len = 0;
     map->cap = size;
+    long bcap = 16;
+    while (bcap / 2 < size && bcap <= LONG_MAX / 2) {
+        bcap *= 2;
+    }
+    map->buckets = (long *)malloc(sizeof(long) * (size_t)bcap);
+    if (!map->buckets) {
+        fprintf(stderr, "aym_map_new: allocation failed\n");
+        free(map);
+        return 0;
+    }
+    for (long i = 0; i < bcap; i++) {
+        map->buckets[i] = -1;
+    }
+    map->bucket_cap = bcap;
     if (size > 0) {
-        map->keys = calloc((size_t)size, sizeof(char *));
-        map->values = calloc((size_t)size, sizeof(intptr_t));
-        map->types = calloc((size_t)size, sizeof(unsigned char));
+        map->keys = (char **)calloc((size_t)size, sizeof(char *));
+        map->values = (intptr_t *)calloc((size_t)size, sizeof(intptr_t));
+        map->types = (unsigned char *)calloc((size_t)size, sizeof(unsigned char));
         if (!map->keys || !map->values || !map->types) {
             fprintf(stderr, "aym_map_new: allocation failed\n");
             free(map->keys);
             free(map->values);
             free(map->types);
+            free(map->buckets);
             free(map);
             return 0;
         }
@@ -41,18 +116,23 @@ intptr_t aym_map_new(long size) {
 
 static int aym_map_grow(AymMap *map) {
     long newCap = map->cap > 0 ? map->cap * 2 : 1;
-    char **newKeys = realloc(map->keys, sizeof(char *) * (size_t)newCap);
-    intptr_t *newValues = realloc(map->values, sizeof(intptr_t) * (size_t)newCap);
-    unsigned char *newTypes = realloc(map->types, sizeof(unsigned char) * (size_t)newCap);
-    if (!newKeys || !newValues || !newTypes) {
+    char **newKeys = (char **)realloc(map->keys, sizeof(char *) * (size_t)newCap);
+    if (!newKeys) {
         fprintf(stderr, "aym_map_set: allocation failed\n");
-        free(newKeys);
-        free(newValues);
-        free(newTypes);
         return 0;
     }
     map->keys = newKeys;
+    intptr_t *newValues = (intptr_t *)realloc(map->values, sizeof(intptr_t) * (size_t)newCap);
+    if (!newValues) {
+        fprintf(stderr, "aym_map_set: allocation failed\n");
+        return 0;
+    }
     map->values = newValues;
+    unsigned char *newTypes = (unsigned char *)realloc(map->types, sizeof(unsigned char) * (size_t)newCap);
+    if (!newTypes) {
+        fprintf(stderr, "aym_map_set: allocation failed\n");
+        return 0;
+    }
     map->types = newTypes;
     map->cap = newCap;
     return 1;
@@ -80,10 +160,25 @@ intptr_t aym_map_set(intptr_t map, const char *key, intptr_t value, int is_strin
     if (m->len >= m->cap) {
         if (!aym_map_grow(m)) return 0;
     }
-    m->keys[m->len] = (char *)key;
-    m->values[m->len] = (intptr_t)value;
-    m->types[m->len] = (unsigned char)(is_string ? 1 : 0);
+    if (m->bucket_cap == 0 || (m->len + 1) * 2 > m->bucket_cap) {
+        long next_bcap = m->bucket_cap > 0 ? m->bucket_cap * 2 : 16;
+        if (next_bcap < 16) next_bcap = 16;
+        if (!aym_map_rehash(m, next_bcap)) return 0;
+    }
+    long new_idx = m->len;
+    m->keys[new_idx] = (char *)key;
+    m->values[new_idx] = (intptr_t)value;
+    m->types[new_idx] = (unsigned char)(is_string ? 1 : 0);
     m->len++;
+    uint64_t h = aym_map_hash(key);
+    uint64_t mask = (uint64_t)(m->bucket_cap - 1);
+    for (long step = 0; step < m->bucket_cap; step++) {
+        long slot = (long)((h + (uint64_t)step) & mask);
+        if (m->buckets[slot] < 0) {
+            m->buckets[slot] = new_idx;
+            break;
+        }
+    }
     return value;
 }
 
@@ -133,6 +228,9 @@ intptr_t aym_map_delete(intptr_t map, const char *key) {
         m->types[i - 1] = m->types[i];
     }
     m->len--;
+    if (m->bucket_cap > 0) {
+        aym_map_rehash(m, m->bucket_cap);
+    }
     return value;
 }
 
@@ -335,6 +433,120 @@ long aym_str_contains(const char *text, const char *sub) {
     if (!sub) return 0;
     if (sub[0] == '\0') return 1;
     return strstr(text, sub) != NULL;
+}
+
+char *aym_str_upper(const char *text) {
+    if (!text) text = "";
+    size_t len = strlen(text);
+    char *out = aym_str_copy(text, len);
+    if (!out) return NULL;
+    for (size_t i = 0; i < len; i++) out[i] = (char)toupper((unsigned char)out[i]);
+    return out;
+}
+
+char *aym_str_lower(const char *text) {
+    if (!text) text = "";
+    size_t len = strlen(text);
+    char *out = aym_str_copy(text, len);
+    if (!out) return NULL;
+    for (size_t i = 0; i < len; i++) out[i] = (char)tolower((unsigned char)out[i]);
+    return out;
+}
+
+char *aym_str_reverse(const char *text) {
+    if (!text) text = "";
+    size_t len = strlen(text);
+    char *out = aym_str_copy(text, len);
+    if (!out) return NULL;
+    size_t i = 0;
+    size_t w = len;
+    while (i < len) {
+        size_t n = 1;
+        while (i + n < len && (((unsigned char)text[i + n]) & 0xC0) == 0x80) n++;
+        w -= n;
+        memcpy(out + w, text + i, n);
+        i += n;
+    }
+    return out;
+}
+
+char *aym_str_repeat(const char *text, long times) {
+    if (!text) text = "";
+    size_t len = strlen(text);
+    if (times <= 0 || len == 0) return aym_str_copy("", 0);
+    if ((size_t)times > ((size_t)1 << 30) / len) {
+        aym_throw_typed("ARG", "repeticion demasiado grande");
+        return aym_str_copy("", 0);
+    }
+    size_t total = len * (size_t)times;
+    char *out = (char *)malloc(total + 1);
+    if (!out) return NULL;
+    for (size_t i = 0; i < (size_t)times; i++) memcpy(out + i * len, text, len);
+    out[total] = '\0';
+    return out;
+}
+
+long aym_str_starts_with(const char *text, const char *prefix) {
+    if (!text) text = "";
+    if (!prefix) prefix = "";
+    size_t plen = strlen(prefix);
+    if (plen > strlen(text)) return 0;
+    return memcmp(text, prefix, plen) == 0 ? 1 : 0;
+}
+
+long aym_str_ends_with(const char *text, const char *suffix) {
+    if (!text) text = "";
+    if (!suffix) suffix = "";
+    size_t tlen = strlen(text);
+    size_t slen = strlen(suffix);
+    if (slen > tlen) return 0;
+    return memcmp(text + (tlen - slen), suffix, slen) == 0 ? 1 : 0;
+}
+
+long aym_str_index_of(const char *text, const char *sub) {
+    if (!text) text = "";
+    if (!sub) sub = "";
+    const char *pos = strstr(text, sub);
+    if (!pos) return -1;
+    return (long)(pos - text);
+}
+
+char *aym_str_char_at(const char *text, long idx) {
+    if (!text) text = "";
+    long len = (long)strlen(text);
+    if (idx < 0 || idx >= len) {
+        aym_throw_typed("INDICE", "indice de texto fuera de rango");
+        return aym_str_copy("", 0);
+    }
+    return aym_str_copy(text + idx, 1);
+}
+
+char *aym_str_substr(const char *text, long start, long count) {
+    if (!text) text = "";
+    long len = (long)strlen(text);
+    if (start < 0) start = 0;
+    if (start > len) start = len;
+    long avail = len - start;
+    if (count < 0) count = 0;
+    if (count > avail) count = avail;
+    return aym_str_copy(text + start, (size_t)count);
+}
+
+long aym_str_ord(const char *text) {
+    if (!text || text[0] == '\0') return -1;
+    return (long)(unsigned char)text[0];
+}
+
+char *aym_str_chr(long code) {
+    if (code < 0 || code > 255) {
+        aym_throw_typed("ARG", "codigo de caracter fuera de rango");
+        return aym_str_copy("", 0);
+    }
+    char *out = (char *)malloc(2);
+    if (!out) return NULL;
+    out[0] = (char)(unsigned char)code;
+    out[1] = '\0';
+    return out;
 }
 
 char *aym_to_string(long value) {
