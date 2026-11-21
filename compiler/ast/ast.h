@@ -100,11 +100,16 @@ public:
     size_t getLine() const { return line; }
     size_t getColumn() const { return column; }
     void setLocation(size_t l, size_t c) { line = l; column = c; }
+    // Archivo fuente; solo se asigna en los nodos de primer nivel (programa
+    // principal o modulo importado) para los mensajes de error en ejecucion.
+    const std::string &getSourceFile() const { return sourceFile; }
+    void setSourceFile(const std::string &f) { sourceFile = f; }
 
     virtual void accept(ASTVisitor &) = 0;
 private:
     size_t line = 0;
     size_t column = 0;
+    std::string sourceFile;
 };
 
 class Expr : public Node {

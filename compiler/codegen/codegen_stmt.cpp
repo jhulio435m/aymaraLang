@@ -9,9 +9,18 @@ void CodeGenImpl::emitStmt(const Stmt *stmt,
                            const std::unordered_map<std::string,int> *locals,
                            const std::string &endLabel) {
     if (!stmt) return;
-    if (emitStmtBasic(stmt, locals, endLabel)) return;
-    if (emitStmtControl(stmt, locals, endLabel)) return;
-    if (emitStmtException(stmt, locals, endLabel)) return;
+    // Linea actual para los mensajes de error en ejecucion (excepciones no
+    // atrapadas, fallos fatales). Un bloque no ejecuta nada por si mismo.
+    size_t outerLine = currentStmtLine;
+    if (stmt->getLine() > 0 && !dynamic_cast<const BlockStmt *>(stmt)) {
+        currentStmtLine = stmt->getLine();
+        out << "    mov qword [rel aym_cur_line], " << stmt->getLine() << "\n";
+    }
+    bool done = emitStmtBasic(stmt, locals, endLabel) ||
+                emitStmtControl(stmt, locals, endLabel) ||
+                emitStmtException(stmt, locals, endLabel);
+    (void)done;
+    currentStmtLine = outerLine;
 }
 
 bool CodeGenImpl::emitStmtBasic(const Stmt *stmt,
@@ -154,6 +163,7 @@ bool CodeGenImpl::emitStmtControl(const Stmt *stmt,
         loopFinallyDepth.push_back(finallyStack.size());
         out << loop << ":\n";
         if (w->getCondition()) {
+            emitRestoreLocation(); // la condicion pertenece a la linea del bucle
             emitExpr(w->getCondition(), locals);
             out << "    cmp rax,0\n";
             out << "    je " << end << "\n";
@@ -177,6 +187,7 @@ bool CodeGenImpl::emitStmtControl(const Stmt *stmt,
         loopFinallyDepth.push_back(finallyStack.size());
         out << loop << ":\n";
         if (f->getCondition()) {
+            emitRestoreLocation(); // la condicion pertenece a la linea del bucle
             emitExpr(f->getCondition(), locals);
             out << "    cmp rax,0\n";
             out << "    je " << end << "\n";
@@ -201,7 +212,8 @@ bool CodeGenImpl::emitStmtControl(const Stmt *stmt,
         out << loop << ":\n";
         emitStmt(dw->getBody(), locals, endLabel);
         out << cont << ":\n";
-        emitExpr(dw->getCondition(), locals);
+        emitRestoreLocation(); // la condicion pertenece a la linea del bucle
+            emitExpr(dw->getCondition(), locals);
         out << "    cmp rax,0\n";
         out << "    jne " << loop << "\n";
         out << end << ":\n";

@@ -1,0 +1,25 @@
+// e.linea indica la linea donde se produjo la excepcion.
+lurawi dividir(jakhüwi a, jakhüwi b): jakhüwi {
+  kuttaya a / b;
+}
+lurawi uno(): jakhüwi { kuttaya 1; }
+yant'aña {
+  qillqa(dividir(1, 0));
+} katjaña(e) {
+  qillqa(e.suti + " en linea " + aru(e.linea));
+}
+yant'aña {
+  yatiya jakhüwi x = uno();
+  qillqa(x / 0);
+} katjaña(e) {
+  qillqa(e.suti + " en linea " + aru(e.linea));
+}
+yatiya t'aqa v = [5, 6];
+yatiya jakhüwi i = 0;
+yant'aña {
+  ukhakamaxa (v[i] > 0) {
+    i = i + 1;
+  }
+} katjaña(e) {
+  qillqa(e.suti + " en linea " + aru(e.linea));
+}

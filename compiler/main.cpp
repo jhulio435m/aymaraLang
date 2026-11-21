@@ -230,6 +230,15 @@ int main(int argc, char** argv) {
             return 1;
         }
 
+        {
+            // Etiqueta los nodos del programa principal con su archivo (los
+            // modulos se etiquetan al cargarse).
+            std::string mainFile = options.inputs.empty() ? std::string()
+                                 : fs::path(options.inputs.front()).filename().string();
+            for (auto &n : nodes) {
+                if (n && n->getSourceFile().empty()) n->setSourceFile(mainFile);
+            }
+        }
         fs::path entryDir = aym::detectEntryDirectory(options.inputs);
         aym::ModuleResolver resolver(entryDir);
         aym::registerInputSearchPaths(options.inputs, resolver);

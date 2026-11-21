@@ -24,6 +24,23 @@ public:
     // liberados. Los sitios de llamada a funciones de usuario los liberan con
     // releaseStackArgs; para los builtins lo hace emitCallExpr automaticamente.
     size_t pendingStackArgs = 0;
+    // Ubicacion fuente para errores en ejecucion: la sentencia en curso y su
+    // archivo. multiFile indica si hay modulos (si no, el archivo es fijo).
+    size_t currentStmtLine = 0;
+    std::string currentFile;
+    bool multiFile = false;
+    void emitSetFile(const std::string &file) {
+        out << "    lea r11, [rel str" << findString(file) << "]\n";
+        out << "    mov [rel aym_cur_file], r11\n";
+    }
+    // Tras volver de una llamada que pudo ejecutar otras sentencias, vuelve a
+    // marcar la ubicacion del llamador (no toca rax).
+    void emitRestoreLocation() {
+        if (currentStmtLine > 0) {
+            out << "    mov qword [rel aym_cur_line], " << currentStmtLine << "\n";
+        }
+        if (multiFile && !currentFile.empty()) emitSetFile(currentFile);
+    }
     void releaseStackArgs(size_t bytes) {
         if (!bytes) return;
         out << "    add rsp, " << bytes << "\n";
@@ -48,6 +65,7 @@ public:
         std::vector<std::string> locals;
         std::unordered_map<std::string,bool> stringLocals;
         std::unordered_map<std::string,std::string> localTypes;
+        std::string sourceFile;
     };
 
     std::vector<FunctionInfo> functions;

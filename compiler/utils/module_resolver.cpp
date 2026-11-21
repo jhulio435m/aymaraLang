@@ -467,6 +467,9 @@ std::vector<std::unique_ptr<Node>> ModuleResolver::load(const std::string &modul
 
     loadingModules.insert(key);
     auto nodes = parseModule(modulePath, moduleName);
+    for (auto &n : nodes) {
+        if (n && n->getSourceFile().empty()) n->setSourceFile(modulePath.filename().string());
+    }
     resolve(nodes, modulePath.parent_path());
     loadingModules.erase(key);
     loadedModules.insert(key);

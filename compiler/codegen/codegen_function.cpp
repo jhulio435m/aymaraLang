@@ -65,6 +65,14 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
         ++idx;
     }
 
+    // Con modulos, cada funcion marca su archivo; el llamador lo restaura al
+    // volver (emitRestoreLocation).
+    std::string prevFile = currentFile;
+    size_t prevLine = currentStmtLine;
+    currentFile = info.sourceFile;
+    currentStmtLine = 0;
+    if (multiFile && !info.sourceFile.empty()) emitSetFile(info.sourceFile);
+
     emitStmt(info.body, &offsets, endLabel);
 
     if (pendingStackArgs != 0) {
@@ -86,6 +94,8 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     out << "    pop rbx\n";
     out << "    pop rbp\n";
     out << "    ret\n";
+    currentFile = prevFile;
+    currentStmtLine = prevLine;
 }
 
 } // namespace aym

@@ -12,6 +12,8 @@ void CodeGenImpl::registerClass(const ClassStmt *cls) {
             continue;
         }
         FunctionInfo info;
+        info.sourceFile = cls->getSourceFile();
+        registerString(info.sourceFile);
         info.name = method.isStatic
             ? classStaticMethodName(cls->getName(), method.name)
             : classMethodName(cls->getName(), method.name);
@@ -30,6 +32,8 @@ void CodeGenImpl::registerClass(const ClassStmt *cls) {
     }
     for (const auto &ctor : cls->getConstructors()) {
         FunctionInfo info;
+        info.sourceFile = cls->getSourceFile();
+        registerString(info.sourceFile);
         info.name = classCtorName(cls->getName(), ctor.params.size());
         info.params = ctor.params;
         info.params.insert(info.params.begin(), Param{"kasta:" + cls->getName(), "Aka", nullptr});
@@ -172,6 +176,7 @@ bool CodeGenImpl::emitNewExpr(const NewExpr *expr,
         out << "    mov " << regs[0] << ", [rsp+" << (stackArgs + spillPad) << "]\n";
         out << "    call " << ctorName << "\n";
         releaseStackArgs(stackArgs);
+        emitRestoreLocation();
     }
     out << "    add rsp, " << spillPad << "\n";
     out << "    pop rax\n";
@@ -199,12 +204,14 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
         }
         out << "    call " << expr->getStaticCallee() << "\n";
         releaseStackArgs(stackArgs);
+        emitRestoreLocation();
         return true;
     }
     if (!expr->getStaticCallee().empty()) {
         size_t stackArgs = emitCallArgs(expr->getArgs(), locals, 0);
         out << "    call " << expr->getStaticCallee() << "\n";
         releaseStackArgs(stackArgs);
+        emitRestoreLocation();
         return true;
     }
     int spillPad = this->windows ? 40 : 8;
@@ -240,6 +247,7 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
         out << "    add rsp, " << spillPad << "\n";
         out << "    pop " << regs[0] << "\n";
         out << "    call r11\n";
+        emitRestoreLocation();
     } else {
         // Los argumentos extra ocupan el tope de la pila: el metodo y el
         // receptor resguardados quedan por encima y se leen sin desapilar.
@@ -249,6 +257,7 @@ bool CodeGenImpl::emitMemberCallExpr(const MemberCallExpr *expr,
         out << "    mov " << regs[0] << ", [rsp+" << (stackArgs + slot + spillPad) << "]\n";
         out << "    call r11\n";
         releaseStackArgs(stackArgs);
+        emitRestoreLocation();
         out << "    add rsp, " << (2 * slot) << "\n";
     }
     return true;

@@ -19,6 +19,11 @@
 #include <fcntl.h>
 #endif
 
+/* Ubicacion actual del programa AymaraLang (la actualiza el codigo generado
+ * en cada sentencia) para los mensajes de error en ejecucion. */
+long aym_cur_line = 0;
+const char *aym_cur_file = NULL;
+
 intptr_t aym_exception_new(const char *type, const char *message);
 void aym_throw(intptr_t exception);
 intptr_t aym_array_new(long size);
@@ -110,6 +115,10 @@ static LONG WINAPI aym_fatal_filter(EXCEPTION_POINTERS *info) {
     } else {
         fputs("Error fatal: acceso invalido a memoria\n", stderr);
     }
+    if (aym_cur_line > 0) {
+        fprintf(stderr, "  en %s, linea %ld\n",
+                (aym_cur_file && aym_cur_file[0]) ? aym_cur_file : "programa", aym_cur_line);
+    }
     fflush(stderr);
     return EXCEPTION_EXECUTE_HANDLER;
 }
@@ -125,13 +134,21 @@ static void aym_fatal_signal(int sig) {
         "Error fatal: desbordamiento de pila o acceso invalido a memoria "
         "(revisa recursion demasiado profunda o infinita)\n";
     static const char other[] = "Error fatal: senal inesperada\n";
-    /* fflush no es async-signal-safe, pero el proceso va a terminar y
-     * perder la salida es peor; en la practica stdout no esta a medio usar. */
+    /* fflush/snprintf no son async-signal-safe, pero el proceso va a
+     * terminar y perder la salida es peor; en la practica stdout no esta a
+     * medio usar. */
     fflush(stdout);
     if (sig == SIGSEGV || sig == SIGBUS) {
         (void)!write(2, overflow, sizeof(overflow) - 1);
     } else {
         (void)!write(2, other, sizeof(other) - 1);
+    }
+    if (aym_cur_line > 0) {
+        char where[512];
+        int n = snprintf(where, sizeof(where), "  en %s, linea %ld\n",
+                         (aym_cur_file && aym_cur_file[0]) ? aym_cur_file : "programa",
+                         aym_cur_line);
+        if (n > 0) (void)!write(2, where, (size_t)(n < (int)sizeof(where) ? n : (int)sizeof(where) - 1));
     }
     _exit(128 + sig);
 }

@@ -269,6 +269,8 @@ void CodeGenImpl::emitExprInner(const Expr *expr,
                 out << "    call aym_exception_type\n";
             } else if (m->getMember() == "aru") {
                 out << "    call aym_exception_message\n";
+            } else if (m->getMember() == "linea") {
+                out << "    call aym_exception_line\n";
             } else {
                 out << "    mov rax, 0\n";
             }

@@ -247,8 +247,11 @@ void SemanticAnalyzer::visit(MemberExpr &m) {
     std::string baseType = currentType;
     if (baseType == "excepcion") {
         m.setExceptionAccess(true);
-        currentType = "aru";
-        m.setResolvedType("aru");
+        currentType = (m.getMember() == "linea") ? "jakhüwi" : "aru";
+        if (m.getMember() != "linea" && m.getMember() != "aru" && m.getMember() != "suti") {
+            reportError("la excepcion solo tiene 'suti', 'aru' y 'linea'");
+        }
+        m.setResolvedType(currentType);
     } else if (baseType.rfind("kasta:", 0) == 0) {
         std::string className = baseType.substr(6);
         const FieldInfo *field = lookupField(className, m.getMember());

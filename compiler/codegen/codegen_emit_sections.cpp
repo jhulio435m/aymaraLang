@@ -416,6 +416,8 @@ void CodeGenImpl::collectProgramItems(const std::vector<std::unique_ptr<Node>> &
         if (auto *fn = dynamic_cast<FunctionStmt*>(n.get())) {
             FunctionInfo info;
             info.name = fn->getName();
+            info.sourceFile = fn->getSourceFile();
+            registerString(info.sourceFile);
             info.params = fn->getParams();
             info.body = fn->getBody();
             assignTrySlots(fn->getBody());
@@ -430,6 +432,7 @@ void CodeGenImpl::collectProgramItems(const std::vector<std::unique_ptr<Node>> &
         } else if (auto *cls = dynamic_cast<ClassStmt*>(n.get())) {
             registerClass(cls);
         } else {
+            registerString(n->getSourceFile());
             assignTrySlots(static_cast<Stmt*>(n.get()));
             mainStmts.push_back(static_cast<const Stmt*>(n.get()));
             collectGlobal(static_cast<const Stmt*>(n.get()));
@@ -561,6 +564,9 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_throw\n";
     out << "extern aym_div_zero\n";
     out << "extern aym_ipow\n";
+    out << "extern aym_cur_line\n";
+    out << "extern aym_cur_file\n";
+    out << "extern aym_exception_line\n";
     for (const char *fn : {"aym_fmod", "aym_fpow", "aym_print_float", "aym_float_to_str",
                            "aym_str_to_float", "aym_map_value_kind", "aym_map_value_kind_key",
                            "aym_array_sort_float", "aym_array_sort_desc_float", "aym_array_sum_float",
@@ -605,6 +611,12 @@ void CodeGenImpl::emitRuntimePrelude() {
 }
 
 void CodeGenImpl::emitMainEntry() {
+    {
+        std::unordered_set<std::string> files;
+        for (const auto &f : functions) if (!f.sourceFile.empty()) files.insert(f.sourceFile);
+        for (const auto *s : mainStmts) if (!s->getSourceFile().empty()) files.insert(s->getSourceFile());
+        multiFile = files.size() > 1;
+    }
     for (const auto &f : functions) emitFunction(f);
 
     out << "main:\n";
@@ -635,7 +647,16 @@ void CodeGenImpl::emitMainEntry() {
         out << "    call aym_srand\n";
     }
     std::string mainEnd = genLabel("endmain");
-    for (const auto *s : mainStmts) emitStmt(s, nullptr, mainEnd);
+    bool fileSet = false;
+    for (const auto *s : mainStmts) {
+        // El codigo de primer nivel de los modulos tambien corre en main.
+        if (!fileSet || s->getSourceFile() != currentFile) {
+            currentFile = s->getSourceFile();
+            fileSet = true;
+            emitSetFile(currentFile);
+        }
+        emitStmt(s, nullptr, mainEnd);
+    }
     out << mainEnd << ":\n";
     out << "    add rsp, " << stackReserve << "\n";
     out << "    pop r15\n";

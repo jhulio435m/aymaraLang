@@ -21,6 +21,12 @@ void CodeGenImpl::emitCallExpr(const CallExpr *c,
         if (pendingStackArgs) {
             out << "    add rsp, " << pendingStackArgs << "\n";
         }
+        // Los builtins de orden superior ejecutan lambdas del usuario.
+        if (nameLower == BUILTIN_MAP || nameLower == BUILTIN_FILTER ||
+            nameLower == BUILTIN_REDUCE || nameLower == BUILTIN_MAYJTAYA ||
+            nameLower == BUILTIN_AJLLI || nameLower == BUILTIN_THAQTHAPI) {
+            emitRestoreLocation();
+        }
         pendingStackArgs = outerPending;
         return;
     }
@@ -30,6 +36,7 @@ void CodeGenImpl::emitCallExpr(const CallExpr *c,
     size_t stackArgs = emitCallArgs(c->getArgs(), locals, 0);
     out << "    call " << c->getName() << "\n";
     releaseStackArgs(stackArgs);
+    emitRestoreLocation();
 }
 
 bool CodeGenImpl::emitBuiltinIoCall(const CallExpr *c,

@@ -1,6 +1,8 @@
 typedef struct {
     const char *type;
     const char *message;
+    long line;        /* linea del programa donde se creo la excepcion */
+    const char *file;
 } AymException;
 
 typedef struct AymHandler {
@@ -16,12 +18,19 @@ intptr_t aym_exception_new(const char *type, const char *message) {
     if (!exc) return 0;
     exc->type = type ? type : "Error";
     exc->message = message ? message : "";
+    exc->line = aym_cur_line;
+    exc->file = aym_cur_file;
     return (intptr_t)exc;
 }
 
 const char *aym_exception_type(intptr_t exc) {
     if (!exc) return "";
     return ((AymException*)exc)->type;
+}
+
+long aym_exception_line(intptr_t exc) {
+    if (!exc) return 0;
+    return ((AymException*)exc)->line;
 }
 
 const char *aym_exception_message(intptr_t exc) {
@@ -71,6 +80,10 @@ void aym_throw(intptr_t exception) {
         fprintf(stderr, "Excepcion no manejada [%s]: %s\n",
                 (exc && exc->type && exc->type[0]) ? exc->type : "Error",
                 (exc && exc->message) ? exc->message : "");
+        if (exc && exc->line > 0) {
+            fprintf(stderr, "  en %s, linea %ld\n",
+                    (exc->file && exc->file[0]) ? exc->file : "programa", exc->line);
+        }
         fflush(stderr);
         exit(1);
     }
