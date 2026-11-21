@@ -151,7 +151,34 @@ Errores corregidos en estas rondas, con sus pruebas de regresión en `tests/gold
 - **Archivos:** `compiler/codegen/codegen_stmt.cpp`.
 - **Prueba:** `tests/golden/decimales/khiti.aym`.
 
+### Errores en ejecución sin ubicación
+
+- **Síntoma:** una excepción no atrapada o un fallo fatal solo decía `Excepcion no manejada`, sin línea ni archivo.
+- **Arreglo:** cada sentencia registra su línea (`aym_cur_line`) y, con módulos, cada función marca su archivo; el llamador restaura su ubicación al volver de una llamada. Cada excepción guarda la línea donde se creó, así el mensaje es correcto aunque se ejecute un `tukuyawi` antes. Coste medido: ~6-10 % en recursión intensa.
+- **Salida:** `Excepcion no manejada [ARITMETICA]: division entera por cero` seguido de `  en util.aym, linea 2`. En `katjaña(e)` está disponible `e.linea`.
+- **Archivos:** `compiler/codegen/codegen_stmt.cpp`, `codegen_function.cpp`, `codegen_impl.h`, `compiler/main.cpp`, `compiler/utils/module_resolver.cpp`, `runtime/runtime.c`, `runtime/runtime_exceptions.c`.
+- **Prueba:** `tests/golden/robustez/linea_error.aym`.
+
+### Condiciones: siempre `chiqa`
+
+- **Antes:** `ukaxa (5)` compilaba (verdad de un entero) pero el ternario exigía `chiqa`.
+- **Ahora:** toda condición (`ukaxa`, `ukhakamaxa`, `kuti`, `!`, `&&`, `||`, `? :`) debe ser `chiqa`; el error sugiere comparar explícitamente (`x != 0`). Ningún programa del repositorio dependía de lo anterior.
+- **Pruebas:** `tests/golden/robustez/errores/condicion_*.aym`, `ternario_no_booleano.aym`, `negacion_entera.aym`, `y_logico_texto.aym`.
+
+### Comparación de textos con `< <= > >=`
+
+- Orden lexicográfico por bytes (en UTF-8 coincide con el orden de los puntos de código). Además, el resultado de `strcmp` (un `int`) ahora se comprueba en 32 bits (`test eax, eax`) en `==`, `!=`, `khiti` y `katjaña`.
+- **Prueba:** `tests/golden/robustez/comparar_textos.aym`.
+
+### Argumentos en pila de los builtins
+
+- `emitCallArgs` acumula en `pendingStackArgs` la pila reservada; las llamadas de usuario la liberan con `releaseStackArgs` y `emitCallExpr` la libera automáticamente tras cualquier builtin. Si una función termina con la pila desbalanceada el compilador da un error interno en vez de generar código corrupto.
+
+### Un solo origen de tipos en el codegen
+
+- `isStringExpr`, `isListExpr`, `isMapExpr`, `isBoolExpr`, `listElementType` y `mapValueType` ya no deducen tipos con heurísticas propias: leen el tipo que el análisis semántico anota en cada expresión. Se eliminaron ~370 líneas.
+- **Validación:** el ensamblador generado para los 117 programas de `samples/`, `biblioteca/` y `tests/golden/` es idéntico byte a byte antes y después del cambio.
+
 ## Limitaciones conocidas (sin corregir)
 
-- La excepción no manejada por división por cero no indica la línea del programa fuente; solo imprime `Excepcion no manejada`.
-- Los builtins con más argumentos que registros deben liberar la pila que devuelve `emitCallArgs` (hoy solo `uja_suyu`).
+- Los programas Win64 se generan y enlazan con MinGW, pero no se han ejecutado en Windows ni Wine.

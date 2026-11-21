@@ -56,6 +56,8 @@ o el [Manual de usuario](manual_usuario.md).
 - Comparación: `== != < <= > >=`
 - Lógicos: `&& || !`
 - Ternario: `cond ? a : b`
+- Textos: `==`, `!=` y orden `< <= > >=`
+- Las condiciones deben ser `chiqa`: compara explícitamente (`x != 0`)
 
 ## Ejemplo mínimo
 
