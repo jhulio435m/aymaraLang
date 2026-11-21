@@ -179,6 +179,22 @@ Errores corregidos en estas rondas, con sus pruebas de regresión en `tests/gold
 - `isStringExpr`, `isListExpr`, `isMapExpr`, `isBoolExpr`, `listElementType` y `mapValueType` ya no deducen tipos con heurísticas propias: leen el tipo que el análisis semántico anota en cada expresión. Se eliminaron ~370 líneas.
 - **Validación:** el ensamblador generado para los 117 programas de `samples/`, `biblioteca/` y `tests/golden/` es idéntico byte a byte antes y después del cambio.
 
-## Limitaciones conocidas (sin corregir)
+### Windows: enteros truncados a 32 bits
 
-- Los programas Win64 se generan y enlazan con MinGW, pero no se han ejecutado en Windows ni Wine.
+- **Síntoma (Wine):** `-9223372036854775808` y `2 ^ 62` se imprimían como `0`.
+- **Causa:** en Win64 `long` mide 32 bits. El runtime usaba `long` y `%ld` para los valores del lenguaje, y como el código generado trata todo como 64 bits, también las funciones que devuelven `long` (`largo`, `jakhu_*`, suma de listas…) dejaban basura en la mitad alta de `rax`.
+- **Arreglo:** el runtime usa `long long` / `%lld` / `strtoll` en todos sus valores (salvo `runtime_gfx_linux.c`, solo Linux) y el compilador emite `%lld` en sus formatos.
+
+### Desbordamiento de pila determinista y atrapable
+
+- **Síntoma (Wine):** con recursión infinita el programa terminaba sin mensaje y perdía la salida previa; el manejador de excepciones del sistema se quedaba sin pila.
+- **Arreglo:** cada función compara `rsp` con `aym_stack_limit` al entrar (2 instrucciones, sin coste medible) y, si lo cruza, lanza la excepción `PILA`, que se puede atrapar con `katjaña("PILA", e)` y muestra archivo y línea. El límite se obtiene de los límites reales de la pila (`pthread_getattr_np` / `GetCurrentThreadStackLimits`) con 256 KB de margen. En Windows se enlaza con 8 MB de pila, como en Linux. El manejador de señales queda solo para otros accesos inválidos.
+- **Prueba:** `tests/golden/robustez/pila_atrapable.aym`.
+
+### `aymc` del árbol de desarrollo no encontraba el runtime fuera de la raíz
+
+- Se añade la búsqueda en `<bin>/../runtime`, así `bin/aymc` funciona desde cualquier directorio.
+
+### Verificación en Windows
+
+- Con Wine 11.22, las 75 pruebas con salida esperada (`tests/golden`, `samples`, `biblioteca`) dan la misma salida que en Linux.

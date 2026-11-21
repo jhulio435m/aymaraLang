@@ -566,6 +566,8 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_ipow\n";
     out << "extern aym_cur_line\n";
     out << "extern aym_cur_file\n";
+    out << "extern aym_stack_limit\n";
+    out << "extern aym_stack_overflow\n";
     out << "extern aym_exception_line\n";
     for (const char *fn : {"aym_fmod", "aym_fpow", "aym_print_float", "aym_float_to_str",
                            "aym_str_to_float", "aym_map_value_kind", "aym_map_value_kind_key",
@@ -578,11 +580,11 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_exception_message\n";
     out << "extern setjmp\n";
     out << "section .data\n";
-    out << "fmt_int: db \"%ld\",10,0\n";
+    out << "fmt_int: db \"%lld\",10,0\n";
     out << "fmt_str: db \"%s\",10,0\n";
     out << "fmt_raw: db \"%s\",0\n";
-    out << "fmt_int_raw: db \"%ld\",0\n";
-    out << "fmt_read_int: db \"%ld\",0\n";
+    out << "fmt_int_raw: db \"%lld\",0\n";
+    out << "fmt_read_int: db \"%lld\",0\n";
     out << "fmt_read_str: db \"%255s\",0\n";
     out << "input_val: dq 0\n";
     out << "input_buf: times 256 db 0\n";
@@ -994,7 +996,9 @@ bool CodeGenImpl::assembleAndLinkOutput(const std::string &path,
         return finalizeFailure();
     }
     if (windows)
-        cmd2 = {gccCommand, obj.string(), runtimeObj.string(), mathObj.string(), "-o", bin.string(), "-lm", "-lgdi32", "-luser32"};
+        // Pila de 8 MB como en Linux (el valor por defecto de Windows es 1 MB).
+        cmd2 = {gccCommand, obj.string(), runtimeObj.string(), mathObj.string(), "-o", bin.string(),
+                "-Wl,--stack,8388608", "-lm", "-lgdi32", "-luser32"};
     else
         cmd2 = {gccCommand, "-no-pie", obj.string(), runtimeObj.string(), mathObj.string(), linuxGfxObj.string(), "-o", bin.string(), "-lm", "-lX11", "-lc"};
     ProcessResult linkProcess;

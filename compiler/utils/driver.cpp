@@ -440,6 +440,12 @@ fs::path findRuntimeDirectory() {
     if (fs::exists(runtimeDir)) {
         return runtimeDir;
     }
+    // Arbol de desarrollo: bin/aymc junto a runtime/ (funciona desde cualquier
+    // directorio de trabajo, no solo desde la raiz del repositorio).
+    runtimeDir = (fs::path(executableDir()) / ".." / "runtime").lexically_normal();
+    if (fs::exists(runtimeDir / "runtime.c")) {
+        return runtimeDir;
+    }
     runtimeDir = fs::path("runtime");
     return runtimeDir;
 }

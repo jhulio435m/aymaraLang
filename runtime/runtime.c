@@ -1,3 +1,6 @@
+#ifndef _WIN32
+#define _GNU_SOURCE /* pthread_getattr_np */
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -16,24 +19,26 @@
 #include <sys/select.h>
 #include <termios.h>
 #include <signal.h>
+#include <sys/resource.h>
+#include <pthread.h>
 #include <fcntl.h>
 #endif
 
 /* Ubicacion actual del programa AymaraLang (la actualiza el codigo generado
  * en cada sentencia) para los mensajes de error en ejecucion. */
-long aym_cur_line = 0;
+long long aym_cur_line = 0;
 const char *aym_cur_file = NULL;
 
 intptr_t aym_exception_new(const char *type, const char *message);
 void aym_throw(intptr_t exception);
-intptr_t aym_array_new(long size);
+intptr_t aym_array_new(long long size);
 void aym_print_float(int64_t bits);
-intptr_t aym_array_get(intptr_t arr, long idx);
-long aym_array_length(intptr_t arr);
+intptr_t aym_array_get(intptr_t arr, long long idx);
+long long aym_array_length(intptr_t arr);
 intptr_t aym_array_push(intptr_t arr, intptr_t val);
-long aym_gfx_set_color(long r, long g, long b);
-long aym_gfx_rect4(long x, long y, long w, long h);
-long aym_gfx_text3(const char *text, long x, long y);
+long long aym_gfx_set_color(long long r, long long g, long long b);
+long long aym_gfx_rect4(long long x, long long y, long long w, long long h);
+long long aym_gfx_text3(const char *text, long long x, long long y);
 #ifndef _WIN32
 long aym_linux_gfx_open(long width, long height, const char *title);
 long aym_linux_gfx_is_open(void);
@@ -100,7 +105,7 @@ void aym_sleep(int ms) {
 #endif
 }
 
-static long aym_cli_argc = 0;
+static long long aym_cli_argc = 0;
 static const char **aym_cli_argv = NULL;
 
 /* Fallos fatales (desbordamiento de pila por recursion infinita, acceso
@@ -116,7 +121,7 @@ static LONG WINAPI aym_fatal_filter(EXCEPTION_POINTERS *info) {
         fputs("Error fatal: acceso invalido a memoria\n", stderr);
     }
     if (aym_cur_line > 0) {
-        fprintf(stderr, "  en %s, linea %ld\n",
+        fprintf(stderr, "  en %s, linea %lld\n",
                 (aym_cur_file && aym_cur_file[0]) ? aym_cur_file : "programa", aym_cur_line);
     }
     fflush(stderr);
@@ -145,7 +150,7 @@ static void aym_fatal_signal(int sig) {
     }
     if (aym_cur_line > 0) {
         char where[512];
-        int n = snprintf(where, sizeof(where), "  en %s, linea %ld\n",
+        int n = snprintf(where, sizeof(where), "  en %s, linea %lld\n",
                          (aym_cur_file && aym_cur_file[0]) ? aym_cur_file : "programa",
                          aym_cur_line);
         if (n > 0) (void)!write(2, where, (size_t)(n < (int)sizeof(where) ? n : (int)sizeof(where) - 1));
@@ -170,58 +175,102 @@ static void aym_install_fatal_handlers(void) {
 }
 #endif
 
-void aym_set_args(long argc, const char **argv) {
+/* Limite de pila: cada funcion generada compara rsp con aym_stack_limit al
+ * entrar y, si lo cruza, llama a aym_stack_overflow, que lanza la excepcion
+ * PILA (atrapable y con ubicacion). Se deja un margen para que el lanzamiento
+ * y el mensaje tengan pila de sobra; no depende de senales del sistema. */
+uintptr_t aym_stack_limit = 0;
+
+void aym_stack_overflow(void) {
+    aym_throw_typed("PILA", "desbordamiento de pila (recursion demasiado profunda o infinita)");
+}
+
+static void aym_init_stack_limit(void) {
+    const uintptr_t margin = 256 * 1024;
+#ifdef _WIN32
+    ULONG_PTR low = 0, high = 0;
+    GetCurrentThreadStackLimits(&low, &high);
+    if (low) aym_stack_limit = (uintptr_t)low + margin;
+#else
+    /* Limites exactos de la pila del hilo principal. */
+    pthread_attr_t attr;
+    if (pthread_getattr_np(pthread_self(), &attr) == 0) {
+        void *addr = NULL;
+        size_t stack_size = 0;
+        int ok = pthread_attr_getstack(&attr, &addr, &stack_size) == 0;
+        pthread_attr_destroy(&attr);
+        if (ok && addr && stack_size > margin * 2) {
+            aym_stack_limit = (uintptr_t)addr + margin;
+            return;
+        }
+    }
+    /* Respaldo: estimar desde una variable local y RLIMIT_STACK. */
+    char here;
+    uintptr_t base = (uintptr_t)&here;
+    struct rlimit rl;
+    uintptr_t size = 8u * 1024 * 1024;
+    if (getrlimit(RLIMIT_STACK, &rl) == 0) {
+        if (rl.rlim_cur == RLIM_INFINITY) size = (uintptr_t)1024 * 1024 * 1024;
+        else size = (uintptr_t)rl.rlim_cur;
+    }
+    /* base esta cerca del tope de la pila (main acaba de empezar). */
+    if (size > margin * 2 && base > size) aym_stack_limit = base - size + margin;
+#endif
+}
+
+void aym_set_args(long long argc, const char **argv) {
     aym_cli_argc = argc;
     aym_cli_argv = argv;
     aym_install_fatal_handlers();
+    aym_init_stack_limit();
 }
 
-long aym_argc(void) {
+long long aym_argc(void) {
     return aym_cli_argc;
 }
 
-const char *aym_argv_get(long idx) {
+const char *aym_argv_get(long long idx) {
     if (!aym_cli_argv) return "";
     if (idx < 0 || idx >= aym_cli_argc) return "";
     if (!aym_cli_argv[idx]) return "";
     return aym_cli_argv[idx];
 }
 
-void aym_exit(long code) {
+void aym_exit(long long code) {
     fflush(stdout);
     exit((int)code);
 }
 
-long aym_math_abs(long x) {
+long long aym_math_abs(long long x) {
     if (x < 0) {
-        return (x == LONG_MIN) ? LONG_MAX : -x;
+        return (x == LLONG_MIN) ? LLONG_MAX : -x;
     }
     return x;
 }
 
-long aym_math_min(long a, long b) {
+long long aym_math_min(long long a, long long b) {
     return (a < b) ? a : b;
 }
 
-long aym_math_max(long a, long b) {
+long long aym_math_max(long long a, long long b) {
     return (a > b) ? a : b;
 }
 
-long aym_math_gcd(long a, long b) {
-    unsigned long ua = (a < 0) ? (0UL - (unsigned long)a) : (unsigned long)a;
-    unsigned long ub = (b < 0) ? (0UL - (unsigned long)b) : (unsigned long)b;
+long long aym_math_gcd(long long a, long long b) {
+    unsigned long long ua = (a < 0) ? (0ULL - (unsigned long long)a) : (unsigned long long)a;
+    unsigned long long ub = (b < 0) ? (0ULL - (unsigned long long)b) : (unsigned long long)b;
     while (ub != 0UL) {
-        unsigned long r = ua % ub;
+        unsigned long long r = ua % ub;
         ua = ub;
         ub = r;
     }
-    if (ua > (unsigned long)LONG_MAX) return LONG_MAX;
-    return (long)ua;
+    if (ua > (unsigned long long)LLONG_MAX) return LLONG_MAX;
+    return (long long)ua;
 }
 
-long aym_math_clamp(long x, long lo, long hi) {
+long long aym_math_clamp(long long x, long long lo, long long hi) {
     if (lo > hi) {
-        long tmp = lo;
+        long long tmp = lo;
         lo = hi;
         hi = tmp;
     }
@@ -230,7 +279,7 @@ long aym_math_clamp(long x, long lo, long hi) {
     return x;
 }
 
-long aym_assert(long cond, const char *message) {
+long long aym_assert(long long cond, const char *message) {
     if (!cond) {
         aym_throw_typed("ASSERT", message ? message : "afirma fallo");
         return 0;
@@ -243,10 +292,10 @@ typedef intptr_t (*AymBinaryFn)(intptr_t, intptr_t);
 
 intptr_t aym_hof_map(intptr_t arr, intptr_t fn_ptr) {
     if (!arr || !fn_ptr) return aym_array_new(0);
-    long len = aym_array_length(arr);
+    long long len = aym_array_length(arr);
     intptr_t out = aym_array_new(0);
     AymUnaryFn fn = (AymUnaryFn)fn_ptr;
-    for (long i = 0; i < len; i++) {
+    for (long long i = 0; i < len; i++) {
         intptr_t v = aym_array_get(arr, i);
         intptr_t mapped = fn(v);
         aym_array_push(out, mapped);
@@ -256,10 +305,10 @@ intptr_t aym_hof_map(intptr_t arr, intptr_t fn_ptr) {
 
 intptr_t aym_hof_filter(intptr_t arr, intptr_t fn_ptr) {
     if (!arr || !fn_ptr) return aym_array_new(0);
-    long len = aym_array_length(arr);
+    long long len = aym_array_length(arr);
     intptr_t out = aym_array_new(0);
     AymUnaryFn fn = (AymUnaryFn)fn_ptr;
-    for (long i = 0; i < len; i++) {
+    for (long long i = 0; i < len; i++) {
         intptr_t v = aym_array_get(arr, i);
         if (fn(v)) {
             aym_array_push(out, v);
@@ -270,10 +319,10 @@ intptr_t aym_hof_filter(intptr_t arr, intptr_t fn_ptr) {
 
 intptr_t aym_hof_reduce(intptr_t arr, intptr_t fn_ptr, intptr_t init) {
     if (!arr || !fn_ptr) return init;
-    long len = aym_array_length(arr);
+    long long len = aym_array_length(arr);
     intptr_t acc = init;
     AymBinaryFn fn = (AymBinaryFn)fn_ptr;
-    for (long i = 0; i < len; i++) {
+    for (long long i = 0; i < len; i++) {
         intptr_t v = aym_array_get(arr, i);
         acc = fn(acc, v);
     }
@@ -288,7 +337,7 @@ char *aym_fs_read_text(const char *path) {
         fclose(f);
         return aym_str_copy("", 0);
     }
-    long size = ftell(f);
+    long long size = ftell(f);
     if (size < 0) {
         fclose(f);
         return aym_str_copy("", 0);
@@ -305,7 +354,7 @@ char *aym_fs_read_text(const char *path) {
     return buf;
 }
 
-static long aym_fs_write_mode(const char *path, const char *text, const char *mode) {
+static long long aym_fs_write_mode(const char *path, const char *text, const char *mode) {
     if (!path || !path[0]) return 0;
     FILE *f = fopen(path, mode);
     if (!f) return 0;
@@ -316,11 +365,11 @@ static long aym_fs_write_mode(const char *path, const char *text, const char *mo
     return (written == len && closed == 0) ? 1 : 0;
 }
 
-long aym_fs_write_text(const char *path, const char *text) {
+long long aym_fs_write_text(const char *path, const char *text) {
     return aym_fs_write_mode(path, text, "wb");
 }
 
-long aym_fs_append_text(const char *path, const char *text) {
+long long aym_fs_append_text(const char *path, const char *text) {
     return aym_fs_write_mode(path, text, "ab");
 }
 
@@ -372,12 +421,12 @@ intptr_t aym_fs_read_lines(const char *path) {
     return arr;
 }
 
-long aym_fs_delete(const char *path) {
+long long aym_fs_delete(const char *path) {
     if (!path || !path[0]) return 0;
     return remove(path) == 0 ? 1 : 0;
 }
 
-long aym_fs_exists(const char *path) {
+long long aym_fs_exists(const char *path) {
     if (!path || !path[0]) return 0;
     struct stat st;
     return stat(path, &st) == 0 ? 1 : 0;
@@ -443,23 +492,23 @@ void aym_term_clear(void) {
     fflush(stdout);
 }
 
-void aym_term_move(long x, long y) {
+void aym_term_move(long long x, long long y) {
     aym_term_init();
     if (x < 1) x = 1;
     if (y < 1) y = 1;
-    printf("\x1b[%ld;%ldH", y, x);
+    printf("\x1b[%lld;%lldH", y, x);
     fflush(stdout);
 }
 
-void aym_term_color(long fg, long bg) {
+void aym_term_color(long long fg, long long bg) {
     aym_term_init();
     if (fg < 0) fg = 7;
     if (bg < 0) bg = 0;
     if (fg > 15) fg = 15;
     if (bg > 15) bg = 15;
-    long fgCode = (fg < 8) ? (30 + fg) : (90 + (fg - 8));
-    long bgCode = (bg < 8) ? (40 + bg) : (100 + (bg - 8));
-    printf("\x1b[%ld;%ldm", fgCode, bgCode);
+    long long fgCode = (fg < 8) ? (30 + fg) : (90 + (fg - 8));
+    long long bgCode = (bg < 8) ? (40 + bg) : (100 + (bg - 8));
+    printf("\x1b[%lld;%lldm", fgCode, bgCode);
     fflush(stdout);
 }
 
@@ -469,7 +518,7 @@ void aym_term_reset(void) {
     fflush(stdout);
 }
 
-void aym_term_cursor(long visible) {
+void aym_term_cursor(long long visible) {
     aym_term_init();
     printf(visible ? "\x1b[?25h" : "\x1b[?25l");
     fflush(stdout);
@@ -480,30 +529,30 @@ static int aym_key_down(int vk) {
     return (GetAsyncKeyState(vk) & 0x8000) != 0;
 }
 
-static long aym_key_ascii(void) {
+static long long aym_key_ascii(void) {
     for (int vk = 'A'; vk <= 'Z'; ++vk) {
-        if (aym_key_down(vk)) return (long)(vk + ('a' - 'A'));
+        if (aym_key_down(vk)) return (long long)(vk + ('a' - 'A'));
     }
     for (int vk = '0'; vk <= '9'; ++vk) {
-        if (aym_key_down(vk)) return (long)vk;
+        if (aym_key_down(vk)) return (long long)vk;
     }
-    if (aym_key_down(VK_SPACE)) return (long)' ';
-    if (aym_key_down(VK_RETURN)) return (long)'\r';
+    if (aym_key_down(VK_SPACE)) return (long long)' ';
+    if (aym_key_down(VK_RETURN)) return (long long)'\r';
     if (aym_key_down(VK_ESCAPE)) return 27;
     if (aym_key_down(VK_BACK)) return 8;
-    if (aym_key_down(VK_TAB)) return (long)'\t';
+    if (aym_key_down(VK_TAB)) return (long long)'\t';
     return -1;
 }
 #endif
 
-long aym_key_poll(void) {
+long long aym_key_poll(void) {
     aym_term_init();
 #ifdef _WIN32
     if (aym_key_down(VK_LEFT)) return 1003;
     if (aym_key_down(VK_RIGHT)) return 1004;
     if (aym_key_down(VK_DOWN)) return 1002;
     if (aym_key_down(VK_UP)) return 1001;
-    long ascii = aym_key_ascii();
+    long long ascii = aym_key_ascii();
     if (ascii != -1) return ascii;
     return -1;
 #else
@@ -522,22 +571,22 @@ long aym_key_poll(void) {
         }
         return 27;
     }
-    return (long)ch;
+    return (long long)ch;
 #endif
 }
 
-long aym_time_ms(void) {
+long long aym_time_ms(void) {
 #ifdef _WIN32
-    return (long)GetTickCount64();
+    return (long long)GetTickCount64();
 #else
     struct timeval tv;
     if (gettimeofday(&tv, NULL) != 0) return 0;
-    return (long)(tv.tv_sec * 1000L + tv.tv_usec / 1000L);
+    return (long long)(tv.tv_sec * 1000L + tv.tv_usec / 1000L);
 #endif
 }
 
 #ifdef _WIN32
-static long aym_color_clip(long value) {
+static long long aym_color_clip(long long value) {
     if (value < 0) return 0;
     if (value > 255) return 255;
     return value;
@@ -557,8 +606,8 @@ static int aym_gfx_console_hidden = 0;
 static int aym_gfx_console_was_visible = 0;
 static uint32_t aym_gfx_current_color = 0x00FFFFFFu;
 static BITMAPINFO aym_gfx_bmi;
-static long aym_gfx_width = 0;
-static long aym_gfx_height = 0;
+static long long aym_gfx_width = 0;
+static long long aym_gfx_height = 0;
 static int aym_gfx_alive = 0;
 static int aym_gfx_class_ready = 0;
 static const wchar_t *aym_gfx_class_name = L"AymaraLangGfxWindow";
@@ -688,7 +737,7 @@ static void aym_gfx_close_window(void) {
     aym_gfx_alive = 0;
 }
 
-static int aym_gfx_key_to_vk(long key) {
+static int aym_gfx_key_to_vk(long long key) {
     switch (key) {
     case 1001: return VK_UP;
     case 1002: return VK_DOWN;
@@ -709,7 +758,7 @@ static int aym_gfx_key_to_vk(long key) {
 }
 #endif
 
-long aym_gfx_open(long width, long height, const char *title) {
+long long aym_gfx_open(long long width, long long height, const char *title) {
 #ifdef _WIN32
     if (width <= 0 || height <= 0) return 0;
     if (width > 4096 || height > 4096) return 0;
@@ -822,7 +871,7 @@ long aym_gfx_open(long width, long height, const char *title) {
 #endif
 }
 
-long aym_gfx_is_open(void) {
+long long aym_gfx_is_open(void) {
 #ifdef _WIN32
     aym_gfx_pump_messages();
     return aym_gfx_alive ? 1 : 0;
@@ -831,7 +880,7 @@ long aym_gfx_is_open(void) {
 #endif
 }
 
-long aym_gfx_clear(long r, long g, long b) {
+long long aym_gfx_clear(long long r, long long g, long long b) {
 #ifdef _WIN32
     if (!aym_gfx_alive || !aym_gfx_pixels) return 0;
     aym_gfx_pump_messages();
@@ -850,7 +899,7 @@ long aym_gfx_clear(long r, long g, long b) {
 #endif
 }
 
-long aym_gfx_rect(long x, long y, long w, long h, long r, long g, long b) {
+long long aym_gfx_rect(long long x, long long y, long long w, long long h, long long r, long long g, long long b) {
 #ifdef _WIN32
     aym_gfx_current_color = ((uint32_t)aym_color_clip(r) << 16) |
                             ((uint32_t)aym_color_clip(g) << 8) |
@@ -862,7 +911,7 @@ long aym_gfx_rect(long x, long y, long w, long h, long r, long g, long b) {
 #endif
 }
 
-long aym_gfx_set_color(long r, long g, long b) {
+long long aym_gfx_set_color(long long r, long long g, long long b) {
 #ifdef _WIN32
     aym_gfx_current_color = ((uint32_t)aym_color_clip(r) << 16) |
                             ((uint32_t)aym_color_clip(g) << 8) |
@@ -873,7 +922,7 @@ long aym_gfx_set_color(long r, long g, long b) {
 #endif
 }
 
-long aym_gfx_rect4(long x, long y, long w, long h) {
+long long aym_gfx_rect4(long long x, long long y, long long w, long long h) {
 #ifdef _WIN32
     if (!aym_gfx_alive || !aym_gfx_pixels) return 0;
     aym_gfx_pump_messages();
@@ -889,17 +938,17 @@ long aym_gfx_rect4(long x, long y, long w, long h) {
     }
     if (w <= 0 || h <= 0) return 1;
 
-    long x0 = x < 0 ? 0 : x;
-    long y0 = y < 0 ? 0 : y;
-    long x1 = x + w;
-    long y1 = y + h;
+    long long x0 = x < 0 ? 0 : x;
+    long long y0 = y < 0 ? 0 : y;
+    long long x1 = x + w;
+    long long y1 = y + h;
     if (x1 > aym_gfx_width) x1 = aym_gfx_width;
     if (y1 > aym_gfx_height) y1 = aym_gfx_height;
     if (x0 >= x1 || y0 >= y1) return 1;
 
-    for (long yy = y0; yy < y1; ++yy) {
+    for (long long yy = y0; yy < y1; ++yy) {
         size_t row = (size_t)yy * (size_t)aym_gfx_width;
-        for (long xx = x0; xx < x1; ++xx) {
+        for (long long xx = x0; xx < x1; ++xx) {
             aym_gfx_pixels[row + (size_t)xx] = aym_gfx_current_color;
         }
     }
@@ -909,7 +958,7 @@ long aym_gfx_rect4(long x, long y, long w, long h) {
 #endif
 }
 
-long aym_gfx_text(const char *text, long x, long y, long r, long g, long b) {
+long long aym_gfx_text(const char *text, long long x, long long y, long long r, long long g, long long b) {
 #ifdef _WIN32
     aym_gfx_current_color = ((uint32_t)aym_color_clip(r) << 16) |
                             ((uint32_t)aym_color_clip(g) << 8) |
@@ -921,7 +970,7 @@ long aym_gfx_text(const char *text, long x, long y, long r, long g, long b) {
 #endif
 }
 
-long aym_gfx_text3(const char *text, long x, long y) {
+long long aym_gfx_text3(const char *text, long long x, long long y) {
 #ifdef _WIN32
     if (!aym_gfx_alive || !aym_gfx_mem_dc) return 0;
     aym_gfx_pump_messages();
@@ -941,7 +990,7 @@ long aym_gfx_text3(const char *text, long x, long y) {
 #endif
 }
 
-long aym_gfx_present(void) {
+long long aym_gfx_present(void) {
 #ifdef _WIN32
     if (!aym_gfx_alive || !aym_gfx_window_dc || !aym_gfx_mem_dc) return 0;
     aym_gfx_pump_messages();
@@ -954,7 +1003,7 @@ long aym_gfx_present(void) {
 #endif
 }
 
-long aym_gfx_close(void) {
+long long aym_gfx_close(void) {
 #ifdef _WIN32
     aym_gfx_close_window();
     return 1;
@@ -963,7 +1012,7 @@ long aym_gfx_close(void) {
 #endif
 }
 
-long aym_gfx_key_down(long key) {
+long long aym_gfx_key_down(long long key) {
 #ifdef _WIN32
     if (!aym_gfx_alive) return 0;
     aym_gfx_pump_messages();
@@ -1022,7 +1071,7 @@ char *aym_file_read_text(const char *path) {
     return buf;
 }
 
-long aym_file_write_text(const char *path, const char *text) {
+long long aym_file_write_text(const char *path, const char *text) {
     if (!path || path[0] == '\0') return 0;
     FILE *f = fopen(path, "wb");
     if (!f) return 0;
@@ -1033,19 +1082,19 @@ long aym_file_write_text(const char *path, const char *text) {
     return (written == len) ? 1 : 0;
 }
 
-long aym_record_load(void) {
+long long aym_record_load(void) {
     FILE *f = fopen("tetris_highscore.txt", "rb");
     if (!f) return 0;
-    long value = 0;
-    if (fscanf(f, "%ld", &value) != 1) value = 0;
+    long long value = 0;
+    if (fscanf(f, "%lld", &value) != 1) value = 0;
     fclose(f);
     return value;
 }
 
-long aym_record_save(long value) {
+long long aym_record_save(long long value) {
     FILE *f = fopen("tetris_highscore.txt", "wb");
     if (!f) return 0;
-    int ok = fprintf(f, "%ld", value);
+    int ok = fprintf(f, "%lld", value);
     fclose(f);
     return ok > 0 ? 1 : 0;
 }

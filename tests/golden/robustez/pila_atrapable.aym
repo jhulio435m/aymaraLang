@@ -1,0 +1,10 @@
+lurawi r(jakhüwi n): jakhüwi {
+  kuttaya 1 + r(n + 1);
+}
+yant'aña {
+  qillqa(r(0));
+} katjaña("PILA", e) {
+  qillqa("atrapado: " + e.aru + " linea " + aru(e.linea));
+}
+lurawi prof(jakhüwi n): jakhüwi { ukaxa (n == 0) { kuttaya 0; } kuttaya 1 + prof(n - 1); }
+qillqa(prof(50000));

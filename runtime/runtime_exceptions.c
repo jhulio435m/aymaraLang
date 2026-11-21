@@ -1,7 +1,7 @@
 typedef struct {
     const char *type;
     const char *message;
-    long line;        /* linea del programa donde se creo la excepcion */
+    long long line;        /* linea del programa donde se creo la excepcion */
     const char *file;
 } AymException;
 
@@ -28,7 +28,7 @@ const char *aym_exception_type(intptr_t exc) {
     return ((AymException*)exc)->type;
 }
 
-long aym_exception_line(intptr_t exc) {
+long long aym_exception_line(intptr_t exc) {
     if (!exc) return 0;
     return ((AymException*)exc)->line;
 }
@@ -81,7 +81,7 @@ void aym_throw(intptr_t exception) {
                 (exc && exc->type && exc->type[0]) ? exc->type : "Error",
                 (exc && exc->message) ? exc->message : "");
         if (exc && exc->line > 0) {
-            fprintf(stderr, "  en %s, linea %ld\n",
+            fprintf(stderr, "  en %s, linea %lld\n",
                     (exc->file && exc->file[0]) ? exc->file : "programa", exc->line);
         }
         fflush(stderr);

@@ -49,6 +49,15 @@ void CodeGenImpl::emitFunction(const FunctionInfo &info) {
     out << "    push r15\n";
     if (stackSize) out << "    sub rsp, " << stackSize << "\n";
 
+    // Limite de pila: recursion demasiado profunda lanza la excepcion PILA.
+    {
+        std::string stackOk = genLabel("stack_ok");
+        out << "    cmp rsp, [rel aym_stack_limit]\n";
+        out << "    jae " << stackOk << "\n";
+        out << "    call aym_stack_overflow\n";
+        out << stackOk << ":\n";
+    }
+
     // store parameters
     std::vector<std::string> regs = paramRegs(this->windows);
     size_t idx = 0;

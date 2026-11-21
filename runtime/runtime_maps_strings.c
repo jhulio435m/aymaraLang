@@ -1,11 +1,11 @@
 typedef struct {
-    long len;
-    long cap;
+    long long len;
+    long long cap;
     char **keys;
     intptr_t *values;
     unsigned char *types;
-    long *buckets;
-    long bucket_cap;
+    long long *buckets;
+    long long bucket_cap;
 } AymMap;
 
 static uint64_t aym_map_hash(const char *s) {
@@ -18,33 +18,33 @@ static uint64_t aym_map_hash(const char *s) {
     return h;
 }
 
-static int aym_map_rehash(AymMap *m, long new_bcap) {
+static int aym_map_rehash(AymMap *m, long long new_bcap) {
     if (!m) return 0;
-    long bcap = 16;
-    while (bcap < new_bcap && bcap <= LONG_MAX / 2) {
+    long long bcap = 16;
+    while (bcap < new_bcap && bcap <= LLONG_MAX / 2) {
         bcap *= 2;
     }
-    long *target = NULL;
+    long long *target = NULL;
     int reused = 0;
     if (m->buckets && m->bucket_cap == bcap) {
         target = m->buckets;
         reused = 1;
     } else {
-        target = (long *)malloc(sizeof(long) * (size_t)bcap);
+        target = (long long *)malloc(sizeof(long long) * (size_t)bcap);
         if (!target) {
             fprintf(stderr, "aym_map_rehash: allocation failed\n");
             return 0;
         }
     }
-    for (long i = 0; i < bcap; i++) {
+    for (long long i = 0; i < bcap; i++) {
         target[i] = -1;
     }
     uint64_t mask = (uint64_t)(bcap - 1);
-    for (long i = 0; i < m->len; i++) {
+    for (long long i = 0; i < m->len; i++) {
         if (!m->keys[i]) continue;
         uint64_t h = aym_map_hash(m->keys[i]);
-        for (long step = 0; step < bcap; step++) {
-            long slot = (long)((h + (uint64_t)step) & mask);
+        for (long long step = 0; step < bcap; step++) {
+            long long slot = (long long)((h + (uint64_t)step) & mask);
             if (target[slot] < 0) {
                 target[slot] = i;
                 break;
@@ -59,13 +59,13 @@ static int aym_map_rehash(AymMap *m, long new_bcap) {
     return 1;
 }
 
-static long aym_map_find(AymMap *map, const char *key) {
+static long long aym_map_find(AymMap *map, const char *key) {
     if (!map || !key || !map->buckets || map->bucket_cap <= 0 || map->len <= 0) return -1;
     uint64_t h = aym_map_hash(key);
     uint64_t mask = (uint64_t)(map->bucket_cap - 1);
-    for (long step = 0; step < map->bucket_cap; step++) {
-        long slot = (long)((h + (uint64_t)step) & mask);
-        long idx = map->buckets[slot];
+    for (long long step = 0; step < map->bucket_cap; step++) {
+        long long slot = (long long)((h + (uint64_t)step) & mask);
+        long long idx = map->buckets[slot];
         if (idx < 0) return -1;
         if (idx < map->len && map->keys[idx] && strcmp(map->keys[idx], key) == 0) {
             return idx;
@@ -74,7 +74,7 @@ static long aym_map_find(AymMap *map, const char *key) {
     return -1;
 }
 
-intptr_t aym_map_new(long size) {
+intptr_t aym_map_new(long long size) {
     if (size < 0) return 0;
     AymMap *map = (AymMap *)calloc(1, sizeof(AymMap));
     if (!map) {
@@ -83,17 +83,17 @@ intptr_t aym_map_new(long size) {
     }
     map->len = 0;
     map->cap = size;
-    long bcap = 16;
-    while (bcap / 2 < size && bcap <= LONG_MAX / 2) {
+    long long bcap = 16;
+    while (bcap / 2 < size && bcap <= LLONG_MAX / 2) {
         bcap *= 2;
     }
-    map->buckets = (long *)malloc(sizeof(long) * (size_t)bcap);
+    map->buckets = (long long *)malloc(sizeof(long long) * (size_t)bcap);
     if (!map->buckets) {
         fprintf(stderr, "aym_map_new: allocation failed\n");
         free(map);
         return 0;
     }
-    for (long i = 0; i < bcap; i++) {
+    for (long long i = 0; i < bcap; i++) {
         map->buckets[i] = -1;
     }
     map->bucket_cap = bcap;
@@ -115,7 +115,7 @@ intptr_t aym_map_new(long size) {
 }
 
 static int aym_map_grow(AymMap *map) {
-    long newCap = map->cap > 0 ? map->cap * 2 : 1;
+    long long newCap = map->cap > 0 ? map->cap * 2 : 1;
     char **newKeys = (char **)realloc(map->keys, sizeof(char *) * (size_t)newCap);
     if (!newKeys) {
         fprintf(stderr, "aym_map_set: allocation failed\n");
@@ -138,12 +138,12 @@ static int aym_map_grow(AymMap *map) {
     return 1;
 }
 
-long aym_map_size(intptr_t map) {
+long long aym_map_size(intptr_t map) {
     if (!map) return 0;
     return ((AymMap*)map)->len;
 }
 
-long aym_map_contains(intptr_t map, const char *key) {
+long long aym_map_contains(intptr_t map, const char *key) {
     if (!map || !key) return 0;
     return aym_map_find((AymMap*)map, key) >= 0;
 }
@@ -151,7 +151,7 @@ long aym_map_contains(intptr_t map, const char *key) {
 intptr_t aym_map_set(intptr_t map, const char *key, intptr_t value, int is_string) {
     if (!map || !key) return 0;
     AymMap *m = (AymMap*)map;
-    long idx = aym_map_find(m, key);
+    long long idx = aym_map_find(m, key);
     if (idx >= 0) {
         m->values[idx] = (intptr_t)value;
         m->types[idx] = (unsigned char)((is_string == 1 || is_string == 2) ? is_string : 0);
@@ -161,19 +161,19 @@ intptr_t aym_map_set(intptr_t map, const char *key, intptr_t value, int is_strin
         if (!aym_map_grow(m)) return 0;
     }
     if (m->bucket_cap == 0 || (m->len + 1) * 2 > m->bucket_cap) {
-        long next_bcap = m->bucket_cap > 0 ? m->bucket_cap * 2 : 16;
+        long long next_bcap = m->bucket_cap > 0 ? m->bucket_cap * 2 : 16;
         if (next_bcap < 16) next_bcap = 16;
         if (!aym_map_rehash(m, next_bcap)) return 0;
     }
-    long new_idx = m->len;
+    long long new_idx = m->len;
     m->keys[new_idx] = (char *)key;
     m->values[new_idx] = (intptr_t)value;
     m->types[new_idx] = (unsigned char)((is_string == 1 || is_string == 2) ? is_string : 0);
     m->len++;
     uint64_t h = aym_map_hash(key);
     uint64_t mask = (uint64_t)(m->bucket_cap - 1);
-    for (long step = 0; step < m->bucket_cap; step++) {
-        long slot = (long)((h + (uint64_t)step) & mask);
+    for (long long step = 0; step < m->bucket_cap; step++) {
+        long long slot = (long long)((h + (uint64_t)step) & mask);
         if (m->buckets[slot] < 0) {
             m->buckets[slot] = new_idx;
             break;
@@ -194,7 +194,7 @@ intptr_t aym_map_get(intptr_t map, const char *key) {
         return 0;
     }
     AymMap *m = (AymMap*)map;
-    long idx = aym_map_find(m, key);
+    long long idx = aym_map_find(m, key);
     if (idx < 0) {
         aym_map_missing_key(key);
         return 0;
@@ -205,7 +205,7 @@ intptr_t aym_map_get(intptr_t map, const char *key) {
 intptr_t aym_map_get_default(intptr_t map, const char *key, intptr_t default_value) {
     if (!map || !key) return default_value;
     AymMap *m = (AymMap*)map;
-    long idx = aym_map_find(m, key);
+    long long idx = aym_map_find(m, key);
     if (idx < 0) return default_value;
     return m->values[idx];
 }
@@ -216,13 +216,13 @@ intptr_t aym_map_delete(intptr_t map, const char *key) {
         return 0;
     }
     AymMap *m = (AymMap*)map;
-    long idx = aym_map_find(m, key);
+    long long idx = aym_map_find(m, key);
     if (idx < 0) {
         aym_map_missing_key(key);
         return 0;
     }
     intptr_t value = m->values[idx];
-    for (long i = idx + 1; i < m->len; i++) {
+    for (long long i = idx + 1; i < m->len; i++) {
         m->keys[i - 1] = m->keys[i];
         m->values[i - 1] = m->values[i];
         m->types[i - 1] = m->types[i];
@@ -238,7 +238,7 @@ intptr_t aym_map_keys(intptr_t map) {
     if (!map) return 0;
     AymMap *m = (AymMap*)map;
     intptr_t arr = aym_array_new(m->len);
-    for (long i = 0; i < m->len; i++) {
+    for (long long i = 0; i < m->len; i++) {
         aym_array_set(arr, i, (intptr_t)m->keys[i]);
     }
     return arr;
@@ -248,27 +248,27 @@ intptr_t aym_map_values(intptr_t map) {
     if (!map) return 0;
     AymMap *m = (AymMap*)map;
     intptr_t arr = aym_array_new(m->len);
-    for (long i = 0; i < m->len; i++) {
+    for (long long i = 0; i < m->len; i++) {
         aym_array_set(arr, i, (intptr_t)m->values[i]);
     }
     return arr;
 }
 
-const char *aym_map_key_at(intptr_t map, long idx) {
+const char *aym_map_key_at(intptr_t map, long long idx) {
     if (!map) return "";
     AymMap *m = (AymMap*)map;
     if (idx < 0 || idx >= m->len) return "";
     return m->keys[idx] ? m->keys[idx] : "";
 }
 
-intptr_t aym_map_value_at(intptr_t map, long idx) {
+intptr_t aym_map_value_at(intptr_t map, long long idx) {
     if (!map) return 0;
     AymMap *m = (AymMap*)map;
     if (idx < 0 || idx >= m->len) return 0;
     return m->values[idx];
 }
 
-long aym_map_value_is_string(intptr_t map, long idx) {
+long long aym_map_value_is_string(intptr_t map, long long idx) {
     if (!map) return 0;
     AymMap *m = (AymMap*)map;
     if (idx < 0 || idx >= m->len) return 0;
@@ -276,25 +276,25 @@ long aym_map_value_is_string(intptr_t map, long idx) {
 }
 
 /* Tipo del valor: 0 = entero/otro, 1 = aru, 2 = chikata (bits de double). */
-long aym_map_value_kind(intptr_t map, long idx) {
+long long aym_map_value_kind(intptr_t map, long long idx) {
     if (!map) return 0;
     AymMap *m = (AymMap*)map;
     if (idx < 0 || idx >= m->len) return 0;
     return m->types[idx];
 }
 
-long aym_map_value_is_string_key(intptr_t map, const char *key) {
+long long aym_map_value_is_string_key(intptr_t map, const char *key) {
     if (!map || !key) return 0;
     AymMap *m = (AymMap*)map;
-    long idx = aym_map_find(m, key);
+    long long idx = aym_map_find(m, key);
     if (idx < 0) return 0;
     return m->types[idx] == 1 ? 1 : 0;
 }
 
-long aym_map_value_kind_key(intptr_t map, const char *key) {
+long long aym_map_value_kind_key(intptr_t map, const char *key) {
     if (!map || !key) return 0;
     AymMap *m = (AymMap*)map;
-    long idx = aym_map_find(m, key);
+    long long idx = aym_map_find(m, key);
     if (idx < 0) return 0;
     return m->types[idx];
 }
@@ -342,18 +342,18 @@ intptr_t aym_str_split(const char *text, const char *sep) {
         count++;
         scan += sep_len;
     }
-    intptr_t arr = aym_array_new((long)count);
+    intptr_t arr = aym_array_new((long long)count);
     const char *start = text;
     size_t idx = 0;
     while (1) {
         const char *pos = strstr(start, sep);
         if (!pos) {
             char *piece = aym_str_copy(start, strlen(start));
-            if (piece) aym_array_set(arr, (long)idx, (intptr_t)piece);
+            if (piece) aym_array_set(arr, (long long)idx, (intptr_t)piece);
             break;
         }
         char *piece = aym_str_copy(start, (size_t)(pos - start));
-        if (piece) aym_array_set(arr, (long)idx, (intptr_t)piece);
+        if (piece) aym_array_set(arr, (long long)idx, (intptr_t)piece);
         idx++;
         start = pos + sep_len;
     }
@@ -367,7 +367,7 @@ char *aym_str_join(intptr_t arr, const char *sep) {
     AymArray *a = (AymArray*)arr;
     if (a->len <= 0) return aym_str_copy("", 0);
     size_t total = 0;
-    for (long i = 0; i < a->len; i++) {
+    for (long long i = 0; i < a->len; i++) {
         const char *part = (const char *)a->data[i];
         if (part) total += strlen(part);
         if (i + 1 < a->len) total += sep_len;
@@ -375,7 +375,7 @@ char *aym_str_join(intptr_t arr, const char *sep) {
     char *out = (char *)malloc(total + 1);
     if (!out) return NULL;
     char *cursor = out;
-    for (long i = 0; i < a->len; i++) {
+    for (long long i = 0; i < a->len; i++) {
         const char *part = (const char *)a->data[i];
         if (part) {
             size_t len = strlen(part);
@@ -444,7 +444,7 @@ char *aym_str_replace(const char *text, const char *search, const char *replacem
     return out;
 }
 
-long aym_str_contains(const char *text, const char *sub) {
+long long aym_str_contains(const char *text, const char *sub) {
     if (!text) return 0;
     if (!sub) return 0;
     if (sub[0] == '\0') return 1;
@@ -486,7 +486,7 @@ char *aym_str_reverse(const char *text) {
     return out;
 }
 
-char *aym_str_repeat(const char *text, long times) {
+char *aym_str_repeat(const char *text, long long times) {
     if (!text) text = "";
     size_t len = strlen(text);
     if (times <= 0 || len == 0) return aym_str_copy("", 0);
@@ -502,7 +502,7 @@ char *aym_str_repeat(const char *text, long times) {
     return out;
 }
 
-long aym_str_starts_with(const char *text, const char *prefix) {
+long long aym_str_starts_with(const char *text, const char *prefix) {
     if (!text) text = "";
     if (!prefix) prefix = "";
     size_t plen = strlen(prefix);
@@ -510,7 +510,7 @@ long aym_str_starts_with(const char *text, const char *prefix) {
     return memcmp(text, prefix, plen) == 0 ? 1 : 0;
 }
 
-long aym_str_ends_with(const char *text, const char *suffix) {
+long long aym_str_ends_with(const char *text, const char *suffix) {
     if (!text) text = "";
     if (!suffix) suffix = "";
     size_t tlen = strlen(text);
@@ -519,17 +519,17 @@ long aym_str_ends_with(const char *text, const char *suffix) {
     return memcmp(text + (tlen - slen), suffix, slen) == 0 ? 1 : 0;
 }
 
-long aym_str_index_of(const char *text, const char *sub) {
+long long aym_str_index_of(const char *text, const char *sub) {
     if (!text) text = "";
     if (!sub) sub = "";
     const char *pos = strstr(text, sub);
     if (!pos) return -1;
-    return (long)(pos - text);
+    return (long long)(pos - text);
 }
 
-char *aym_str_char_at(const char *text, long idx) {
+char *aym_str_char_at(const char *text, long long idx) {
     if (!text) text = "";
-    long len = (long)strlen(text);
+    long long len = (long long)strlen(text);
     if (idx < 0 || idx >= len) {
         aym_throw_typed("INDICE", "indice de texto fuera de rango");
         return aym_str_copy("", 0);
@@ -537,23 +537,23 @@ char *aym_str_char_at(const char *text, long idx) {
     return aym_str_copy(text + idx, 1);
 }
 
-char *aym_str_substr(const char *text, long start, long count) {
+char *aym_str_substr(const char *text, long long start, long long count) {
     if (!text) text = "";
-    long len = (long)strlen(text);
+    long long len = (long long)strlen(text);
     if (start < 0) start = 0;
     if (start > len) start = len;
-    long avail = len - start;
+    long long avail = len - start;
     if (count < 0) count = 0;
     if (count > avail) count = avail;
     return aym_str_copy(text + start, (size_t)count);
 }
 
-long aym_str_ord(const char *text) {
+long long aym_str_ord(const char *text) {
     if (!text || text[0] == '\0') return -1;
-    return (long)(unsigned char)text[0];
+    return (long long)(unsigned char)text[0];
 }
 
-char *aym_str_chr(long code) {
+char *aym_str_chr(long long code) {
     if (code < 0 || code > 255) {
         aym_throw_typed("ARG", "codigo de caracter fuera de rango");
         return aym_str_copy("", 0);
@@ -565,9 +565,9 @@ char *aym_str_chr(long code) {
     return out;
 }
 
-char *aym_to_string(long value) {
+char *aym_to_string(long long value) {
     char buffer[64];
-    int written = snprintf(buffer, sizeof(buffer), "%ld", value);
+    int written = snprintf(buffer, sizeof(buffer), "%lld", value);
     if (written < 0) return NULL;
     size_t len = (size_t)written;
     char *out = (char *)malloc(len + 1);
@@ -630,13 +630,13 @@ int64_t aym_str_to_float(const char *text) {
     return aym_double_to_bits(value);
 }
 
-long aym_to_number(const char *text) {
+long long aym_to_number(const char *text) {
     if (!text) {
         aym_throw_typed("CONVERSION", "texto vacio");
         return 0;
     }
     char *end = NULL;
-    long value = strtol(text, &end, 10);
+    long long value = strtoll(text, &end, 10);
     if (end == text || *end != '\0') {
         aym_throw_typed("CONVERSION", "no es numero");
         return 0;

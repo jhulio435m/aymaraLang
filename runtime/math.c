@@ -20,11 +20,11 @@ static int64_t aym_b(double d) {
 }
 
 /* Redondeo a jakhüwi con saturacion (nan -> 0). */
-static long aym_math_to_long(double value) {
+static long long aym_math_to_long(double value) {
     if (value != value) return 0;
-    if (value >= (double)LONG_MAX) return LONG_MAX;
-    if (value <= (double)LONG_MIN) return LONG_MIN;
-    return (long)value;
+    if (value >= (double)LLONG_MAX) return LLONG_MAX;
+    if (value <= (double)LLONG_MIN) return LLONG_MIN;
+    return (long long)value;
 }
 
 int64_t aym_sin(int64_t x)   { return aym_b(sin(aym_d(x))); }
@@ -48,6 +48,6 @@ int64_t aym_fmod(int64_t a, int64_t b) { return aym_b(fmod(aym_d(a), aym_d(b)));
 int64_t aym_fpow(int64_t a, int64_t b) { return aym_b(pow(aym_d(a), aym_d(b))); }
 
 /* floor/ceil/round devuelven jakhüwi. */
-long aym_floor(int64_t x) { return aym_math_to_long(floor(aym_d(x))); }
-long aym_ceil(int64_t x)  { return aym_math_to_long(ceil(aym_d(x))); }
-long aym_round(int64_t x) { return aym_math_to_long(round(aym_d(x))); }
+long long aym_floor(int64_t x) { return aym_math_to_long(floor(aym_d(x))); }
+long long aym_ceil(int64_t x)  { return aym_math_to_long(ceil(aym_d(x))); }
+long long aym_round(int64_t x) { return aym_math_to_long(round(aym_d(x))); }
