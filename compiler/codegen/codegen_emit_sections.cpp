@@ -561,6 +561,12 @@ void CodeGenImpl::emitRuntimePrelude() {
     out << "extern aym_throw\n";
     out << "extern aym_div_zero\n";
     out << "extern aym_ipow\n";
+    for (const char *fn : {"aym_fmod", "aym_fpow", "aym_print_float", "aym_float_to_str",
+                           "aym_str_to_float", "aym_map_value_kind", "aym_map_value_kind_key",
+                           "aym_array_sort_float", "aym_array_sort_desc_float", "aym_array_sum_float",
+                           "aym_array_min_float", "aym_array_max_float"}) {
+        out << "extern " << fn << "\n";
+    }
     out << "extern aym_exception_new\n";
     out << "extern aym_exception_type\n";
     out << "extern aym_exception_message\n";

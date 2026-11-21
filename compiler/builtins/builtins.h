@@ -52,6 +52,7 @@ constexpr const char BUILTIN_JAKHU_MCD[] = "jakhu_mcd";
 constexpr const char BUILTIN_JAKHU_LIMITA[] = "jakhu_limita";
 constexpr const char BUILTIN_TO_STRING[] = "aru";
 constexpr const char BUILTIN_TO_NUMBER[] = "jakhüwi";
+constexpr const char BUILTIN_TO_FLOAT[] = "chikata";
 constexpr const char BUILTIN_KATU[] = "katu";
 constexpr const char BUILTIN_LARGO[] = "largo";
 constexpr const char BUILTIN_PUSH[] = "push";

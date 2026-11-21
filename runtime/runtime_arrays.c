@@ -274,6 +274,64 @@ long aym_array_max(intptr_t arr) {
     return aym_array_extremum(arr, 1);
 }
 
+/* Variantes para t'aqa<chikata>: los elementos son bits de double. */
+static double aym_arr_d(intptr_t v) {
+    double d;
+    int64_t bits = (int64_t)v;
+    memcpy(&d, &bits, sizeof(d));
+    return d;
+}
+
+static intptr_t aym_arr_b(double d) {
+    int64_t bits;
+    memcpy(&bits, &d, sizeof(bits));
+    return (intptr_t)bits;
+}
+
+static int aym_cmp_double(const void *a, const void *b) {
+    double x = aym_arr_d(*(const intptr_t *)a);
+    double y = aym_arr_d(*(const intptr_t *)b);
+    return (x > y) - (x < y);
+}
+
+static int aym_cmp_double_desc(const void *a, const void *b) {
+    return aym_cmp_double(b, a);
+}
+
+intptr_t aym_array_sort_float(intptr_t arr) {
+    return aym_array_sort_with(arr, aym_cmp_double);
+}
+
+intptr_t aym_array_sort_desc_float(intptr_t arr) {
+    return aym_array_sort_with(arr, aym_cmp_double_desc);
+}
+
+intptr_t aym_array_sum_float(intptr_t arr) {
+    double total = 0.0;
+    if (arr) {
+        AymArray *a = (AymArray *)arr;
+        for (long i = 0; i < a->len; i++) total += aym_arr_d(a->data[i]);
+    }
+    return aym_arr_b(total);
+}
+
+static intptr_t aym_array_extremum_float(intptr_t arr, int find_max) {
+    AymArray *a = (AymArray *)arr;
+    if (!a || a->len <= 0) {
+        aym_throw_typed("VACIO", "lista vacia");
+        return 0;
+    }
+    double best = aym_arr_d(a->data[0]);
+    for (long i = 1; i < a->len; i++) {
+        double v = aym_arr_d(a->data[i]);
+        if (find_max ? (v > best) : (v < best)) best = v;
+    }
+    return aym_arr_b(best);
+}
+
+intptr_t aym_array_min_float(intptr_t arr) { return aym_array_extremum_float(arr, 0); }
+intptr_t aym_array_max_float(intptr_t arr) { return aym_array_extremum_float(arr, 1); }
+
 void aym_print_list_depth(intptr_t arr, long depth, long elem_is_str) {
     if (!arr) {
         printf("[]");
@@ -286,7 +344,9 @@ void aym_print_list_depth(intptr_t arr, long depth, long elem_is_str) {
             printf(", ");
         }
         if (depth <= 1) {
-            if (elem_is_str) {
+            if (elem_is_str == 2) {
+                aym_print_float((int64_t)a->data[i]);
+            } else if (elem_is_str) {
                 const char *s = (const char *)a->data[i];
                 printf("\"%s\"", s ? s : "");
             } else {

@@ -11,6 +11,12 @@ void SemanticAnalyzer::visit(NumberExpr &n) {
     lastInputCall = false;
 }
 
+void SemanticAnalyzer::visit(FloatExpr &f) {
+    markNode(f);
+    currentType = "chikata";
+    lastInputCall = false;
+}
+
 void SemanticAnalyzer::visit(BoolExpr &b) {
     markNode(b);
     currentType = "chiqa";
@@ -50,6 +56,17 @@ void SemanticAnalyzer::visit(BinaryExpr &b) {
             reportError("operacion bit a bit requiere jakhüwi", "AYM3003");
         }
         currentType = "jakhüwi";
+    } else if (l != r && isNumericType(l) && isNumericType(r)) {
+        // Mezcla jakhüwi/chikata: el entero se promueve a decimal.
+        if (op == '&' || op == '|') {
+            reportError("operacion logica requiere chiqa", "AYM3003");
+        }
+        markToFloat(b.getLeft());
+        markToFloat(b.getRight());
+        if (op=='&' || op=='|' || op=='s' || op=='d' || op=='<' || op=='>' || op=='l' || op=='g')
+            currentType = "chiqa";
+        else
+            currentType = "chikata";
     } else {
         if (l != r) {
             std::string msg = "tipos incompatibles en operacion: '" + l + "' y '" + r + "'";
@@ -94,7 +111,11 @@ void SemanticAnalyzer::visit(TernaryExpr &t) {
     std::string thenType = currentType;
     t.getElse()->accept(*this);
     std::string elseType = currentType;
-    if (thenType != elseType) {
+    if (thenType != elseType && isNumericType(thenType) && isNumericType(elseType)) {
+        markToFloat(t.getThen());
+        markToFloat(t.getElse());
+        thenType = "chikata";
+    } else if (thenType != elseType) {
         reportError("tipos incompatibles en operador ternario", "AYM3003");
     }
     currentType = thenType;
@@ -111,7 +132,7 @@ void SemanticAnalyzer::visit(IncDecExpr &e) {
             reportError("no se puede modificar la constante '" + e.getName() + "'", "AYM3003");
         }
         std::string t = lookup(e.getName());
-        if (t != "jakhüwi") {
+        if (!isNumericType(t)) {
             reportError("incremento/decremento requiere numero", "AYM3003");
         }
         currentType = t;
@@ -138,6 +159,8 @@ void SemanticAnalyzer::visit(ListExpr &l) {
         std::string t = currentType;
         if (elementType.empty()) {
             elementType = t;
+        } else if (elementType != t && isNumericType(elementType) && isNumericType(t)) {
+            elementType = "chikata";
         } else if (isTypeAssignable(elementType, t)) {
             elementType = t;
         } else if (!isTypeAssignable(t, elementType)) {
@@ -146,6 +169,9 @@ void SemanticAnalyzer::visit(ListExpr &l) {
     }
     if (elementType.empty()) {
         elementType = "jakhüwi";
+    }
+    if (elementType == "chikata") {
+        for (const auto &elem : l.getElements()) markToFloat(elem.get());
     }
     currentType = "t'aqa:" + elementType;
     lastInputCall = false;
@@ -294,7 +320,7 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         std::string t = currentType;
         if (pit != paramTypes.end() && idx < pit->second.size()) {
             const std::string &expectedType = pit->second[idx];
-            if (!expectedType.empty() && !t.empty() && !isTypeAssignable(t, expectedType)) {
+            if (!expectedType.empty() && !t.empty() && !checkAssignable(arg.get(), t, expectedType)) {
                 reportError("tipo incompatible en argumento " + std::to_string(idx + 1) +
                                 " en llamada a '" + c.getName() + "'",
                             "AYM3003");
@@ -310,12 +336,28 @@ void SemanticAnalyzer::visit(CallExpr &c) {
         nameLower == BUILTIN_JALJA_ARU || nameLower == BUILTIN_JAKHUWI_CHIMPU ||
         nameLower == BUILTIN_PACHA_ARU) {
         currentType = "aru";
+    } else if ((nameLower == BUILTIN_THANTA || nameLower == BUILTIN_JISKA_TAQA ||
+                nameLower == BUILTIN_JACHA_TAQA) && !c.getArgs().empty() &&
+               c.getArgs()[0]->getSemType() == "t'aqa:chikata") {
+        currentType = "chikata";
     } else if (nameLower == BUILTIN_TO_NUMBER || nameLower == BUILTIN_CHIMPU_JAKHUWI ||
                nameLower == BUILTIN_THANTA || nameLower == BUILTIN_JISKA_TAQA ||
                nameLower == BUILTIN_JACHA_TAQA || nameLower == BUILTIN_JAKHU_CHANI ||
                nameLower == BUILTIN_JAKHU_JISKA || nameLower == BUILTIN_JAKHU_JACHA ||
                nameLower == BUILTIN_JAKHU_MCD || nameLower == BUILTIN_JAKHU_LIMITA ||
                nameLower == BUILTIN_YAPXATA_ARU || nameLower == BUILTIN_MISTUNA) {
+        currentType = "jakhüwi";
+    } else if (nameLower == BUILTIN_TO_FLOAT || nameLower == BUILTIN_SIN ||
+               nameLower == BUILTIN_COS || nameLower == BUILTIN_TAN ||
+               nameLower == BUILTIN_ASIN || nameLower == BUILTIN_ACOS ||
+               nameLower == BUILTIN_ATAN || nameLower == BUILTIN_SQRT ||
+               nameLower == BUILTIN_POW || nameLower == BUILTIN_EXP ||
+               nameLower == BUILTIN_LOG || nameLower == BUILTIN_LOG10 ||
+               nameLower == BUILTIN_FABS) {
+        currentType = "chikata";
+    } else if (nameLower == BUILTIN_FLOOR || nameLower == BUILTIN_CEIL ||
+               nameLower == BUILTIN_ROUND) {
+        // Redondeos devuelven entero: utiles para indices y contadores.
         currentType = "jakhüwi";
     } else if (nameLower == BUILTIN_ARG_OBTENER) {
         currentType = "aru";
@@ -402,7 +444,7 @@ void SemanticAnalyzer::visit(CallExpr &c) {
                 if (baseType.rfind("t'aqa:", 0) == 0) {
                     std::string elementType = baseType.substr(6);
                     if (!valueType.empty() && !elementType.empty() &&
-                        !isTypeAssignable(valueType, elementType)) {
+                        !checkAssignable(c.getArgs()[1].get(), valueType, elementType)) {
                         reportError("tipo incompatible en push");
                     }
                     currentType = baseType;

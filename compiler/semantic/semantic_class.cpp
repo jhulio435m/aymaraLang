@@ -276,6 +276,25 @@ bool SemanticAnalyzer::isTypeAssignable(const std::string &actualType,
     return false;
 }
 
+bool SemanticAnalyzer::checkAssignable(Expr *e, const std::string &actualType,
+                                       const std::string &expectedType) {
+    if (isTypeAssignable(actualType, expectedType)) return true;
+    if (actualType == "jakhüwi" && expectedType == "chikata") {
+        if (e) e->setConvertTo("chikata");
+        return true;
+    }
+    // Literal de lista entera asignado a t'aqa<chikata>: se convierte cada
+    // elemento.
+    if (actualType == "t'aqa:jakhüwi" && expectedType == "t'aqa:chikata") {
+        if (auto *list = dynamic_cast<ListExpr*>(e)) {
+            for (const auto &elem : list->getElements()) markToFloat(elem.get());
+            list->setSemType(expectedType);
+            return true;
+        }
+    }
+    return false;
+}
+
 void SemanticAnalyzer::visit(ClassStmt &cls) {
     markNode(cls);
     std::string prevClass = currentClass;
@@ -313,7 +332,10 @@ void SemanticAnalyzer::visit(ClassStmt &cls) {
         }
         bool prevInCtor = inConstructor;
         inConstructor = false;
+        std::string prevReturn = currentReturnType;
+        currentReturnType = resolveTypeAnnotation(method.returnType);
         if (method.body) method.body->accept(*this);
+        currentReturnType = prevReturn;
         inConstructor = prevInCtor;
         --functionDepth;
         popScope();
@@ -339,7 +361,10 @@ void SemanticAnalyzer::visit(ClassStmt &cls) {
         }
         bool prevInCtor = inConstructor;
         inConstructor = true;
+        std::string prevReturn = currentReturnType;
+        currentReturnType.clear();
         if (ctor.body) ctor.body->accept(*this);
+        currentReturnType = prevReturn;
         inConstructor = prevInCtor;
         --functionDepth;
         popScope();
@@ -367,7 +392,7 @@ void SemanticAnalyzer::visit(MemberCallExpr &c) {
         size_t count = std::min(argc, mi->paramTypes.size());
         for (size_t i = 0; i < count; ++i) {
             c.getArgs()[i]->accept(*this);
-            if (!isTypeAssignable(currentType, mi->paramTypes[i])) {
+            if (!checkAssignable(c.getArgs()[i].get(), currentType, mi->paramTypes[i])) {
                 reportError("tipo incompatible en argumento " + std::to_string(i + 1) +
                             " de '" + c.getMember() + "'");
             }
@@ -394,7 +419,7 @@ void SemanticAnalyzer::visit(MemberCallExpr &c) {
             if (owner && it != owner->constructors.end()) {
                 for (size_t i = 0; i < arity; ++i) {
                     c.getArgs()[i]->accept(*this);
-                    if (!isTypeAssignable(currentType, it->second[i])) {
+                    if (!checkAssignable(c.getArgs()[i].get(), currentType, it->second[i])) {
                         reportError("tipo incompatible en argumento " + std::to_string(i + 1) +
                                     " de constructor '" + owner->name + "'");
                     }
@@ -509,7 +534,7 @@ void SemanticAnalyzer::visit(NewExpr &n) {
                 bool typesOk = true;
                 for (size_t i = 0; i < arity; ++i) {
                     n.getArgs()[i]->accept(*this);
-                    if (!isTypeAssignable(currentType, it->second[i])) {
+                    if (!checkAssignable(n.getArgs()[i].get(), currentType, it->second[i])) {
                         reportError("tipo incompatible en argumento " + std::to_string(i + 1) +
                                     " de constructor '" + n.getName() + "'");
                         typesOk = false;

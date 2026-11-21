@@ -5,13 +5,16 @@ o el [Manual de usuario](manual_usuario.md).
 
 ## Tipos y literales
 
-- `jakhüwi`: numérico
+- `jakhüwi`: entero de 64 bits
+- `chikata`: decimal (punto flotante de 64 bits)
 - `aru`: texto
 - `chiqa`: booleano
 - `t'aqa`: listas
 - `mapa`: mapas
 - Booleanos: `chiqa` / `k'ari`
-- Números: decimal, `0x`, `0b`
+- Números enteros: decimal, `0x`, `0b`
+- Números decimales: `3.14`, `2.5e-3`, `1e6`
+- Conversiones: `chikata(x)`, `jakhüwi(x)` (trunca), `aru(x)`, `floor`/`ceil`/`round` (devuelven `jakhüwi`)
 - Cadenas: comillas simples o dobles con escapes
 
 ## Estructuras del lenguaje

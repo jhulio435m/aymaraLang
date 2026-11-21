@@ -8,6 +8,8 @@
 namespace aym {
 
 class NumberExpr;
+class FloatExpr;
+class Expr;
 class BoolExpr;
 class StringExpr;
 class VariableExpr;
@@ -47,7 +49,11 @@ class TryStmt;
 class ASTVisitor {
 public:
     virtual ~ASTVisitor() = default;
+    // Se invoca despues de visitar cualquier expresion (el analisis semantico
+    // lo usa para anotar el tipo resuelto en el nodo).
+    virtual void exprVisited(Expr &) {}
     virtual void visit(NumberExpr &) = 0;
+    virtual void visit(FloatExpr &) = 0;
     virtual void visit(BoolExpr &) = 0;
     virtual void visit(StringExpr &) = 0;
     virtual void visit(VariableExpr &) = 0;
@@ -102,6 +108,17 @@ private:
 };
 
 class Expr : public Node {
+public:
+    // Tipo resuelto por el analisis semantico ("jakhüwi", "chikata", "aru", ...).
+    const std::string &getSemType() const { return semType; }
+    void setSemType(const std::string &t) { semType = t; }
+    // Conversion implicita que el codegen aplica tras evaluar la expresion
+    // (hoy solo "chikata": entero -> decimal).
+    const std::string &getConvertTo() const { return convertTo; }
+    void setConvertTo(const std::string &t) { convertTo = t; }
+private:
+    std::string semType;
+    std::string convertTo;
 };
 
 class Stmt : public Node {
@@ -117,16 +134,25 @@ class NumberExpr : public Expr {
 public:
     explicit NumberExpr(long long v) : value(v) {}
     long long getValue() const { return value; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     long long value;
+};
+
+class FloatExpr : public Expr {
+public:
+    explicit FloatExpr(double v) : value(v) {}
+    double getValue() const { return value; }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
+private:
+    double value;
 };
 
 class BoolExpr : public Expr {
 public:
     explicit BoolExpr(bool v) : value(v) {}
     bool getValue() const { return value; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     bool value;
 };
@@ -135,7 +161,7 @@ class StringExpr : public Expr {
 public:
     explicit StringExpr(const std::string &v) : value(v) {}
     const std::string &getValue() const { return value; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::string value;
 };
@@ -144,7 +170,7 @@ class VariableExpr : public Expr {
 public:
     explicit VariableExpr(const std::string &n) : name(n) {}
     const std::string &getName() const { return name; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::string name;
 };
@@ -158,7 +184,7 @@ public:
     char getOp() const { return oper; }
     Expr *getLeft() const { return left.get(); }
     Expr *getRight() const { return right.get(); }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     char oper;
     std::unique_ptr<Expr> left, right;
@@ -169,7 +195,7 @@ public:
     UnaryExpr(char o, std::unique_ptr<Expr> e) : op(o), expr(std::move(e)) {}
     char getOp() const { return op; }
     Expr *getExpr() const { return expr.get(); }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     char op;
     std::unique_ptr<Expr> expr;
@@ -186,7 +212,7 @@ public:
     Expr *getCondition() const { return condition.get(); }
     Expr *getThen() const { return thenBranch.get(); }
     Expr *getElse() const { return elseBranch.get(); }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::unique_ptr<Expr> condition;
     std::unique_ptr<Expr> thenBranch;
@@ -200,7 +226,7 @@ public:
     const std::string &getName() const { return name; }
     bool increment() const { return isIncrement; }
     bool prefix() const { return isPrefix; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::string name;
     bool isIncrement;
@@ -215,7 +241,7 @@ public:
     const std::string &getName() const { return name; }
     const std::vector<std::unique_ptr<Expr>> &getArgs() const { return arguments; }
     void appendArg(std::unique_ptr<Expr> arg) { arguments.push_back(std::move(arg)); }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::string name;
     std::vector<std::unique_ptr<Expr>> arguments;
@@ -237,7 +263,7 @@ public:
     const std::string &getStaticCallee() const { return staticCallee; }
     void setResolvedType(const std::string &type) { resolvedType = type; }
     const std::string &getResolvedType() const { return resolvedType; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::unique_ptr<Expr> base;
     std::string member;
@@ -253,7 +279,7 @@ public:
         : name(std::move(className)), arguments(std::move(args)) {}
     const std::string &getName() const { return name; }
     const std::vector<std::unique_ptr<Expr>> &getArgs() const { return arguments; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::string name;
     std::vector<std::unique_ptr<Expr>> arguments;
@@ -263,7 +289,7 @@ class FunctionRefExpr : public Expr {
 public:
     explicit FunctionRefExpr(std::string name) : funcName(std::move(name)) {}
     const std::string &getName() const { return funcName; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::string funcName;
 };
@@ -271,7 +297,7 @@ private:
 class SuperExpr : public Expr {
 public:
     SuperExpr() = default;
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 };
 
 class ListExpr : public Expr {
@@ -279,7 +305,7 @@ public:
     explicit ListExpr(std::vector<std::unique_ptr<Expr>> values)
         : elements(std::move(values)) {}
     const std::vector<std::unique_ptr<Expr>> &getElements() const { return elements; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::vector<std::unique_ptr<Expr>> elements;
 };
@@ -291,7 +317,7 @@ public:
     const std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<Expr>>> &getItems() const {
         return items;
     }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::vector<std::pair<std::unique_ptr<Expr>, std::unique_ptr<Expr>>> items;
 };
@@ -304,7 +330,7 @@ public:
     Expr *getIndex() const { return index.get(); }
     std::unique_ptr<Expr> takeBase() { return std::move(base); }
     std::unique_ptr<Expr> takeIndex() { return std::move(index); }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::unique_ptr<Expr> base;
     std::unique_ptr<Expr> index;
@@ -323,7 +349,7 @@ public:
     const std::string &getStaticField() const { return staticField; }
     void setResolvedType(const std::string &type) { resolvedType = type; }
     const std::string &getResolvedType() const { return resolvedType; }
-    void accept(ASTVisitor &v) override { v.visit(*this); }
+    void accept(ASTVisitor &v) override { v.visit(*this); v.exprVisited(*this); }
 private:
     std::unique_ptr<Expr> base;
     std::string member;

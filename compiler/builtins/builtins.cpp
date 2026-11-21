@@ -36,6 +36,7 @@ static const std::unordered_map<std::string, BuiltinInfo> builtins = {
     {BUILTIN_JAKHU_LIMITA, {3, {Type::Int, Type::Int, Type::Int}}},
     {BUILTIN_TO_STRING, {1, {}}},
     {BUILTIN_TO_NUMBER, {1, {}}},
+    {BUILTIN_TO_FLOAT, {1, {}}},
     {BUILTIN_KATU, {2, {Type::String, Type::String}}},
     {BUILTIN_LARGO, {1, {}}},
     {BUILTIN_PUSH, {2, {}}},
@@ -119,7 +120,7 @@ std::string typeName(Type t) {
     case Type::Int:
         return "jakhüwi";
     case Type::Float:
-        return "jakhüwi";
+        return "chikata";
     case Type::Bool:
         return "chiqa";
     case Type::String:

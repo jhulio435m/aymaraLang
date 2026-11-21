@@ -36,7 +36,8 @@ tokenización están implementadas en `compiler/lexer/lexer.cpp`.
 | `KeywordPrivate` | `sapa` | Modificador privado |
 | `KeywordStatic` | `sapakasta` | Modificador estático |
 | `KeywordSuper` | `jilaaka` | Referencia al padre |
-| `KeywordTypeNumber` | `jakhüwi` | Tipo numérico |
+| `KeywordTypeNumber` | `jakhüwi` | Tipo entero |
+| `KeywordTypeFloat` | `chikata` | Tipo decimal |
 | `KeywordTypeString` | `aru` | Tipo cadena |
 | `KeywordTypeBool` | `chiqa` | Tipo booleano |
 | `KeywordTypeList` | `t'aqa` | Tipo lista |
@@ -62,6 +63,7 @@ Los símbolos se mantienen sin cambios:
 ### Literales
 
 - `Number`: números enteros decimales con soporte `0x` y `0b`.
+- `FloatNumber`: decimales con punto y/o exponente (`7.5`, `1e-3`, `2.5E+10`). `1..3` sigue siendo un rango.
 - `String`: cadenas entre comillas dobles o simples con escapes (`\n`, `\t`, `\"`, `\'`, etc.).
 
 ## Notación EBNF utilizada
@@ -84,7 +86,7 @@ bloque        = "{" { sentencia } "}" ;
 
 decl          = "yatiya" tipo id [ "=" expr ] ";" ;
 
-tipo          = "jakhüwi" | "aru" | "chiqa" | "t'aqa" | "mapa" | id ;
+tipo          = "jakhüwi" | "chikata" | "aru" | "chiqa" | "t'aqa" | "mapa" | id ;
 
 asigna        = id "=" expr ";" ;
 

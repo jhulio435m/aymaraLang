@@ -2,11 +2,16 @@
 #include "../builtins/builtins.h"
 #include <algorithm>
 #include <limits>
+#include <cstring>
 
 namespace aym {
 
 bool CodeGenImpl::tryEvalConstant(const Expr *expr, const std::unordered_map<std::string,int> *locals, long long &outValue, bool &outIsBool) const {
     if (!expr) return false;
+    // El plegado es solo entero. Un entero marcado para conversion si se
+    // pliega: emitExpr aplica la conversion despues. Un padre con un hijo
+    // convertido siempre tiene un hermano chikata, que no se pliega.
+    if (expr->getSemType() == "chikata") return false;
     if (auto *n = dynamic_cast<const NumberExpr*>(expr)) {
         outValue = n->getValue();
         outIsBool = false;
@@ -156,6 +161,23 @@ bool CodeGenImpl::tryEvalConstant(const Expr *expr, const std::unordered_map<std
 void CodeGenImpl::emitExpr(const Expr *expr,
                            const std::unordered_map<std::string,int> *locals) {
     if (!expr) return;
+    emitExprInner(expr, locals);
+    if (expr->getConvertTo() == "chikata" && expr->getSemType() == "jakhüwi") {
+        out << "    cvtsi2sd xmm0, rax\n";
+        out << "    movq rax, xmm0\n";
+    }
+}
+
+void CodeGenImpl::emitExprInner(const Expr *expr,
+                                const std::unordered_map<std::string,int> *locals) {
+    if (!expr) return;
+    if (auto *f = dynamic_cast<const FloatExpr *>(expr)) {
+        double v = f->getValue();
+        unsigned long long bits = 0;
+        std::memcpy(&bits, &v, sizeof(bits));
+        out << "    mov rax, 0x" << std::hex << bits << std::dec << "\n";
+        return;
+    }
     long long constVal = 0;
     bool isBool = false;
     if (tryEvalConstant(expr, locals, constVal, isBool)) {
@@ -207,7 +229,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             out << "    sub rsp, " << spillPad << "\n";
             emitExpr(item.second.get(), locals);
             out << "    mov " << regs[2] << ", rax\n";
-            out << "    mov " << regs[3] << ", " << (isStringExpr(item.second.get(), locals) ? 1 : 0) << "\n";
+            out << "    mov " << regs[3] << ", " << (isStringExpr(item.second.get(), locals) ? 1 : (isFloatValue(item.second.get()) ? 2 : 0)) << "\n";
             out << "    add rsp, " << spillPad << "\n";
             out << "    pop " << regs[1] << "\n";
             out << "    mov " << regs[0] << ", [rsp+" << spillPad << "]\n";
@@ -272,9 +294,21 @@ void CodeGenImpl::emitExpr(const Expr *expr,
         } else {
             out << "    mov rax, [rel $" << inc->getName() << "]\n";
         }
+        auto step = [&]() {
+            if (inc->getSemType() == "chikata") {
+                out << "    movq xmm0, rax\n";
+                out << "    mov rcx, 0x3ff0000000000000\n"; // 1.0
+                out << "    movq xmm1, rcx\n";
+                out << (inc->increment() ? "    addsd xmm0, xmm1\n" : "    subsd xmm0, xmm1\n");
+                out << "    movq rax, xmm0\n";
+            } else if (inc->increment()) {
+                out << "    add rax, 1\n";
+            } else {
+                out << "    sub rax, 1\n";
+            }
+        };
         if (inc->prefix()) {
-            if (inc->increment()) out << "    add rax, 1\n";
-            else out << "    sub rax, 1\n";
+            step();
             if (isLocal) {
                 out << "    mov [rbp-" << locals->at(inc->getName()) << "], rax\n";
             } else {
@@ -282,8 +316,7 @@ void CodeGenImpl::emitExpr(const Expr *expr,
             }
         } else {
             out << "    mov rbx, rax\n";
-            if (inc->increment()) out << "    add rax, 1\n";
-            else out << "    sub rax, 1\n";
+            step();
             if (isLocal) {
                 out << "    mov [rbp-" << locals->at(inc->getName()) << "], rax\n";
             } else {
@@ -366,6 +399,10 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
         out << "    pop rax\n";
         bool leftIsString = isStringExpr(b->getLeft(), locals);
         bool rightIsString = isStringExpr(b->getRight(), locals);
+        if (isFloatValue(b->getLeft()) || isFloatValue(b->getRight())) {
+            emitFloatBinary(b->getOp());
+            return true;
+        }
         switch (b->getOp()) {
             case '+':
                 if (leftIsString && rightIsString) {
@@ -468,7 +505,11 @@ bool CodeGenImpl::emitExprOperator(const Expr *expr,
                 out << "    movzx rax,al\n";
                 break;
             case '-':
-                out << "    neg rax\n";
+                if (u->getSemType() == "chikata") {
+                    out << "    btc rax, 63\n"; // invierte el signo del double
+                } else {
+                    out << "    neg rax\n";
+                }
                 break;
             case '~':
                 out << "    not rax\n";
@@ -550,6 +591,39 @@ size_t CodeGenImpl::emitCallArgs(const std::vector<std::unique_ptr<Expr>> &args,
         out << "    add rsp, " << frame << "\n";
     }
     return stackArea;
+}
+
+void CodeGenImpl::emitFloatBinary(char op) {
+    // rax = izquierda, rbx = derecha (bits de double, ya convertidos).
+    out << "    movq xmm0, rax\n";
+    out << "    movq xmm1, rbx\n";
+    switch (op) {
+        case '+': out << "    addsd xmm0, xmm1\n    movq rax, xmm0\n"; return;
+        case '-': out << "    subsd xmm0, xmm1\n    movq rax, xmm0\n"; return;
+        case '*': out << "    mulsd xmm0, xmm1\n    movq rax, xmm0\n"; return;
+        case '/': out << "    divsd xmm0, xmm1\n    movq rax, xmm0\n"; return; // IEEE: x/0 = inf
+        case '%':
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    mov " << reg2(this->windows) << ", rbx\n";
+            out << "    call aym_fmod\n";
+            return;
+        case '^':
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    mov " << reg2(this->windows) << ", rbx\n";
+            out << "    call aym_fpow\n";
+            return;
+        // Comparaciones: con NaN todas son falsas salvo '!='.
+        case '<': out << "    ucomisd xmm1, xmm0\n    seta al\n"; break;
+        case 'l': out << "    ucomisd xmm1, xmm0\n    setae al\n"; break;
+        case '>': out << "    ucomisd xmm0, xmm1\n    seta al\n"; break;
+        case 'g': out << "    ucomisd xmm0, xmm1\n    setae al\n"; break;
+        case 's': out << "    ucomisd xmm0, xmm1\n    sete al\n    setnp cl\n    and al, cl\n"; break;
+        case 'd': out << "    ucomisd xmm0, xmm1\n    setne al\n    setp cl\n    or al, cl\n"; break;
+        default:
+            out << "    xor eax, eax\n";
+            return;
+    }
+    out << "    movzx rax, al\n";
 }
 
 } // namespace aym

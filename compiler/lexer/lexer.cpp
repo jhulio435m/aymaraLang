@@ -258,6 +258,8 @@ void Lexer::lexIdentifierOrKeyword(std::vector<Token> &tokens,
         tokens.push_back({TokenType::KeywordTypeList, word, startLine, startColumn});
     } else if (normalized == "mapa") {
         tokens.push_back({TokenType::KeywordTypeMap, word, startLine, startColumn});
+    } else if (normalized == "chikata") {
+        tokens.push_back({TokenType::KeywordTypeFloat, word, startLine, startColumn});
     } else if (normalized == "chiqa") {
         tokens.push_back({TokenType::KeywordTrue, word, startLine, startColumn});
     } else if (normalized == "kari") {
@@ -312,7 +314,27 @@ void Lexer::lexNumber(std::vector<Token> &tokens,
     while (pos < src.size() && std::isdigit(static_cast<unsigned char>(peek()))) {
         num += get();
     }
-    tokens.push_back({TokenType::Number, num, startLine, startColumn});
+    // Literal decimal (chikata): 7.5, 1e-3, 2.5E+10. '1..3' sigue siendo un
+    // rango porque tras el punto debe venir un digito.
+    auto isDigitAt = [&](size_t p) {
+        return p < src.size() && std::isdigit(static_cast<unsigned char>(src[p]));
+    };
+    bool isFloat = false;
+    if (peek() == '.' && isDigitAt(pos + 1)) {
+        isFloat = true;
+        num += get();
+        while (isDigitAt(pos)) num += get();
+    }
+    if (peek() == 'e' || peek() == 'E') {
+        size_t p = pos + 1;
+        if (p < src.size() && (src[p] == '+' || src[p] == '-')) ++p;
+        if (isDigitAt(p)) {
+            isFloat = true;
+            while (pos < p) num += get();
+            while (isDigitAt(pos)) num += get();
+        }
+    }
+    tokens.push_back({isFloat ? TokenType::FloatNumber : TokenType::Number, num, startLine, startColumn});
 }
 
 void Lexer::lexInterpolatedString(std::vector<Token> &tokens,

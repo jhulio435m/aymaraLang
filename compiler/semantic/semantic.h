@@ -65,6 +65,8 @@ private:
     std::string currentClass;
     std::string currentBaseClass;
     bool inConstructor = false;
+    // Tipo de retorno de la funcion/metodo en analisis ('' si no declara).
+    std::string currentReturnType;
 
     void pushScope();
     void popScope();
@@ -93,6 +95,11 @@ private:
     const FieldInfo *lookupStaticField(const std::string &className, const std::string &fieldName) const;
     bool isSubclassOf(const std::string &className, const std::string &baseName) const;
     bool isTypeAssignable(const std::string &actualType, const std::string &expectedType) const;
+    // Como isTypeAssignable, pero admite jakhüwi -> chikata marcando en 'e'
+    // la conversion implicita que debe emitir el codegen.
+    bool checkAssignable(Expr *e, const std::string &actualType, const std::string &expectedType);
+    static bool isNumericType(const std::string &t) { return t == "jakhüwi" || t == "chikata"; }
+    static void markToFloat(Expr *e) { if (e && e->getSemType() == "jakhüwi") e->setConvertTo("chikata"); }
     void collectClassInfo(const std::vector<std::unique_ptr<Node>> &nodes);
 
     std::string currentType;
@@ -106,6 +113,8 @@ private:
     void reportError(const std::string &message, const std::string &code = "AYM3001");
 
     void visit(NumberExpr &) override;
+    void visit(FloatExpr &) override;
+    void exprVisited(Expr &e) override { e.setSemType(currentType); }
     void visit(BoolExpr &) override;
     void visit(StringExpr &) override;
     void visit(VariableExpr &) override;

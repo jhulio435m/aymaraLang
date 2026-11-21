@@ -12,6 +12,12 @@ void CodeGenImpl::emitPrintDefault(const std::string &label) {
 void CodeGenImpl::emitPrintValue(const Expr *expr,
                                  const std::unordered_map<std::string,int> *locals) {
     if (!expr) return;
+    if (isFloatValue(expr)) {
+        emitExpr(expr, locals);
+        out << "    mov " << reg1(this->windows) << ", rax\n";
+        out << "    call aym_print_float\n";
+        return;
+    }
     if (isListExpr(expr, locals)) {
         emitPrintList(expr, locals);
         return;
@@ -33,7 +39,7 @@ void CodeGenImpl::emitPrintValue(const Expr *expr,
             out << "    sub rsp, " << spillPad << "\n";
             out << "    mov " << reg2(this->windows) << ", rax\n";
             out << "    mov " << reg1(this->windows) << ", [rsp+" << (2 * spillPad + 8) << "]\n";
-            out << "    call aym_map_value_is_string_key\n";
+            out << "    call aym_map_value_kind_key\n";
             out << "    add rsp, " << spillPad << "\n";
             out << "    pop " << reg2(this->windows) << "\n";
             out << "    add rsp, " << spillPad << "\n";
@@ -44,6 +50,13 @@ void CodeGenImpl::emitPrintValue(const Expr *expr,
             out << "    mov " << reg2(this->windows) << ", rax\n";
             out << "    add rsp, " << spillPad << "\n";
             out << "    pop rax\n";
+            std::string valueIsString = genLabel("map_idx_str");
+            out << "    cmp rax, 2\n";
+            out << "    jne " << valueIsString << "\n";
+            out << "    mov " << reg1(this->windows) << ", " << reg2(this->windows) << "\n";
+            out << "    call aym_print_float\n";
+            out << "    jmp " << valueDone << "\n";
+            out << valueIsString << ":\n";
             out << "    cmp rax, 0\n";
             out << "    je " << valueIsNumber << "\n";
             out << "    lea " << reg1(this->windows) << ", [rel fmt_raw]\n";
@@ -86,6 +99,25 @@ void CodeGenImpl::emitPrintValue(const Expr *expr,
 void CodeGenImpl::emitPrintList(const Expr *expr,
                                 const std::unordered_map<std::string,int> *locals) {
     std::string elemType = listElementType(expr, locals);
+    {
+        // Listas de chikata (a cualquier profundidad): el tipo semantico es
+        // fiable; el runtime imprime cada double.
+        std::string st = expr->getSemType();
+        long depth = 0;
+        while (st.rfind("t'aqa:", 0) == 0) {
+            st = st.substr(6);
+            ++depth;
+        }
+        if (depth > 0 && st == "chikata") {
+            std::vector<std::string> regs = paramRegs(this->windows);
+            emitExpr(expr, locals);
+            out << "    mov " << regs[0] << ", rax\n";
+            out << "    mov " << regs[1] << ", " << depth << "\n";
+            out << "    mov " << regs[2] << ", 2\n";
+            out << "    call aym_print_list_depth\n";
+            return;
+        }
+    }
     if (elemType.rfind("t'aqa", 0) == 0) {
         std::string t = elemType;
         long depth = 1;
@@ -168,15 +200,22 @@ void CodeGenImpl::emitPrintMap(const Expr *expr,
     emitPrintDefault("map_colon");
     out << "    mov " << reg2(this->windows) << ", r13\n";
     out << "    mov " << reg1(this->windows) << ", rbx\n";
-    out << "    call aym_map_value_is_string\n";
+    out << "    call aym_map_value_kind\n";
     out << "    mov r15, rax\n";
     out << "    mov " << reg2(this->windows) << ", r13\n";
     out << "    mov " << reg1(this->windows) << ", rbx\n";
     out << "    call aym_map_value_at\n";
     out << "    mov r14, rax\n";
-    out << "    cmp r15, 0\n";
     std::string valueIsNumber = genLabel("map_value_num");
     std::string valueDone = genLabel("map_value_done");
+    std::string valueNotFloat = genLabel("map_value_nf");
+    out << "    cmp r15, 2\n";
+    out << "    jne " << valueNotFloat << "\n";
+    out << "    mov " << reg1(this->windows) << ", r14\n";
+    out << "    call aym_print_float\n";
+    out << "    jmp " << valueDone << "\n";
+    out << valueNotFloat << ":\n";
+    out << "    cmp r15, 0\n";
     out << "    je " << valueIsNumber << "\n";
     emitPrintDefault("list_quote");
     out << "    mov " << reg2(this->windows) << ", r14\n";

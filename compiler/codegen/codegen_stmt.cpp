@@ -83,7 +83,7 @@ bool CodeGenImpl::emitStmtBasic(const Stmt *stmt,
         out << "    add rsp, " << spillPad << "\n";
         out << "    pop " << regs[0] << "\n";
         if (isMapExpr(a->getBase(), locals)) {
-            out << "    mov " << regs[3] << ", " << (isStringExpr(a->getValue(), locals) ? 1 : 0) << "\n";
+            out << "    mov " << regs[3] << ", " << (isStringExpr(a->getValue(), locals) ? 1 : (isFloatValue(a->getValue()) ? 2 : 0)) << "\n";
             out << "    call aym_map_set\n";
         } else {
             out << "    call aym_array_set\n";

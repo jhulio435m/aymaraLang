@@ -13,6 +13,8 @@ std::string canonicalTypeName(const Token &tok) {
     switch (tok.type) {
         case TokenType::KeywordTypeNumber:
             return "jakhüwi";
+        case TokenType::KeywordTypeFloat:
+            return "chikata";
         case TokenType::KeywordTypeString:
             return "aru";
         case TokenType::KeywordTypeBool:
@@ -32,6 +34,11 @@ std::unique_ptr<Expr> cloneSimpleExpr(const Expr *expr) {
     if (auto *v = dynamic_cast<const VariableExpr*>(expr)) {
         auto node = std::make_unique<VariableExpr>(v->getName());
         node->setLocation(v->getLine(), v->getColumn());
+        return node;
+    }
+    if (auto *f = dynamic_cast<const FloatExpr*>(expr)) {
+        auto node = std::make_unique<FloatExpr>(f->getValue());
+        node->setLocation(f->getLine(), f->getColumn());
         return node;
     }
     if (auto *n = dynamic_cast<const NumberExpr*>(expr)) {
@@ -73,7 +80,8 @@ Parser::Parser(const std::vector<Token>& t, DiagnosticEngine *diag)
     : tokens(t), diagnostics(diag) {}
 
 std::string Parser::parseTypeName() {
-    if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeString) ||
+    if (match(TokenType::KeywordTypeNumber) || match(TokenType::KeywordTypeFloat) ||
+        match(TokenType::KeywordTypeString) ||
         match(TokenType::KeywordTypeBool) || match(TokenType::KeywordTrue)) {
         return canonicalTypeName(tokens[pos-1]);
     }

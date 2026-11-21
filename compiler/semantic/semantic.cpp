@@ -86,6 +86,11 @@ std::unique_ptr<Expr> SemanticAnalyzer::cloneDefaultExpr(const Expr *def) {
         node->setLocation(n->getLine(), n->getColumn());
         return node;
     }
+    if (auto *f = dynamic_cast<const FloatExpr *>(def)) {
+        auto node = std::make_unique<FloatExpr>(f->getValue());
+        node->setLocation(f->getLine(), f->getColumn());
+        return node;
+    }
     if (auto *b = dynamic_cast<const BoolExpr *>(def)) {
         auto node = std::make_unique<BoolExpr>(b->getValue());
         node->setLocation(b->getLine(), b->getColumn());
@@ -182,6 +187,7 @@ void SemanticAnalyzer::analyze(const std::vector<std::unique_ptr<Node>> &nodes) 
             }
         }
         void visit(NumberExpr&) override {}
+        void visit(FloatExpr&) override {}
         void visit(BoolExpr&) override {}
         void visit(StringExpr&) override {}
         void visit(VariableExpr&) override {}
@@ -256,8 +262,12 @@ void SemanticAnalyzer::visit(AssignStmt &a) {
     if (lastInputCall) t = lookup(a.getName());
     if (!isDeclared(a.getName())) {
         declare(a.getName(), t);
-    } else if (!t.empty() && !isTypeAssignable(t, lookup(a.getName()))) {
-        reportError("tipo incompatible en asignacion a '" + a.getName() + "'", "AYM3003");
+    } else if (!t.empty() && !checkAssignable(a.getValue(), t, lookup(a.getName()))) {
+        std::string msg = "tipo incompatible en asignacion a '" + a.getName() + "'";
+        if (t == "chikata" && lookup(a.getName()) == "jakhüwi") {
+            msg += " (chikata no se convierte solo a jakhüwi: usa jakhüwi(x), floor(x) o round(x))";
+        }
+        reportError(msg, "AYM3003");
     }
 }
 
@@ -278,7 +288,7 @@ void SemanticAnalyzer::visit(IndexAssignStmt &a) {
             if (field && field->isPrivate && currentClass != field->ownerClass) {
                 reportError("atributo estatico privado no accesible");
             }
-            if (field && !isTypeAssignable(valueType, field->type)) {
+            if (field && !checkAssignable(a.getValue(), valueType, field->type)) {
                 reportError("tipo incompatible en asignacion estatica");
             }
         }
@@ -293,14 +303,14 @@ void SemanticAnalyzer::visit(IndexAssignStmt &a) {
             if (field && field->isPrivate && currentClass != field->ownerClass) {
                 reportError("atributo privado no accesible");
             }
-            if (field && !isTypeAssignable(valueType, field->type)) {
+            if (field && !checkAssignable(a.getValue(), valueType, field->type)) {
                 reportError("tipo incompatible en asignacion de atributo");
             }
         }
         currentType = valueType;
     } else if (baseType.rfind("t'aqa:", 0) == 0) {
         std::string elementType = baseType.substr(6);
-        if (!valueType.empty() && !elementType.empty() && !isTypeAssignable(valueType, elementType)) {
+        if (!valueType.empty() && !elementType.empty() && !checkAssignable(a.getValue(), valueType, elementType)) {
             reportError("tipo incompatible en asignacion de lista");
         }
         currentType = elementType;
@@ -308,7 +318,7 @@ void SemanticAnalyzer::visit(IndexAssignStmt &a) {
         currentType = valueType;
     } else if (baseType.rfind("mapa:", 0) == 0) {
         std::string elementType = baseType.substr(5);
-        if (!valueType.empty() && !elementType.empty() && !isTypeAssignable(valueType, elementType)) {
+        if (!valueType.empty() && !elementType.empty() && !checkAssignable(a.getValue(), valueType, elementType)) {
             reportError("tipo incompatible en asignacion de mapa");
         }
         currentType = elementType;
@@ -353,8 +363,12 @@ void SemanticAnalyzer::visit(VarDeclStmt &v) {
     } else if (!constScopes.empty()) {
         constScopes.back().erase(v.getName());
     }
-    if (!t.empty() && !isTypeAssignable(t, declaredType) && !isTypeAssignable(t, v.getType())) {
-        reportError("tipo incompatible en declaracion de '" + v.getName() + "'", "AYM3003");
+    if (!t.empty() && !checkAssignable(v.getInit(), t, declaredType) && !isTypeAssignable(t, v.getType())) {
+        std::string msg = "tipo incompatible en declaracion de '" + v.getName() + "'";
+        if (t == "chikata" && declaredType == "jakhüwi") {
+            msg += " (chikata no se convierte solo a jakhüwi: usa jakhüwi(x), floor(x) o round(x))";
+        }
+        reportError(msg, "AYM3003");
     }
 }
 
@@ -466,7 +480,10 @@ void SemanticAnalyzer::visit(FunctionStmt &fn) {
         declare(param.name, t);
         ++idx;
     }
+    std::string prevReturn = currentReturnType;
+    currentReturnType = resolveTypeAnnotation(fn.getReturnType());
     fn.getBody()->accept(*this);
+    currentReturnType = prevReturn;
     --functionDepth;
     popScope();
 }
@@ -490,7 +507,15 @@ void SemanticAnalyzer::visit(ReturnStmt &r) {
     if (functionDepth == 0) {
         reportError("'return' fuera de una funcion", "AYM3008");
     }
-    if (r.getValue()) r.getValue()->accept(*this);
+    if (r.getValue()) {
+        r.getValue()->accept(*this);
+        std::string t = currentType;
+        if (!currentReturnType.empty() && !t.empty() &&
+            !checkAssignable(r.getValue(), t, currentReturnType)) {
+            reportError("tipo incompatible en 'kuttaya': se esperaba '" + currentReturnType +
+                        "' y se obtuvo '" + t + "'", "AYM3003");
+        }
+    }
 }
 
 void SemanticAnalyzer::visit(ThrowStmt &t) {

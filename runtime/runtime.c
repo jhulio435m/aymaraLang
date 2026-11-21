@@ -22,6 +22,7 @@
 intptr_t aym_exception_new(const char *type, const char *message);
 void aym_throw(intptr_t exception);
 intptr_t aym_array_new(long size);
+void aym_print_float(int64_t bits);
 intptr_t aym_array_get(intptr_t arr, long idx);
 long aym_array_length(intptr_t arr);
 intptr_t aym_array_push(intptr_t arr, intptr_t val);

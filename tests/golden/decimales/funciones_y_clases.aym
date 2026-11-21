@@ -1,0 +1,46 @@
+lurawi area(chikata r): chikata { kuttaya 3.14159 * r * r; }
+qillqa(area(2));
+qillqa(area(1.5));
+lurawi mitad(jakhüwi n): chikata { kuttaya n / 2.0; }
+qillqa(mitad(7));
+lurawi entero(): chikata { kuttaya 4; }
+qillqa(entero());
+lurawi promedio(t'aqa<chikata> xs): chikata {
+  yatiya chikata s = 0;
+  kuti (yatiya jakhüwi i = 0; i < largo(xs); i++) { s += xs[i]; }
+  kuttaya s / largo(xs);
+}
+qillqa(promedio([1.5, 2.5, 4]));
+lurawi muchos(chikata a, chikata b, chikata c, chikata d, chikata e, chikata f, chikata g): chikata {
+  kuttaya a + b + c + d + e + f + g * 10;
+}
+qillqa(muchos(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.25));
+kasta Punto {
+  yatiya chikata x;
+  yatiya chikata y;
+  qallta(chikata a, chikata b) { aka.x = a; aka.y = b; }
+  lurawi norma(): chikata { kuttaya sqrt(aka.x * aka.x + aka.y * aka.y); }
+}
+yatiya Punto p = machaqa Punto(3, 4);
+qillqa(p.norma());
+qillqa(p.x);
+p.x = 1.5;
+qillqa(p.x + p.y);
+yatiya chikata t = 0;
+ukhakamaxa (t < 1) { t = t + 0.25; }
+qillqa(t);
+ukaxa (t >= 1.0 && t <= 1) { qillqa("uno"); }
+yatiya chikata g = 9.81;
+lurawi usa_global(): chikata { kuttaya g * 2; }
+qillqa(usa_global());
+qillqa($"g vale {g}");
+qillqa("temp: " + aru(-0.5));
+yatiya jakhüwi n = jakhüwi(-3.7);
+qillqa(n);
+qillqa(fabs(-2));
+qillqa(pow(2, 0.5) * pow(2, 0.5));
+yatiya chikata z = -0.0;
+qillqa(z);
+qillqa(1.0 / 3.0);
+qillqa(100000000000000000000.0);
+qillqa(123456.789);

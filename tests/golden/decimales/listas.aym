@@ -1,0 +1,17 @@
+yatiya t'aqa<chikata> v = [2.5, -1.5, 0.5, -3.0];
+qillqa(thanta(v));
+qillqa(jiska_taqa(v));
+qillqa(jacha_taqa(v));
+qillqa(wakicha(v));
+qillqa(wakicha_qhipa(v));
+qillqa(sapaki([1.5, 1.5, 2.0]));
+qillqa(kutikipat(v));
+push(v, 7);
+qillqa(v);
+qillqa(apsu(v));
+yatiya t'aqa<chikata> v = [1.5, 2.5, 4.0];
+yatiya t'aqa<chikata> d = map(v, lurawi(chikata x): chikata { kuttaya x * 2; });
+qillqa(d);
+yatiya t'aqa<chikata> g = filter(v, lurawi(chikata x): chiqa { kuttaya x > 2; });
+qillqa(g);
+qillqa(reduce(v, lurawi(chikata a, chikata b): chikata { kuttaya a + b; }, 0.0));

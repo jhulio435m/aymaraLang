@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "ast_json.h"
 
 #include "ast.h"
@@ -245,6 +246,13 @@ std::string serializeNode(const Node *node, int level) {
     if (const auto *n = dynamic_cast<const NumberExpr*>(node)) {
         auto fields = baseFields("NumberExpr", n);
         fields.push_back({"value", std::to_string(n->getValue())});
+        return makeObject(fields, level);
+    }
+    if (const auto *f = dynamic_cast<const FloatExpr*>(node)) {
+        auto fields = baseFields("FloatExpr", f);
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), "%.17g", f->getValue());
+        fields.push_back({"value", std::string(buf)});
         return makeObject(fields, level);
     }
     if (const auto *n = dynamic_cast<const BoolExpr*>(node)) {

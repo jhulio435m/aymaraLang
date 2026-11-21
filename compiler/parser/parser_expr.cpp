@@ -600,6 +600,18 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
     if (auto classExpr = parseClassPrimary()) {
         return classExpr;
     }
+    if (match(TokenType::FloatNumber)) {
+        Token tok = tokens[pos-1];
+        double value = 0.0;
+        try {
+            value = std::stod(tok.text);
+        } catch (const std::exception &) {
+            parseError("literal decimal fuera de rango: " + tok.text);
+        }
+        auto node = std::make_unique<FloatExpr>(value);
+        node->setLocation(tok.line, tok.column);
+        return node;
+    }
     if (match(TokenType::Number)) {
         Token tok = tokens[pos-1];
         try {
@@ -666,7 +678,8 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
         Token tok = tokens[pos-1];
         return parseMapLiteral(tok);
     }
-    if (match(TokenType::KeywordTypeString) || match(TokenType::KeywordTypeNumber)) {
+    if (match(TokenType::KeywordTypeString) || match(TokenType::KeywordTypeNumber) ||
+        match(TokenType::KeywordTypeFloat)) {
         Token idTok = tokens[pos-1];
         std::string name = idTok.text;
         if (match(TokenType::LParen)) {

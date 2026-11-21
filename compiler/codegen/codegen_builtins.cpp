@@ -82,6 +82,12 @@ bool CodeGenImpl::emitBuiltinIoCall(const CallExpr *c,
             emitExpr(arg, locals);
             return true;
         }
+        if (isFloatValue(arg)) {
+            emitExpr(arg, locals);
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_float_to_str\n";
+            return true;
+        }
         if (isBoolExpr(arg, locals)) {
             std::string falseLbl = genLabel("bool_false");
             std::string endLbl = genLabel("bool_end");
@@ -111,6 +117,25 @@ bool CodeGenImpl::emitBuiltinIoCall(const CallExpr *c,
             return true;
         }
         emitExpr(arg, locals);
+        if (isFloatValue(arg)) {
+            // Truncamiento hacia cero (como C).
+            out << "    movq xmm0, rax\n";
+            out << "    cvttsd2si rax, xmm0\n";
+        }
+        return true;
+    }
+
+    if (nameLower == BUILTIN_TO_FLOAT) {
+        if (c->getArgs().empty()) return true;
+        const Expr *arg = c->getArgs()[0].get();
+        emitExpr(arg, locals);
+        if (isStringExpr(arg, locals)) {
+            out << "    mov " << reg1(this->windows) << ", rax\n";
+            out << "    call aym_str_to_float\n";
+        } else if (!isFloatValue(arg)) {
+            out << "    cvtsi2sd xmm0, rax\n";
+            out << "    movq rax, xmm0\n";
+        }
         return true;
     }
 
@@ -296,6 +321,12 @@ bool CodeGenImpl::emitBuiltinCollectionCall(const CallExpr *c,
         else if (nameLower == BUILTIN_THANTA) arrFn = "aym_array_sum";
         else if (nameLower == BUILTIN_JISKA_TAQA) arrFn = "aym_array_min";
         else if (nameLower == BUILTIN_JACHA_TAQA) arrFn = "aym_array_max";
+        if (arrFn && !c->getArgs().empty() &&
+            c->getArgs()[0]->getSemType() == "t'aqa:chikata") {
+            if (nameLower == BUILTIN_THANTA) arrFn = "aym_array_sum_float";
+            else if (nameLower == BUILTIN_JISKA_TAQA) arrFn = "aym_array_min_float";
+            else if (nameLower == BUILTIN_JACHA_TAQA) arrFn = "aym_array_max_float";
+        }
         if (arrFn) {
             emitCallArgs(c->getArgs(), locals, 0);
             out << "    call " << arrFn << "\n";
@@ -319,7 +350,12 @@ bool CodeGenImpl::emitBuiltinCollectionCall(const CallExpr *c,
         if (intFn) {
             emitExpr(c->getArgs()[0].get(), locals);
             out << "    mov " << reg1(this->windows) << ", rax\n";
-            if (listElementType(c->getArgs()[0].get(), locals) == "aru") {
+            bool floatList = c->getArgs()[0]->getSemType() == "t'aqa:chikata";
+            if (floatList && nameLower == BUILTIN_WAKICHA) {
+                out << "    call aym_array_sort_float\n";
+            } else if (floatList && nameLower == BUILTIN_WAKICHA_QHIPA) {
+                out << "    call aym_array_sort_desc_float\n";
+            } else if (listElementType(c->getArgs()[0].get(), locals) == "aru") {
                 out << "    call " << strFn << "\n";
             } else {
                 out << "    call " << intFn << "\n";

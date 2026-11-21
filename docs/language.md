@@ -25,7 +25,8 @@ yatiya aru saludo = "kamisaraki";
 yatiya chiqa activo = chiqa;
 ```
 
-- `jakhüwi`: número
+- `jakhüwi`: número entero
+- `chikata`: número decimal (`yatiya chikata pi = 3.14;`)
 - `aru`: texto
 - `chiqa`: booleano
 

@@ -121,8 +121,18 @@ private:
     bool emitStmtException(const Stmt *stmt,
                            const std::unordered_map<std::string,int> *locals,
                            const std::string &endLabel);
+    // Evalua la expresion en rax y aplica la conversion implicita que marco el
+    // analisis semantico (jakhüwi -> chikata). Los chikata viajan como los 64
+    // bits del double en rax.
     void emitExpr(const Expr *expr,
                   const std::unordered_map<std::string,int> *locals);
+    void emitExprInner(const Expr *expr,
+                       const std::unordered_map<std::string,int> *locals);
+    // Valor decimal tras la conversion implicita (tipo propio o convertTo).
+    static bool isFloatValue(const Expr *e) {
+        return e && (e->getSemType() == "chikata" || e->getConvertTo() == "chikata");
+    }
+    void emitFloatBinary(char op);
     bool emitExprOperator(const Expr *expr,
                           const std::unordered_map<std::string,int> *locals);
     void emitCallExpr(const CallExpr *expr,

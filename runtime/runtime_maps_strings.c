@@ -154,7 +154,7 @@ intptr_t aym_map_set(intptr_t map, const char *key, intptr_t value, int is_strin
     long idx = aym_map_find(m, key);
     if (idx >= 0) {
         m->values[idx] = (intptr_t)value;
-        m->types[idx] = (unsigned char)(is_string ? 1 : 0);
+        m->types[idx] = (unsigned char)((is_string == 1 || is_string == 2) ? is_string : 0);
         return value;
     }
     if (m->len >= m->cap) {
@@ -168,7 +168,7 @@ intptr_t aym_map_set(intptr_t map, const char *key, intptr_t value, int is_strin
     long new_idx = m->len;
     m->keys[new_idx] = (char *)key;
     m->values[new_idx] = (intptr_t)value;
-    m->types[new_idx] = (unsigned char)(is_string ? 1 : 0);
+    m->types[new_idx] = (unsigned char)((is_string == 1 || is_string == 2) ? is_string : 0);
     m->len++;
     uint64_t h = aym_map_hash(key);
     uint64_t mask = (uint64_t)(m->bucket_cap - 1);
@@ -272,7 +272,15 @@ long aym_map_value_is_string(intptr_t map, long idx) {
     if (!map) return 0;
     AymMap *m = (AymMap*)map;
     if (idx < 0 || idx >= m->len) return 0;
-    return m->types[idx] ? 1 : 0;
+    return m->types[idx] == 1 ? 1 : 0;
+}
+
+/* Tipo del valor: 0 = entero/otro, 1 = aru, 2 = chikata (bits de double). */
+long aym_map_value_kind(intptr_t map, long idx) {
+    if (!map) return 0;
+    AymMap *m = (AymMap*)map;
+    if (idx < 0 || idx >= m->len) return 0;
+    return m->types[idx];
 }
 
 long aym_map_value_is_string_key(intptr_t map, const char *key) {
@@ -280,7 +288,15 @@ long aym_map_value_is_string_key(intptr_t map, const char *key) {
     AymMap *m = (AymMap*)map;
     long idx = aym_map_find(m, key);
     if (idx < 0) return 0;
-    return m->types[idx] ? 1 : 0;
+    return m->types[idx] == 1 ? 1 : 0;
+}
+
+long aym_map_value_kind_key(intptr_t map, const char *key) {
+    if (!map || !key) return 0;
+    AymMap *m = (AymMap*)map;
+    long idx = aym_map_find(m, key);
+    if (idx < 0) return 0;
+    return m->types[idx];
 }
 
 char *aym_str_concat(const char *left, const char *right) {
@@ -559,6 +575,59 @@ char *aym_to_string(long value) {
     memcpy(out, buffer, len);
     out[len] = '\0';
     return out;
+}
+
+/* ---- chikata (decimales) ----
+ * Los decimales viajan como los 64 bits del double en un entero (intptr_t),
+ * asi el codigo generado y el runtime no necesitan registros xmm en el ABI. */
+static double aym_bits_to_double(int64_t bits) {
+    double d;
+    memcpy(&d, &bits, sizeof(d));
+    return d;
+}
+
+static int64_t aym_double_to_bits(double d) {
+    int64_t bits;
+    memcpy(&bits, &d, sizeof(bits));
+    return bits;
+}
+
+/* Formato legible y estable: 15 cifras significativas y siempre con parte
+ * decimal ("3.0"), salvo notacion cientifica, inf y nan. */
+static void aym_format_double(double v, char *buf, size_t n) {
+    if (v != v) { snprintf(buf, n, "nan"); return; }
+    if (v > 1.7976931348623157e308) { snprintf(buf, n, "inf"); return; }
+    if (v < -1.7976931348623157e308) { snprintf(buf, n, "-inf"); return; }
+    snprintf(buf, n, "%.15g", v);
+    if (!strchr(buf, '.') && !strchr(buf, 'e') && strlen(buf) + 2 < n) {
+        strcat(buf, ".0");
+    }
+}
+
+void aym_print_float(int64_t bits) {
+    char buf[64];
+    aym_format_double(aym_bits_to_double(bits), buf, sizeof(buf));
+    fputs(buf, stdout);
+}
+
+char *aym_float_to_str(int64_t bits) {
+    char buf[64];
+    aym_format_double(aym_bits_to_double(bits), buf, sizeof(buf));
+    return aym_str_copy(buf, strlen(buf));
+}
+
+int64_t aym_str_to_float(const char *text) {
+    if (!text || !*text) {
+        aym_throw_typed("CONVERSION", "texto vacio");
+        return 0;
+    }
+    char *end = NULL;
+    double value = strtod(text, &end);
+    if (end == text || *end != '\0') {
+        aym_throw_typed("CONVERSION", "no es numero decimal");
+        return 0;
+    }
+    return aym_double_to_bits(value);
 }
 
 long aym_to_number(const char *text) {

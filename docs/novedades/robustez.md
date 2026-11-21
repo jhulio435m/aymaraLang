@@ -146,5 +146,4 @@ Errores corregidos en estas rondas, con sus pruebas de regresión en `tests/gold
 ## Limitaciones conocidas (sin corregir)
 
 - La excepción no manejada por división por cero no indica la línea del programa fuente; solo imprime `Excepcion no manejada`.
-- El lenguaje solo tiene enteros: no hay literales decimales (`7.5` es un error de sintaxis).
 - Los builtins con más argumentos que registros deben liberar la pila que devuelve `emitCallArgs` (hoy solo `uja_suyu`).
