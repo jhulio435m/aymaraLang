@@ -73,6 +73,43 @@ bash scripts/install/install_deps_linux.sh --with-deb-tools
 bash scripts/build/build_deb.sh
 ```
 
+## Publicar una versión
+
+La publicación está automatizada. Desde `main`, limpio y sincronizado con
+`origin/main`:
+
+```bash
+scripts/release.sh 1.1.0
+```
+
+El script actualiza `VERSION.txt`, crea el commit `release: v1.1.0` y la
+etiqueta `v1.1.0`, y los sube. Al llegar la etiqueta, el workflow
+`.github/workflows/release.yml`:
+
+1. Comprueba que la etiqueta coincide con `VERSION.txt`.
+2. Ejecuta el CI completo (`ci.yml`): compilación, pruebas e instaladores en
+   Linux y Windows.
+3. Crea la release de GitHub con `AymaraLang-Setup.exe`,
+   `AymaraLang-Setup.msi`, `aymaralang_<versión>_amd64.deb` y
+   `SHA256SUMS.txt`.
+4. Despliega la web (`web/`) en Cloudflare con los enlaces de esa release
+   (`scripts/sync-release.mjs`).
+
+Si un paso falla, la etiqueta queda creada: corrige y relanza el workflow
+desde la pestaña *Actions* (la publicación reemplaza los archivos de la
+release existente).
+
+### Secretos necesarios
+
+El despliegue de la web necesita dos secretos del repositorio
+(*Settings → Secrets and variables → Actions*):
+
+- `CLOUDFLARE_API_TOKEN`: token con la plantilla *Edit Cloudflare Workers*.
+- `CLOUDFLARE_ACCOUNT_ID`: ID de la cuenta de Cloudflare.
+
+Sin ellos la release se publica igual, pero el job *Desplegar web* falla con
+un aviso explícito.
+
 ## Validaciones
 
 ### Linux

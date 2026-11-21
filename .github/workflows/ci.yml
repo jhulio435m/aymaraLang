@@ -2,7 +2,11 @@ name: CI
 
 on:
   push:
+    # Solo ramas: las etiquetas v* las procesa release.yml, que llama a este
+    # workflow (workflow_call) y asi no se compila dos veces.
+    branches: ["**"]
   pull_request:
+  workflow_call:
 
 jobs:
   build-and-test:
